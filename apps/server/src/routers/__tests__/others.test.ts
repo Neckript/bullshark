@@ -163,6 +163,19 @@ describe('others router', () => {
     );
   });
 
+  test('should not expose server secrets in get settings', async () => {
+    const { caller } = await initTest(1);
+
+    await caller.others.updateSettings({
+      password: 'testpassword'
+    });
+
+    const settings = await caller.others.getSettings();
+
+    expect(settings.password).toBe('');
+    expect(settings.secretToken).toBe('');
+  });
+
   test('should throw when user lacks permissions (update settings)', async () => {
     const { caller } = await initTest(2);
 
