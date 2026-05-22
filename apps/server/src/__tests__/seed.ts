@@ -82,6 +82,7 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
     storageOverflowAction: STORAGE_OVERFLOW_ACTION,
     enablePlugins: false,
     enableSearch: true,
+    webRtcSimulcastEnabled: false,
     showWelcomeDialog: true,
     storageSignedUrlsEnabled: false,
     storageSignedUrlsTtlSeconds: STORAGE_DEFAULT_SIGNED_URLS_TTL_SECONDS,
@@ -133,6 +134,8 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
     color: '#ff0000',
     isPersistent: true,
     isDefault: false,
+    storageQuotaOverrideEnabled: false,
+    storageSpaceQuota: 0,
     createdAt: firstStart
   };
 
@@ -151,6 +154,8 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
     color: '#99aab5',
     isPersistent: true,
     isDefault: true,
+    storageQuotaOverrideEnabled: false,
+    storageSpaceQuota: 0,
     createdAt: firstStart
   };
 
@@ -172,6 +177,8 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
     color: '#95a5a6',
     isPersistent: false,
     isDefault: false,
+    storageQuotaOverrideEnabled: false,
+    storageSpaceQuota: 0,
     createdAt: firstStart
   };
 

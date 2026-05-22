@@ -67,6 +67,7 @@ const seedDatabase = async () => {
     storageOverflowAction: STORAGE_OVERFLOW_ACTION,
     enablePlugins: false,
     enableSearch: true,
+    webRtcSimulcastEnabled: false,
     showWelcomeDialog: true,
     storageSignedUrlsEnabled: false,
     storageSignedUrlsTtlSeconds: STORAGE_DEFAULT_SIGNED_URLS_TTL_SECONDS,
@@ -130,6 +131,8 @@ const seedDatabase = async () => {
       color: '#FFFFFF',
       isDefault: false,
       isPersistent: true,
+      storageQuotaOverrideEnabled: false,
+      storageSpaceQuota: 0,
       createdAt: firstStart
     },
     {
@@ -137,6 +140,8 @@ const seedDatabase = async () => {
       color: '#FFFFFF',
       isPersistent: true,
       isDefault: true,
+      storageQuotaOverrideEnabled: false,
+      storageSpaceQuota: 0,
       createdAt: firstStart
     }
   ];
