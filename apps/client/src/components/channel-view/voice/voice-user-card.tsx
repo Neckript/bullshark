@@ -1,14 +1,17 @@
 import { useDevices } from '@/components/devices-provider/hooks/use-devices';
 import { UserAvatar } from '@/components/user-avatar';
 import { useStreamVolumeControl } from '@/components/voice-provider/hooks/use-stream-volume-control';
+import { useWebRtcSimulcastEnabled } from '@/features/server/hooks';
 import type { TVoiceUser } from '@/features/server/types';
 import { useIsOwnUser } from '@/features/server/users/hooks';
 import {
   useShowUserBannersInVoice,
-  useSpeakingState
+  useSpeakingState,
+  useVoice
 } from '@/features/server/voice/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { cn } from '@/lib/utils';
+import { StreamKind } from '@sharkord/shared';
 import { HeadphoneOff, MicOff, Monitor, Video } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { CardControls } from './card-controls';
@@ -16,6 +19,7 @@ import { CardGradient } from './card-gradient';
 import { useVoiceRefs } from './hooks/use-voice-refs';
 import { PictureInPictureButton } from './picture-in-picture-button';
 import { PinButton } from './pin-button';
+import { QualityButton } from './quality-button';
 import { VolumeButton } from './volume-button';
 
 type TVoiceUserCardProps = {
@@ -42,9 +46,15 @@ const VoiceUserCard = memo(
     const { volumeKey } = useStreamVolumeControl({ type: 'user', userId });
     const { devices } = useDevices();
     const isOwnUser = useIsOwnUser(userId);
+    const webRtcSimulcastEnabled = useWebRtcSimulcastEnabled();
+    const { isSimulcastConsumer } = useVoice();
     const showUserBanners = useShowUserBannersInVoice();
     const { isActivelySpeaking, speakingEffectClass } =
       useSpeakingState(userId);
+    const isSimulcastVideoConsumer =
+      !isOwnUser && isSimulcastConsumer(userId, StreamKind.VIDEO);
+    const showQualityControl =
+      !isOwnUser && webRtcSimulcastEnabled && hasVideoStream;
 
     const handlePinToggle = useCallback(() => {
       if (isPinned) {
@@ -78,6 +88,13 @@ const VoiceUserCard = memo(
 
         <CardControls>
           {!isOwnUser && <VolumeButton volumeKey={volumeKey} />}
+          {showQualityControl && (
+            <QualityButton
+              streamId={userId}
+              kind={StreamKind.VIDEO}
+              disabled={!isSimulcastVideoConsumer}
+            />
+          )}
           {hasVideoStream && <PictureInPictureButton videoRef={videoRef} />}
           {showPinControls && (
             <PinButton isPinned={isPinned} handlePinToggle={handlePinToggle} />
@@ -106,9 +123,11 @@ const VoiceUserCard = memo(
 
         <div className="absolute bottom-0 left-0 right-0 p-2">
           <div className="flex items-center justify-between">
-            <span className="text-white font-medium text-xs truncate">
-              {voiceUser.name}
-            </span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-white font-medium text-xs truncate">
+                {voiceUser.name}
+              </span>
+            </div>
 
             <div className="flex items-center gap-1">
               {voiceUser.state.micMuted && (

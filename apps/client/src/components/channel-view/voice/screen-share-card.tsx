@@ -2,8 +2,10 @@ import {
   useVolumeControl,
   type TVolumeKey
 } from '@/components/voice-provider/volume-control-context';
+import { useWebRtcSimulcastEnabled } from '@/features/server/hooks';
 import { useOwnUserId, useUserById } from '@/features/server/users/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
+import { useStreamQualityData } from '@/hooks/use-stream-quality-data';
 import { cn } from '@/lib/utils';
 import { StreamKind } from '@sharkord/shared';
 import { IconButton } from '@sharkord/ui';
@@ -18,9 +20,10 @@ import { useVideoStats } from './hooks/use-video-stats';
 import { useVoiceRefs } from './hooks/use-voice-refs';
 import { PictureInPictureButton } from './picture-in-picture-button';
 import { PinButton } from './pin-button';
+import { QualityButton } from './quality-button';
 import { VolumeButton } from './volume-button';
 
-type tScreenShareControlsProps = {
+type TScreenShareControlsProps = {
   isPinned: boolean;
   isFullscreen: boolean;
   isZoomEnabled: boolean;
@@ -29,8 +32,11 @@ type tScreenShareControlsProps = {
   handleToggleZoom: () => void;
   showPinControls: boolean;
   showAudioControl: boolean;
+  showQualityControl: boolean;
+  disableQualityControl: boolean;
   volumeKey: TVolumeKey;
   videoRef: RefObject<HTMLVideoElement | null>;
+  userId: number;
 };
 
 const ScreenShareControls = memo(
@@ -43,12 +49,22 @@ const ScreenShareControls = memo(
     handleToggleZoom,
     showPinControls,
     showAudioControl,
+    showQualityControl,
+    disableQualityControl,
     volumeKey,
-    videoRef
-  }: tScreenShareControlsProps) => {
+    videoRef,
+    userId
+  }: TScreenShareControlsProps) => {
     return (
       <CardControls>
         {showAudioControl && <VolumeButton volumeKey={volumeKey} />}
+        {showQualityControl && (
+          <QualityButton
+            streamId={userId}
+            kind={StreamKind.SCREEN}
+            disabled={disableQualityControl}
+          />
+        )}
         <PictureInPictureButton videoRef={videoRef} />
         {showPinControls && isPinned && (
           <IconButton
@@ -93,14 +109,18 @@ const ScreenShareCard = memo(
     const ownUserId = useOwnUserId();
     const { getUserScreenVolumeKey } = useVolumeControl();
     const isOwnUser = ownUserId === userId;
+    const webRtcSimulcastEnabled = useWebRtcSimulcastEnabled();
     const volumeKey = getUserScreenVolumeKey(userId);
+
     const {
       screenShareRef,
       screenShareAudioRef,
       hasScreenShareStream,
       hasScreenShareAudioStream
     } = useVoiceRefs(userId);
+
     const { transportStats, getConsumerCodec } = useVoice();
+
     const videoStats = useVideoStats(screenShareRef, hasScreenShareStream);
 
     const codec = useMemo(() => {
@@ -123,6 +143,11 @@ const ScreenShareCard = memo(
       getConsumerCodec,
       userId
     ]);
+
+    const { isSimulcastScreenConsumer, qualityLabel } = useStreamQualityData(
+      userId,
+      StreamKind.SCREEN
+    );
 
     const {
       containerRef,
@@ -196,8 +221,11 @@ const ScreenShareCard = memo(
           handleToggleZoom={handleToggleZoom}
           showPinControls={showPinControls}
           showAudioControl={!isOwnUser && hasScreenShareAudioStream}
+          showQualityControl={!isOwnUser && webRtcSimulcastEnabled}
+          disableQualityControl={!isSimulcastScreenConsumer}
           volumeKey={volumeKey}
           videoRef={screenShareRef}
+          userId={userId}
         />
 
         <video
@@ -225,7 +253,7 @@ const ScreenShareCard = memo(
             <span className="text-white font-medium text-xs truncate">
               {user.name}'s screen
             </span>
-            {(videoStats || codec) && (
+            {(videoStats || codec || qualityLabel) && (
               <span className="text-white/50 text-xs shrink-0">
                 {codec}
                 {codec && videoStats && ' '}
@@ -235,6 +263,8 @@ const ScreenShareCard = memo(
                     {videoStats.frameRate > 0 && ` ${videoStats.frameRate}fps`}
                   </>
                 )}
+                {(codec || videoStats) && qualityLabel && ' '}
+                {qualityLabel && `(${qualityLabel})`}
               </span>
             )}
             {isZoomEnabled && zoom > 1 && (
