@@ -119,16 +119,32 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 
 ## Roadmap
 
+### Foundation / Fondations
 - [x] Fork established
 - [ ] `fix` Audio stability — voice freeze after 10s (#695 upstream)
-- [ ] `feat` Configurable global hotkeys
+- [ ] `fix` Emoji reactions on Firefox (#728 upstream)
+- [ ] `fix` Global hotkeys mute/unmute (#678 upstream)
+
+### Sovereignty / Souveraineté
+- [ ] `docs` HTTPS guide — Caddy + OVH DNS (no Cloudflare dependency)
+- [ ] `docs` HTTPS guide — Caddy + Hetzner DNS
+- [ ] `docs` Deployment guides — OVH, Hetzner, Raspberry Pi, bare metal
+- [ ] `feat` Replace any remaining US-dependent defaults with EU-sovereign alternatives
+
+### Gaming features / Fonctionnalités gaming
 - [ ] `feat` Push-to-Talk + VAD advanced
 - [ ] `feat` Client-side noise suppression
 - [ ] `feat` Soundboard
 - [ ] `feat` Voice channel grid UI
-- [ ] `feat` Roles & permissions
+- [ ] `feat` In-game overlay
+
+### Platform / Plateforme
+- [ ] `feat` Roles & permissions granular
 - [ ] `feat` PWA mobile optimized
-- [ ] `release` v0.1.0 stable
+- [ ] `feat` Threads & discussion channels
+
+### Release
+- [ ] `release` v0.1.0 stable — first Bullshark release
 
 ---
 
