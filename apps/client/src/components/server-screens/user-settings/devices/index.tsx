@@ -451,12 +451,8 @@ const Devices = memo(() => {
           <InputModeSection
             inputMode={values.inputMode ?? InputMode.NORMAL}
             pttKey={values.pttKey}
-            vadThreshold={values.vadThreshold}
             onInputModeChange={(mode) => onChange('inputMode', mode)}
             onPttKeyChange={(key) => onChange('pttKey', key)}
-            onVadThresholdChange={(threshold) =>
-              onChange('vadThreshold', threshold)
-            }
           />
         </div>
 

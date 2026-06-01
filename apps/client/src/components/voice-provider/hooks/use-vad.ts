@@ -8,10 +8,13 @@ const VAD_HOLD_MS = 400;
 const ANALYSER_MIN_DB = -90;
 const ANALYSER_MAX_DB = -10;
 
+// Fixed detection threshold: -45 dB is a practical default that activates on
+// normal speech while ignoring ambient noise and keyboard sounds.
+const VAD_THRESHOLD_DB = -45;
+
 type TUseVadParams = {
   enabled: boolean;
   rawStream: MediaStream | null;
-  thresholdDb: number;
   transmitTrackRef: React.RefObject<MediaStreamTrack | null>;
   onSpeakingChange: (speaking: boolean) => void;
 };
@@ -28,18 +31,10 @@ type TUseVadParams = {
 const useVad = ({
   enabled,
   rawStream,
-  thresholdDb,
   transmitTrackRef,
   onSpeakingChange
 }: TUseVadParams) => {
-  // Use refs so the analysis loop can pick up live changes without being
-  // restarted (avoids AudioContext teardown on every threshold slider tick).
-  const thresholdRef = useRef(thresholdDb);
   const onSpeakingChangeRef = useRef(onSpeakingChange);
-
-  useEffect(() => {
-    thresholdRef.current = thresholdDb;
-  }, [thresholdDb]);
 
   useEffect(() => {
     onSpeakingChangeRef.current = onSpeakingChange;
@@ -100,9 +95,8 @@ const useVad = ({
       }
       const rms = Math.sqrt(sum / dataArray.length);
 
-      // Convert threshold dB to the byte scale the analyser uses.
       const thresholdByte =
-        ((thresholdRef.current - ANALYSER_MIN_DB) /
+        ((VAD_THRESHOLD_DB - ANALYSER_MIN_DB) /
           (ANALYSER_MAX_DB - ANALYSER_MIN_DB)) *
         255;
 

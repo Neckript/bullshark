@@ -1,4 +1,3 @@
-import { MICROPHONE_GATE_DEFAULT_THRESHOLD_DB } from '@/helpers/audio-gate';
 import { getRestrictOwnAudioSupport } from '@/helpers/get-display-media-support';
 import {
   getLocalStorageItemAsJSON,
@@ -45,8 +44,7 @@ const getDefaultDeviceSettings = (): TDeviceSettings => ({
   screenCodec: VideoCodec.AUTO,
   screenBitrate: DEFAULT_BITRATE,
   inputMode: InputMode.NORMAL,
-  pttKey: DEFAULT_PTT_KEY,
-  vadThreshold: MICROPHONE_GATE_DEFAULT_THRESHOLD_DB
+  pttKey: DEFAULT_PTT_KEY
 });
 
 const resolveDeviceId = (

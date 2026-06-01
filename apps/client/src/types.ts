@@ -79,7 +79,6 @@ export type TDeviceSettings = {
   screenBitrate: number;
   inputMode: InputMode;
   pttKey: string;
-  vadThreshold: number;
 };
 
 export type TRemoteUserStreamKinds =

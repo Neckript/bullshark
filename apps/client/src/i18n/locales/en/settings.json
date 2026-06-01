@@ -436,7 +436,5 @@
   "inputModePtt": "Push-to-Talk — hold a key to transmit",
   "inputModeVad": "Voice Activity — transmit automatically when voice is detected",
   "pttKeyLabel": "Key",
-  "pttKeyCapturing": "Press any key…",
-  "vadSensitivityLabel": "Sensitivity",
-  "vadSensitivityHint": "Higher sensitivity activates sooner; lower reduces false triggers."
+  "pttKeyCapturing": "Press any key…"
 }

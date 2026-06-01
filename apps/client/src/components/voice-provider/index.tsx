@@ -1223,7 +1223,6 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
   useVad({
     enabled: !!currentVoiceChannelId && devices.inputMode === InputMode.VAD,
     rawStream: rawMicrophoneStreamRef.current,
-    thresholdDb: devices.vadThreshold,
     transmitTrackRef: transmitMicrophoneTrackRef,
     onSpeakingChange: setIsVadSpeaking
   });

@@ -1,11 +1,6 @@
-import {
-  clampMicrophoneDecibels,
-  MICROPHONE_GATE_DEFAULT_THRESHOLD_DB,
-  microphoneDecibelsToPercent
-} from '@/helpers/audio-gate';
 import { cn } from '@/lib/utils';
 import { DEFAULT_PTT_KEY, InputMode } from '@/types';
-import { Button, Group, Label, Slider } from '@sharkord/ui';
+import { Button, Group, Label } from '@sharkord/ui';
 import { Keyboard } from 'lucide-react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,27 +9,22 @@ import { useTranslation } from 'react-i18next';
 const formatPttKey = (code: string): string => {
   if (code.startsWith('Key')) return code.slice(3);
   if (code.startsWith('Digit')) return code.slice(5);
-  // Insert space before each uppercase letter run, then trim.
   return code.replace(/([A-Z])/g, ' $1').trim().replace(/\s+/g, ' ');
 };
 
 type TInputModeSectionProps = {
   inputMode: InputMode;
   pttKey: string;
-  vadThreshold: number;
   onInputModeChange: (mode: InputMode) => void;
   onPttKeyChange: (key: string) => void;
-  onVadThresholdChange: (threshold: number) => void;
 };
 
 const InputModeSection = memo(
   ({
     inputMode,
     pttKey,
-    vadThreshold,
     onInputModeChange,
-    onPttKeyChange,
-    onVadThresholdChange
+    onPttKeyChange
   }: TInputModeSectionProps) => {
     const { t } = useTranslation('settings');
     const [isCapturing, setIsCapturing] = useState(false);
@@ -50,7 +40,6 @@ const InputModeSection = memo(
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (!capturingRef.current) return;
-        // Ignore bare modifier-only presses — they can't be held alone reliably.
         if (['Shift', 'Control', 'Alt', 'Meta'].includes(e.key)) return;
         e.preventDefault();
         capturingRef.current = false;
@@ -61,8 +50,6 @@ const InputModeSection = memo(
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isCapturing, onPttKeyChange]);
-
-    const vadPercent = microphoneDecibelsToPercent(vadThreshold);
 
     const modes = [
       { value: InputMode.NORMAL, label: t('inputModeNormal') },
@@ -108,39 +95,6 @@ const InputModeSection = memo(
                   ? t('pttKeyCapturing')
                   : formatPttKey(pttKey || DEFAULT_PTT_KEY)}
               </Button>
-            </div>
-          )}
-
-          {inputMode === InputMode.VAD && (
-            <div className="flex flex-col gap-2 pl-1">
-              <Label className="text-muted-foreground text-sm">
-                {t('vadSensitivityLabel')}
-              </Label>
-              <Slider
-                className="max-w-80"
-                min={0}
-                max={100}
-                step={1}
-                value={[vadPercent]}
-                onValueChange={([value]) => {
-                  const pct = value / 100;
-                  const db = clampMicrophoneDecibels(
-                    MICROPHONE_GATE_DEFAULT_THRESHOLD_DB +
-                      pct *
-                        (clampMicrophoneDecibels(0) -
-                          MICROPHONE_GATE_DEFAULT_THRESHOLD_DB)
-                  );
-                  onVadThresholdChange(db);
-                }}
-                rightSlot={
-                  <span className="text-sm text-muted-foreground w-16 text-right">
-                    {Math.round(vadPercent)}%
-                  </span>
-                }
-              />
-              <p className="text-xs text-muted-foreground">
-                {t('vadSensitivityHint')}
-              </p>
             </div>
           )}
         </div>
