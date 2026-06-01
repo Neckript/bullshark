@@ -3,15 +3,9 @@ import {
   MICROPHONE_GATE_DEFAULT_THRESHOLD_DB,
   microphoneDecibelsToPercent
 } from '@/helpers/audio-gate';
+import { cn } from '@/lib/utils';
 import { DEFAULT_PTT_KEY, InputMode } from '@/types';
-import {
-  Button,
-  Group,
-  Label,
-  RadioGroup,
-  RadioGroupItem,
-  Slider
-} from '@sharkord/ui';
+import { Button, Group, Label, Slider } from '@sharkord/ui';
 import { Keyboard } from 'lucide-react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -70,33 +64,40 @@ const InputModeSection = memo(
 
     const vadPercent = microphoneDecibelsToPercent(vadThreshold);
 
+    const modes = [
+      { value: InputMode.NORMAL, label: t('inputModeNormal') },
+      { value: InputMode.PTT, label: t('inputModePtt') },
+      { value: InputMode.VAD, label: t('inputModeVad') }
+    ] as const;
+
     return (
       <Group label={t('inputModeLabel')} description={t('inputModeDesc')}>
-        <RadioGroup
-          value={inputMode}
-          onValueChange={(v) => onInputModeChange(v as InputMode)}
-          className="flex flex-col gap-3"
-        >
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value={InputMode.NORMAL} id="im-normal" />
-            <Label htmlFor="im-normal" className="cursor-pointer font-normal">
-              {t('inputModeNormal')}
-            </Label>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value={InputMode.PTT} id="im-ptt" />
-            <Label htmlFor="im-ptt" className="cursor-pointer font-normal">
-              {t('inputModePtt')}
-            </Label>
+        <div className="flex flex-col gap-3">
+          <div className="flex gap-2 flex-wrap">
+            {modes.map(({ value, label }) => (
+              <Button
+                key={value}
+                type="button"
+                variant={inputMode === value ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => onInputModeChange(value)}
+                className={cn(
+                  'min-w-24',
+                  inputMode === value && 'pointer-events-none'
+                )}
+              >
+                {label}
+              </Button>
+            ))}
           </div>
 
           {inputMode === InputMode.PTT && (
-            <div className="ml-6 flex items-center gap-3">
+            <div className="flex items-center gap-3 pl-1">
               <Label className="text-muted-foreground text-sm">
                 {t('pttKeyLabel')}
               </Label>
               <Button
+                type="button"
                 variant={isCapturing ? 'default' : 'outline'}
                 size="sm"
                 onClick={startCapture}
@@ -110,15 +111,8 @@ const InputModeSection = memo(
             </div>
           )}
 
-          <div className="flex items-center gap-2">
-            <RadioGroupItem value={InputMode.VAD} id="im-vad" />
-            <Label htmlFor="im-vad" className="cursor-pointer font-normal">
-              {t('inputModeVad')}
-            </Label>
-          </div>
-
           {inputMode === InputMode.VAD && (
-            <div className="ml-6 flex flex-col gap-2">
+            <div className="flex flex-col gap-2 pl-1">
               <Label className="text-muted-foreground text-sm">
                 {t('vadSensitivityLabel')}
               </Label>
@@ -129,7 +123,6 @@ const InputModeSection = memo(
                 step={1}
                 value={[vadPercent]}
                 onValueChange={([value]) => {
-                  // Convert percent back to dB (inverted: higher % = more sensitive = lower threshold).
                   const pct = value / 100;
                   const db = clampMicrophoneDecibels(
                     MICROPHONE_GATE_DEFAULT_THRESHOLD_DB +
@@ -150,7 +143,7 @@ const InputModeSection = memo(
               </p>
             </div>
           )}
-        </RadioGroup>
+        </div>
       </Group>
     );
   }
