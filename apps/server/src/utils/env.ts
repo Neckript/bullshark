@@ -7,7 +7,7 @@ const SHARKORD_MEDIASOUP_BIN_NAME = process.env.SHARKORD_MEDIASOUP_BIN_NAME;
 const SERVER_VERSION =
   typeof SHARKORD_BUILD_VERSION !== 'undefined'
     ? SHARKORD_BUILD_VERSION
-    : '0.0.0-dev';
+    : '0.1.0-alpha';
 
 const BUILD_DATE =
   typeof SHARKORD_BUILD_DATE !== 'undefined' ? SHARKORD_BUILD_DATE : 'dev';

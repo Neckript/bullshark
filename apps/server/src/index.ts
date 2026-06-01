@@ -32,7 +32,7 @@ const host = IS_PRODUCTION ? SERVER_PRIVATE_IP : 'localhost';
 const url = `http://${host}:${config.server.port}/`;
 
 const message = [
-  chalk.green.bold('SHARKORD') + ' ' + chalk.white.bold(`v${SERVER_VERSION}`),
+  chalk.green.bold('BULLSHARK') + ' ' + chalk.white.bold(`v${SERVER_VERSION}`),
   chalk.dim('────────────────────────────────────────────────────'),
   `${chalk.yellow('Port:')} ${chalk.bold(String(config.server.port))}`,
   `${chalk.yellow('Interface:')} ${chalk.underline.cyan(url)}`
