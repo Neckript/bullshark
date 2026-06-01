@@ -40,80 +40,129 @@ export enum SessionStorageKey {
   TOKEN = 'sharkord-token'
 }
 
+// localStorage / sessionStorage can throw SecurityError in privacy-hardened
+// browsers (Librewolf, Firefox private mode) when storage access is blocked
+// (issue #2 / upstream Sharkord#728). All access is wrapped in try/catch so
+// that callers receive safe fallback values instead of a thrown exception.
+
 const getLocalStorageItem = (key: LocalStorageKey): string | null => {
-  return localStorage.getItem(key);
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
 };
 
 const getLocalStorageItemBool = (
   key: LocalStorageKey,
   defaultValue: boolean = false
 ): boolean => {
-  const item = localStorage.getItem(key);
+  try {
+    const item = localStorage.getItem(key);
 
-  if (item === null) {
-    return defaultValue ?? false;
+    if (item === null) {
+      return defaultValue;
+    }
+
+    return item === 'true';
+  } catch {
+    return defaultValue;
   }
-
-  return item === 'true';
 };
 
 const setLocalStorageItemBool = (
   key: LocalStorageKey,
   value: boolean
 ): void => {
-  localStorage.setItem(key, value.toString());
+  try {
+    localStorage.setItem(key, value.toString());
+  } catch {
+    /* ignore */
+  }
 };
 
 const getLocalStorageItemAsNumber = (
   key: LocalStorageKey,
   defaultValue?: number
 ): number | undefined => {
-  const item = localStorage.getItem(key);
+  try {
+    const item = localStorage.getItem(key);
 
-  if (item === null) {
+    if (item === null) {
+      return defaultValue;
+    }
+
+    const parsed = parseInt(item, 10);
+
+    return Number.isNaN(parsed) ? defaultValue : parsed;
+  } catch {
     return defaultValue;
   }
-
-  const parsed = parseInt(item, 10);
-
-  return Number.isNaN(parsed) ? defaultValue : parsed;
 };
 
 const getLocalStorageItemAsJSON = <T>(
   key: LocalStorageKey,
   defaultValue: T | undefined = undefined
 ): T | undefined => {
-  const item = localStorage.getItem(key);
+  try {
+    const item = localStorage.getItem(key);
 
-  if (item) {
-    return JSON.parse(item) as T;
+    if (item) {
+      return JSON.parse(item) as T;
+    }
+
+    return defaultValue;
+  } catch {
+    return defaultValue;
   }
-
-  return defaultValue;
 };
 
 const setLocalStorageItemAsJSON = <T>(key: LocalStorageKey, value: T): void => {
-  localStorage.setItem(key, JSON.stringify(value));
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* ignore */
+  }
 };
 
 const setLocalStorageItem = (key: LocalStorageKey, value: string): void => {
-  localStorage.setItem(key, value);
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* ignore */
+  }
 };
 
 const removeLocalStorageItem = (key: LocalStorageKey): void => {
-  localStorage.removeItem(key);
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    /* ignore */
+  }
 };
 
 const getSessionStorageItem = (key: SessionStorageKey): string | null => {
-  return sessionStorage.getItem(key);
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
 };
 
 const setSessionStorageItem = (key: SessionStorageKey, value: string): void => {
-  sessionStorage.setItem(key, value);
+  try {
+    sessionStorage.setItem(key, value);
+  } catch {
+    /* ignore */
+  }
 };
 
 const removeSessionStorageItem = (key: SessionStorageKey): void => {
-  sessionStorage.removeItem(key);
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    /* ignore */
+  }
 };
 
 export {
