@@ -6,6 +6,8 @@ import {
   setLocalStorageItemAsJSON
 } from '@/helpers/storage';
 import {
+  DEFAULT_PTT_KEY,
+  InputMode,
   NoiseSuppression,
   Resolution,
   VideoCodec,
@@ -41,7 +43,10 @@ const getDefaultDeviceSettings = (): TDeviceSettings => ({
   screenResolution: Resolution['720p'],
   screenFramerate: 30,
   screenCodec: VideoCodec.AUTO,
-  screenBitrate: DEFAULT_BITRATE
+  screenBitrate: DEFAULT_BITRATE,
+  inputMode: InputMode.NORMAL,
+  pttKey: DEFAULT_PTT_KEY,
+  vadThreshold: MICROPHONE_GATE_DEFAULT_THRESHOLD_DB
 });
 
 const resolveDeviceId = (

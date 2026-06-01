@@ -428,5 +428,15 @@
   "failedDeleteFile": "Failed to delete file",
 
   "standard": "Standard",
-  "experimental": "experimental"
+  "experimental": "experimental",
+
+  "inputModeLabel": "Input mode",
+  "inputModeDesc": "Choose how your microphone is activated in voice channels.",
+  "inputModeNormal": "Normal — always on (muted/unmuted manually)",
+  "inputModePtt": "Push-to-Talk — hold a key to transmit",
+  "inputModeVad": "Voice Activity — transmit automatically when voice is detected",
+  "pttKeyLabel": "Key",
+  "pttKeyCapturing": "Press any key…",
+  "vadSensitivityLabel": "Sensitivity",
+  "vadSensitivityHint": "Higher sensitivity activates sooner; lower reduces false triggers."
 }

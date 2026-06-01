@@ -48,6 +48,15 @@ export enum NoiseSuppression {
   DTLN = 'dtln'
 }
 
+export enum InputMode {
+  NORMAL = 'normal',
+  PTT = 'ptt',
+  VAD = 'vad'
+}
+
+/** Default PTT key (KeyboardEvent.code format). */
+export const DEFAULT_PTT_KEY = 'Space';
+
 export type TDeviceSettings = {
   microphoneId: string | undefined;
   playbackId: string | undefined;
@@ -68,6 +77,9 @@ export type TDeviceSettings = {
   screenFramerate: number;
   screenCodec: VideoCodec;
   screenBitrate: number;
+  inputMode: InputMode;
+  pttKey: string;
+  vadThreshold: number;
 };
 
 export type TRemoteUserStreamKinds =

@@ -50,7 +50,9 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { InputMode } from '@/types';
 import { useMicrophoneTest } from './hooks/use-microphone-test';
+import { InputModeSection } from './input-mode-section';
 import { useWebcamTest } from './hooks/use-webcam-test';
 import { MicrophoneTestLevelBar } from './microphone-test-level-bar';
 import ResolutionFpsControl from './resolution-fps-control';
@@ -445,6 +447,17 @@ const Devices = memo(() => {
 
             <audio ref={testAudioRef} className="hidden" />
           </Group>
+
+          <InputModeSection
+            inputMode={values.inputMode ?? InputMode.NORMAL}
+            pttKey={values.pttKey}
+            vadThreshold={values.vadThreshold}
+            onInputModeChange={(mode) => onChange('inputMode', mode)}
+            onPttKeyChange={(key) => onChange('pttKey', key)}
+            onVadThresholdChange={(threshold) =>
+              onChange('vadThreshold', threshold)
+            }
+          />
         </div>
 
         <Separator />
