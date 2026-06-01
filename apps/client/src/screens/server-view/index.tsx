@@ -78,7 +78,7 @@ const ServerView = memo(() => {
     <VoiceProvider>
       <div
         data-testid={TestId.SERVER_VIEW}
-        className="flex h-dvh flex-col bg-background text-foreground dark"
+        className="flex h-dvh flex-col bg-background text-foreground"
         {...swipeHandlers}
       >
         <TopBar
