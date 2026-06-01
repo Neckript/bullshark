@@ -56,6 +56,16 @@ const useAudioLevel = (audioStream: MediaStream | undefined) => {
 
       source.connect(analyser);
 
+      // Connect through a zero-gain node to audioContext.destination so Chrome
+      // does not auto-suspend this context after ~10 s of "no speaker output".
+      // A suspended context stops reading from the shared MediaStreamTrack,
+      // which in some Chrome versions can stall the track used by the WebRTC
+      // producer — contributing to the audio freeze (issue #1).
+      const silentGain = audioContext.createGain();
+      silentGain.gain.value = 0;
+      analyser.connect(silentGain);
+      silentGain.connect(audioContext.destination);
+
       audioContextRef.current = audioContext;
       analyserRef.current = analyser;
 
@@ -90,10 +100,14 @@ const useAudioLevel = (audioStream: MediaStream | undefined) => {
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
+
+      analyserRef.current = null;
 
       if (audioContextRef.current) {
         audioContextRef.current.close();
+        audioContextRef.current = null;
       }
 
       setAudioLevel(0);

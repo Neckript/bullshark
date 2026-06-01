@@ -62,6 +62,16 @@ function createBunPipeSocket(
   let bunSocket: any = null;
   let destroyed = false;
 
+  // Write-mode backpressure state. mediasoup's Channel stops writing when
+  // write() returns false and waits for the 'drain' event. Without proper
+  // drain signalling the IPC channel stalls permanently, causing audio freeze.
+  type TPendingWrite = {
+    chunk: Buffer;
+    callback?: (error?: Error | null) => void;
+  };
+  const pendingWrites: TPendingWrite[] = [];
+  let hasPressure = false;
+
   emitter.readable = mode === 'read';
   emitter.writable = mode === 'write';
   emitter.readableFlowing = null;
@@ -82,11 +92,32 @@ function createBunPipeSocket(
       callback?.(new Error('Socket not ready'));
       return false;
     }
+
+    // Queue behind any already-buffered writes to preserve ordering.
+    if (hasPressure) {
+      pendingWrites.push({
+        chunk: Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk),
+        callback
+      });
+      return false;
+    }
+
     try {
       const n = bunSocket.write(chunk);
+
+      if (n === 0) {
+        // Bun socket buffer is full — apply backpressure.
+        hasPressure = true;
+        pendingWrites.push({
+          chunk: Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk),
+          callback
+        });
+        return false;
+      }
+
       bunSocket.flush();
       callback?.(null);
-      return n > 0;
+      return true;
     } catch (err: unknown) {
       callback?.(err as Error);
       return false;
@@ -96,6 +127,7 @@ function createBunPipeSocket(
   emitter.destroy = () => {
     if (destroyed) return;
     destroyed = true;
+    pendingWrites.length = 0;
     if (bunSocket) {
       try {
         bunSocket.end();
@@ -131,7 +163,39 @@ function createBunPipeSocket(
           emitter.emit('error', err);
         }
       },
-      drain() {}
+      // Called by Bun when the write buffer drains and can accept more data.
+      // Flush pending writes and signal mediasoup's Channel to resume.
+      drain(_socket: any) {
+        if (destroyed) return;
+
+        hasPressure = false;
+
+        while (pendingWrites.length > 0 && !hasPressure) {
+          // length > 0 guarantees shift() returns a value; non-null safe here.
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const pending = pendingWrites.shift()!;
+
+          try {
+            const n = bunSocket.write(pending.chunk);
+
+            if (n === 0) {
+              // Re-queue and stop — buffer is full again.
+              pendingWrites.unshift(pending);
+              hasPressure = true;
+              break;
+            }
+
+            bunSocket.flush();
+            pending.callback?.(null);
+          } catch (err: unknown) {
+            pending.callback?.(err as Error);
+          }
+        }
+
+        if (!hasPressure) {
+          emitter.emit('drain');
+        }
+      }
     }
   }).catch((err: Error) => {
     if (!destroyed) {
