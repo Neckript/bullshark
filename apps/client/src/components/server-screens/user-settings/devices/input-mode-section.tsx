@@ -53,8 +53,7 @@ const InputModeSection = memo(
 
     const modes = [
       { value: InputMode.NORMAL, label: t('inputModeNormal') },
-      { value: InputMode.PTT, label: t('inputModePtt') },
-      { value: InputMode.VAD, label: t('inputModeVad') }
+      { value: InputMode.PTT, label: t('inputModePtt') }
     ] as const;
 
     return (
