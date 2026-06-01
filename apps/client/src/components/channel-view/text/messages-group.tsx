@@ -1,6 +1,8 @@
+import { NicknameBadge } from '@/components/nickname-badge';
 import { PluginAvatar } from '@/components/plugin-avatar';
 import { RelativeTime } from '@/components/relative-time';
 import { UserAvatar } from '@/components/user-avatar';
+import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
 import { usePluginMetadata } from '@/features/server/plugins/hooks';
 import { useIsOwnUser, useUserById } from '@/features/server/users/hooks';
 import { cn } from '@/lib/utils';
@@ -70,9 +72,20 @@ const MessagesGroup = memo(
                 isDeletedUser && 'line-through text-muted-foreground',
                 isPluginMessage && 'text-primary/80'
               )}
+              style={
+                !isDeletedUser && !isPluginMessage
+                  ? {
+                      color: user?.nicknameColor ?? undefined,
+                      fontFamily: getNicknameFontFamily(user?.nicknameFont)
+                    }
+                  : undefined
+              }
             >
               {authorName}
             </span>
+            {!isDeletedUser && !isPluginMessage && user?.showRoleBadge !== false && (
+              <NicknameBadge userId={firstMessage.userId} size="md" />
+            )}
             {isPluginMessage && (
               <span className="inline-flex items-center rounded-sm bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary/60 uppercase tracking-wide">
                 bot

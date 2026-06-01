@@ -3,12 +3,14 @@ import { useCurrentVoiceChannelId } from '@/features/server/channels/hooks';
 import { useChannelCan } from '@/features/server/hooks';
 import { useOwnPublicUser } from '@/features/server/users/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
+import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
 import { cn } from '@/lib/utils';
 import { ChannelPermission } from '@sharkord/shared';
 import { Button } from '@sharkord/ui';
 import { HeadphoneOff, Headphones, Mic, MicOff, Settings } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NicknameBadge } from '../nickname-badge';
 import { ServerScreen } from '../server-screens/screens';
 import { UserAvatar } from '../user-avatar';
 import { UserPopover } from '../user-popover';
@@ -36,9 +38,18 @@ const UserControl = memo(() => {
             showUserPopover={false}
           />
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-sm font-medium text-foreground truncate">
+            <span
+              className="text-sm font-medium truncate"
+              style={{
+                color: ownPublicUser.nicknameColor ?? undefined,
+                fontFamily: getNicknameFontFamily(ownPublicUser.nicknameFont)
+              }}
+            >
               {ownPublicUser.name}
             </span>
+            {ownPublicUser.showRoleBadge !== false && (
+              <NicknameBadge userId={ownPublicUser.id} size="sm" />
+            )}
             <div className="flex items-center space-x-1">
               <span className="text-xs text-muted-foreground capitalize">
                 {ownPublicUser.status}

@@ -4,6 +4,7 @@ import { usePublicServerSettings, useUserRoles } from '@/features/server/hooks';
 import { useIsOwnUser, useUserById } from '@/features/server/users/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
+import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { getTRPCClient } from '@/lib/trpc';
 import {
@@ -23,6 +24,7 @@ import { MessageSquare, ShieldCheck, Trash, UserCog } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { NicknameBadge } from '../nickname-badge';
 import { Protect } from '../protect';
 import { RoleBadge } from '../role-badge';
 import { UserAvatar } from '../user-avatar';
@@ -103,9 +105,20 @@ const UserPopover = memo(({ userId, children }: TUserPopoverProps) => {
 
         <div className="px-4 pt-12 pb-4">
           <div className="mb-3">
-            <span className="text-lg font-semibold text-foreground truncate mb-1">
-              {getRenderedUsername(user)}
-            </span>
+            <div className="flex items-center gap-1.5 mb-1">
+              <span
+                className="text-lg font-semibold truncate"
+                style={{
+                  color: user.nicknameColor ?? undefined,
+                  fontFamily: getNicknameFontFamily(user.nicknameFont)
+                }}
+              >
+                {getRenderedUsername(user)}
+              </span>
+              {user.showRoleBadge !== false && (
+                <NicknameBadge userId={userId} size="md" />
+              )}
+            </div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-2">
                 <UserStatusBadge

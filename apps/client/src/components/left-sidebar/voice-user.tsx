@@ -1,5 +1,7 @@
+import { NicknameBadge } from '@/components/nickname-badge';
 import { UserAvatar } from '@/components/user-avatar';
 import { useStreamVolumeControl } from '@/components/voice-provider/hooks/use-stream-volume-control';
+import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
 import type { TVoiceUser } from '@/features/server/types';
 import { useIsOwnUser } from '@/features/server/users/hooks';
 import { useSpeakingState } from '@/features/server/voice/hooks';
@@ -38,9 +40,18 @@ const VoiceUser = memo(({ user, isOwnChannel = false }: TVoiceUserProps) => {
         showStatusBadge={false}
       />
 
-      <span className="flex-1 text-muted-foreground truncate text-xs">
+      <span
+        className="flex-1 truncate text-xs"
+        style={{
+          color: user.nicknameColor ?? undefined,
+          fontFamily: getNicknameFontFamily(user.nicknameFont)
+        }}
+      >
         {user.name}
       </span>
+      {user.showRoleBadge !== false && (
+        <NicknameBadge userId={user.id} size="sm" />
+      )}
 
       <div className="flex items-center gap-1 opacity-60">
         {shouldShowMuteIndicator && (
