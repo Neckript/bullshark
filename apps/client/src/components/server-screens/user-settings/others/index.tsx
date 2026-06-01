@@ -1,4 +1,5 @@
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { ThemeSelector } from '@/components/theme-selector';
 import { setAutoJoinLastChannel } from '@/features/app/actions';
 import { useAutoJoinLastChannel } from '@/features/app/hooks';
 import {
@@ -8,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
   Group,
+  Separator,
   Switch
 } from '@sharkord/ui';
 import { memo } from 'react';
@@ -24,6 +26,12 @@ const Others = memo(() => {
         <CardDescription>{t('othersDesc')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <Group label={t('themeLabel')} description={t('themeDesc')}>
+          <ThemeSelector />
+        </Group>
+
+        <Separator />
+
         <Group
           label={t('autoJoinLastChannelLabel')}
           description={t('autoJoinLastChannelDesc')}

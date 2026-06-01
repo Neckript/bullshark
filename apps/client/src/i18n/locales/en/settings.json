@@ -435,5 +435,13 @@
   "inputModeNormal": "Normal — always on (muted/unmuted manually)",
   "inputModePtt": "Push-to-Talk — hold a key to transmit",
   "pttKeyLabel": "Key",
-  "pttKeyCapturing": "Press any key…"
+  "pttKeyCapturing": "Press any key…",
+
+  "themeLabel": "Appearance",
+  "themeDesc": "Choose a colour theme. Changes apply instantly.",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "themeGamingRed": "Gaming Red",
+  "themeDeepOcean": "Deep Ocean",
+  "themeMidnightPurple": "Midnight Purple"
 }
