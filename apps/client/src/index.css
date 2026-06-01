@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import '@fontsource/rajdhani';
+@import '@fontsource/orbitron';
+@import '@fontsource/exo-2';
+@import '@fontsource/bebas-neue';
+@import '@fontsource/press-start-2p';
+@import '@fontsource/share-tech-mono';
 
 @source "../../../packages/ui/src";
 
