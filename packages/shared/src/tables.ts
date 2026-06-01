@@ -105,6 +105,9 @@ type TPublicUser = Pick<
   | 'bannerId'
   | 'banned'
   | 'createdAt'
+  | 'nicknameColor'
+  | 'nicknameFont'
+  | 'showRoleBadge'
 > & {
   status?: UserStatus;
   _identity?: string;
