@@ -47,9 +47,10 @@ const useVad = ({
 
   useEffect(() => {
     if (!enabled || !rawStream) {
-      if (transmitTrackRef.current) {
-        transmitTrackRef.current.enabled = false;
-      }
+      // Do NOT touch track.enabled here. The mode-switch effect in
+      // VoiceProvider runs first (it is declared before useVad) and sets the
+      // correct state for the new mode. Writing false here would overwrite it,
+      // leaving Normal mode permanently muted.
       return;
     }
 
@@ -139,9 +140,8 @@ const useVad = ({
       cancelAnimationFrame(animFrameId);
       if (holdTimerId !== null) clearTimeout(holdTimerId);
       audioContext.close();
-      if (transmitTrackRef.current) {
-        transmitTrackRef.current.enabled = false;
-      }
+      // Do NOT set track.enabled = false here — same reason as the !enabled
+      // path above. The mode-switch effect owns the track state on transition.
       onSpeakingChangeRef.current(false);
     };
   }, [enabled, rawStream, transmitTrackRef]);

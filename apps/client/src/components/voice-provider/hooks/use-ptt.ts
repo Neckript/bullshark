@@ -35,9 +35,10 @@ const usePtt = ({
 
   useEffect(() => {
     if (!enabled) {
-      if (transmitTrackRef.current) {
-        transmitTrackRef.current.enabled = false;
-      }
+      // Do NOT touch track.enabled here. The mode-switch effect in
+      // VoiceProvider runs first (it is declared before usePtt) and sets the
+      // correct state for the new mode. Writing false here would overwrite it,
+      // leaving Normal mode permanently muted.
       if (isHeldRef.current) {
         isHeldRef.current = false;
         onActiveChangeRef.current(false);
@@ -87,9 +88,8 @@ const usePtt = ({
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('blur', handleBlur);
-      if (transmitTrackRef.current) {
-        transmitTrackRef.current.enabled = false;
-      }
+      // Do NOT set track.enabled = false here — same reason as above.
+      // The mode-switch effect owns the track state on transition.
       isHeldRef.current = false;
       onActiveChangeRef.current(false);
     };
