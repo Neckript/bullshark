@@ -125,7 +125,7 @@
    continue to work normally.
    ───────────────────────────────────────────────────────────────────────── */
 
-.theme-gaming-red {
+.dark.theme-gaming-red {
   --background: oklch(0.12 0.015 20);
   --foreground: oklch(0.95 0 0);
   --card: oklch(0.17 0.015 20);
@@ -154,7 +154,7 @@
   --sidebar-ring: oklch(0.63 0.26 25);
 }
 
-.theme-deep-ocean {
+.dark.theme-deep-ocean {
   --background: oklch(0.13 0.04 240);
   --foreground: oklch(0.93 0.015 200);
   --card: oklch(0.18 0.045 240);
@@ -183,7 +183,7 @@
   --sidebar-ring: oklch(0.72 0.17 185);
 }
 
-.theme-midnight-purple {
+.dark.theme-midnight-purple {
   --background: oklch(0.12 0.04 285);
   --foreground: oklch(0.94 0.01 280);
   --card: oklch(0.18 0.045 285);
