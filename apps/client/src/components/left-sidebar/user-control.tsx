@@ -38,18 +38,20 @@ const UserControl = memo(() => {
             showUserPopover={false}
           />
           <div className="flex flex-col min-w-0 flex-1">
-            <span
-              className="text-sm font-medium truncate"
-              style={{
-                color: ownPublicUser.nicknameColor ?? undefined,
-                fontFamily: getNicknameFontFamily(ownPublicUser.nicknameFont)
-              }}
-            >
-              {ownPublicUser.name}
-            </span>
-            {ownPublicUser.showRoleBadge !== false && (
-              <NicknameBadge userId={ownPublicUser.id} size="sm" />
-            )}
+            <div className="flex items-center gap-1">
+              <span
+                className="text-sm font-medium truncate"
+                style={{
+                  color: ownPublicUser.nicknameColor ?? undefined,
+                  fontFamily: getNicknameFontFamily(ownPublicUser.nicknameFont)
+                }}
+              >
+                {ownPublicUser.name}
+              </span>
+              {ownPublicUser.showRoleBadge !== false && (
+                <NicknameBadge userId={ownPublicUser.id} size="sm" />
+              )}
+            </div>
             <div className="flex items-center space-x-1">
               <span className="text-xs text-muted-foreground capitalize">
                 {ownPublicUser.status}
