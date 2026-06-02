@@ -89,7 +89,9 @@ export type TStorageSettings = Pick<
   | 'storageSignedUrlsTtlSeconds'
   | 'storageImageOptimizationEnabled'
   | 'storageImageOptimizationQuality'
->;
+> & {
+  storageMaxAnimatedImageSize: number;
+};
 
 // joined types
 
