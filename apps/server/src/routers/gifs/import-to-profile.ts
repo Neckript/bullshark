@@ -1,4 +1,3 @@
-import { getErrorMessage } from '@sharkord/shared';
 import fs from 'fs/promises';
 import z from 'zod';
 import { getGifProvider } from '../../integrations/gif';
@@ -35,7 +34,8 @@ const importToProfileRoute = rateLimitedProcedure(protectedProcedure, {
       throw new Error('Refusing to download GIF from an untrusted source.');
     }
 
-    const res = await fetch(mediaUrl);
+    // redirect: 'error' prevents a 3xx response from bypassing the host allowlist (SSRF).
+    const res = await fetch(mediaUrl, { redirect: 'error' });
     if (!res.ok || !res.body) {
       throw new Error('Failed to download GIF.');
     }
@@ -45,9 +45,11 @@ const importToProfileRoute = rateLimitedProcedure(protectedProcedure, {
       throw new Error('Downloaded file is not an image.');
     }
 
-    const safePath = await fileManager.getSafeUploadPath(`gif-${input.gifId}.gif`);
+    const safeId = input.gifId.replace(/[^a-zA-Z0-9_-]/g, '_');
+    const safePath = await fileManager.getSafeUploadPath(`gif-${safeId}.gif`);
     const handle = await fs.open(safePath, 'w');
     let total = 0;
+    let succeeded = false;
     try {
       const reader = res.body.getReader();
       // eslint-disable-next-line no-constant-condition
@@ -60,15 +62,16 @@ const importToProfileRoute = rateLimitedProcedure(protectedProcedure, {
         }
         await handle.write(value);
       }
-    } catch (error) {
-      await handle.close();
-      await fs.unlink(safePath).catch(() => undefined);
-      throw new Error(getErrorMessage(error));
+      succeeded = true;
+    } finally {
+      await handle.close().catch(() => undefined);
+      if (!succeeded) {
+        await fs.unlink(safePath).catch(() => undefined);
+      }
     }
-    await handle.close();
 
     const tempFile = await fileManager.addTemporaryFile({
-      originalName: `gif-${input.gifId}.gif`,
+      originalName: `gif-${safeId}.gif`,
       filePath: safePath,
       size: total,
       userId: ctx.userId
