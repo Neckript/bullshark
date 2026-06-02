@@ -57,7 +57,8 @@ const getPublicSettings: () => Promise<TPublicServerSettings> = async () => {
     webRtcMaxBitrate: config.webRtc.maxBitrate,
     enableSearch: settings.enableSearch,
     showWelcomeDialog: settings.showWelcomeDialog,
-    storageSignedUrlsEnabled: settings.storageSignedUrlsEnabled
+    storageSignedUrlsEnabled: settings.storageSignedUrlsEnabled,
+    klipyEnabled: !!settings.klipyApiKey
   };
 
   return publicSettings;

@@ -19,6 +19,7 @@ const getStorageSettingsRoute = protectedProcedure.query(async ({ ctx }) => {
     storageUploadMaxFileSize: settings.storageUploadMaxFileSize,
     storageMaxAvatarSize: settings.storageMaxAvatarSize,
     storageMaxBannerSize: settings.storageMaxBannerSize,
+    storageMaxAnimatedImageSize: settings.storageMaxAnimatedImageSize,
     storageMaxFilesPerMessage: settings.storageMaxFilesPerMessage,
     storageSpaceQuotaByUser: settings.storageSpaceQuotaByUser,
     storageOverflowAction: settings.storageOverflowAction,
