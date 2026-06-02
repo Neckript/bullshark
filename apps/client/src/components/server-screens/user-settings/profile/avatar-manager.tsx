@@ -1,11 +1,13 @@
+import { GifPickerDialog } from '@/components/gif-picker/gif-picker-dialog';
 import { UserAvatar } from '@/components/user-avatar';
+import { usePublicServerSettings } from '@/features/server/hooks';
 import { uploadImage } from '@/helpers/upload-file';
 import { useFilePicker } from '@/hooks/use-file-picker';
 import { getTRPCClient } from '@/lib/trpc';
 import { getTrpcError, type TJoinedPublicUser } from '@sharkord/shared';
 import { Button, Group } from '@sharkord/ui';
 import { Upload } from 'lucide-react';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { toast } from 'sonner';
 
 type TAvatarManagerProps = {
@@ -14,6 +16,8 @@ type TAvatarManagerProps = {
 
 const AvatarManager = memo(({ user }: TAvatarManagerProps) => {
   const openFilePicker = useFilePicker();
+  const settings = usePublicServerSettings();
+  const [gifOpen, setGifOpen] = useState(false);
 
   const removeAvatar = useCallback(async () => {
     const trpc = getTRPCClient();
@@ -31,7 +35,7 @@ const AvatarManager = memo(({ user }: TAvatarManagerProps) => {
     const trpc = getTRPCClient();
 
     try {
-      const [file] = await openFilePicker('image/*');
+      const [file] = await openFilePicker('.gif,.jpg,.jpeg,.png,.webp');
 
       const temporaryFile = await uploadImage(file);
 
@@ -46,6 +50,16 @@ const AvatarManager = memo(({ user }: TAvatarManagerProps) => {
       toast.error(getTrpcError(error, 'Failed to update avatar'));
     }
   }, [openFilePicker]);
+
+  const onSelectGif = useCallback(async (gifId: string) => {
+    const trpc = getTRPCClient();
+    try {
+      await trpc.gifs.importToProfile.mutate({ gifId, target: 'avatar' });
+      toast.success('Avatar updated successfully!');
+    } catch (error) {
+      toast.error(getTrpcError(error, 'Failed to update avatar'));
+    }
+  }, []);
 
   return (
     <Group label="Avatar">
@@ -74,6 +88,14 @@ const AvatarManager = memo(({ user }: TAvatarManagerProps) => {
           </Button>
         </div>
       )}
+      {settings?.klipyEnabled && (
+        <div>
+          <Button size="sm" variant="outline" onClick={() => setGifOpen(true)}>
+            GIF
+          </Button>
+        </div>
+      )}
+      <GifPickerDialog open={gifOpen} onOpenChange={setGifOpen} onSelect={onSelectGif} />
     </Group>
   );
 });
