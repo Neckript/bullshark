@@ -61,6 +61,10 @@ const settings = sqliteTable(
     storageUploadMaxFileSize: integer('storage_upload_max_file_size').notNull(),
     storageMaxAvatarSize: integer('storage_max_avatar_size').notNull(),
     storageMaxBannerSize: integer('storage_max_banner_size').notNull(),
+    storageMaxAnimatedImageSize: integer('storage_max_animated_image_size')
+      .notNull()
+      .default(8 * 1024 * 1024),
+    klipyApiKey: text('klipy_api_key'),
     storageMaxFilesPerMessage: integer(
       'storage_max_files_per_message'
     ).notNull(),

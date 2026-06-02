@@ -82,6 +82,7 @@ export type TStorageSettings = Pick<
   | 'storageUploadMaxFileSize'
   | 'storageMaxAvatarSize'
   | 'storageMaxBannerSize'
+  | 'storageMaxAnimatedImageSize'
   | 'storageMaxFilesPerMessage'
   | 'storageSpaceQuotaByUser'
   | 'storageOverflowAction'
@@ -89,9 +90,7 @@ export type TStorageSettings = Pick<
   | 'storageSignedUrlsTtlSeconds'
   | 'storageImageOptimizationEnabled'
   | 'storageImageOptimizationQuality'
-> & {
-  storageMaxAnimatedImageSize: number;
-};
+>;
 
 // joined types
 
