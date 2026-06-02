@@ -6,6 +6,12 @@ import { protectedProcedure, rateLimitedProcedure } from '../../utils/trpc';
 import { applyProfileMedia } from '../users/apply-profile-media';
 
 const MAX_BYTES = 8 * 1024 * 1024; // hard cap during download
+const ALLOWED_CONTENT_TYPES = [
+  'image/gif',
+  'image/webp',
+  'image/png',
+  'image/jpeg'
+];
 
 const importToProfileRoute = rateLimitedProcedure(protectedProcedure, {
   maxRequests: 10,
@@ -41,8 +47,8 @@ const importToProfileRoute = rateLimitedProcedure(protectedProcedure, {
     }
 
     const contentType = res.headers.get('content-type') ?? '';
-    if (!contentType.startsWith('image/')) {
-      throw new Error('Downloaded file is not an image.');
+    if (!ALLOWED_CONTENT_TYPES.some((type) => contentType.startsWith(type))) {
+      throw new Error('Downloaded file is not an allowed image type.');
     }
 
     const safeId = input.gifId.replace(/[^a-zA-Z0-9_-]/g, '_');
