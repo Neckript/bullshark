@@ -85,7 +85,11 @@ const defaultRouterOptions: RouterOptions<AppData> = {
       channels: 2,
       parameters: {
         useinbandfec: 1,
-        usedtx: 1,
+        // DTX (usedtx: 1) stops sending packets during silence. Combined with
+        // the noise gate, this starves remote consumers of RTP for ~10 s until
+        // the browser marks the track as stalled — the root cause of the audio
+        // freeze reported in issue #1 / upstream Sharkord#695.
+        usedtx: 0,
         stereo: 1,
         'sprop-stereo': 1,
         maxplaybackrate: 48000,
@@ -418,6 +422,7 @@ class VoiceRuntime {
     this.removeProducer(userId, StreamKind.AUDIO);
     this.removeProducer(userId, StreamKind.VIDEO);
     this.removeProducer(userId, StreamKind.SCREEN);
+    this.removeProducer(userId, StreamKind.SCREEN_AUDIO);
 
     if (this.consumers[userId]) {
       Object.values(this.consumers[userId]).forEach((consumer) => {

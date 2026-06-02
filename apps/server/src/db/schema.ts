@@ -189,6 +189,11 @@ const users = sqliteTable(
     banReason: text('ban_reason'),
     bannedAt: integer('banned_at'),
     bannerColor: text('banner_color'),
+    nicknameColor: text('nickname_color'),
+    nicknameFont: text('nickname_font'),
+    showRoleBadge: integer('show_role_badge', { mode: 'boolean' })
+      .notNull()
+      .default(true),
     lastLoginAt: integer('last_login_at')
       .notNull()
       .$defaultFn(() => Date.now()),

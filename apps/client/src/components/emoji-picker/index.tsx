@@ -10,7 +10,7 @@ import {
   TabsList,
   TabsTrigger
 } from '@sharkord/ui';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CustomEmojiTab } from './custom-emoji-tab';
 import { ALL_EMOJIS, searchEmojis, toTEmojiItem } from './emoji-data';
@@ -28,6 +28,7 @@ const EmojiPicker = memo(
   ({ children, onEmojiSelect, defaultTab = 'native' }: TEmojiPickerProps) => {
     const { t } = useTranslation('common');
     const [open, setOpen] = useState(false);
+    const searchInputRef = useRef<HTMLInputElement>(null);
     const [search, setSearch] = useState('');
     const customEmojis = useCustomEmojis();
     const { addRecent } = useRecentEmojis();
@@ -79,6 +80,20 @@ const EmojiPicker = memo(
       }
     }, []);
 
+    // Focus the search input once the Radix portal has fully mounted.
+    // Using autoFocus directly on the Input triggers a different focus-event
+    // sequence in Firefox/Librewolf: Radix's DismissableLayer sees the
+    // resulting focusout on the trigger as "focus moved outside" and closes
+    // the popover immediately before any emoji can be selected (issue #2 /
+    // upstream Sharkord#728).
+    useEffect(() => {
+      if (!open) return;
+      const id = requestAnimationFrame(() => {
+        searchInputRef.current?.focus({ preventScroll: true });
+      });
+      return () => cancelAnimationFrame(id);
+    }, [open]);
+
     return (
       <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>{children}</PopoverTrigger>
@@ -86,15 +101,16 @@ const EmojiPicker = memo(
           className="w-[320px] p-0 h-100"
           align="start"
           sideOffset={8}
+          onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <div className="h-full flex flex-col">
             <div className="p-3 border-b">
               <Input
+                ref={searchInputRef}
                 placeholder={t('searchAllEmojis')}
                 value={search}
                 onChange={handleSearchChange}
                 className="h-9"
-                autoFocus
               />
             </div>
 

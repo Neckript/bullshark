@@ -428,5 +428,27 @@
   "failedDeleteFile": "Failed to delete file",
 
   "standard": "Standard",
-  "experimental": "experimental"
+  "experimental": "experimental",
+
+  "inputModeLabel": "Input mode",
+  "inputModeDesc": "Choose how your microphone is activated in voice channels.",
+  "inputModeNormal": "Normal — always on (muted/unmuted manually)",
+  "inputModePtt": "Push-to-Talk — hold a key to transmit",
+  "pttKeyLabel": "Key",
+  "pttKeyCapturing": "Press any key…",
+
+  "themeLabel": "Appearance",
+  "themeDesc": "Choose a colour theme. Changes apply instantly.",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "themeGamingRed": "Gaming Red",
+  "themeDeepOcean": "Deep Ocean",
+  "themeMidnightPurple": "Midnight Purple",
+  "nicknameStyleLabel": "Nickname style",
+  "nicknameStyleDesc": "Customise how your name appears in messages and the sidebar.",
+  "nicknameColorLabel": "Colour",
+  "nicknameColorClear": "Use default",
+  "nicknameFontLabel": "Font",
+  "nicknameBadgeLabel": "Role badge",
+  "nicknamePreviewLabel": "Preview:"
 }

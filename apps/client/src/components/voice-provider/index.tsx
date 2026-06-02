@@ -24,7 +24,7 @@ import {
 import { getResWidthHeight } from '@/helpers/get-res-with-height';
 import { useScreenShareSupport } from '@/hooks/use-screen-share-support';
 import { getTRPCClient } from '@/lib/trpc';
-import { NoiseSuppression, VideoCodec, type TStreamQuality } from '@/types';
+import { InputMode, NoiseSuppression, VideoCodec, type TStreamQuality } from '@/types';
 import {
   DEFAULT_BITRATE,
   StreamKind,
@@ -73,6 +73,8 @@ import {
   type TransportStatsData
 } from './hooks/use-transport-stats';
 import { useTransports } from './hooks/use-transports';
+import { usePtt } from './hooks/use-ptt';
+import { useVad } from './hooks/use-vad';
 import { useVoiceControls } from './hooks/use-voice-controls';
 import { useVoiceEvents } from './hooks/use-voice-events';
 import { SIMULCAST_WEBCAM_MAX_BITRATE } from './statics';
@@ -125,6 +127,8 @@ export type TVoiceProvider = {
     routerRtpCapabilities: RtpCapabilities,
     channelId: number
   ) => Promise<void>;
+  isPttActive: boolean;
+  isVadSpeaking: boolean;
 } & Pick<
   ReturnType<typeof useLocalStreams>,
   | 'localAudioStream'
@@ -169,6 +173,8 @@ const VoiceProviderContext = createContext<TVoiceProvider>({
   setStreamQuality: () => Promise.resolve(),
   isSimulcastConsumer: () => false,
   init: () => Promise.resolve(),
+  isPttActive: false,
+  isVadSpeaking: false,
   toggleMic: () => Promise.resolve(),
   toggleSound: () => Promise.resolve(),
   toggleWebcam: () => Promise.resolve(),
@@ -197,6 +203,8 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
     ConnectionStatus.DISCONNECTED
   );
+  const [isPttActive, setIsPttActive] = useState(false);
+  const [isVadSpeaking, setIsVadSpeaking] = useState(false);
   const routerRtpCapabilities = useRef<RtpCapabilities | null>(null);
   const deviceRtpCapabilities = useRef<RtpCapabilities | null>(null);
   const audioVideoRefsMap = useRef<Map<number, AudioVideoRefs>>(new Map());
@@ -420,7 +428,15 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
   const nsAudioContextsRef = useRef<AudioContext[]>([]);
   const micMutedRef = useRef(ownVoiceState.micMuted);
 
+  const inputModeRef = useRef(devices.inputMode);
+  useEffect(() => {
+    inputModeRef.current = devices.inputMode;
+  }, [devices.inputMode]);
+
   const syncTransmitMicrophoneTrackState = useCallback(() => {
+    // PTT and VAD hooks own track.enabled — don't override them here.
+    if (inputModeRef.current !== InputMode.NORMAL) return;
+
     const track = transmitMicrophoneTrackRef.current;
 
     if (!track) return;
@@ -518,6 +534,10 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
 
       logVoice('Microphone stream obtained', { stream: rawStream });
 
+      // Always store the raw stream so VAD can analyse it regardless of
+      // whether the noise gate or NS chain is active (issue #4).
+      rawMicrophoneStreamRef.current = rawStream;
+
       const rawAudioTrack = rawStream.getAudioTracks()[0];
 
       if (rawAudioTrack) {
@@ -551,7 +571,6 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
             const processedTrack = destination.stream.getAudioTracks()[0];
 
             if (processedTrack) {
-              rawMicrophoneStreamRef.current = rawStream;
               microphoneNoiseGateAudioContextRef.current = audioContext;
               microphoneNoiseGateWorkletNodeRef.current = noiseGateNode;
               transmitTrack = processedTrack;
@@ -1180,6 +1199,34 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       deviceRtpCapabilities.current ?? routerRtpCapabilities.current!
   });
 
+  // When the user switches input mode while in a voice channel, re-sync the
+  // transmit track state: PTT/VAD take ownership and start muted; Normal
+  // restores the track to its server-side micMuted state.
+  useEffect(() => {
+    const track = transmitMicrophoneTrackRef.current;
+    if (!track) return;
+
+    if (devices.inputMode === InputMode.NORMAL) {
+      syncTransmitMicrophoneTrackState();
+    } else {
+      track.enabled = false;
+    }
+  }, [devices.inputMode, syncTransmitMicrophoneTrackState]);
+
+  usePtt({
+    enabled: !!currentVoiceChannelId && devices.inputMode === InputMode.PTT,
+    pttKey: devices.pttKey,
+    transmitTrackRef: transmitMicrophoneTrackRef,
+    onActiveChange: setIsPttActive
+  });
+
+  useVad({
+    enabled: !!currentVoiceChannelId && devices.inputMode === InputMode.VAD,
+    rawStream: rawMicrophoneStreamRef.current,
+    transmitTrackRef: transmitMicrophoneTrackRef,
+    onSpeakingChange: setIsVadSpeaking
+  });
+
   useEffect(() => {
     const previousVoiceChannelId = previousVoiceChannelIdRef.current;
 
@@ -1216,6 +1263,8 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       setStreamQuality,
       isSimulcastConsumer,
       init,
+      isPttActive,
+      isVadSpeaking,
 
       toggleMic,
       toggleSound,
@@ -1243,6 +1292,8 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       setStreamQuality,
       isSimulcastConsumer,
       init,
+      isPttActive,
+      isVadSpeaking,
 
       toggleMic,
       toggleSound,

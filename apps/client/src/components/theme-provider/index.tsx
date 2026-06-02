@@ -5,7 +5,24 @@ import {
 } from '@/helpers/storage';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'dark' | 'light' | 'system';
+type Theme = 'dark' | 'light' | 'gaming-red' | 'deep-ocean' | 'midnight-purple';
+
+const VALID_THEMES = new Set<Theme>([
+  'dark',
+  'light',
+  'gaming-red',
+  'deep-ocean',
+  'midnight-purple'
+]);
+
+// All classes this provider may ever add — removed together on each switch.
+const ALL_THEME_CLASSES = [
+  'light',
+  'dark',
+  'theme-gaming-red',
+  'theme-deep-ocean',
+  'theme-midnight-purple'
+] as const;
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -19,7 +36,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: 'system',
+  theme: 'dark',
   setTheme: () => null
 };
 
@@ -27,30 +44,33 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 function ThemeProvider({
   children,
-  defaultTheme = 'system',
+  defaultTheme = 'dark',
   storageKey = LocalStorageKey.VITE_UI_THEME,
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (getLocalStorageItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>(() => {
+    const stored = getLocalStorageItem(storageKey) as Theme;
+    return VALID_THEMES.has(stored) ? stored : defaultTheme;
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove('light', 'dark');
+    root.classList.remove(...ALL_THEME_CLASSES);
 
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light';
-
-      root.classList.add(systemTheme);
+    if (theme === 'light') {
+      // :root already defines light variables — no extra class needed.
       return;
     }
 
-    root.classList.add(theme);
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      return;
+    }
+
+    // Custom dark-based theme: add .dark so Tailwind dark utilities work,
+    // then the theme-specific class overrides the CSS variables.
+    root.classList.add('dark', `theme-${theme}`);
   }, [theme]);
 
   const value = {
@@ -78,4 +98,4 @@ const useTheme = () => {
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export { ThemeProvider, useTheme };
+export { ThemeProvider, useTheme, VALID_THEMES, type Theme };
