@@ -925,6 +925,85 @@ describe('file manager', () => {
   });
 });
 
+describe('file manager – animated image size limits', () => {
+  const tempFilesToCleanup: string[] = [];
+
+  const ANIMATED_GIF_BYTES = new Uint8Array([
+    0x47,0x49,0x46,0x38,0x39,0x61, 0x01,0x00,0x01,0x00,0x80,0x00,0x00,
+    0x00,0x00,0x00,0xff,0xff,0xff,
+    0x21,0xff,0x0b,0x4e,0x45,0x54,0x53,0x43,0x41,0x50,0x45,0x32,0x2e,0x30,0x03,0x01,0x00,0x00,0x00,
+    0x21,0xf9,0x04,0x00,0x00,0x00,0x00,0x00, 0x2c,0x00,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x00, 0x02,0x02,0x44,0x01,0x00,
+    0x21,0xf9,0x04,0x00,0x00,0x00,0x00,0x00, 0x2c,0x00,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x00, 0x02,0x02,0x44,0x01,0x00,
+    0x3b
+  ]);
+
+  afterEach(async () => {
+    for (const p of tempFilesToCleanup) {
+      try {
+        await fs.unlink(p);
+      } catch {
+        // ignore
+      }
+    }
+    tempFilesToCleanup.length = 0;
+  });
+
+  const addAnimatedGifTempFile = async () => {
+    const filePath = path.join(UPLOADS_PATH, `anim-${Date.now()}-${Math.random()}.gif`);
+    await fs.writeFile(filePath, ANIMATED_GIF_BYTES);
+    const stats = await fs.stat(filePath);
+    const tempFile = await fileManager.addTemporaryFile({
+      filePath,
+      size: stats.size,
+      originalName: `animated-${Date.now()}.gif`,
+      userId: 1
+    });
+    tempFilesToCleanup.push(tempFile.path);
+    return tempFile;
+  };
+
+  test('animated avatar uses storageMaxAnimatedImageSize, not storageMaxAvatarSize', async () => {
+    // static limit is tiny (10 bytes) but animated limit is large — save must SUCCEED
+    await tdb
+      .update(settings)
+      .set({
+        storageMaxAvatarSize: 10,
+        storageMaxAnimatedImageSize: 50 * 1024 * 1024
+      })
+      .execute();
+
+    const tempFile = await addAnimatedGifTempFile();
+    const savedFile = await fileManager.saveFile(tempFile.id, 1, FileSaveType.AVATAR);
+
+    tempFilesToCleanup.push(path.join(PUBLIC_PATH, savedFile.name));
+
+    expect(savedFile).toBeDefined();
+    expect(savedFile.extension).toBe('.gif');
+  });
+
+  test('animated avatar rejects when storageMaxAnimatedImageSize is exceeded', async () => {
+    // animated limit is tiny — save must FAIL with the animated message
+    await tdb
+      .update(settings)
+      .set({
+        storageMaxAvatarSize: 50 * 1024 * 1024,
+        storageMaxAnimatedImageSize: 10
+      })
+      .execute();
+
+    const tempFile = await addAnimatedGifTempFile();
+
+    await expect(
+      fileManager.saveFile(tempFile.id, 1, FileSaveType.AVATAR)
+    ).rejects.toThrow('Animated image exceeds');
+
+    // temp file is still tracked since save was aborted
+    expect(fileManager.getTemporaryFile(tempFile.id)).toBeDefined();
+    await fileManager.removeTemporaryFile(tempFile.id);
+    tempFilesToCleanup.pop(); // already cleaned up via removeTemporaryFile
+  });
+});
+
 describe('file manager – beforeFileSave hooks', () => {
   const tempFilesToCleanup: string[] = [];
   let testFilePath: string;

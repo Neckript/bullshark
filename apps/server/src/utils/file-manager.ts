@@ -9,6 +9,7 @@ import {
   type TJoinedSettings,
   type TTempFile
 } from '@sharkord/shared';
+import { isAnimatedImage } from './is-animated-image';
 import { randomUUIDv7 } from 'bun';
 import { createHash } from 'crypto';
 import { eq } from 'drizzle-orm';
@@ -230,8 +231,13 @@ class FileManager {
 
   private optimizeImageIfEnabled = async (
     tempFile: TTempFile,
-    settings: TJoinedSettings
+    settings: TJoinedSettings,
+    isAnimated: boolean
   ) => {
+    if (isAnimated) {
+      return;
+    }
+
     if (
       !settings.storageImageOptimizationEnabled ||
       !OPTIMIZABLE_IMAGE_EXTENSIONS.has(tempFile.extension)
@@ -296,8 +302,21 @@ class FileManager {
   private validateFinalFileSize = (
     tempFile: TTempFile,
     type: FileSaveType | undefined,
-    settings: TJoinedSettings
+    settings: TJoinedSettings,
+    isAnimated: boolean
   ) => {
+    if (
+      isAnimated &&
+      (type === FileSaveType.AVATAR || type === FileSaveType.BANNER)
+    ) {
+      if (tempFile.size > settings.storageMaxAnimatedImageSize) {
+        throw new Error(
+          `Animated image exceeds the configured maximum size of ${settings.storageMaxAnimatedImageSize / (1024 * 1024)} MB`
+        );
+      }
+      return;
+    }
+
     if (
       type === FileSaveType.AVATAR &&
       tempFile.size > settings.storageMaxAvatarSize
@@ -408,10 +427,12 @@ class FileManager {
 
     const settings = await getSettings();
 
-    await this.optimizeImageIfEnabled(tempFile, settings);
+    const isAnimated = await isAnimatedImage(tempFile.path);
+
+    await this.optimizeImageIfEnabled(tempFile, settings, isAnimated);
 
     // check for file size after optimization but before moving to final destination to prevent hitting storage limits with optimized files
-    this.validateFinalFileSize(tempFile, type, settings);
+    this.validateFinalFileSize(tempFile, type, settings, isAnimated);
 
     await this.handleStorageLimits(tempFile, settings);
 
