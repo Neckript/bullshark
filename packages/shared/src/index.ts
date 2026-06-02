@@ -2,6 +2,7 @@ export const A = 123;
 
 export * from './events';
 export * from './extensions';
+export * from './gif';
 export * from './helpers';
 export * from './logs';
 export * from './plugins';
