@@ -254,6 +254,8 @@
   "maxAvatarSizeDesc": "The maximum avatar file size users are allowed to set on their profile.",
   "maxBannerSizeLabel": "Max banner size",
   "maxBannerSizeDesc": "The maximum profile banner file size users are allowed to set.",
+  "maxAnimatedImageSizeLabel": "Max animated image size",
+  "maxAnimatedImageSizeDesc": "Maximum size for animated avatars and banners (GIF / animated WebP).",
   "quotaPerUserLabel": "Quota per user",
   "quotaPerUserDesc": "The maximum amount of storage space each user can use on the server. You can also configure quotas on a per-role basis in the Roles settings, which will override this global setting for users with that specific role. Use 0 for unlimited",
   "maxFilesPerMessageLabel": "Max files per message",
@@ -345,6 +347,9 @@
   "signedUrlsTtlLabel": "Signed URL expiration",
   "signedUrlsTtlDesc": "How long a signed URL remains valid before it expires. Shorter durations enhance security but may cause inconvenience for users accessing files.",
   "signedUrlsTtlUnit": "minutes",
+
+  "klipyApiKeyLabel": "Klipy API key",
+  "klipyApiKeyDesc": "API key for the Klipy GIF picker. Leave empty to disable GIF search.",
 
   "moderateUserAction": "Moderate User",
 

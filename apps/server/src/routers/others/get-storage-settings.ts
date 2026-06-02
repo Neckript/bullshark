@@ -20,6 +20,7 @@ const getStorageSettingsRoute = protectedProcedure.query(async ({ ctx }) => {
     storageMaxAvatarSize: settings.storageMaxAvatarSize,
     storageMaxBannerSize: settings.storageMaxBannerSize,
     storageMaxAnimatedImageSize: settings.storageMaxAnimatedImageSize,
+    klipyApiKey: settings.klipyApiKey,
     storageMaxFilesPerMessage: settings.storageMaxFilesPerMessage,
     storageSpaceQuotaByUser: settings.storageSpaceQuotaByUser,
     storageOverflowAction: settings.storageOverflowAction,

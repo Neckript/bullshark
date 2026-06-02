@@ -450,6 +450,8 @@ export const useAdminStorage = () => {
       storageUploadMaxFileSize: STORAGE_MAX_FILE_SIZE,
       storageMaxAvatarSize: STORAGE_DEFAULT_MAX_AVATAR_SIZE,
       storageMaxBannerSize: STORAGE_DEFAULT_MAX_BANNER_SIZE,
+      storageMaxAnimatedImageSize: 8 * 1024 * 1024,
+      klipyApiKey: null,
       storageMaxFilesPerMessage: STORAGE_DEFAULT_MAX_FILES_PER_MESSAGE,
       storageQuota: STORAGE_QUOTA,
       storageSignedUrlsEnabled: false,
@@ -486,6 +488,8 @@ export const useAdminStorage = () => {
         storageUploadMaxFileSize: values.storageUploadMaxFileSize,
         storageMaxAvatarSize: values.storageMaxAvatarSize,
         storageMaxBannerSize: values.storageMaxBannerSize,
+        storageMaxAnimatedImageSize: values.storageMaxAnimatedImageSize,
+        klipyApiKey: values.klipyApiKey,
         storageMaxFilesPerMessage: values.storageMaxFilesPerMessage,
         storageSpaceQuotaByUser: values.storageSpaceQuotaByUser,
         storageOverflowAction:
@@ -529,7 +533,14 @@ export const useAdminStorage = () => {
       storageMaxBannerSize: filesize(Number(values.storageMaxBannerSize ?? 0), {
         output: 'object',
         standard: 'jedec'
-      })
+      }),
+      storageMaxAnimatedImageSize: filesize(
+        Number(values.storageMaxAnimatedImageSize ?? 0),
+        {
+          output: 'object',
+          standard: 'jedec'
+        }
+      )
     };
   }, [values]);
 
