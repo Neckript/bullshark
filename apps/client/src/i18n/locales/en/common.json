@@ -89,5 +89,10 @@
   "wasReactedBy": "was reacted by {{reacters}}.",
   "andMore": "and {{count}} more",
   "typeAMessage": "Type a message...",
-  "messageChannel": "Message \"{{name}}\""
+  "messageChannel": "Message \"{{name}}\"",
+
+  "gifPickerTitle": "Choose a GIF",
+  "gifSearchPlaceholder": "Search GIFs...",
+  "gifSearchFailed": "GIF search failed. Please try again.",
+  "loading": "Loading..."
 }
