@@ -1,4 +1,4 @@
-import { describe, expect, test, afterEach, mock } from 'bun:test';
+import { afterEach, describe, expect, mock, test } from 'bun:test';
 import { initTest } from '../../__tests__/helpers';
 import { tdb } from '../../__tests__/setup';
 import { settings } from '../../db/schema';
@@ -6,29 +6,51 @@ import { settings } from '../../db/schema';
 // Minimal valid animated GIF bytes (two-frame GIF89a)
 const ANIMATED_GIF_BYTES = new Uint8Array([
   0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0xff, 0xff, 0xff,
-  0x21, 0xff, 0x0b, 0x4e, 0x45, 0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2e, 0x30, 0x03, 0x01, 0x00, 0x00, 0x00,
-  0x21, 0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00,
-  0x21, 0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00,
-  0x3b
+  0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x21, 0xff, 0x0b, 0x4e, 0x45, 0x54, 0x53,
+  0x43, 0x41, 0x50, 0x45, 0x32, 0x2e, 0x30, 0x03, 0x01, 0x00, 0x00, 0x00, 0x21,
+  0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01,
+  0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x21, 0xf9, 0x04, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+  0x00, 0x02, 0x02, 0x44, 0x01, 0x00, 0x3b
 ]);
+
+// Real Klipy shape: media is nested by size (hd/md/sm/xs) → format (gif/jpg/…)
+const KLIPY_ITEM = {
+  slug: 'abc',
+  title: 'cat',
+  file: {
+    hd: {
+      gif: {
+        url: 'https://media.klipy.com/abc-hd.gif',
+        width: 480,
+        height: 480
+      }
+    },
+    md: {
+      gif: {
+        url: 'https://media.klipy.com/abc-md.gif',
+        width: 240,
+        height: 240
+      }
+    },
+    sm: {
+      gif: {
+        url: 'https://media.klipy.com/abc-sm.gif',
+        width: 120,
+        height: 120
+      }
+    },
+    xs: {
+      gif: { url: 'https://media.klipy.com/abc-xs.gif', width: 64, height: 64 },
+      jpg: { url: 'https://media.klipy.com/abc-xs.jpg' }
+    }
+  }
+};
 
 const SEARCH_RESPONSE = {
   result: true,
   data: {
-    data: [
-      {
-        slug: 'abc',
-        title: 'cat',
-        file: {
-          gif: { url: 'https://cdn.klipy.com/abc.gif', width: 1, height: 1 }
-        },
-        files: {
-          gif_url: 'https://cdn.klipy.com/abc.gif',
-          thumbnail_url: 'https://cdn.klipy.com/abc-thumb.gif'
-        }
-      }
-    ],
+    data: [KLIPY_ITEM],
     current_page: 1,
     per_page: 24,
     has_next: false
@@ -36,17 +58,16 @@ const SEARCH_RESPONSE = {
 };
 
 const RESOLVE_RESPONSE = {
-  data: {
-    file: {
-      gif: { url: 'https://cdn.klipy.com/abc.gif' }
-    }
-  }
+  result: true,
+  data: KLIPY_ITEM
 };
 
 const RESOLVE_UNTRUSTED_RESPONSE = {
+  result: true,
   data: {
+    slug: 'abc',
     file: {
-      gif: { url: 'https://evil.example.com/x.gif' }
+      md: { gif: { url: 'https://evil.example.com/x.gif' } }
     }
   }
 };
@@ -59,10 +80,15 @@ afterEach(() => {
 
 const makeFetchMock = (resolveResponse: object = RESOLVE_RESPONSE) =>
   mock(async (url: string | URL | Request) => {
-    const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+    const urlStr =
+      typeof url === 'string'
+        ? url
+        : url instanceof URL
+          ? url.toString()
+          : url.url;
 
-    // Media download — check exact media host first
-    if (urlStr === 'https://cdn.klipy.com/abc.gif') {
+    // Media download — Klipy CDN host (any size variant)
+    if (urlStr.startsWith('https://media.klipy.com/')) {
       return new Response(ANIMATED_GIF_BYTES, {
         status: 200,
         headers: { 'content-type': 'image/gif' }

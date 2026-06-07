@@ -9,27 +9,59 @@ import type {
 const KLIPY_BASE = 'https://api.klipy.com/api/v1';
 const ALLOWED_MEDIA_HOSTS = ['klipy.com'];
 
+// Klipy nests media by size (hd/md/sm/xs), each with format variants
+// (gif/webp/jpg/mp4). e.g. item.file.md.gif.url. A legacy flat `file.gif`
+// shape is kept as a last-resort fallback.
+type TKlipyVariant = { url?: string; width?: number; height?: number };
+type TKlipyFormats = {
+  gif?: TKlipyVariant;
+  webp?: TKlipyVariant;
+  jpg?: TKlipyVariant;
+  mp4?: TKlipyVariant;
+};
+type TKlipyFile = {
+  hd?: TKlipyFormats;
+  md?: TKlipyFormats;
+  sm?: TKlipyFormats;
+  xs?: TKlipyFormats;
+  gif?: TKlipyVariant;
+};
 type TKlipyItem = {
   slug?: string;
   id?: string | number;
   title?: string;
-  file?: { gif?: { url?: string; width?: number; height?: number } };
-  files?: { gif_url?: string; thumbnail_url?: string };
-  width?: number;
-  height?: number;
+  file?: TKlipyFile;
+};
+
+type TKlipySize = 'hd' | 'md' | 'sm' | 'xs';
+
+// smaller sizes first for the grid preview; larger first when importing
+const PREVIEW_SIZE_ORDER: readonly TKlipySize[] = ['sm', 'xs', 'md', 'hd'];
+const MEDIA_SIZE_ORDER: readonly TKlipySize[] = ['md', 'sm', 'hd', 'xs'];
+
+const pickGifVariant = (
+  file: TKlipyFile | undefined,
+  order: readonly TKlipySize[]
+): TKlipyVariant | undefined => {
+  if (!file) return undefined;
+  for (const size of order) {
+    const variant = file[size]?.gif;
+    if (variant?.url) return variant;
+  }
+  // legacy flat fallback
+  return file.gif?.url ? file.gif : undefined;
 };
 
 const mapItem = (item: TKlipyItem): TGifSearchResult | null => {
   const id = String(item.slug ?? item.id ?? '');
-  const previewUrl =
-    item.files?.thumbnail_url ?? item.file?.gif?.url ?? item.files?.gif_url;
-  if (!id || !previewUrl) return null;
+  const variant = pickGifVariant(item.file, PREVIEW_SIZE_ORDER);
+  if (!id || !variant?.url) return null;
   return {
     id,
     title: item.title ?? '',
-    previewUrl,
-    width: item.file?.gif?.width ?? item.width ?? 0,
-    height: item.file?.gif?.height ?? item.height ?? 0
+    previewUrl: variant.url,
+    width: variant.width ?? 0,
+    height: variant.height ?? 0
   };
 };
 
@@ -79,9 +111,9 @@ const createKlipyProvider = (apiKey: string): GifProvider => ({
       throw new Error('GIF not found');
     }
     const body = (await res.json()) as { data?: TKlipyItem };
-    const mediaUrl = body.data?.file?.gif?.url ?? body.data?.files?.gif_url;
-    if (!mediaUrl) throw new Error('GIF media URL not found');
-    return mediaUrl;
+    const variant = pickGifVariant(body.data?.file, MEDIA_SIZE_ORDER);
+    if (!variant?.url) throw new Error('GIF media URL not found');
+    return variant.url;
   }
 });
 
