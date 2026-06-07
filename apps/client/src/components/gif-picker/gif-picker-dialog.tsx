@@ -3,6 +3,7 @@ import type { TGifSearchResult } from '@sharkord/shared';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   Input
@@ -58,6 +59,7 @@ const GifPickerDialog = memo(
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>{t('gifPickerTitle')}</DialogTitle>
+            <DialogDescription>{t('gifSearchPlaceholder')}</DialogDescription>
           </DialogHeader>
           <Input
             autoFocus
