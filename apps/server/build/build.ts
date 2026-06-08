@@ -18,6 +18,10 @@ const { values } = parseArgs({
     bump: {
       type: 'string',
       default: 'none'
+    },
+    'all-targets': {
+      type: 'boolean',
+      default: false
     }
   },
   strict: true,
@@ -80,13 +84,31 @@ await zipDirectory(drizzleMigrationsPath, drizzleZipPath);
 
 console.log('Compiling server with Bun...');
 
-const targets: TTarget[] = [
+const allTargets: TTarget[] = [
   { out: 'sharkord-linux-x64', target: 'bun-linux-x64' },
   { out: 'sharkord-linux-arm64', target: 'bun-linux-arm64' },
   { out: 'sharkord-windows-x64.exe', target: 'bun-windows-x64' },
   { out: 'sharkord-macos-arm64', target: 'bun-darwin-arm64' }
   // mediasoup doesn't support macOS x64
 ];
+
+// On a Linux server build, only compile linux-x64: downloading the mediasoup
+// binaries for every target (darwin, windows, ...) times out. The other
+// targets are only needed for GitHub Actions releases, which set GITHUB_ACTIONS
+// or can force a full build with --all-targets.
+const buildAllTargets =
+  values['all-targets'] ||
+  process.env.GITHUB_ACTIONS === 'true' ||
+  process.platform !== 'linux';
+
+const targets: TTarget[] = buildAllTargets
+  ? allTargets
+  : allTargets.filter((t) => t.target === 'bun-linux-x64');
+
+console.log(
+  `Building targets: ${targets.map((t) => t.target).join(', ')}` +
+    (buildAllTargets ? '' : ' (linux-x64 only — use --all-targets for all)')
+);
 
 for (const target of targets) {
   console.log(`Building for target: ${target.target}...`);
