@@ -49,6 +49,8 @@ export enum UploadHeaders {
 export enum ChannelPermission {
   VIEW_CHANNEL = 'VIEW_CHANNEL',
   SEND_MESSAGES = 'SEND_MESSAGES',
+  ADD_REACTIONS = 'ADD_REACTIONS',
+  ATTACH_FILES = 'ATTACH_FILES',
   JOIN = 'JOIN',
   SPEAK = 'SPEAK',
   SHARE_SCREEN = 'SHARE_SCREEN',

@@ -1,4 +1,4 @@
-import { Permission } from '@sharkord/shared';
+import { ChannelPermission, Permission } from '@sharkord/shared';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { config } from '../../config';
@@ -37,6 +37,10 @@ const toggleMessageReactionRoute = rateLimitedProcedure(protectedProcedure, {
     });
 
     await assertChannelAccess(ctx, message.channelId);
+    await ctx.needsChannelPermission(
+      message.channelId,
+      ChannelPermission.ADD_REACTIONS
+    );
 
     const reaction = await getReaction(
       input.messageId,
