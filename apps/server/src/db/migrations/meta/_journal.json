@@ -134,6 +134,13 @@
       "when": 1780405254991,
       "tag": "0018_material_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1780918063536,
+      "tag": "0019_unusual_havok",
+      "breakpoints": true
     }
   ]
 }

@@ -119,7 +119,8 @@ const roles = sqliteTable(
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
-    color: text('color').notNull().default('#ffffff'),
+    color: text('color'),
+    position: integer('position').notNull().default(0),
     isPersistent: integer('is_persistent', { mode: 'boolean' }).notNull(),
     isDefault: integer('is_default', { mode: 'boolean' }).notNull(),
     storageQuotaOverrideEnabled: integer('storage_quota_override_enabled', {
@@ -133,7 +134,8 @@ const roles = sqliteTable(
   },
   (t) => [
     index('roles_is_default_idx').on(t.isDefault),
-    index('roles_is_persistent_idx').on(t.isPersistent)
+    index('roles_is_persistent_idx').on(t.isPersistent),
+    index('roles_position_idx').on(t.position)
   ]
 );
 
