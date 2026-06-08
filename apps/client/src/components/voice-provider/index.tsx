@@ -900,6 +900,13 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       if (videoTrack) {
         logVoice('Obtained video track', { videoTrack });
 
+        // Screen capture tracks default to detail/text behaviour, which makes
+        // the browser pick degradationPreference=maintain-resolution: under CPU
+        // or bitrate pressure it keeps the resolution and drops the framerate
+        // (the ~12fps screen-share freeze on high-res gaming shares). 'motion'
+        // flips the default to maintain-framerate so framerate is preserved.
+        videoTrack.contentHint = 'motion';
+
         let preferredCodec: RtpCodecCapability | undefined;
 
         if (
