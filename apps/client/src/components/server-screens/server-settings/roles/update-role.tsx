@@ -1,4 +1,6 @@
 import { requestConfirmation } from '@/features/dialogs/actions';
+import { useUserRoles } from '@/features/server/hooks';
+import { useOwnPublicUser } from '@/features/server/users/hooks';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
 import {
@@ -49,6 +51,16 @@ const UpdateRole = memo(
     });
 
     const isOwnerRole = selectedRole.id === OWNER_ROLE_ID;
+
+    // Mirror the server-side rank enforcement in the UI: a role at or above the
+    // current user's own rank cannot be edited (the server rejects it anyway).
+    const ownUser = useOwnPublicUser();
+    const ownRoles = useUserRoles(ownUser?.id ?? -1);
+    const ownTopPosition = ownRoles.some((role) => role.id === OWNER_ROLE_ID)
+      ? Infinity
+      : Math.max(0, ...ownRoles.map((role) => role.position));
+    const lockedByRank = ownTopPosition <= selectedRole.position;
+
     const storageQuotaLabel = filesize(Number(values.storageSpaceQuota ?? 0), {
       output: 'object',
       standard: 'jedec'
@@ -154,21 +166,36 @@ const UpdateRole = memo(
             </Alert>
           )}
 
+          {!isOwnerRole && lockedByRank && (
+            <Alert variant="default">
+              <Info />
+              <AlertDescription>{t('roleLockedByRankInfo')}</AlertDescription>
+            </Alert>
+          )}
+
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="role-name">{t('roleNameLabel')}</Label>
-              <Input {...r('name')} />
+              <Input {...r('name')} disabled={lockedByRank} />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="role-color">{t('roleColorLabel')}</Label>
               <div className="flex gap-2">
-                <Input className="h-10 w-20" {...r('color', 'color')} />
-                <Input className="flex-1" {...r('color')} />
+                <Input
+                  className="h-10 w-20"
+                  {...r('color', 'color')}
+                  disabled={lockedByRank}
+                />
+                <Input
+                  className="flex-1"
+                  {...r('color')}
+                  disabled={lockedByRank}
+                />
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={values.color === null}
+                  disabled={lockedByRank || values.color === null}
                   onClick={() => onChange('color', null)}
                 >
                   {t('roleNoColorBtn')}
@@ -179,7 +206,7 @@ const UpdateRole = memo(
 
           <PermissionList
             permissions={values.permissions}
-            disabled={OWNER_ROLE_ID === selectedRole.id}
+            disabled={OWNER_ROLE_ID === selectedRole.id || lockedByRank}
             setPermissions={(permissions) =>
               onChange('permissions', permissions)
             }
@@ -235,7 +262,9 @@ const UpdateRole = memo(
             >
               {t('close')}
             </Button>
-            <Button onClick={onUpdateRole}>{t('saveRoleBtn')}</Button>
+            <Button onClick={onUpdateRole} disabled={lockedByRank}>
+              {t('saveRoleBtn')}
+            </Button>
           </div>
         </CardContent>
       </Card>

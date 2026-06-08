@@ -164,6 +164,7 @@
   "roleCreateFailed": "Could not create role",
   "roleReorderFailed": "Could not reorder roles",
   "roleNoColorBtn": "No color",
+  "roleLockedByRankInfo": "This role is ranked at or above your highest role, so you cannot edit it.",
   "editRoleTitle": "Edit Role",
   "setAsDefaultRoleTooltip": "Set as Default Role",
   "defaultRoleInfo": "This is the default role. New members will be assigned this role upon joining.",
