@@ -60,19 +60,19 @@ describe('role hierarchy — role mutation enforcement', () => {
     ).rejects.toThrow('equal to or above');
   });
 
-  test('owner can set a role color to null', async () => {
+  test('owner can clear a role colour back to default white', async () => {
     const { caller: owner } = await initTest();
     const roleId = await owner.roles.add();
     await owner.roles.update({
       roleId,
       name: 'Colorless',
-      color: null,
+      color: '#ffffff',
       permissions: [],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
     });
     const all = await owner.roles.getAll();
-    expect(all.find((r) => r.id === roleId)!.color).toBeNull();
+    expect(all.find((r) => r.id === roleId)!.color).toBe('#ffffff');
   });
 });
 
@@ -124,7 +124,7 @@ describe('role hierarchy — assignment & moderation', () => {
     await owner.roles.update({
       roleId: low,
       name: 'Low',
-      color: null,
+      color: '#336699',
       permissions: [Permission.MANAGE_USERS],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0

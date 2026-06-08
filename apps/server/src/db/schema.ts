@@ -119,7 +119,7 @@ const roles = sqliteTable(
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
-    color: text('color'),
+    color: text('color').notNull().default('#ffffff'),
     position: integer('position').notNull().default(0),
     isPersistent: integer('is_persistent', { mode: 'boolean' }).notNull(),
     isDefault: integer('is_default', { mode: 'boolean' }).notNull(),

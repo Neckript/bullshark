@@ -22,7 +22,7 @@ describe('expanded channel permissions — ADD_REACTIONS', () => {
     await owner.roles.update({
       roleId: 2,
       name: 'Member',
-      color: null,
+      color: '#ffffff',
       permissions: [
         Permission.SEND_MESSAGES,
         Permission.REACT_TO_MESSAGES,

@@ -22,8 +22,7 @@ const updateRoleRoute = protectedProcedure
       name: z.string().min(1).max(26),
       color: z
         .string()
-        .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color')
-        .nullable(),
+        .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color'),
       permissions: z.enum(Permission).array(),
       storageQuotaOverrideEnabled: z.boolean(),
       storageSpaceQuota: z

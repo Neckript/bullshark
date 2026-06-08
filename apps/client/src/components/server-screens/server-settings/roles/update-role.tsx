@@ -1,6 +1,7 @@
 import { requestConfirmation } from '@/features/dialogs/actions';
 import { useUserRoles } from '@/features/server/hooks';
 import { useOwnPublicUser } from '@/features/server/users/hooks';
+import { isNoColor } from '@/helpers/resolve-name-color';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
 import {
@@ -195,8 +196,8 @@ const UpdateRole = memo(
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={lockedByRank || values.color === null}
-                  onClick={() => onChange('color', null)}
+                  disabled={lockedByRank || isNoColor(values.color)}
+                  onClick={() => onChange('color', '#ffffff')}
                 >
                   {t('roleNoColorBtn')}
                 </Button>
