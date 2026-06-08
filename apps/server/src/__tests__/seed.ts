@@ -2,6 +2,7 @@ import {
   ChannelType,
   DEFAULT_ROLE_PERMISSIONS,
   OWNER_ROLE_ID,
+  OWNER_ROLE_POSITION,
   Permission,
   sha256,
   STORAGE_DEFAULT_IMAGE_OPTIMIZATION_QUALITY,
@@ -135,6 +136,7 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
     id: OWNER_ROLE_ID,
     name: 'Owner',
     color: '#ff0000',
+    position: OWNER_ROLE_POSITION,
     isPersistent: true,
     isDefault: false,
     storageQuotaOverrideEnabled: false,
@@ -155,6 +157,7 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
   const defaultRole: TIRole = {
     name: 'Member',
     color: '#99aab5',
+    position: 0,
     isPersistent: true,
     isDefault: true,
     storageQuotaOverrideEnabled: false,
@@ -178,6 +181,7 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
   const guestRole: TIRole = {
     name: 'Guest',
     color: '#95a5a6',
+    position: 1,
     isPersistent: false,
     isDefault: false,
     storageQuotaOverrideEnabled: false,

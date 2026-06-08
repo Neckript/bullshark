@@ -158,5 +158,5 @@ export type TJoinedSettings = TSettings & {
 
 export type TJoinedInvite = TInvite & {
   creator: TJoinedPublicUser;
-  role: { id: number; name: string; color: string } | null;
+  role: { id: number; name: string; color: string | null } | null;
 };

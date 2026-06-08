@@ -2,6 +2,7 @@ import {
   ChannelType,
   DEFAULT_ROLE_PERMISSIONS,
   OWNER_ROLE_ID,
+  OWNER_ROLE_POSITION,
   Permission,
   sha256,
   STORAGE_DEFAULT_IMAGE_OPTIMIZATION_QUALITY,
@@ -131,7 +132,8 @@ const seedDatabase = async () => {
   const initialRoles: TIRole[] = [
     {
       name: 'Owner',
-      color: '#FFFFFF',
+      color: null,
+      position: OWNER_ROLE_POSITION,
       isDefault: false,
       isPersistent: true,
       storageQuotaOverrideEnabled: false,
@@ -140,7 +142,8 @@ const seedDatabase = async () => {
     },
     {
       name: 'Member',
-      color: '#FFFFFF',
+      color: null,
+      position: 0,
       isPersistent: true,
       isDefault: true,
       storageQuotaOverrideEnabled: false,

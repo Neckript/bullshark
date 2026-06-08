@@ -6,6 +6,7 @@ import { fallbackUsersToDefaultRole } from '../../db/mutations/users';
 import { publishRole } from '../../db/publishers';
 import { getRole } from '../../db/queries/roles';
 import { roles } from '../../db/schema';
+import { assertOutranksRole } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
@@ -33,6 +34,8 @@ const deleteRoleRoute = protectedProcedure
       code: 'FORBIDDEN',
       message: 'Cannot delete the default role'
     });
+
+    await assertOutranksRole(ctx.userId, role.id);
 
     await fallbackUsersToDefaultRole(role.id);
     await db.delete(roles).where(eq(roles.id, role.id));

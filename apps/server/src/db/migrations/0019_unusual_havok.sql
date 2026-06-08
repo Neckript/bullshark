@@ -25,4 +25,4 @@ UPDATE `roles` SET `position` = (
 	SELECT COUNT(*) FROM `roles` r2
 	WHERE r2.`id` <= `roles`.`id` AND r2.`is_default` = 0 AND r2.`id` != 1
 ) WHERE `is_default` = 0 AND `id` != 1;--> statement-breakpoint
-UPDATE `roles` SET `position` = (SELECT COALESCE(MAX(`position`), 0) FROM `roles`) + 1 WHERE `id` = 1;
+UPDATE `roles` SET `position` = 1000000 WHERE `id` = 1;
