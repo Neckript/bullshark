@@ -8,21 +8,26 @@ type TRoleBadgeProps = {
   onRemoveRole?: (roleId: number, roleName: string) => void;
 };
 
+// Neutral fallback used when a role has no colour set.
+const DEFAULT_ROLE_COLOR = '#6b7280';
+
 const RoleBadge = memo(({ role, onRemoveRole }: TRoleBadgeProps) => {
+  const color = role.color ?? DEFAULT_ROLE_COLOR;
+
   return (
     <Badge
       style={{
-        backgroundColor: role.color + '20',
-        borderColor: role.color
+        backgroundColor: color + '20',
+        borderColor: color
       }}
     >
-      <span style={{ color: role.color }}>{role.name}</span>
+      <span style={{ color }}>{role.name}</span>
       {onRemoveRole && (
         <IconButton
           icon={X}
           size="xs"
           aria-label={`Remove ${role.name} role`}
-          style={{ color: role.color }}
+          style={{ color }}
           onClick={() => onRemoveRole(role.id, role.name)}
         />
       )}

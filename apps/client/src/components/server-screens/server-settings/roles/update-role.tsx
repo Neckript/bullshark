@@ -165,6 +165,14 @@ const UpdateRole = memo(
               <div className="flex gap-2">
                 <Input className="h-10 w-20" {...r('color', 'color')} />
                 <Input className="flex-1" {...r('color')} />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={values.color === null}
+                  onClick={() => onChange('color', null)}
+                >
+                  {t('roleNoColorBtn')}
+                </Button>
               </div>
             </div>
           </div>

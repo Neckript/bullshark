@@ -162,6 +162,8 @@
   "selectRoleToEdit": "Select a role to edit or create a new one",
   "roleCreated": "Role created",
   "roleCreateFailed": "Could not create role",
+  "roleReorderFailed": "Could not reorder roles",
+  "roleNoColorBtn": "No color",
   "editRoleTitle": "Edit Role",
   "setAsDefaultRoleTooltip": "Set as Default Role",
   "defaultRoleInfo": "This is the default role. New members will be assigned this role upon joining.",

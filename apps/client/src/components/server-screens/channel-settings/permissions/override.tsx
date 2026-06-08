@@ -41,7 +41,7 @@ const RoleHeader = memo(({ roleId }: TRoleHeaderProps) => {
     <div className="flex items-center gap-3">
       <div
         className="h-6 w-6 rounded-full"
-        style={{ backgroundColor: role.color }}
+        style={{ backgroundColor: role.color ?? '#6b7280' }}
       />
       <CardTitle>{role.name}</CardTitle>
     </div>
