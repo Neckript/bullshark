@@ -4,6 +4,7 @@ import { channelsRouter } from './channels';
 import { dmsRouter } from './dms';
 import { emojisRouter } from './emojis';
 import { filesRouter } from './files';
+import { gifsRouter } from './gifs';
 import { invitesRouter } from './invites';
 import { messagesRouter } from './messages';
 import { othersRouter } from './others';
@@ -24,7 +25,8 @@ const appRouter = t.router({
   invites: invitesRouter,
   voice: voiceRouter,
   categories: categoriesRouter,
-  plugins: pluginsRouter
+  plugins: pluginsRouter,
+  gifs: gifsRouter
 });
 
 type AppRouter = typeof appRouter;

@@ -11,6 +11,14 @@ export const imageExtensions = [
   '.tif'
 ];
 
+export const PROFILE_MEDIA_EXTENSIONS = [
+  '.gif',
+  '.jpg',
+  '.jpeg',
+  '.png',
+  '.webp'
+];
+
 export const videoExtensions = [
   '.mp4',
   '.mkv',

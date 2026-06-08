@@ -1200,4 +1200,86 @@ describe('users router', () => {
     expect(userInfo.messages.length).toBe(0);
     expect(dbMessages.length).toBeGreaterThan(0);
   });
+
+  // --- apply-profile-media helper tests ---
+
+  test('should reject avatar upload with disallowed extension (.svg)', async () => {
+    const { caller, mockedToken } = await initTest();
+
+    const file = new File(['<svg></svg>'], 'bad.svg', {
+      type: 'image/svg+xml'
+    });
+
+    const uploadResponse = await uploadFile(file, mockedToken);
+    const uploadData = (await uploadResponse.json()) as TTempFile;
+
+    await expect(
+      caller.users.changeAvatar({ fileId: uploadData.id })
+    ).rejects.toThrow('Invalid file type');
+  });
+
+  test('should allow animated GIF avatar when user has ANIMATED_AVATAR permission', async () => {
+    const ANIMATED_GIF_BYTES = new Uint8Array([
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x21, 0xff, 0x0b, 0x4e, 0x45,
+      0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2e, 0x30, 0x03, 0x01, 0x00,
+      0x00, 0x00, 0x21, 0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00,
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01,
+      0x00, 0x21, 0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00,
+      0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00,
+      0x3b
+    ]);
+
+    const { caller, mockedToken } = await initTest();
+
+    const file = new File([ANIMATED_GIF_BYTES], 'anim.gif', {
+      type: 'image/gif'
+    });
+
+    const uploadResponse = await uploadFile(file, mockedToken);
+    const uploadData = (await uploadResponse.json()) as TTempFile;
+
+    await caller.users.changeAvatar({ fileId: uploadData.id });
+
+    const userInfo = await caller.users.getInfo({ userId: 1 });
+
+    expect(userInfo.user.avatarId).toBeDefined();
+    expect(userInfo.user.avatarId).not.toBeNull();
+  });
+
+  test('should reject animated GIF avatar when user lacks ANIMATED_AVATAR permission', async () => {
+    const ANIMATED_GIF_BYTES = new Uint8Array([
+      0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00,
+      0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x21, 0xff, 0x0b, 0x4e, 0x45,
+      0x54, 0x53, 0x43, 0x41, 0x50, 0x45, 0x32, 0x2e, 0x30, 0x03, 0x01, 0x00,
+      0x00, 0x00, 0x21, 0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00,
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01,
+      0x00, 0x21, 0xf9, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2c, 0x00, 0x00,
+      0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44, 0x01, 0x00,
+      0x3b
+    ]);
+
+    // Remove ANIMATED_AVATAR from the default role (roleId=2) so userId=2 lacks it
+    await tdb
+      .delete(rolePermissions)
+      .where(
+        and(
+          eq(rolePermissions.roleId, 2),
+          eq(rolePermissions.permission, Permission.ANIMATED_AVATAR)
+        )
+      );
+
+    const { caller, mockedToken } = await initTest(2);
+
+    const file = new File([ANIMATED_GIF_BYTES], 'anim.gif', {
+      type: 'image/gif'
+    });
+
+    const uploadResponse = await uploadFile(file, mockedToken);
+    const uploadData = (await uploadResponse.json()) as TTempFile;
+
+    await expect(
+      caller.users.changeAvatar({ fileId: uploadData.id })
+    ).rejects.toThrow('Insufficient permissions');
+  });
 });

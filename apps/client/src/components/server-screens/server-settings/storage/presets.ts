@@ -26,6 +26,12 @@ const MAX_BANNER_SIZE_PRESETS = [
   { label: '10 MB', value: 10 * MEGABYTE }
 ];
 
+const MAX_ANIMATED_IMAGE_SIZE_PRESETS = [
+  { label: '4 MB', value: 4 * MEGABYTE },
+  { label: '8 MB', value: 8 * MEGABYTE },
+  { label: '16 MB', value: 16 * MEGABYTE }
+];
+
 const QUOTA_BY_USER_PRESETS = [
   { label: 'Unlimited', value: 0 },
   { label: '1 GB', value: 1 * 1024 * 1024 * 1024 },
@@ -49,6 +55,7 @@ const SIGNED_URLS_TTL_PRESETS = [
 
 export {
   FILE_SIZE_STEP,
+  MAX_ANIMATED_IMAGE_SIZE_PRESETS,
   MAX_AVATAR_SIZE_PRESETS,
   MAX_BANNER_SIZE_PRESETS,
   MAX_FILES_PER_MESSAGE_PRESETS,

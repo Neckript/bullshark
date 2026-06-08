@@ -77,6 +77,7 @@ const TiptapInput = memo(
     const extensions = useMemo(() => {
       const exts = [
         StarterKit.configure({
+          link: false,
           hardBreak: {
             HTMLAttributes: {
               class: 'hard-break'

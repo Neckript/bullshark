@@ -82,6 +82,8 @@ export type TStorageSettings = Pick<
   | 'storageUploadMaxFileSize'
   | 'storageMaxAvatarSize'
   | 'storageMaxBannerSize'
+  | 'storageMaxAnimatedImageSize'
+  | 'klipyApiKey'
   | 'storageMaxFilesPerMessage'
   | 'storageSpaceQuotaByUser'
   | 'storageOverflowAction'

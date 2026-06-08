@@ -1,6 +1,7 @@
 import { closeServerScreens } from '@/features/server-screens/actions';
 import { useAdminStorage } from '@/features/server/admin/hooks';
 import {
+  STORAGE_MAX_ANIMATED_IMAGE_SIZE,
   STORAGE_MAX_AVATAR_SIZE,
   STORAGE_MAX_BANNER_SIZE,
   STORAGE_MAX_FILES_PER_MESSAGE,
@@ -40,6 +41,7 @@ import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DiskMetrics } from './metrics';
 import {
+  MAX_ANIMATED_IMAGE_SIZE_PRESETS,
   MAX_AVATAR_SIZE_PRESETS,
   MAX_BANNER_SIZE_PRESETS,
   MAX_FILES_PER_MESSAGE_PRESETS,
@@ -170,6 +172,26 @@ const Storage = memo(() => {
               </>
             }
             presets={MAX_BANNER_SIZE_PRESETS}
+          />
+        </Group>
+
+        <Group
+          label={t('maxAnimatedImageSizeLabel')}
+          description={t('maxAnimatedImageSizeDesc')}
+        >
+          <StorageSizeControl
+            value={Number(values.storageMaxAnimatedImageSize)}
+            max={STORAGE_MAX_ANIMATED_IMAGE_SIZE}
+            min={STORAGE_MIN_FILE_SIZE}
+            disabled={!values.storageUploadEnabled}
+            onChange={(value) => onChange('storageMaxAnimatedImageSize', value)}
+            preview={
+              <>
+                {labels.storageMaxAnimatedImageSize.value}{' '}
+                {labels.storageMaxAnimatedImageSize.unit}
+              </>
+            }
+            presets={MAX_ANIMATED_IMAGE_SIZE_PRESETS}
           />
         </Group>
 
@@ -419,6 +441,18 @@ const Storage = memo(() => {
               ))}
             </div>
           </div>
+        </Group>
+
+        <Separator />
+
+        <Group label={t('klipyApiKeyLabel')} description={t('klipyApiKeyDesc')}>
+          <Input
+            type="password"
+            autoComplete="off"
+            className="max-w-150"
+            value={values.klipyApiKey ?? ''}
+            onChange={(e) => onChange('klipyApiKey', e.target.value)}
+          />
         </Group>
 
         <div className="flex justify-end gap-2 pt-4">

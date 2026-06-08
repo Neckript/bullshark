@@ -60,6 +60,7 @@ export type TPublicServerSettings = Pick<
   | 'storageSignedUrlsEnabled'
 > & {
   webRtcMaxBitrate: number;
+  klipyEnabled: boolean;
 };
 
 export type TGenericObject = {
