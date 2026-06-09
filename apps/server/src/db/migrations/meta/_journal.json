@@ -141,6 +141,13 @@
       "when": 1780935837980,
       "tag": "0019_lame_blue_shield",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1781013115756,
+      "tag": "0020_awesome_wendigo",
+      "breakpoints": true
     }
   ]
 }

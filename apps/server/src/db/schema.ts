@@ -536,6 +536,22 @@ const pluginData = sqliteTable('plugin_data', {
     .default({})
 });
 
+const userSettings = sqliteTable(
+  'user_settings',
+  {
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(),
+    value: text('value').notNull(),
+    updatedAt: integer('updated_at').notNull()
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.key] }),
+    index('user_settings_user_idx').on(t.userId)
+  ]
+);
+
 export {
   activityLog,
   categories,
@@ -556,5 +572,6 @@ export {
   roles,
   settings,
   userRoles,
-  users
+  users,
+  userSettings
 };
