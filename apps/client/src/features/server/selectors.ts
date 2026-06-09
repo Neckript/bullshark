@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ChannelPermission, OWNER_ROLE_ID } from '@sharkord/shared';
 import { createCachedSelector } from 're-reselect';
+import { mutedRoleMentionIdsSelector } from '../app/selectors';
 import type { IRootState } from '../store';
 import {
   channelByIdSelector,
@@ -118,6 +119,11 @@ export const userRolesIdsSelector = createSelector(
   (user) => user?.roleIds || []
 );
 
+export const ownUserRoleIdsSelector = createSelector(
+  [ownUserSelector],
+  (ownUser) => ownUser?.roleIds || []
+);
+
 export const typingUsersByChannelIdSelector = createCachedSelector(
   [
     typingMapSelector,
@@ -205,12 +211,20 @@ export const hasUnreadMentionsSelector = createCachedSelector(
     channelReadStateByIdSelector,
     channelByIdSelector,
     messagesByChannelIdSelector,
-    ownUserIdSelector
+    ownUserIdSelector,
+    ownUserRoleIdsSelector,
+    mutedRoleMentionIdsSelector
   ],
-  (readState, channel, messages, ownUserId) => {
+  (readState, channel, messages, ownUserId, ownRoleIds, mutedRoleIds) => {
     if (!channel || !messages) return false;
 
-    return hasUnreadMentionInMessages(readState, messages, ownUserId);
+    return hasUnreadMentionInMessages(
+      readState,
+      messages,
+      ownUserId,
+      ownRoleIds,
+      mutedRoleIds
+    );
   }
 )((_, channelId: number) => channelId);
 
@@ -228,14 +242,25 @@ export const categoryHasUnreadMentionsSelector = createCachedSelector(
     visibleChannelsInCategorySelector,
     channelsReadStatesSelector,
     messagesMapSelector,
-    ownUserIdSelector
+    ownUserIdSelector,
+    ownUserRoleIdsSelector,
+    mutedRoleMentionIdsSelector
   ],
-  (channelsInCategory, readStatesMap, messagesMap, ownUserId) => {
+  (
+    channelsInCategory,
+    readStatesMap,
+    messagesMap,
+    ownUserId,
+    ownRoleIds,
+    mutedRoleIds
+  ) => {
     return channelsInCategory.some((channel) => {
       return hasUnreadMentionInMessages(
         readStatesMap[channel.id] ?? 0,
         messagesMap[channel.id] ?? [],
-        ownUserId
+        ownUserId,
+        ownRoleIds,
+        mutedRoleIds
       );
     });
   }

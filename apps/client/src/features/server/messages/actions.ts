@@ -3,6 +3,7 @@ import {
   browserNotificationsForMentionsSelector,
   browserNotificationsForRepliesSelector,
   browserNotificationsSelector,
+  mutedRoleMentionIdsSelector,
   threadSidebarDataSelector
 } from '@/features/app/selectors';
 import { store } from '@/features/store';
@@ -19,6 +20,7 @@ import {
   isChannelTextVisibleByIdSelector
 } from '../channels/selectors';
 import { pluginMetadataByIdSelector } from '../plugins/selectors';
+import { userRolesIdsSelector } from '../selectors';
 import { serverSliceActions } from '../slice';
 import { playSound } from '../sounds/actions';
 import { SoundType } from '../types';
@@ -159,9 +161,15 @@ export const addMessages = (
         if (isDmChannel && hasDmNotificationsEnabled) {
           sendBrowserNotification(targetMessage, channelId, true);
         } else if (notificationsForMentionsOnly) {
+          const ownRoleIds = ownUserId
+            ? userRolesIdsSelector(state, ownUserId)
+            : [];
+          const mutedRoleIds = mutedRoleMentionIdsSelector(state);
           const isMentioned = hasMention(
             targetMessage.content ?? null,
-            ownUserId
+            ownUserId,
+            ownRoleIds,
+            mutedRoleIds
           );
 
           if (isMentioned) {
