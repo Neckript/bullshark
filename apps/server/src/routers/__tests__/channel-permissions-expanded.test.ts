@@ -23,6 +23,8 @@ describe('expanded channel permissions — ADD_REACTIONS', () => {
       roleId: 2,
       name: 'Member',
       color: '#ffffff',
+      hoist: false,
+      isMentionable: false,
       permissions: [
         Permission.SEND_MESSAGES,
         Permission.REACT_TO_MESSAGES,

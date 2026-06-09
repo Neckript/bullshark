@@ -610,6 +610,8 @@ describe('users router', () => {
       roleId: newRoleId,
       name: 'Test Role',
       color: '#123456',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.MANAGE_USERS],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
@@ -655,6 +657,8 @@ describe('users router', () => {
       roleId: newRoleId,
       name: 'Test Role',
       color: '#123456',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.MANAGE_USERS],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0

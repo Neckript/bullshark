@@ -41,6 +41,8 @@ describe('role hierarchy — role mutation enforcement', () => {
       roleId: modRoleId,
       name: 'Mod',
       color: '#00ff00',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.MANAGE_ROLES],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
@@ -53,6 +55,8 @@ describe('role hierarchy — role mutation enforcement', () => {
         roleId: OWNER_ROLE_ID,
         name: 'Owner',
         color: '#ff0000',
+        hoist: false,
+        isMentionable: false,
         permissions: [],
         storageQuotaOverrideEnabled: false,
         storageSpaceQuota: 0
@@ -67,6 +71,8 @@ describe('role hierarchy — role mutation enforcement', () => {
       roleId,
       name: 'Colorless',
       color: '#ffffff',
+      hoist: false,
+      isMentionable: false,
       permissions: [],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
@@ -125,6 +131,8 @@ describe('role hierarchy — assignment & moderation', () => {
       roleId: low,
       name: 'Low',
       color: '#336699',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.MANAGE_USERS],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
