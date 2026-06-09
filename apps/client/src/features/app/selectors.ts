@@ -43,6 +43,9 @@ export const browserNotificationsForDmsSelector = (state: IRootState) =>
 export const browserNotificationsForRepliesSelector = (state: IRootState) =>
   state.app.browserNotificationsForReplies;
 
+export const mutedRoleMentionIdsSelector = (state: IRootState) =>
+  state.app.mutedRoleMentionIds;
+
 export const messageJumpTargetSelector = (state: IRootState) =>
   state.app.messageJumpTarget;
 
