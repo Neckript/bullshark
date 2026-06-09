@@ -46,6 +46,8 @@ const UpdateRole = memo(
     const { setTrpcErrors, r, onChange, values } = useForm({
       name: selectedRole.name,
       color: selectedRole.color,
+      hoist: selectedRole.hoist,
+      isMentionable: selectedRole.isMentionable,
       permissions: selectedRole.permissions,
       storageQuotaOverrideEnabled: selectedRole.storageQuotaOverrideEnabled,
       storageSpaceQuota: selectedRole.storageSpaceQuota
@@ -202,6 +204,40 @@ const UpdateRole = memo(
                   {t('roleNoColorBtn')}
                 </Button>
               </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <Label htmlFor="role-hoist">{t('roleHoistLabel')}</Label>
+                <p className="text-sm text-muted-foreground">
+                  {t('roleHoistDesc')}
+                </p>
+              </div>
+              <Switch
+                id="role-hoist"
+                checked={!!values.hoist}
+                disabled={lockedByRank}
+                onCheckedChange={(checked) => onChange('hoist', checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-1">
+                <Label htmlFor="role-mentionable">
+                  {t('roleMentionableLabel')}
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  {t('roleMentionableDesc')}
+                </p>
+              </div>
+              <Switch
+                id="role-mentionable"
+                checked={!!values.isMentionable}
+                disabled={lockedByRank}
+                onCheckedChange={(checked) =>
+                  onChange('isMentionable', checked)
+                }
+              />
             </div>
           </div>
 
