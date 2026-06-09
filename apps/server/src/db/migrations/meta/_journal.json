@@ -148,6 +148,13 @@
       "when": 1781013115756,
       "tag": "0020_awesome_wendigo",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1781014120700,
+      "tag": "0021_same_krista_starr",
+      "breakpoints": true
     }
   ]
 }
