@@ -21,3 +21,13 @@ describe('role attributes — update-role', () => {
     expect(role.isMentionable).toBe(true);
   });
 });
+
+describe('role attributes — icon', () => {
+  test('clearing icon (no temp file) leaves icon_file_id null', async () => {
+    const { caller: owner } = await initTest();
+    const roleId = await owner.roles.add();
+    await owner.roles.changeIcon({ roleId });
+    const all = await owner.roles.getAll();
+    expect(all.find((r) => r.id === roleId)!.iconFileId ?? null).toBeNull();
+  });
+});
