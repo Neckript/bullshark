@@ -9,6 +9,10 @@ import { appSliceActions } from '../app/slice';
 import { openDialog } from '../dialogs/actions';
 import { store } from '../store';
 import {
+  loadUserSettings,
+  migrateLocalSettings
+} from './user-settings/actions';
+import {
   channelReadStateByIdSelector,
   isChannelTextVisibleByIdSelector
 } from './channels/selectors';
@@ -100,6 +104,9 @@ export const joinServer = async (handshakeHash: string, password?: string) => {
   unsubscribeFromServer = initSubscriptions();
 
   store.dispatch(serverSliceActions.setInitialData(data));
+
+  const settings = await loadUserSettings();
+  await migrateLocalSettings(settings);
 
   setPluginCommands(data.commands);
 
