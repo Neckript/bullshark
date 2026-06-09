@@ -307,7 +307,9 @@ class FileManager {
   ) => {
     if (
       isAnimated &&
-      (type === FileSaveType.AVATAR || type === FileSaveType.BANNER)
+      (type === FileSaveType.AVATAR ||
+        type === FileSaveType.BANNER ||
+        type === FileSaveType.ROLE_ICON)
     ) {
       if (tempFile.size > settings.storageMaxAnimatedImageSize) {
         throw new Error(
@@ -318,7 +320,7 @@ class FileManager {
     }
 
     if (
-      type === FileSaveType.AVATAR &&
+      (type === FileSaveType.AVATAR || type === FileSaveType.ROLE_ICON) &&
       tempFile.size > settings.storageMaxAvatarSize
     ) {
       throw new Error(
