@@ -10,6 +10,7 @@ import { messagesRouter } from './messages';
 import { othersRouter } from './others';
 import { pluginsRouter } from './plugins';
 import { rolesRouter } from './roles';
+import { settingsRouter } from './settings';
 import { usersRouter } from './users';
 import { voiceRouter } from './voice';
 
@@ -26,7 +27,8 @@ const appRouter = t.router({
   voice: voiceRouter,
   categories: categoriesRouter,
   plugins: pluginsRouter,
-  gifs: gifsRouter
+  gifs: gifsRouter,
+  settings: settingsRouter
 });
 
 type AppRouter = typeof appRouter;
