@@ -55,6 +55,8 @@
   "dmNotificationsDesc": "Send a notification for every new direct message.",
   "repliesNotificationsLabel": "Replies to Me",
   "repliesNotificationsDesc": "Send a notification when someone replies to your message. Ignored if 'All Messages' is enabled.",
+  "mutedRoleMentionsLabel": "Muted role mentions",
+  "mutedRoleMentionsHint": "Turn off notifications when these roles are @mentioned, even if you hold them.",
   "devicesTitle": "Devices",
   "devicesDesc": "Manage your peripheral devices and their settings.",
   "voiceChannelActiveInfo": "You are in a voice channel, changes will only take effect after you leave and rejoin the channel.",

@@ -55,6 +55,8 @@
   "dmNotificationsDesc": "每收到一条新私信时发送通知。",
   "repliesNotificationsLabel": "回复我的消息",
   "repliesNotificationsDesc": "当有人回复您的消息时发送通知。若启用\"所有消息\"，此设置将被忽略。",
+  "mutedRoleMentionsLabel": "Muted role mentions",
+  "mutedRoleMentionsHint": "Turn off notifications when these roles are @mentioned, even if you hold them.",
   "devicesTitle": "设备",
   "devicesDesc": "管理您的外围设备及其设置。",
   "voiceChannelActiveInfo": "您正在语音频道中，更改将在您离开并重新加入频道后生效。",

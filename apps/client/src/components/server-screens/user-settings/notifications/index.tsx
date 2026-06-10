@@ -2,14 +2,19 @@ import {
   setBrowserNotifications,
   setBrowserNotificationsForDms,
   setBrowserNotificationsForMentions,
-  setBrowserNotificationsForReplies
+  setBrowserNotificationsForReplies,
+  setRoleMentionMuted
 } from '@/features/app/actions';
 import {
   useBrowserNotifications,
   useBrowserNotificationsForDms,
   useBrowserNotificationsForMentions,
-  useBrowserNotificationsForReplies
+  useBrowserNotificationsForReplies,
+  useMutedRoleMentionIds
 } from '@/features/app/hooks';
+import { useRoles } from '@/features/server/roles/hooks';
+import { getFileUrl } from '@/helpers/get-file-url';
+import { isNoColor } from '@/helpers/resolve-name-color';
 import {
   Card,
   CardContent,
@@ -19,7 +24,7 @@ import {
   Group,
   Switch
 } from '@sharkord/ui';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Notifications = memo(() => {
@@ -28,6 +33,12 @@ const Notifications = memo(() => {
   const browserNotificationsForMentions = useBrowserNotificationsForMentions();
   const browserNotificationsForDms = useBrowserNotificationsForDms();
   const browserNotificationsForReplies = useBrowserNotificationsForReplies();
+  const roles = useRoles();
+  const mutedRoleMentionIds = useMutedRoleMentionIds();
+  const mutedSet = useMemo(
+    () => new Set(mutedRoleMentionIds),
+    [mutedRoleMentionIds]
+  );
 
   return (
     <Card>
@@ -73,6 +84,47 @@ const Notifications = memo(() => {
             }
           />
         </Group>
+
+        {roles.length > 0 && (
+          <Group
+            label={t('mutedRoleMentionsLabel')}
+            description={t('mutedRoleMentionsHint')}
+          >
+            <div className="space-y-2">
+              {roles.map((role) => {
+                const colored = !isNoColor(role.color);
+                return (
+                  <div
+                    key={role.id}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <span className="flex items-center gap-2 min-w-0">
+                      {role.icon && (
+                        <img
+                          src={getFileUrl(role.icon)}
+                          alt=""
+                          className="h-4 w-4 shrink-0 rounded-sm object-cover"
+                        />
+                      )}
+                      <span
+                        className="text-sm truncate"
+                        style={colored ? { color: role.color } : undefined}
+                      >
+                        {role.name}
+                      </span>
+                    </span>
+                    <Switch
+                      checked={mutedSet.has(role.id)}
+                      onCheckedChange={(value) =>
+                        setRoleMentionMuted(role.id, value)
+                      }
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          </Group>
+        )}
       </CardContent>
     </Card>
   );

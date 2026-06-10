@@ -55,6 +55,8 @@
   "dmNotificationsDesc": "Envoyer une notification pour chaque nouveau message privé.",
   "repliesNotificationsLabel": "Réponses à moi",
   "repliesNotificationsDesc": "Envoyer une notification quand quelqu'un répond à votre message. Ignoré si 'Tous les messages' est activé.",
+  "mutedRoleMentionsLabel": "Mentions de rôles en sourdine",
+  "mutedRoleMentionsHint": "Désactiver les notifications quand ces rôles sont @mentionnés, même si vous les possédez.",
   "devicesTitle": "Appareils",
   "devicesDesc": "Gérez vos appareils périphériques et leurs paramètres.",
   "voiceChannelActiveInfo": "Vous êtes dans un salon vocal, les modifications ne prendront effet qu'après avoir quitté et rejoint le salon.",
