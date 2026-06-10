@@ -3,6 +3,7 @@ import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
 import { publishChannel } from '../../db/publishers';
+import { copyCategoryPermissionsToChannel } from '../../db/queries/categories';
 import { channels } from '../../db/schema';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { VoiceRuntime } from '../../runtimes/voice';
@@ -44,6 +45,15 @@ const addChannelRoute = protectedProcedure
         })
         .returning()
         .get();
+
+      // New channels inherit their category's permission overrides.
+      if (newChannel.categoryId) {
+        await copyCategoryPermissionsToChannel(
+          tx,
+          newChannel.categoryId,
+          newChannel.id
+        );
+      }
 
       return newChannel;
     });
