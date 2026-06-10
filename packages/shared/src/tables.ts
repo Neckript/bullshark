@@ -117,6 +117,7 @@ type TPublicUser = Pick<
 
 export type TJoinedRole = TRole & {
   permissions: Permission[];
+  icon: TFile | null;
 };
 
 export type TJoinedMessageReaction = TMessageReaction & {
