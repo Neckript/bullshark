@@ -56,6 +56,7 @@
   "cpuEncoder": "CPU ({{encoder}})",
   "unknownEncoder": "Neznámý ({{encoder}})",
   "membersHeader": "Členové — {{count}}",
+  "membersDefaultGroup": "Members",
   "openDirectMessages": "Otevřít přímé zprávy",
   "closeDirectMessages": "Zavřít přímé zprávy",
   "openChat": "Otevřít textový chat",
