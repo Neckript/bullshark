@@ -172,6 +172,7 @@
   "roleDeleted": "Rol eliminado",
   "roleDeleteFailed": "Error al eliminar el rol",
   "roleUpdated": "Rol actualizado",
+  "roleUpdateFailed": "Failed to update role",
   "defaultRoleUpdated": "Rol por defecto actualizado",
   "failedSetDefaultRole": "Error al establecer el rol por defecto",
   "saveRoleBtn": "Guardar rol",

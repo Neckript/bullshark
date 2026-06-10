@@ -1,7 +1,10 @@
 import { requestConfirmation } from '@/features/dialogs/actions';
 import { useUserRoles } from '@/features/server/hooks';
 import { useOwnPublicUser } from '@/features/server/users/hooks';
+import { getFileUrl } from '@/helpers/get-file-url';
 import { isNoColor } from '@/helpers/resolve-name-color';
+import { uploadImage } from '@/helpers/upload-file';
+import { useFilePicker } from '@/hooks/use-file-picker';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
 import {
@@ -26,7 +29,7 @@ import {
   Tooltip
 } from '@sharkord/ui';
 import { filesize } from 'filesize';
-import { Info, Star, Trash2 } from 'lucide-react';
+import { Info, Star, Trash2, Upload } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -43,6 +46,7 @@ type TUpdateRoleProps = {
 const UpdateRole = memo(
   ({ selectedRole, setSelectedRoleId, refetch }: TUpdateRoleProps) => {
     const { t } = useTranslation('settings');
+    const openFilePicker = useFilePicker();
     const { setTrpcErrors, r, onChange, values } = useForm({
       name: selectedRole.name,
       color: selectedRole.color,
@@ -127,6 +131,41 @@ const UpdateRole = memo(
       }
     }, [selectedRole.id, refetch, t]);
 
+    const onUploadIcon = useCallback(async () => {
+      const trpc = getTRPCClient();
+
+      try {
+        const [file] = await openFilePicker('.jpg,.jpeg,.png,.webp,.gif');
+
+        const temporaryFile = await uploadImage(file);
+
+        if (!temporaryFile) return;
+
+        await trpc.roles.changeIcon.mutate({
+          roleId: selectedRole.id,
+          fileId: temporaryFile.id
+        });
+
+        toast.success(t('roleUpdated'));
+        refetch();
+      } catch (error) {
+        toast.error(getTrpcError(error, t('roleUpdateFailed')));
+      }
+    }, [selectedRole.id, openFilePicker, refetch, t]);
+
+    const onRemoveIcon = useCallback(async () => {
+      const trpc = getTRPCClient();
+
+      try {
+        await trpc.roles.changeIcon.mutate({ roleId: selectedRole.id });
+
+        toast.success(t('roleUpdated'));
+        refetch();
+      } catch (error) {
+        toast.error(getTrpcError(error, t('roleUpdateFailed')));
+      }
+    }, [selectedRole.id, refetch, t]);
+
     return (
       <Card className="flex-1">
         <CardHeader>
@@ -203,6 +242,53 @@ const UpdateRole = memo(
                 >
                   {t('roleNoColorBtn')}
                 </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>{t('roleIconLabel')}</Label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className="relative group h-16 w-16 shrink-0 rounded-md bg-muted overflow-hidden disabled:cursor-not-allowed disabled:opacity-50"
+                  onClick={onUploadIcon}
+                  disabled={lockedByRank}
+                >
+                  {selectedRole.icon ? (
+                    <img
+                      src={getFileUrl(selectedRole.icon)}
+                      alt={selectedRole.name}
+                      className="h-full w-full object-cover transition-opacity group-hover:opacity-30"
+                    />
+                  ) : null}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="bg-black/50 rounded-full p-2">
+                      <Upload className="h-4 w-4 text-white" />
+                    </div>
+                  </div>
+                </button>
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    disabled={lockedByRank}
+                    onClick={onUploadIcon}
+                  >
+                    {t('roleIconUpload')}
+                  </Button>
+                  {selectedRole.icon && (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={lockedByRank}
+                      onClick={onRemoveIcon}
+                    >
+                      {t('roleIconRemove')}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 

@@ -149,6 +149,7 @@
   "roleDeleted": "Роль удалена",
   "roleDeleteFailed": "Не удалось удалить роль",
   "roleUpdated": "Роль обновлена",
+  "roleUpdateFailed": "Failed to update role",
   "defaultRoleUpdated": "Роль по умолчанию обновлена",
   "failedSetDefaultRole": "Не удалось установить роль по умолчанию",
   "saveRoleBtn": "Сохранить роль",

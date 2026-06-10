@@ -172,6 +172,7 @@
   "roleDeleted": "角色已删除",
   "roleDeleteFailed": "删除角色失败",
   "roleUpdated": "角色已更新",
+  "roleUpdateFailed": "Failed to update role",
   "defaultRoleUpdated": "默认角色已更新",
   "failedSetDefaultRole": "设置默认角色失败",
   "saveRoleBtn": "保存角色",

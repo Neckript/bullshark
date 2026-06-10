@@ -172,6 +172,7 @@
   "roleDeleted": "Ruolo eliminato",
   "roleDeleteFailed": "Impossibile eliminare il ruolo",
   "roleUpdated": "Ruolo aggiornato",
+  "roleUpdateFailed": "Failed to update role",
   "defaultRoleUpdated": "Ruolo predefinito aggiornato",
   "failedSetDefaultRole": "Impossibile impostare il ruolo predefinito",
   "saveRoleBtn": "Salva ruolo",

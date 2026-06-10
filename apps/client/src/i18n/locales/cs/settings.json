@@ -172,6 +172,7 @@
   "roleDeleted": "Role byla odstraněna",
   "roleDeleteFailed": "Roli se odstranit nepodařilo",
   "roleUpdated": "Role byla aktualizována",
+  "roleUpdateFailed": "Failed to update role",
   "defaultRoleUpdated": "Výchozí role byla aktualizována",
   "failedSetDefaultRole": "Výchozí roli se nastavit nepodařilo",
   "saveRoleBtn": "Uložit roli",

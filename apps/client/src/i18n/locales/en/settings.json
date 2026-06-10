@@ -184,6 +184,7 @@
   "roleDeleted": "Role deleted",
   "roleDeleteFailed": "Failed to delete role",
   "roleUpdated": "Role updated",
+  "roleUpdateFailed": "Failed to update role",
   "defaultRoleUpdated": "Default role updated",
   "failedSetDefaultRole": "Failed to set default role",
   "saveRoleBtn": "Save Role",
