@@ -1,9 +1,10 @@
 import { openServerScreen } from '@/features/server-screens/actions';
 import { useCurrentVoiceChannelId } from '@/features/server/channels/hooks';
-import { useChannelCan } from '@/features/server/hooks';
+import { useChannelCan, useUserRoles } from '@/features/server/hooks';
 import { useOwnPublicUser } from '@/features/server/users/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
 import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
+import { resolveNameColor } from '@/helpers/resolve-name-color';
 import { cn } from '@/lib/utils';
 import { ChannelPermission } from '@sharkord/shared';
 import { Button } from '@sharkord/ui';
@@ -21,6 +22,7 @@ const UserControl = memo(() => {
   const currentVoiceChannelId = useCurrentVoiceChannelId();
   const { ownVoiceState, toggleMic, toggleSound } = useVoice();
   const channelCan = useChannelCan(currentVoiceChannelId);
+  const roles = useUserRoles(ownPublicUser?.id ?? -1);
 
   const handleSettingsClick = useCallback(() => {
     openServerScreen(ServerScreen.USER_SETTINGS);
@@ -42,7 +44,7 @@ const UserControl = memo(() => {
               <span
                 className="text-sm font-medium truncate"
                 style={{
-                  color: ownPublicUser.nicknameColor ?? undefined,
+                  color: resolveNameColor(ownPublicUser.nicknameColor, roles),
                   fontFamily: getNicknameFontFamily(ownPublicUser.nicknameFont)
                 }}
               >

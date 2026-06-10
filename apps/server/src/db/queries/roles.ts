@@ -1,33 +1,57 @@
-import type { Permission, TJoinedRole, TRole } from '@sharkord/shared';
-import { and, eq, getTableColumns, sql } from 'drizzle-orm';
+import {
+  OWNER_ROLE_ID,
+  OWNER_ROLE_POSITION,
+  type Permission,
+  type TFile,
+  type TJoinedRole,
+  type TRole
+} from '@sharkord/shared';
+import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/sqlite-core';
 import { db } from '..';
-import { rolePermissions, roles, userRoles } from '../schema';
+import { signFile } from '../../helpers/files-crypto';
+import { files, rolePermissions, roles, userRoles } from '../schema';
+import { getSettings } from './server';
+
+const iconFiles = alias(files, 'iconFiles');
+
 type TQueryResult = TRole & {
   permissions: string | null;
+  icon: TFile | null;
 };
 
 const roleSelectFields = {
   ...getTableColumns(roles),
+  icon: iconFiles,
   permissions: sql<string>`group_concat(${rolePermissions.permission}, ',')`.as(
     'permissions'
   )
 };
 
-const parseRole = (role: TQueryResult): TJoinedRole => ({
+const parseRole = (
+  role: TQueryResult,
+  signedUrlsEnabled: boolean,
+  signedUrlsTtl: number
+): TJoinedRole => ({
   ...role,
   permissions: role.permissions
     ? (role.permissions.split(',') as Permission[])
-    : []
+    : [],
+  icon: signFile(role.icon, signedUrlsEnabled, signedUrlsTtl)
 });
 
 const getDefaultRole = async (): Promise<TRole | undefined> =>
   db.select().from(roles).where(eq(roles.isDefault, true)).get();
 
 const getRole = async (roleId: number): Promise<TJoinedRole | undefined> => {
+  const { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds } =
+    await getSettings();
+
   const role = await db
     .select(roleSelectFields)
     .from(roles)
     .leftJoin(rolePermissions, sql`${roles.id} = ${rolePermissions.roleId}`)
+    .leftJoin(iconFiles, eq(roles.iconFileId, iconFiles.id))
     .where(sql`${roles.id} = ${roleId}`)
     .groupBy(roles.id)
     .limit(1)
@@ -35,17 +59,60 @@ const getRole = async (roleId: number): Promise<TJoinedRole | undefined> => {
 
   if (!role) return undefined;
 
-  return parseRole(role);
+  return parseRole(
+    role,
+    storageSignedUrlsEnabled,
+    storageSignedUrlsTtlSeconds
+  );
 };
 
 const getRoles = async (): Promise<TJoinedRole[]> => {
+  const { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds } =
+    await getSettings();
+
   const results = await db
     .select(roleSelectFields)
     .from(roles)
     .leftJoin(rolePermissions, sql`${roles.id} = ${rolePermissions.roleId}`)
-    .groupBy(roles.id);
+    .leftJoin(iconFiles, eq(roles.iconFileId, iconFiles.id))
+    .groupBy(roles.id)
+    .orderBy(desc(roles.position));
 
-  return results.map(parseRole);
+  return results.map((role) =>
+    parseRole(role, storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds)
+  );
+};
+
+// The owner role always outranks every other role; we special-case it so its
+// rank is independent of its stored numeric position.
+const getRolePosition = async (roleId: number): Promise<number> => {
+  if (roleId === OWNER_ROLE_ID) return OWNER_ROLE_POSITION;
+
+  const row = await db
+    .select({ position: roles.position })
+    .from(roles)
+    .where(eq(roles.id, roleId))
+    .limit(1)
+    .get();
+
+  return row?.position ?? 0;
+};
+
+// A user's rank is the highest position among their roles (owner wins outright).
+const getUserTopPosition = async (userId: number): Promise<number> => {
+  const userRoleRecords = await db
+    .select({ position: roles.position, id: roles.id })
+    .from(userRoles)
+    .innerJoin(roles, eq(userRoles.roleId, roles.id))
+    .where(eq(userRoles.userId, userId));
+
+  if (userRoleRecords.some((r) => r.id === OWNER_ROLE_ID)) {
+    return OWNER_ROLE_POSITION;
+  }
+
+  if (userRoleRecords.length === 0) return 0;
+
+  return Math.max(...userRoleRecords.map((r) => r.position));
 };
 
 const getUserRoleIds = async (userId: number): Promise<number[]> => {
@@ -87,6 +154,8 @@ export {
   getDefaultRole,
   getEffectiveStorageSpaceQuotaByUserId,
   getRole,
+  getRolePosition,
   getRoles,
-  getUserRoleIds
+  getUserRoleIds,
+  getUserTopPosition
 };

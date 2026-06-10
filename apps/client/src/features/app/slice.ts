@@ -27,6 +27,7 @@ export interface TAppState {
   voiceChatChannelId: number | undefined;
   pluginSlotDebug: boolean;
   modifierKeysHeldMap: Record<string, boolean>;
+  mutedRoleMentionIds: number[];
 }
 
 const initialState: TAppState = {
@@ -72,7 +73,8 @@ const initialState: TAppState = {
     LocalStorageKey.PLUGIN_SLOT_DEBUG,
     false
   ),
-  modifierKeysHeldMap: { Shift: false, Control: false, Alt: false }
+  modifierKeysHeldMap: { Shift: false, Control: false, Alt: false },
+  mutedRoleMentionIds: []
 };
 
 export const appSlice = createSlice({
@@ -164,6 +166,37 @@ export const appSlice = createSlice({
       action: PayloadAction<Record<string, boolean>>
     ) => {
       state.modifierKeysHeldMap = action.payload;
+    },
+    hydrateUserSettings: (
+      state,
+      action: PayloadAction<{
+        browserNotifications: boolean;
+        browserNotificationsForMentions: boolean;
+        browserNotificationsForDms: boolean;
+        browserNotificationsForReplies: boolean;
+        autoJoinLastChannel: boolean;
+        mutedRoleMentionIds: number[];
+      }>
+    ) => {
+      state.browserNotifications = action.payload.browserNotifications;
+      state.browserNotificationsForMentions =
+        action.payload.browserNotificationsForMentions;
+      state.browserNotificationsForDms =
+        action.payload.browserNotificationsForDms;
+      state.browserNotificationsForReplies =
+        action.payload.browserNotificationsForReplies;
+      state.autoJoinLastChannel = action.payload.autoJoinLastChannel;
+      state.mutedRoleMentionIds = action.payload.mutedRoleMentionIds;
+    },
+    setMutedRoleMention: (
+      state,
+      action: PayloadAction<{ roleId: number; muted: boolean }>
+    ) => {
+      const { roleId, muted } = action.payload;
+      const set = new Set(state.mutedRoleMentionIds);
+      if (muted) set.add(roleId);
+      else set.delete(roleId);
+      state.mutedRoleMentionIds = Array.from(set);
     }
   }
 });

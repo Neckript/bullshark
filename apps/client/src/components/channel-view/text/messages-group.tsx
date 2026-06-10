@@ -3,6 +3,8 @@ import { PluginAvatar } from '@/components/plugin-avatar';
 import { RelativeTime } from '@/components/relative-time';
 import { UserAvatar } from '@/components/user-avatar';
 import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
+import { resolveNameColor } from '@/helpers/resolve-name-color';
+import { useUserRoles } from '@/features/server/hooks';
 import { usePluginMetadata } from '@/features/server/plugins/hooks';
 import { useIsOwnUser, useUserById } from '@/features/server/users/hooks';
 import { cn } from '@/lib/utils';
@@ -44,6 +46,7 @@ const MessagesGroup = memo(
     const firstMessage = group[0];
     const pluginMetadata = usePluginMetadata(firstMessage.pluginId);
     const user = useUserById(firstMessage.userId);
+    const roles = useUserRoles(firstMessage.userId ?? -1);
     const date = new Date(firstMessage.createdAt);
     const isOwnUser = useIsOwnUser(firstMessage.userId);
     const authorName = useMessageAuthorName(firstMessage);
@@ -75,7 +78,7 @@ const MessagesGroup = memo(
               style={
                 !isDeletedUser && !isPluginMessage
                   ? {
-                      color: user?.nicknameColor ?? undefined,
+                      color: resolveNameColor(user?.nicknameColor, roles),
                       fontFamily: getNicknameFontFamily(user?.nicknameFont)
                     }
                   : undefined

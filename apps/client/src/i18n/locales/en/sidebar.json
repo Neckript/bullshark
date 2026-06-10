@@ -58,6 +58,7 @@
   "cpuEncoder": "CPU ({{encoder}})",
   "unknownEncoder": "Unknown ({{encoder}})",
   "membersHeader": "Members — {{count}}",
+  "membersDefaultGroup": "Members",
   "openDirectMessages": "Open Direct Messages",
   "closeDirectMessages": "Close Direct Messages",
   "openChat": "Open Text Chat",

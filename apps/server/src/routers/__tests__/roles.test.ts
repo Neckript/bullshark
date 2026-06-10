@@ -27,6 +27,8 @@ describe('roles router', () => {
         roleId: 2,
         name: 'Updated Role',
         color: '#ff0000',
+        hoist: false,
+        isMentionable: false,
         permissions: [Permission.SEND_MESSAGES],
         storageQuotaOverrideEnabled: false,
         storageSpaceQuota: 0
@@ -94,6 +96,8 @@ describe('roles router', () => {
       roleId,
       name: 'Updated Role Name',
       color: '#ff5500',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.SEND_MESSAGES, Permission.UPLOAD_FILES],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
@@ -121,6 +125,8 @@ describe('roles router', () => {
       roleId,
       name: 'Storage Role',
       color: '#336699',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.UPLOAD_FILES],
       storageQuotaOverrideEnabled: true,
       storageSpaceQuota: 1024 * 1024 * 1024
@@ -144,6 +150,8 @@ describe('roles router', () => {
         roleId,
         name: 'Invalid Storage Role',
         color: '#336699',
+        hoist: false,
+        isMentionable: false,
         permissions: [Permission.UPLOAD_FILES],
         storageQuotaOverrideEnabled: true,
         storageSpaceQuota: -1
@@ -158,6 +166,8 @@ describe('roles router', () => {
       roleId: 1,
       name: 'Owner',
       color: '#ff0000',
+      hoist: false,
+      isMentionable: false,
       permissions: [Permission.SEND_MESSAGES],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
@@ -266,6 +276,8 @@ describe('roles router', () => {
       roleId,
       name: 'No Permissions Role',
       color: '#000000',
+      hoist: false,
+      isMentionable: false,
       permissions: [],
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0
@@ -294,6 +306,8 @@ describe('roles router', () => {
       roleId,
       name: 'Multi Permission Role',
       color: '#00ff00',
+      hoist: false,
+      isMentionable: false,
       permissions,
       storageQuotaOverrideEnabled: false,
       storageSpaceQuota: 0

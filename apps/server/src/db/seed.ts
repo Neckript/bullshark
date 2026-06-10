@@ -2,6 +2,7 @@ import {
   ChannelType,
   DEFAULT_ROLE_PERMISSIONS,
   OWNER_ROLE_ID,
+  OWNER_ROLE_POSITION,
   Permission,
   sha256,
   STORAGE_DEFAULT_IMAGE_OPTIMIZATION_QUALITY,
@@ -132,6 +133,7 @@ const seedDatabase = async () => {
     {
       name: 'Owner',
       color: '#FFFFFF',
+      position: OWNER_ROLE_POSITION,
       isDefault: false,
       isPersistent: true,
       storageQuotaOverrideEnabled: false,
@@ -141,6 +143,7 @@ const seedDatabase = async () => {
     {
       name: 'Member',
       color: '#FFFFFF',
+      position: 0,
       isPersistent: true,
       isDefault: true,
       storageQuotaOverrideEnabled: false,

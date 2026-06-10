@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { db } from '../../db';
 import { publishUser } from '../../db/publishers';
 import { userRoles } from '../../db/schema';
+import { assertOutranksRole } from '../../helpers/assert-rank';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
 import { assertCanModifyOwnerRole } from './assert-can-modify-owner-role';
@@ -34,6 +35,7 @@ const addRoleRoute = protectedProcedure
     });
 
     await assertCanModifyOwnerRole(ctx.userId, input.roleId, 'assign');
+    await assertOutranksRole(ctx.userId, input.roleId);
 
     await db.insert(userRoles).values({
       userId: input.userId,

@@ -1,7 +1,6 @@
 import { UserAvatar } from '@/components/user-avatar';
 import { useRoleById } from '@/features/server/roles/hooks';
 import { useUserById } from '@/features/server/users/hooks';
-import { getTRPCClient } from '@/lib/trpc';
 import { ChannelPermission, getTrpcError } from '@sharkord/shared';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sharkord/ui';
 import { Trash2 } from 'lucide-react';
@@ -9,7 +8,7 @@ import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ChannelPermissionList } from './channel-permission-list';
-import type { TChannelPermission } from './types';
+import type { TChannelPermission, TPermissionActions } from './types';
 
 type TUserHeaderProps = {
   userId: number;
@@ -41,7 +40,7 @@ const RoleHeader = memo(({ roleId }: TRoleHeaderProps) => {
     <div className="flex items-center gap-3">
       <div
         className="h-6 w-6 rounded-full"
-        style={{ backgroundColor: role.color }}
+        style={{ backgroundColor: role.color ?? '#6b7280' }}
       />
       <CardTitle>{role.name}</CardTitle>
     </div>
@@ -49,7 +48,7 @@ const RoleHeader = memo(({ roleId }: TRoleHeaderProps) => {
 });
 
 type TOverrideProps = {
-  channelId: number;
+  actions: TPermissionActions;
   overrideId: string; // Format: "role-{id}" or "user-{id}"
   permissions: TChannelPermission[];
   setSelectedOverrideId: (id: string | undefined) => void;
@@ -58,7 +57,7 @@ type TOverrideProps = {
 
 const Override = memo(
   ({
-    channelId,
+    actions,
     overrideId,
     permissions,
     setSelectedOverrideId,
@@ -72,21 +71,10 @@ const Override = memo(
     const isRole = overrideType === 'role';
 
     const onDeleteOverride = useCallback(async () => {
-      const trpc = getTRPCClient();
-
       try {
-        const payload = {};
+        const target = isRole ? { roleId: targetId } : { userId: targetId };
 
-        if (isRole) {
-          Object.assign(payload, { roleId: targetId });
-        } else {
-          Object.assign(payload, { userId: targetId });
-        }
-
-        await trpc.channels.deletePermissions.mutate({
-          ...payload,
-          channelId
-        });
+        await actions.deleteOverride(target);
 
         toast.success(t('permissionOverrideDeleted'));
         setSelectedOverrideId(undefined);
@@ -95,35 +83,24 @@ const Override = memo(
       } catch (error) {
         toast.error(getTrpcError(error, t('failedDeletePermissionOverride')));
       }
-    }, [channelId, isRole, targetId, setSelectedOverrideId, refetch, t]);
+    }, [actions, isRole, targetId, setSelectedOverrideId, refetch, t]);
 
     const onUpdateOverride = useCallback(async () => {
-      const trpc = getTRPCClient();
-
       try {
-        const payload = { channelId };
-
-        if (isRole) {
-          Object.assign(payload, { roleId: targetId });
-        } else {
-          Object.assign(payload, { userId: targetId });
-        }
+        const target = isRole ? { roleId: targetId } : { userId: targetId };
 
         const allowedPermissions = localPermissions
           .filter((perm) => perm.allow)
           .map((perm) => perm.permission);
 
-        await trpc.channels.updatePermissions.mutate({
-          ...payload,
-          permissions: allowedPermissions
-        });
+        await actions.updateOverride(target, allowedPermissions);
 
         toast.success(t('permissionOverrideUpdated'));
         await refetch();
       } catch (error) {
         toast.error(getTrpcError(error, t('failedUpdatePermissionOverride')));
       }
-    }, [channelId, isRole, targetId, localPermissions, refetch, t]);
+    }, [actions, isRole, targetId, localPermissions, refetch, t]);
 
     const onTogglePermission = useCallback((permission: ChannelPermission) => {
       setLocalPermissions((prevPermissions) =>

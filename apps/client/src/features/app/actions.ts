@@ -9,6 +9,10 @@ import type { TMessageJumpToTarget } from '@/types';
 import type { TServerInfo } from '@sharkord/shared';
 import { toast } from 'sonner';
 import { markChannelAsRead, setInfo } from '../server/actions';
+import {
+  clearUserSetting,
+  writeUserSetting
+} from '../server/user-settings/actions';
 import { store } from '../store';
 import {
   pluginSlotDebugSelector,
@@ -139,6 +143,7 @@ export const setAutoJoinLastChannel = (autoJoin: boolean) => {
   store.dispatch(appSliceActions.setAutoJoinLastChannel(autoJoin));
 
   setLocalStorageItemBool(LocalStorageKey.AUTO_JOIN_LAST_CHANNEL, autoJoin);
+  void writeUserSetting('auto_join_last_channel', autoJoin);
 };
 
 export const setSelectedDmChannelId = (channelId: number | undefined) =>
@@ -151,6 +156,7 @@ export const setBrowserNotifications = async (enabled: boolean) => {
 
   store.dispatch(appSliceActions.setBrowserNotifications(enabled));
   setLocalStorageItemBool(LocalStorageKey.BROWSER_NOTIFICATIONS, enabled);
+  void writeUserSetting('browser_notifications', enabled);
 };
 
 export const setBrowserNotificationsForMentions = async (enabled: boolean) => {
@@ -163,6 +169,7 @@ export const setBrowserNotificationsForMentions = async (enabled: boolean) => {
     LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_MENTIONS,
     enabled
   );
+  void writeUserSetting('browser_notifications_mentions', enabled);
 };
 
 export const setBrowserNotificationsForDms = async (enabled: boolean) => {
@@ -175,6 +182,7 @@ export const setBrowserNotificationsForDms = async (enabled: boolean) => {
     LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_DMS,
     enabled
   );
+  void writeUserSetting('browser_notifications_dms', enabled);
 };
 
 export const setBrowserNotificationsForReplies = async (enabled: boolean) => {
@@ -187,6 +195,19 @@ export const setBrowserNotificationsForReplies = async (enabled: boolean) => {
     LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_REPLIES,
     enabled
   );
+  void writeUserSetting('browser_notifications_replies', enabled);
+};
+
+export const setRoleMentionMuted = (roleId: number, muted: boolean) => {
+  store.dispatch(appSliceActions.setMutedRoleMention({ roleId, muted }));
+
+  const key = `muted_role_mention:${roleId}`;
+
+  if (muted) {
+    void writeUserSetting(key, true);
+  } else {
+    void clearUserSetting(key);
+  }
 };
 
 export const setMessageJumpTarget = (

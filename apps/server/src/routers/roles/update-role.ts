@@ -11,6 +11,7 @@ import { db } from '../../db';
 import { syncRolePermissions } from '../../db/mutations/roles';
 import { publishRole } from '../../db/publishers';
 import { roles } from '../../db/schema';
+import { assertOutranksRole } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { protectedProcedure } from '../../utils/trpc';
 
@@ -22,6 +23,8 @@ const updateRoleRoute = protectedProcedure
       color: z
         .string()
         .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Invalid hex color'),
+      hoist: z.boolean(),
+      isMentionable: z.boolean(),
       permissions: z.enum(Permission).array(),
       storageQuotaOverrideEnabled: z.boolean(),
       storageSpaceQuota: z
@@ -32,12 +35,15 @@ const updateRoleRoute = protectedProcedure
   )
   .mutation(async ({ ctx, input }) => {
     await ctx.needsPermission(Permission.MANAGE_ROLES);
+    await assertOutranksRole(ctx.userId, input.roleId);
 
     const updatedRole = await db
       .update(roles)
       .set({
         name: input.name,
         color: input.color,
+        hoist: input.hoist,
+        isMentionable: input.isMentionable,
         storageQuotaOverrideEnabled: input.storageQuotaOverrideEnabled,
         storageSpaceQuota: input.storageSpaceQuota
       })

@@ -5,6 +5,7 @@ import { useIsOwnUser, useUserById } from '@/features/server/users/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
 import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
+import { resolveNameColor } from '@/helpers/resolve-name-color';
 import { useDateLocale } from '@/hooks/use-date-locale';
 import { getTRPCClient } from '@/lib/trpc';
 import {
@@ -109,7 +110,7 @@ const UserPopover = memo(({ userId, children }: TUserPopoverProps) => {
               <span
                 className="text-lg font-semibold truncate"
                 style={{
-                  color: user.nicknameColor ?? undefined,
+                  color: resolveNameColor(user.nicknameColor, roles),
                   fontFamily: getNicknameFontFamily(user.nicknameFont)
                 }}
               >

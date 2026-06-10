@@ -78,3 +78,34 @@ describe('has-mention', () => {
     expect(hasMention(content, 123)).toBe(true);
   });
 });
+
+describe('has-mention — role mentions', () => {
+  const roleChip = (id: number) =>
+    `<p><span data-type="mention-role" data-role-id="${id}">@role</span></p>`;
+
+  test('matches a role mention when the user holds the role and it is not muted', () => {
+    expect(hasMention(roleChip(5), 1, [5], [])).toBe(true);
+  });
+
+  test('does not match when the role is muted', () => {
+    expect(hasMention(roleChip(5), 1, [5], [5])).toBe(false);
+  });
+
+  test('does not match a role the user does not hold', () => {
+    expect(hasMention(roleChip(5), 1, [9], [])).toBe(false);
+  });
+
+  test('does not match a role mention with no role ids passed', () => {
+    expect(hasMention(roleChip(5), 1)).toBe(false);
+  });
+
+  test('still matches a direct user mention regardless of role args', () => {
+    const content =
+      '<p><span data-type="mention" data-user-id="1">@user</span></p>';
+    expect(hasMention(content, 1, [], [5])).toBe(true);
+  });
+
+  test('does not match a role id as a substring', () => {
+    expect(hasMention(roleChip(12), 1, [1], [])).toBe(false);
+  });
+});

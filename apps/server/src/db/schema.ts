@@ -120,6 +120,14 @@ const roles = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
     color: text('color').notNull().default('#ffffff'),
+    position: integer('position').notNull().default(0),
+    hoist: integer('hoist', { mode: 'boolean' }).notNull().default(false),
+    iconFileId: integer('icon_file_id').references(() => files.id, {
+      onDelete: 'set null'
+    }),
+    isMentionable: integer('is_mentionable', { mode: 'boolean' })
+      .notNull()
+      .default(false),
     isPersistent: integer('is_persistent', { mode: 'boolean' }).notNull(),
     isDefault: integer('is_default', { mode: 'boolean' }).notNull(),
     storageQuotaOverrideEnabled: integer('storage_quota_override_enabled', {
@@ -133,7 +141,9 @@ const roles = sqliteTable(
   },
   (t) => [
     index('roles_is_default_idx').on(t.isDefault),
-    index('roles_is_persistent_idx').on(t.isPersistent)
+    index('roles_is_persistent_idx').on(t.isPersistent),
+    index('roles_position_idx').on(t.position),
+    index('roles_hoist_idx').on(t.hoist)
   ]
 );
 
@@ -480,6 +490,48 @@ const channelUserPermissions = sqliteTable(
   ]
 );
 
+const categoryRolePermissions = sqliteTable(
+  'category_role_permissions',
+  {
+    categoryId: integer('category_id')
+      .notNull()
+      .references(() => categories.id, { onDelete: 'cascade' }),
+    roleId: integer('role_id')
+      .notNull()
+      .references(() => roles.id, { onDelete: 'cascade' }),
+    permission: text('permission').notNull(),
+    allow: integer('allow', { mode: 'boolean' }).notNull(),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at')
+  },
+  (t) => [
+    primaryKey({ columns: [t.categoryId, t.roleId, t.permission] }),
+    index('category_role_permissions_category_idx').on(t.categoryId),
+    index('category_role_permissions_role_idx').on(t.roleId)
+  ]
+);
+
+const categoryUserPermissions = sqliteTable(
+  'category_user_permissions',
+  {
+    categoryId: integer('category_id')
+      .notNull()
+      .references(() => categories.id, { onDelete: 'cascade' }),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    permission: text('permission').notNull(),
+    allow: integer('allow', { mode: 'boolean' }).notNull(),
+    createdAt: integer('created_at').notNull(),
+    updatedAt: integer('updated_at')
+  },
+  (t) => [
+    primaryKey({ columns: [t.categoryId, t.userId, t.permission] }),
+    index('category_user_permissions_category_idx').on(t.categoryId),
+    index('category_user_permissions_user_idx').on(t.userId)
+  ]
+);
+
 const channelReadStates = sqliteTable(
   'channel_read_states',
   {
@@ -534,9 +586,27 @@ const pluginData = sqliteTable('plugin_data', {
     .default({})
 });
 
+const userSettings = sqliteTable(
+  'user_settings',
+  {
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    key: text('key').notNull(),
+    value: text('value').notNull(),
+    updatedAt: integer('updated_at').notNull()
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.key] }),
+    index('user_settings_user_idx').on(t.userId)
+  ]
+);
+
 export {
   activityLog,
   categories,
+  categoryRolePermissions,
+  categoryUserPermissions,
   channelReadStates,
   channelRolePermissions,
   channels,
@@ -554,5 +624,6 @@ export {
   roles,
   settings,
   userRoles,
-  users
+  users,
+  userSettings
 };

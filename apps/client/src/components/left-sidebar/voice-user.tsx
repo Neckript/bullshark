@@ -2,7 +2,9 @@ import { NicknameBadge } from '@/components/nickname-badge';
 import { UserAvatar } from '@/components/user-avatar';
 import { useStreamVolumeControl } from '@/components/voice-provider/hooks/use-stream-volume-control';
 import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
+import { resolveNameColor } from '@/helpers/resolve-name-color';
 import type { TVoiceUser } from '@/features/server/types';
+import { useUserRoles } from '@/features/server/hooks';
 import { useIsOwnUser } from '@/features/server/users/hooks';
 import { useSpeakingState } from '@/features/server/voice/hooks';
 import { cn } from '@sharkord/ui';
@@ -29,6 +31,7 @@ const VoiceUser = memo(({ user, isOwnChannel = false }: TVoiceUserProps) => {
   const isOwnUser = useIsOwnUser(user.id);
   const { isMuted } = useStreamVolumeControl({ type: 'user', userId: user.id });
   const { isActivelySpeaking, speakingEffectClass } = useSpeakingState(user.id);
+  const roles = useUserRoles(user.id);
   const shouldShowMuteIndicator = isOwnChannel && !isOwnUser && isMuted;
 
   const userRow = (
@@ -43,7 +46,7 @@ const VoiceUser = memo(({ user, isOwnChannel = false }: TVoiceUserProps) => {
       <span
         className="flex-1 truncate text-xs"
         style={{
-          color: user.nicknameColor ?? undefined,
+          color: resolveNameColor(user.nicknameColor, roles),
           fontFamily: getNicknameFontFamily(user.nicknameFont)
         }}
       >

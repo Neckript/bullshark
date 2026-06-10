@@ -55,6 +55,8 @@
   "channel": {
     "VIEW_CHANNEL": "View Channel",
     "SEND_MESSAGES": "Send Messages",
+    "ADD_REACTIONS": "Add Reactions",
+    "ATTACH_FILES": "Attach Files",
     "JOIN": "Join Channel",
     "SPEAK": "Speak",
     "SHARE_SCREEN": "Share Screen",
@@ -63,6 +65,8 @@
   "channelDescriptions": {
     "VIEW_CHANNEL": "Allows the user to view the channel.",
     "SEND_MESSAGES": "Allows the user to send messages.",
+    "ADD_REACTIONS": "Allows the user to react to messages.",
+    "ATTACH_FILES": "Allows the user to attach files to messages.",
     "JOIN": "Allows the user to join the channel.",
     "SPEAK": "Allows the user to speak in voice channels.",
     "SHARE_SCREEN": "Allows the user to share their screen.",

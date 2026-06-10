@@ -1,6 +1,8 @@
 import { useCustomEmojis } from '@/features/server/emojis/hooks';
+import { useCan } from '@/features/server/hooks';
+import { useRoles } from '@/features/server/roles/hooks';
 import { useFilteredUsers } from '@/features/server/users/hooks';
-import { TestId, type TCommandInfo } from '@sharkord/shared';
+import { Permission, TestId, type TCommandInfo } from '@sharkord/shared';
 import Emoji, { gitHubEmojis } from '@tiptap/extension-emoji';
 import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
@@ -22,6 +24,7 @@ import { SlashCommands } from './extensions/commands/slash-commands-extension';
 import { EmojiSuggestion } from './extensions/emojis/suggestions';
 import { Mention } from './extensions/mentions';
 import { MentionNode } from './extensions/mentions/node';
+import { MentionRoleNode } from './extensions/mentions/role-node';
 import {
   MENTION_STORAGE_KEY,
   MentionSuggestion
@@ -73,6 +76,14 @@ const TiptapInput = memo(
 
     const customEmojis = useCustomEmojis();
     const users = useFilteredUsers();
+    const roles = useRoles();
+    const can = useCan();
+    const canManageRoles = can(Permission.MANAGE_ROLES);
+    const mentionableRoles = useMemo(
+      () =>
+        canManageRoles ? roles : roles.filter((role) => role.isMentionable),
+      [roles, canManageRoles]
+    );
 
     const extensions = useMemo(() => {
       const exts = [
@@ -106,9 +117,11 @@ const TiptapInput = memo(
         }),
         Mention.configure({
           users,
+          roles: mentionableRoles,
           suggestion: MentionSuggestion
         }),
         MentionNode,
+        MentionRoleNode,
         PluginCommandNode
       ];
 
@@ -123,7 +136,7 @@ const TiptapInput = memo(
       }
 
       return exts;
-    }, [customEmojis, commands, users]);
+    }, [customEmojis, commands, users, mentionableRoles]);
 
     const editor = useEditor({
       extensions,
@@ -250,19 +263,20 @@ const TiptapInput = memo(
       }
     }, [editor, commands]);
 
-    // keep mention users storage in sync with the users from the store
+    // keep mention users/roles storage in sync with the store
     useEffect(() => {
       if (editor) {
         const storage = editor.storage as unknown as Record<
           string,
-          { users?: typeof users }
+          { users?: typeof users; roles?: typeof mentionableRoles }
         >;
 
         if (storage[MENTION_STORAGE_KEY]) {
           storage[MENTION_STORAGE_KEY].users = users;
+          storage[MENTION_STORAGE_KEY].roles = mentionableRoles;
         }
       }
-    }, [editor, users]);
+    }, [editor, users, mentionableRoles]);
 
     useEffect(() => {
       if (editor && value !== undefined) {

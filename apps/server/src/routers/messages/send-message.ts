@@ -114,6 +114,11 @@ const sendMessageRoute = rateLimitedProcedure(protectedProcedure, {
     );
 
     if (limitedFiles.length > 0) {
+      await ctx.needsChannelPermission(
+        input.channelId,
+        ChannelPermission.ATTACH_FILES
+      );
+
       invariant(settings.storageUploadEnabled, {
         code: 'FORBIDDEN',
         message: 'File uploads are disabled on this server'

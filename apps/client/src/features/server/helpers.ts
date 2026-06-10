@@ -24,7 +24,9 @@ const canViewChannel = (
 const hasUnreadMentionInMessages = (
   unreadCount: number,
   messages: { content?: string | null }[],
-  ownUserId: number | undefined
+  ownUserId: number | undefined,
+  ownRoleIds: number[] = [],
+  mutedRoleMentionIds: number[] = []
 ) => {
   if (unreadCount <= 0 || messages.length === 0 || ownUserId === undefined) {
     return false;
@@ -35,7 +37,12 @@ const hasUnreadMentionInMessages = (
   return unreadMessages.some((message) => {
     if (!message.content) return false;
 
-    return hasMention(message.content, ownUserId);
+    return hasMention(
+      message.content,
+      ownUserId,
+      ownRoleIds,
+      mutedRoleMentionIds
+    );
   });
 };
 

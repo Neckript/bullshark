@@ -4,6 +4,7 @@ import z from 'zod';
 import { db } from '../../db';
 import { publishUser } from '../../db/publishers';
 import { users } from '../../db/schema';
+import { assertOutranksUser } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
@@ -22,6 +23,8 @@ const banRoute = protectedProcedure
       code: 'BAD_REQUEST',
       message: 'You cannot ban yourself.'
     });
+
+    await assertOutranksUser(ctx.userId, input.userId);
 
     const userWs = ctx.getUserWs(input.userId);
 

@@ -2,6 +2,7 @@ import {
   useAdminChannelGeneral,
   useAdminChannelPermissions
 } from '@/features/server/admin/hooks';
+import { getTRPCClient } from '@/lib/trpc';
 import { ChannelPermission } from '@sharkord/shared';
 import {
   Alert,
@@ -19,7 +20,7 @@ import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Override } from './override';
 import { OverridesList } from './overrides-list';
-import type { TChannelPermission } from './types';
+import type { TChannelPermission, TPermissionActions } from './types';
 
 type TChannelPermissionsProps = {
   channelId: number;
@@ -33,6 +34,32 @@ const ChannelPermissions = memo(({ channelId }: TChannelPermissionsProps) => {
   const { channel } = useAdminChannelGeneral(channelId);
   const { rolePermissions, userPermissions, loading, refetch } =
     useAdminChannelPermissions(channelId);
+
+  const actions = useMemo<TPermissionActions>(
+    () => ({
+      createOverride: async (target) => {
+        await getTRPCClient().channels.updatePermissions.mutate({
+          channelId,
+          ...target,
+          isCreate: true
+        });
+      },
+      updateOverride: async (target, permissions) => {
+        await getTRPCClient().channels.updatePermissions.mutate({
+          channelId,
+          ...target,
+          permissions
+        });
+      },
+      deleteOverride: async (target) => {
+        await getTRPCClient().channels.deletePermissions.mutate({
+          channelId,
+          ...target
+        });
+      }
+    }),
+    [channelId]
+  );
 
   const selectedPermissions = useMemo<TChannelPermission[]>(() => {
     if (!selectedOverrideId) return [];
@@ -79,7 +106,7 @@ const ChannelPermissions = memo(({ channelId }: TChannelPermissionsProps) => {
       <CardContent>
         <div className="flex gap-6">
           <OverridesList
-            channelId={channelId}
+            actions={actions}
             rolePermissions={rolePermissions}
             userPermissions={userPermissions}
             selectedOverrideId={selectedOverrideId}
@@ -90,7 +117,7 @@ const ChannelPermissions = memo(({ channelId }: TChannelPermissionsProps) => {
           {selectedOverrideId ? (
             <Override
               key={selectedOverrideId}
-              channelId={channelId}
+              actions={actions}
               overrideId={selectedOverrideId}
               permissions={selectedPermissions}
               setSelectedOverrideId={setSelectedOverrideId}

@@ -23,13 +23,20 @@ type TNicknameBadgeProps = {
  * Pill showing the highest-priority role name next to a username.
  * Returns null when the user has no roles.
  */
+// Neutral fallback when the highest role has no colour set.
+const DEFAULT_BADGE_COLOR = '#6b7280';
+
 const NicknameBadge = memo(({ userId, size = 'md' }: TNicknameBadgeProps) => {
   const roles = useUserRoles(userId);
-  const topRole = roles[0];
+  const sortedRoles = [...roles].sort((a, b) => b.position - a.position);
+  const topRole = sortedRoles[0];
 
   if (!topRole) return null;
 
-  const bg = topRole.color;
+  const bg =
+    topRole.color ??
+    sortedRoles.find((role) => role.color)?.color ??
+    DEFAULT_BADGE_COLOR;
   const fg = getContrastColor(bg);
 
   return (

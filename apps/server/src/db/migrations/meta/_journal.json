@@ -134,6 +134,34 @@
       "when": 1780405254991,
       "tag": "0018_material_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1780918063536,
+      "tag": "0019_lame_blue_shield",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1781013115756,
+      "tag": "0020_awesome_wendigo",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1781014120700,
+      "tag": "0021_same_krista_starr",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "6",
+      "when": 1781077082063,
+      "tag": "0022_mixed_midnight",
+      "breakpoints": true
     }
   ]
 }
