@@ -2,6 +2,7 @@ import { parseDomCommand } from '@sharkord/shared';
 import { Element, type DOMNode } from 'html-react-parser';
 import { CommandOverride } from '../overrides/command';
 import { MentionOverride } from '../overrides/mention';
+import { MentionRoleOverride } from '../overrides/mention-role';
 import { YoutubeOverride } from '../overrides/youtube';
 import { getYoutubeInfo } from './helpers';
 
@@ -33,6 +34,17 @@ const serializer = (domNode: DOMNode, messageId: number) => {
 
       if (!Number.isNaN(userId)) {
         return <MentionOverride userId={userId} />;
+      }
+    } else if (
+      domNode instanceof Element &&
+      domNode.name === 'span' &&
+      domNode.attribs['data-type'] === 'mention-role' &&
+      domNode.attribs['data-role-id']
+    ) {
+      const roleId = parseInt(domNode.attribs['data-role-id'], 10);
+
+      if (!Number.isNaN(roleId)) {
+        return <MentionRoleOverride roleId={roleId} />;
       }
     }
   } catch (error) {

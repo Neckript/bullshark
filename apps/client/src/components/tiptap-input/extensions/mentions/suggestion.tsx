@@ -1,7 +1,9 @@
 import { UserAvatar } from '@/components/user-avatar';
+import { getFileUrl } from '@/helpers/get-file-url';
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
+import { isNoColor } from '@/helpers/resolve-name-color';
 import { computePosition } from '@floating-ui/dom';
-import type { TJoinedPublicUser } from '@sharkord/shared';
+import type { TJoinedPublicUser, TJoinedRole } from '@sharkord/shared';
 import type { Editor } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
 import {
@@ -14,16 +16,20 @@ import {
 
 const MENTION_STORAGE_KEY = 'mentionUsers';
 
-type TUserListProps = {
-  items: TJoinedPublicUser[];
-  onSelect: (item: TJoinedPublicUser) => void;
+export type TMentionItem =
+  | { type: 'user'; id: number; user: TJoinedPublicUser }
+  | { type: 'role'; id: number; role: TJoinedRole };
+
+type TMentionListProps = {
+  items: TMentionItem[];
+  onSelect: (item: TMentionItem) => void;
 };
 
-export type TUserListRef = {
+export type TMentionListRef = {
   onKeyDown: (event: KeyboardEvent) => boolean;
 };
 
-const UserList = forwardRef<TUserListRef, TUserListProps>(
+const MentionList = forwardRef<TMentionListRef, TMentionListProps>(
   ({ items, onSelect }, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -74,11 +80,11 @@ const UserList = forwardRef<TUserListRef, TUserListProps>(
       <div
         className="bg-popover text-popover-foreground border rounded-md shadow-md min-w-[16rem] max-w-88 max-h-60 overflow-y-auto p-1 z-50"
         role="listbox"
-        aria-label="Mention user"
+        aria-label="Mention"
       >
         {items.map((item, index) => (
           <button
-            key={item.id}
+            key={`${item.type}-${item.id}`}
             type="button"
             role="option"
             aria-selected={index === selectedIndex}
@@ -87,10 +93,43 @@ const UserList = forwardRef<TUserListRef, TUserListProps>(
             }`}
             onClick={() => onSelect(item)}
           >
-            <UserAvatar userId={item.id} className="h-6 w-6 shrink-0" />
-            <span className="font-medium truncate">
-              {getRenderedUsername(item)}
-            </span>
+            {item.type === 'user' ? (
+              <>
+                <UserAvatar userId={item.id} className="h-6 w-6 shrink-0" />
+                <span className="font-medium truncate">
+                  {getRenderedUsername(item.user)}
+                </span>
+              </>
+            ) : (
+              <>
+                {item.role.icon ? (
+                  <img
+                    src={getFileUrl(item.role.icon)}
+                    alt=""
+                    className="h-6 w-6 shrink-0 rounded-sm object-cover"
+                  />
+                ) : (
+                  <span
+                    className="h-3 w-3 ml-1.5 mr-1.5 shrink-0 rounded-full"
+                    style={{
+                      backgroundColor: isNoColor(item.role.color)
+                        ? 'currentColor'
+                        : item.role.color
+                    }}
+                  />
+                )}
+                <span
+                  className="font-medium truncate"
+                  style={
+                    isNoColor(item.role.color)
+                      ? undefined
+                      : { color: item.role.color }
+                  }
+                >
+                  @{item.role.name}
+                </span>
+              </>
+            )}
           </button>
         ))}
       </div>
@@ -127,7 +166,7 @@ type TSuggestionProps = {
   editor: Editor;
   query: string;
   clientRect?: (() => DOMRect | null) | null;
-  command: (item: TJoinedPublicUser) => void;
+  command: (item: TMentionItem) => void;
 };
 
 const MentionSuggestion = {
@@ -137,21 +176,26 @@ const MentionSuggestion = {
   }: {
     editor: Editor;
     query: string;
-  }): TJoinedPublicUser[] => {
-    const users: TJoinedPublicUser[] =
-      (
-        editor.storage as unknown as Record<
-          string,
-          { users?: TJoinedPublicUser[] }
-        >
-      )[MENTION_STORAGE_KEY]?.users ?? [];
+  }): TMentionItem[] => {
+    const storage = (
+      editor.storage as unknown as Record<
+        string,
+        { users?: TJoinedPublicUser[]; roles?: TJoinedRole[] }
+      >
+    )[MENTION_STORAGE_KEY];
 
-    if (!query) return users.slice(0, 10);
+    const users = storage?.users ?? [];
+    const roles = storage?.roles ?? [];
 
     const q = query.toLowerCase();
 
-    return users
-      .filter((u) => getRenderedUsername(u).toLowerCase().includes(q))
+    const roleItems: TMentionItem[] = roles
+      .filter((r) => !q || r.name.toLowerCase().includes(q))
+      .sort((a, b) => b.position - a.position)
+      .map((role) => ({ type: 'role', id: role.id, role }));
+
+    const userItems: TMentionItem[] = users
+      .filter((u) => !q || getRenderedUsername(u).toLowerCase().includes(q))
       .sort((a, b) => {
         const aName = getRenderedUsername(a).toLowerCase();
         const bName = getRenderedUsername(b).toLowerCase();
@@ -164,7 +208,10 @@ const MentionSuggestion = {
 
         return aS && bS ? aName.length - bName.length : 0;
       })
-      .slice(0, 10);
+      .map((user) => ({ type: 'user', id: user.id, user }));
+
+    // Roles first (fewer, intentional pings), then users; capped at 10.
+    return [...roleItems, ...userItems].slice(0, 10);
   },
   allowSpaces: false,
   render: () => {
@@ -175,14 +222,14 @@ const MentionSuggestion = {
           editor: props.editor,
           query: props.query
         });
-        const onSelect = (item: TJoinedPublicUser) => {
+        const onSelect = (item: TMentionItem) => {
           props.command(item);
 
           cleanup(component);
 
           component = null;
         };
-        component = new ReactRenderer(UserList, {
+        component = new ReactRenderer(MentionList, {
           props: { items, onSelect },
           editor: props.editor
         });
@@ -202,7 +249,7 @@ const MentionSuggestion = {
         });
         component?.updateProps({
           items,
-          onSelect: (item: TJoinedPublicUser) => {
+          onSelect: (item: TMentionItem) => {
             props.command(item);
 
             cleanup(component);
@@ -217,7 +264,7 @@ const MentionSuggestion = {
         }
       },
       onKeyDown(props: { event: KeyboardEvent }) {
-        const ref = component?.ref as TUserListRef | undefined;
+        const ref = component?.ref as TMentionListRef | undefined;
 
         return ref?.onKeyDown(props.event) ?? false;
       },
