@@ -623,6 +623,41 @@ export const useAdminChannelPermissions = (channelId: number) => {
   };
 };
 
+export const useAdminCategoryPermissions = (categoryId: number) => {
+  const [loading, setLoading] = useState(true);
+  const [rolePermissions, setRolePermissions] = useState<
+    TChannelRolePermission[]
+  >([]);
+  const [userPermissions, setUserPermissions] = useState<
+    TChannelUserPermission[]
+  >([]);
+
+  const fetchPermissions = useCallback(async () => {
+    setLoading(true);
+
+    const trpc = getTRPCClient();
+    const { rolePermissions, userPermissions } =
+      await trpc.categories.getPermissions.mutate({ categoryId });
+
+    // Category rows are structurally identical for what the overrides editor
+    // reads (roleId/userId/permission/allow); only the FK column differs.
+    setRolePermissions(rolePermissions as unknown as TChannelRolePermission[]);
+    setUserPermissions(userPermissions as unknown as TChannelUserPermission[]);
+    setLoading(false);
+  }, [categoryId]);
+
+  useEffect(() => {
+    fetchPermissions();
+  }, [fetchPermissions]);
+
+  return {
+    rolePermissions,
+    userPermissions,
+    refetch: fetchPermissions,
+    loading
+  };
+};
+
 export const useAdminUserInfo = (userId: number) => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<TJoinedUser | null>(null);

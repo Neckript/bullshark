@@ -1,7 +1,6 @@
 import { useRoleById } from '@/features/server/roles/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { getInitialsFromName } from '@/helpers/get-initials-from-name';
-import { getTRPCClient } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import type {
   TChannelRolePermission,
@@ -21,7 +20,7 @@ import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { SearchPopover } from './search-popover';
-import type { TChannelPermissionType } from './types';
+import type { TChannelPermissionType, TPermissionActions } from './types';
 
 type TRoleItemProps = {
   roleId: number;
@@ -165,7 +164,7 @@ const UsersSection = memo(
 );
 
 type TOverridesListProps = {
-  channelId: number;
+  actions: TPermissionActions;
   rolePermissions: TChannelRolePermission[];
   userPermissions: TChannelUserPermission[];
   selectedOverrideId: string | undefined;
@@ -178,7 +177,7 @@ const OverridesList = memo(
     rolePermissions,
     userPermissions,
     selectedOverrideId,
-    channelId,
+    actions,
     setSelectedOverrideId,
     refetch
   }: TOverridesListProps) => {
@@ -197,23 +196,11 @@ const OverridesList = memo(
 
     const onSelect = useCallback(
       async (type: TChannelPermissionType, targetId: number) => {
-        const trpc = getTRPCClient();
-
         try {
-          const payload = {
-            channelId
-          };
+          const target =
+            type === 'role' ? { roleId: targetId } : { userId: targetId };
 
-          if (type === 'role') {
-            Object.assign(payload, { roleId: targetId });
-          } else {
-            Object.assign(payload, { userId: targetId });
-          }
-
-          await trpc.channels.updatePermissions.mutate({
-            ...payload,
-            isCreate: true
-          });
+          await actions.createOverride(target);
 
           toast.success(t('permissionOverrideAdded'));
 
@@ -224,7 +211,7 @@ const OverridesList = memo(
           toast.error(getTrpcError(error, t('failedAddPermissionOverride')));
         }
       },
-      [channelId, setSelectedOverrideId, refetch, t]
+      [actions, setSelectedOverrideId, refetch, t]
     );
 
     return (
