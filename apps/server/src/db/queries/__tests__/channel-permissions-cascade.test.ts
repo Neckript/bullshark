@@ -1,7 +1,7 @@
 import { ChannelPermission, ChannelType } from '@sharkord/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest } from '../../../__tests__/helpers';
-import { getAllChannelUserPermissions } from '../channels';
+import { channelUserCan, getAllChannelUserPermissions } from '../channels';
 
 // role 2 = default "Member"; user 2 has role 2 (see seed.ts)
 const MEMBER_ROLE_ID = 2;
@@ -101,5 +101,42 @@ describe('channel permission cascade — getAllChannelUserPermissions', () => {
     expect(perms[channelId]?.permissions[ChannelPermission.VIEW_CHANNEL]).toBe(
       false
     );
+  });
+});
+
+describe('channel permission cascade — channelUserCan (private channel)', () => {
+  test('private channel is visible via inherited category VIEW_CHANNEL', async () => {
+    const { caller: owner } = await initTest(1);
+    const categoryId = await owner.categories.add({ name: 'Cat' });
+    const channelId = await owner.channels.add({
+      type: ChannelType.TEXT,
+      name: 'secret',
+      categoryId
+    });
+    await owner.channels.update({ channelId, private: true });
+
+    // before any override: member cannot view
+    expect(
+      await channelUserCan(
+        channelId,
+        MEMBER_USER_ID,
+        ChannelPermission.VIEW_CHANNEL
+      )
+    ).toBe(false);
+
+    // category grants VIEW_CHANNEL to the member role
+    await owner.categories.updatePermissions({
+      categoryId,
+      roleId: MEMBER_ROLE_ID,
+      permissions: [ChannelPermission.VIEW_CHANNEL]
+    });
+
+    expect(
+      await channelUserCan(
+        channelId,
+        MEMBER_USER_ID,
+        ChannelPermission.VIEW_CHANNEL
+      )
+    ).toBe(true);
   });
 });

@@ -83,6 +83,86 @@ const getPermissions = async (
     rolePermissionMap.set(perm.channelId, existing || perm.allow);
   }
 
+  // Live category inheritance: fill channels that have no channel-level
+  // override for this permission with their category's override.
+  const channelRows = await db
+    .select({ id: channels.id, categoryId: channels.categoryId })
+    .from(channels)
+    .where(channelId ? eq(channels.id, channelId) : undefined);
+
+  const categoryIds = channelRows
+    .map((c) => c.categoryId)
+    .filter((id): id is number => id != null);
+
+  const categoryUserMap = new Map<number, boolean>();
+  const categoryRoleMap = new Map<number, boolean>();
+
+  if (categoryIds.length > 0) {
+    const categoryUserPerms = await db
+      .select({
+        categoryId: categoryUserPermissions.categoryId,
+        allow: categoryUserPermissions.allow
+      })
+      .from(categoryUserPermissions)
+      .where(
+        and(
+          eq(categoryUserPermissions.userId, userId),
+          eq(categoryUserPermissions.permission, permission),
+          inArray(categoryUserPermissions.categoryId, categoryIds)
+        )
+      );
+
+    for (const perm of categoryUserPerms) {
+      categoryUserMap.set(perm.categoryId, perm.allow);
+    }
+
+    if (roleIds.length > 0) {
+      const categoryRolePerms = await db
+        .select({
+          categoryId: categoryRolePermissions.categoryId,
+          allow: categoryRolePermissions.allow
+        })
+        .from(categoryRolePermissions)
+        .where(
+          and(
+            inArray(categoryRolePermissions.roleId, roleIds),
+            eq(categoryRolePermissions.permission, permission),
+            inArray(categoryRolePermissions.categoryId, categoryIds)
+          )
+        );
+
+      for (const perm of categoryRolePerms) {
+        const existing = categoryRoleMap.get(perm.categoryId);
+
+        categoryRoleMap.set(perm.categoryId, existing || perm.allow);
+      }
+    }
+  }
+
+  for (const channel of channelRows) {
+    if (channel.categoryId == null) continue;
+
+    if (
+      !userPermissionMap.has(channel.id) &&
+      categoryUserMap.has(channel.categoryId)
+    ) {
+      userPermissionMap.set(
+        channel.id,
+        categoryUserMap.get(channel.categoryId)!
+      );
+    }
+
+    if (
+      !rolePermissionMap.has(channel.id) &&
+      categoryRoleMap.has(channel.categoryId)
+    ) {
+      rolePermissionMap.set(
+        channel.id,
+        categoryRoleMap.get(channel.categoryId)!
+      );
+    }
+  }
+
   return { userPermissionMap, rolePermissionMap };
 };
 
