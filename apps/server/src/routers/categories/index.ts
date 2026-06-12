@@ -1,6 +1,5 @@
 import { t } from '../../utils/trpc';
 import { addCategoryRoute } from './add-category';
-import { applyPermissionsRoute } from './apply-permissions';
 import { deleteCategoryRoute } from './delete-category';
 import { deletePermissionsRoute } from './delete-permissions';
 import {
@@ -23,7 +22,6 @@ export const categoriesRouter = t.router({
   updatePermissions: updatePermissionsRoute,
   getPermissions: getPermissionsRoute,
   deletePermissions: deletePermissionsRoute,
-  applyPermissionsToChannels: applyPermissionsRoute,
   onCreate: onCategoryCreateRoute,
   onDelete: onCategoryDeleteRoute,
   onUpdate: onCategoryUpdateRoute

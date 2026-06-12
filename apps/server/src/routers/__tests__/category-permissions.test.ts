@@ -39,40 +39,6 @@ describe('category permissions', () => {
   });
 });
 
-describe('category permissions — apply to channels', () => {
-  test('copies category overrides onto child channels, replacing theirs', async () => {
-    const { caller: owner } = await initTest(1);
-    const categoryId = await owner.categories.add({ name: 'Cat' });
-    const channelId = await owner.channels.add({
-      type: ChannelType.TEXT,
-      name: 'general',
-      categoryId
-    });
-
-    // give the channel a stale override that should be wiped
-    await owner.channels.updatePermissions({
-      channelId,
-      roleId: 2,
-      permissions: []
-    });
-    // category allows VIEW_CHANNEL for role 2
-    await owner.categories.updatePermissions({
-      categoryId,
-      roleId: 2,
-      permissions: [ChannelPermission.VIEW_CHANNEL]
-    });
-
-    await owner.categories.applyPermissionsToChannels({ categoryId });
-
-    const perms = await owner.channels.getPermissions({ channelId });
-    const view = perms.rolePermissions.find(
-      (p) => p.roleId === 2 && p.permission === ChannelPermission.VIEW_CHANNEL
-    );
-
-    expect(view?.allow).toBe(true);
-  });
-});
-
 describe('category permissions — live inheritance', () => {
   test('a channel in a category inherits effective perms without copying rows', async () => {
     const { caller: owner } = await initTest(1);
