@@ -4,12 +4,10 @@ import type {
   TChannelPermission,
   TPermissionActions
 } from '@/components/server-screens/channel-settings/permissions/types';
-import { requestConfirmation } from '@/features/dialogs/actions';
 import { useAdminCategoryPermissions } from '@/features/server/admin/hooks';
 import { getTRPCClient } from '@/lib/trpc';
-import { ChannelPermission, getTrpcError } from '@sharkord/shared';
+import { ChannelPermission } from '@sharkord/shared';
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -17,9 +15,8 @@ import {
   CardTitle,
   LoadingCard
 } from '@sharkord/ui';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 
 type TCategoryPermissionsProps = {
   categoryId: number;
@@ -83,25 +80,6 @@ const CategoryPermissions = memo(
         }));
     }, [selectedOverrideId, rolePermissions, userPermissions]);
 
-    const onApplyToChannels = useCallback(async () => {
-      const confirmed = await requestConfirmation({
-        title: t('applyCategoryPermsConfirmTitle'),
-        message: t('applyCategoryPermsConfirmBody'),
-        confirmLabel: t('applyCategoryPermsButton')
-      });
-
-      if (!confirmed) return;
-
-      try {
-        await getTRPCClient().categories.applyPermissionsToChannels.mutate({
-          categoryId
-        });
-        toast.success(t('applyCategoryPermsSuccess'));
-      } catch (error) {
-        toast.error(getTrpcError(error, t('applyCategoryPermsFailed')));
-      }
-    }, [categoryId, t]);
-
     if (loading) {
       return <LoadingCard className="h-[600px]" />;
     }
@@ -109,16 +87,9 @@ const CategoryPermissions = memo(
     return (
       <Card>
         <CardHeader>
-          <div className="flex items-start justify-between gap-4">
-            <div className="space-y-1.5">
-              <CardTitle>{t('permissionsTitle')}</CardTitle>
-              <CardDescription>
-                {t('categoryPermissionsDesc')}
-              </CardDescription>
-            </div>
-            <Button variant="outline" onClick={onApplyToChannels}>
-              {t('applyCategoryPermsButton')}
-            </Button>
+          <div className="space-y-1.5">
+            <CardTitle>{t('permissionsTitle')}</CardTitle>
+            <CardDescription>{t('categoryPermissionsDesc')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
