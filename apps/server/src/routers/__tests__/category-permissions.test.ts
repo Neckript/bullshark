@@ -1,6 +1,7 @@
 import { ChannelPermission, ChannelType } from '@sharkord/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest } from '../../__tests__/helpers';
+import { getAllChannelUserPermissions } from '../../db/queries/channels';
 
 describe('category permissions', () => {
   test('updatePermissions then getPermissions round-trips for a role', async () => {
@@ -72,8 +73,8 @@ describe('category permissions — apply to channels', () => {
   });
 });
 
-describe('category permissions — inheritance on create', () => {
-  test('a channel created in a category inherits its overrides', async () => {
+describe('category permissions — live inheritance', () => {
+  test('a channel in a category inherits effective perms without copying rows', async () => {
     const { caller: owner } = await initTest(1);
     const categoryId = await owner.categories.add({ name: 'Cat' });
     await owner.categories.updatePermissions({
@@ -87,17 +88,19 @@ describe('category permissions — inheritance on create', () => {
       name: 'inherits',
       categoryId
     });
-    const perms = await owner.channels.getPermissions({ channelId });
 
+    // No channel-level rows are created (inheritance is live, not copied).
+    const channelPerms = await owner.channels.getPermissions({ channelId });
+    expect(channelPerms.rolePermissions.length).toBe(0);
+
+    // Effective resolution reflects the category override.
+    const effective = await getAllChannelUserPermissions(2);
     expect(
-      perms.rolePermissions.find(
-        (p) =>
-          p.roleId === 2 && p.permission === ChannelPermission.VIEW_CHANNEL
-      )?.allow
+      effective[channelId]?.permissions[ChannelPermission.VIEW_CHANNEL]
     ).toBe(true);
   });
 
-  test('a channel created in a category with no overrides inherits nothing', async () => {
+  test('a channel in a category with no overrides resolves to defaults', async () => {
     const { caller: owner } = await initTest(1);
     const categoryId = await owner.categories.add({ name: 'Empty' });
 
@@ -106,8 +109,13 @@ describe('category permissions — inheritance on create', () => {
       name: 'orphan',
       categoryId
     });
-    const perms = await owner.channels.getPermissions({ channelId });
+    const channelPerms = await owner.channels.getPermissions({ channelId });
 
-    expect(perms.rolePermissions.length).toBe(0);
+    expect(channelPerms.rolePermissions.length).toBe(0);
+
+    const effective = await getAllChannelUserPermissions(2);
+    expect(
+      effective[channelId]?.permissions[ChannelPermission.VIEW_CHANNEL]
+    ).toBe(false);
   });
 });
