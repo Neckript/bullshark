@@ -9,6 +9,8 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '..';
 import { getOnlineUserIds } from '../../utils/wss';
 import {
+  categoryRolePermissions,
+  categoryUserPermissions,
   channelReadStates,
   channelRolePermissions,
   channels,
@@ -195,6 +197,29 @@ const getAllChannelUserPermissions = async (
       .where(inArray(channelRolePermissions.roleId, roleIds));
   }
 
+  // Category-level overrides (the live-inheritance source).
+  const categoryUserPerms = await db
+    .select({
+      categoryId: categoryUserPermissions.categoryId,
+      permission: categoryUserPermissions.permission,
+      allow: categoryUserPermissions.allow
+    })
+    .from(categoryUserPermissions)
+    .where(eq(categoryUserPermissions.userId, userId));
+
+  let categoryRolePerms: typeof categoryUserPerms = [];
+
+  if (roleIds.length > 0) {
+    categoryRolePerms = await db
+      .select({
+        categoryId: categoryRolePermissions.categoryId,
+        permission: categoryRolePermissions.permission,
+        allow: categoryRolePermissions.allow
+      })
+      .from(categoryRolePermissions)
+      .where(inArray(categoryRolePermissions.roleId, roleIds));
+  }
+
   const userPermMap = new Map<number, Map<ChannelPermission, boolean>>();
 
   for (const perm of userPermissions) {
@@ -217,7 +242,38 @@ const getAllChannelUserPermissions = async (
     const channelMap = rolePermMap.get(perm.channelId)!;
     const existing = channelMap.get(perm.permission as ChannelPermission);
 
-    channelMap.set(
+    channelMap.set(perm.permission as ChannelPermission, existing || perm.allow);
+  }
+
+  const categoryUserPermMap = new Map<
+    number,
+    Map<ChannelPermission, boolean>
+  >();
+
+  for (const perm of categoryUserPerms) {
+    if (!categoryUserPermMap.has(perm.categoryId)) {
+      categoryUserPermMap.set(perm.categoryId, new Map());
+    }
+
+    categoryUserPermMap
+      .get(perm.categoryId)!
+      .set(perm.permission as ChannelPermission, perm.allow);
+  }
+
+  const categoryRolePermMap = new Map<
+    number,
+    Map<ChannelPermission, boolean>
+  >();
+
+  for (const perm of categoryRolePerms) {
+    if (!categoryRolePermMap.has(perm.categoryId)) {
+      categoryRolePermMap.set(perm.categoryId, new Map());
+    }
+
+    const categoryMap = categoryRolePermMap.get(perm.categoryId)!;
+    const existing = categoryMap.get(perm.permission as ChannelPermission);
+
+    categoryMap.set(
       perm.permission as ChannelPermission,
       existing || perm.allow
     );
@@ -231,21 +287,46 @@ const getAllChannelUserPermissions = async (
   > = {};
 
   for (const channel of allChannels) {
+    const categoryId = channel.categoryId;
     const permissions: Record<string, boolean> = {};
 
     for (const permissionType of allPermissionTypes) {
-      const userPerm = userPermMap.get(channel.id)?.get(permissionType);
+      // type-first cascade:
+      // channel-user > category-user > channel-role > category-role > false
+      const channelUser = userPermMap.get(channel.id)?.get(permissionType);
 
-      if (userPerm !== undefined) {
-        permissions[permissionType] = userPerm;
+      if (channelUser !== undefined) {
+        permissions[permissionType] = channelUser;
 
         continue;
       }
 
-      const rolePerm = rolePermMap.get(channel.id)?.get(permissionType);
+      const categoryUser =
+        categoryId != null
+          ? categoryUserPermMap.get(categoryId)?.get(permissionType)
+          : undefined;
 
-      if (rolePerm !== undefined) {
-        permissions[permissionType] = rolePerm;
+      if (categoryUser !== undefined) {
+        permissions[permissionType] = categoryUser;
+
+        continue;
+      }
+
+      const channelRole = rolePermMap.get(channel.id)?.get(permissionType);
+
+      if (channelRole !== undefined) {
+        permissions[permissionType] = channelRole;
+
+        continue;
+      }
+
+      const categoryRole =
+        categoryId != null
+          ? categoryRolePermMap.get(categoryId)?.get(permissionType)
+          : undefined;
+
+      if (categoryRole !== undefined) {
+        permissions[permissionType] = categoryRole;
 
         continue;
       }
