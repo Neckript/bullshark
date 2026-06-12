@@ -1,7 +1,11 @@
 import { ChannelPermission, ChannelType } from '@sharkord/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest } from '../../../__tests__/helpers';
-import { channelUserCan, getAllChannelUserPermissions } from '../channels';
+import {
+  channelUserCan,
+  getAllChannelUserPermissions,
+  getAffectedUserIdsForCategoryTarget
+} from '../channels';
 
 // role 2 = default "Member"; user 2 has role 2 (see seed.ts)
 const MEMBER_ROLE_ID = 2;
@@ -138,5 +142,26 @@ describe('channel permission cascade — channelUserCan (private channel)', () =
         ChannelPermission.VIEW_CHANNEL
       )
     ).toBe(true);
+  });
+});
+
+describe('getAffectedUserIdsForCategoryTarget', () => {
+  test('returns all members of a role', async () => {
+    await initTest(1);
+
+    const ids = await getAffectedUserIdsForCategoryTarget({
+      roleId: MEMBER_ROLE_ID
+    });
+
+    // users 2, 3, 4 all have the default member role (see seed.ts)
+    expect(ids.sort()).toEqual([2, 3, 4]);
+  });
+
+  test('returns the single user for a user target', async () => {
+    await initTest(1);
+
+    const ids = await getAffectedUserIdsForCategoryTarget({ userId: 4 });
+
+    expect(ids).toEqual([4]);
   });
 });

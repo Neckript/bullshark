@@ -599,6 +599,36 @@ const getAffectedOnlineUserIdsForChannel = async (
   return onlineAffectedUserIds;
 };
 
+const getAffectedUserIdsForCategoryTarget = async (target: {
+  userId?: number;
+  roleId?: number;
+}): Promise<number[]> => {
+  if (target.userId) {
+    return [target.userId];
+  }
+
+  if (target.roleId) {
+    const rows = await db
+      .select({ userId: userRoles.userId })
+      .from(userRoles)
+      .where(eq(userRoles.roleId, target.roleId));
+
+    return rows.map((r) => r.userId);
+  }
+
+  return [];
+};
+
+const getAffectedOnlineUserIdsForCategoryTarget = async (target: {
+  userId?: number;
+  roleId?: number;
+}): Promise<number[]> => {
+  const affectedUserIds = await getAffectedUserIdsForCategoryTarget(target);
+  const onlineUserIds = getOnlineUserIds();
+
+  return affectedUserIds.filter((userId) => onlineUserIds.includes(userId));
+};
+
 const getChannelsReadStatesForUser = async (
   userId: number,
   channelId?: number
@@ -662,7 +692,9 @@ const getChannelsReadStatesForUser = async (
 
 export {
   channelUserCan,
+  getAffectedOnlineUserIdsForCategoryTarget,
   getAffectedOnlineUserIdsForChannel,
+  getAffectedUserIdsForCategoryTarget,
   getAffectedUserIdsForChannel,
   getAllChannelUserPermissions,
   getChannelsForUser,
