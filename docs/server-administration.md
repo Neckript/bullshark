@@ -67,11 +67,20 @@ same database file):
 (il partage le même fichier de base de données) :
 
 ```bash
-docker exec -u bun bullshark /sharkord --new-owner-token
+docker exec -u bun -e HOME=/home/bun sharkord /sharkord --new-owner-token
 ```
 
-> Replace `bullshark` with your container name. / Remplace `bullshark` par le nom
-> de ton conteneur.
+> **EN** — Replace `sharkord` with your container name (`docker ps` to find it). The
+> `-u bun -e HOME=/home/bun` part matters: without it the command runs as `root`
+> (`HOME=/root`) and would target an empty `/root/.config/sharkord` database instead
+> of your server's. Do **not** use the from-source command below for a Dockerized
+> server — it targets a different (dev) database.
+>
+> **FR** — Remplace `sharkord` par le nom de ton conteneur (`docker ps` pour le
+> trouver). Le `-u bun -e HOME=/home/bun` est important : sans ça la commande tourne
+> en `root` (`HOME=/root`) et viserait une base vide `/root/.config/sharkord` au lieu
+> de celle de ton serveur. N'utilise **pas** la commande « depuis les sources »
+> ci-dessous pour un serveur Docker — elle vise une autre base (celle de dev).
 
 ### From source (development) / Depuis les sources (développement)
 

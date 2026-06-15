@@ -91,7 +91,7 @@ docker run \
   -p 4991:4991/tcp \
   -p 40000:40000/tcp \
   -p 40000:40000/udp \
-  -v ./data:/home/bun/.config/bullshark \
+  -v ./data:/home/bun/.config/sharkord \
   --name bullshark \
   ghcr.io/neckript/bullshark:latest
 ```
@@ -118,9 +118,17 @@ démarrer le serveur) :
 # Native binary / Binaire natif
 ./bullshark --new-owner-token
 
-# Docker
-docker exec -u bun bullshark /sharkord --new-owner-token
+# Docker (replace "sharkord" with your container name — see `docker ps`)
+# Docker (remplace "sharkord" par le nom de ton conteneur — voir `docker ps`)
+docker exec -u bun -e HOME=/home/bun sharkord /sharkord --new-owner-token
 ```
+
+> ⚠️ For a Dockerized server, always run it **inside the container** as above — do
+> **not** run `bun src/index.ts --new-owner-token` from the source tree (it targets a
+> different, dev database, not your container's).  
+> ⚠️ Pour un serveur Docker, lance-le toujours **dans le conteneur** comme ci-dessus —
+> n'utilise **pas** `bun src/index.ts --new-owner-token` depuis les sources (ça vise
+> une autre base, celle de dev, pas celle de ton conteneur).
 
 See [docs/server-administration.md](./docs/server-administration.md) for the full
 owner-token lifecycle, the security model, and upgrade notes.  
