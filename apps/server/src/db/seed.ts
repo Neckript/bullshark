@@ -25,7 +25,7 @@ import {
 import { randomUUIDv7 } from 'bun';
 import chalk from 'chalk';
 import { logger } from '../logger';
-import { IS_DEVELOPMENT } from '../utils/env';
+import { generateOwnerToken, hashOwnerToken } from '../helpers/owner-token';
 import { db } from './index';
 import {
   categories,
@@ -46,7 +46,10 @@ const seedDatabase = async () => {
   logger.debug('Seeding initial database values...');
 
   const firstStart = Date.now();
-  const originalToken = IS_DEVELOPMENT ? 'dev' : randomUUIDv7();
+  // Owner-claim token: always CSPRNG, never a constant (audit C1). Printed once below.
+  const originalToken = generateOwnerToken();
+  // Crypto secret (JWT signing + file HMAC): independent CSPRNG value (audit M3).
+  const cryptoSecret = generateOwnerToken();
 
   const initialSettings: TISettings = {
     name: 'sharkord Server',
@@ -55,7 +58,8 @@ const seedDatabase = async () => {
     password: '',
     onlyAskForPasswordOnFirstJoin: false,
     serverId: Bun.randomUUIDv7(),
-    secretToken: await sha256(originalToken),
+    secretToken: await sha256(cryptoSecret),
+    ownerClaimTokenHash: await hashOwnerToken(originalToken),
     allowNewUsers: true,
     directMessagesEnabled: true,
     storageUploadEnabled: true,
