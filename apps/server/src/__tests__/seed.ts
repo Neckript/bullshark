@@ -71,6 +71,7 @@ const seedTestDb = async (db: BunSQLiteDatabase) => {
     onlyAskForPasswordOnFirstJoin: false,
     serverId: randomUUIDv7(),
     secretToken: await sha256(TEST_SECRET_TOKEN),
+    ownerClaimTokenHash: await sha256(TEST_SECRET_TOKEN),
     allowNewUsers: true,
     directMessagesEnabled: true,
     storageUploadEnabled: true,

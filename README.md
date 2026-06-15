@@ -91,7 +91,7 @@ docker run \
   -p 4991:4991/tcp \
   -p 40000:40000/tcp \
   -p 40000:40000/udp \
-  -v ./data:/home/bun/.config/bullshark \
+  -v ./data:/home/bun/.config/sharkord \
   --name bullshark \
   ghcr.io/neckript/bullshark:latest
 ```
@@ -99,8 +99,41 @@ docker run \
 Puis ouvre `http://localhost:4991` dans ton navigateur.  
 Then open `http://localhost:4991` in your browser.
 
-> ⚠️ On first launch, Bullshark prints an owner token in the console. This is your master key — store it securely.  
-> ⚠️ Au premier lancement, Bullshark affiche un token admin dans la console. C'est ta clé maître — garde-la précieusement.
+> ⚠️ On first launch, Bullshark prints an **owner token** in the console. This is your master key — store it securely. Paste it in the web UI ("secret token" prompt) to become the server owner.  
+> ⚠️ Au premier lancement, Bullshark affiche un **token owner** dans la console. C'est ta clé maître — garde-la précieusement. Colle-la dans l'interface web (invite « secret token ») pour devenir owner du serveur.
+
+---
+
+## Server administration / Administration du serveur
+
+**EN** — Lost the owner token, or need to revoke it? Regenerate one with the
+`--new-owner-token` flag (it prints a fresh token, invalidates the old one, and
+exits without starting the server):
+
+**FR** — Token owner perdu, ou besoin de le révoquer ? Régénères-en un avec le flag
+`--new-owner-token` (il affiche un nouveau token, invalide l'ancien, et sort sans
+démarrer le serveur) :
+
+```bash
+# Native binary / Binaire natif
+./bullshark --new-owner-token
+
+# Docker (replace "sharkord" with your container name — see `docker ps`)
+# Docker (remplace "sharkord" par le nom de ton conteneur — voir `docker ps`)
+docker exec -u bun -e HOME=/home/bun sharkord /sharkord --new-owner-token
+```
+
+> ⚠️ For a Dockerized server, always run it **inside the container** as above — do
+> **not** run `bun src/index.ts --new-owner-token` from the source tree (it targets a
+> different, dev database, not your container's).  
+> ⚠️ Pour un serveur Docker, lance-le toujours **dans le conteneur** comme ci-dessus —
+> n'utilise **pas** `bun src/index.ts --new-owner-token` depuis les sources (ça vise
+> une autre base, celle de dev, pas celle de ton conteneur).
+
+See [docs/server-administration.md](./docs/server-administration.md) for the full
+owner-token lifecycle, the security model, and upgrade notes.  
+Voir [docs/server-administration.md](./docs/server-administration.md) pour le cycle
+de vie complet du token owner, le modèle de sécurité et les notes de mise à jour.
 
 ---
 

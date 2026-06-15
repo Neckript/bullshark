@@ -9,6 +9,8 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import { db } from '..';
 import { getOnlineUserIds } from '../../utils/wss';
 import {
+  categoryRolePermissions,
+  categoryUserPermissions,
   channelReadStates,
   channelRolePermissions,
   channels,
@@ -79,6 +81,86 @@ const getPermissions = async (
     const existing = rolePermissionMap.get(perm.channelId);
 
     rolePermissionMap.set(perm.channelId, existing || perm.allow);
+  }
+
+  // Live category inheritance: fill channels that have no channel-level
+  // override for this permission with their category's override.
+  const channelRows = await db
+    .select({ id: channels.id, categoryId: channels.categoryId })
+    .from(channels)
+    .where(channelId ? eq(channels.id, channelId) : undefined);
+
+  const categoryIds = channelRows
+    .map((c) => c.categoryId)
+    .filter((id): id is number => id != null);
+
+  const categoryUserMap = new Map<number, boolean>();
+  const categoryRoleMap = new Map<number, boolean>();
+
+  if (categoryIds.length > 0) {
+    const categoryUserPerms = await db
+      .select({
+        categoryId: categoryUserPermissions.categoryId,
+        allow: categoryUserPermissions.allow
+      })
+      .from(categoryUserPermissions)
+      .where(
+        and(
+          eq(categoryUserPermissions.userId, userId),
+          eq(categoryUserPermissions.permission, permission),
+          inArray(categoryUserPermissions.categoryId, categoryIds)
+        )
+      );
+
+    for (const perm of categoryUserPerms) {
+      categoryUserMap.set(perm.categoryId, perm.allow);
+    }
+
+    if (roleIds.length > 0) {
+      const categoryRolePerms = await db
+        .select({
+          categoryId: categoryRolePermissions.categoryId,
+          allow: categoryRolePermissions.allow
+        })
+        .from(categoryRolePermissions)
+        .where(
+          and(
+            inArray(categoryRolePermissions.roleId, roleIds),
+            eq(categoryRolePermissions.permission, permission),
+            inArray(categoryRolePermissions.categoryId, categoryIds)
+          )
+        );
+
+      for (const perm of categoryRolePerms) {
+        const existing = categoryRoleMap.get(perm.categoryId);
+
+        categoryRoleMap.set(perm.categoryId, existing || perm.allow);
+      }
+    }
+  }
+
+  for (const channel of channelRows) {
+    if (channel.categoryId == null) continue;
+
+    if (
+      !userPermissionMap.has(channel.id) &&
+      categoryUserMap.has(channel.categoryId)
+    ) {
+      userPermissionMap.set(
+        channel.id,
+        categoryUserMap.get(channel.categoryId)!
+      );
+    }
+
+    if (
+      !rolePermissionMap.has(channel.id) &&
+      categoryRoleMap.has(channel.categoryId)
+    ) {
+      rolePermissionMap.set(
+        channel.id,
+        categoryRoleMap.get(channel.categoryId)!
+      );
+    }
   }
 
   return { userPermissionMap, rolePermissionMap };
@@ -195,6 +277,29 @@ const getAllChannelUserPermissions = async (
       .where(inArray(channelRolePermissions.roleId, roleIds));
   }
 
+  // Category-level overrides (the live-inheritance source).
+  const categoryUserPerms = await db
+    .select({
+      categoryId: categoryUserPermissions.categoryId,
+      permission: categoryUserPermissions.permission,
+      allow: categoryUserPermissions.allow
+    })
+    .from(categoryUserPermissions)
+    .where(eq(categoryUserPermissions.userId, userId));
+
+  let categoryRolePerms: typeof categoryUserPerms = [];
+
+  if (roleIds.length > 0) {
+    categoryRolePerms = await db
+      .select({
+        categoryId: categoryRolePermissions.categoryId,
+        permission: categoryRolePermissions.permission,
+        allow: categoryRolePermissions.allow
+      })
+      .from(categoryRolePermissions)
+      .where(inArray(categoryRolePermissions.roleId, roleIds));
+  }
+
   const userPermMap = new Map<number, Map<ChannelPermission, boolean>>();
 
   for (const perm of userPermissions) {
@@ -217,7 +322,38 @@ const getAllChannelUserPermissions = async (
     const channelMap = rolePermMap.get(perm.channelId)!;
     const existing = channelMap.get(perm.permission as ChannelPermission);
 
-    channelMap.set(
+    channelMap.set(perm.permission as ChannelPermission, existing || perm.allow);
+  }
+
+  const categoryUserPermMap = new Map<
+    number,
+    Map<ChannelPermission, boolean>
+  >();
+
+  for (const perm of categoryUserPerms) {
+    if (!categoryUserPermMap.has(perm.categoryId)) {
+      categoryUserPermMap.set(perm.categoryId, new Map());
+    }
+
+    categoryUserPermMap
+      .get(perm.categoryId)!
+      .set(perm.permission as ChannelPermission, perm.allow);
+  }
+
+  const categoryRolePermMap = new Map<
+    number,
+    Map<ChannelPermission, boolean>
+  >();
+
+  for (const perm of categoryRolePerms) {
+    if (!categoryRolePermMap.has(perm.categoryId)) {
+      categoryRolePermMap.set(perm.categoryId, new Map());
+    }
+
+    const categoryMap = categoryRolePermMap.get(perm.categoryId)!;
+    const existing = categoryMap.get(perm.permission as ChannelPermission);
+
+    categoryMap.set(
       perm.permission as ChannelPermission,
       existing || perm.allow
     );
@@ -231,21 +367,46 @@ const getAllChannelUserPermissions = async (
   > = {};
 
   for (const channel of allChannels) {
+    const categoryId = channel.categoryId;
     const permissions: Record<string, boolean> = {};
 
     for (const permissionType of allPermissionTypes) {
-      const userPerm = userPermMap.get(channel.id)?.get(permissionType);
+      // type-first cascade:
+      // channel-user > category-user > channel-role > category-role > false
+      const channelUser = userPermMap.get(channel.id)?.get(permissionType);
 
-      if (userPerm !== undefined) {
-        permissions[permissionType] = userPerm;
+      if (channelUser !== undefined) {
+        permissions[permissionType] = channelUser;
 
         continue;
       }
 
-      const rolePerm = rolePermMap.get(channel.id)?.get(permissionType);
+      const categoryUser =
+        categoryId != null
+          ? categoryUserPermMap.get(categoryId)?.get(permissionType)
+          : undefined;
 
-      if (rolePerm !== undefined) {
-        permissions[permissionType] = rolePerm;
+      if (categoryUser !== undefined) {
+        permissions[permissionType] = categoryUser;
+
+        continue;
+      }
+
+      const channelRole = rolePermMap.get(channel.id)?.get(permissionType);
+
+      if (channelRole !== undefined) {
+        permissions[permissionType] = channelRole;
+
+        continue;
+      }
+
+      const categoryRole =
+        categoryId != null
+          ? categoryRolePermMap.get(categoryId)?.get(permissionType)
+          : undefined;
+
+      if (categoryRole !== undefined) {
+        permissions[permissionType] = categoryRole;
 
         continue;
       }
@@ -438,6 +599,36 @@ const getAffectedOnlineUserIdsForChannel = async (
   return onlineAffectedUserIds;
 };
 
+const getAffectedUserIdsForCategoryTarget = async (target: {
+  userId?: number;
+  roleId?: number;
+}): Promise<number[]> => {
+  if (target.userId) {
+    return [target.userId];
+  }
+
+  if (target.roleId) {
+    const rows = await db
+      .select({ userId: userRoles.userId })
+      .from(userRoles)
+      .where(eq(userRoles.roleId, target.roleId));
+
+    return rows.map((r) => r.userId);
+  }
+
+  return [];
+};
+
+const getAffectedOnlineUserIdsForCategoryTarget = async (target: {
+  userId?: number;
+  roleId?: number;
+}): Promise<number[]> => {
+  const affectedUserIds = await getAffectedUserIdsForCategoryTarget(target);
+  const onlineUserIds = getOnlineUserIds();
+
+  return affectedUserIds.filter((userId) => onlineUserIds.includes(userId));
+};
+
 const getChannelsReadStatesForUser = async (
   userId: number,
   channelId?: number
@@ -501,7 +692,9 @@ const getChannelsReadStatesForUser = async (
 
 export {
   channelUserCan,
+  getAffectedOnlineUserIdsForCategoryTarget,
   getAffectedOnlineUserIdsForChannel,
+  getAffectedUserIdsForCategoryTarget,
   getAffectedUserIdsForChannel,
   getAllChannelUserPermissions,
   getChannelsForUser,

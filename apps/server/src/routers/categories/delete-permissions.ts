@@ -2,10 +2,12 @@ import { Permission } from '@sharkord/shared';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
+import { publishChannelPermissions } from '../../db/publishers';
 import {
   categoryRolePermissions,
   categoryUserPermissions
 } from '../../db/schema';
+import { getAffectedOnlineUserIdsForCategoryTarget } from '../../db/queries/channels';
 import { protectedProcedure } from '../../utils/trpc';
 
 const deletePermissionsRoute = protectedProcedure
@@ -47,6 +49,13 @@ const deletePermissionsRoute = protectedProcedure
           );
       }
     });
+
+    const affectedUserIds = await getAffectedOnlineUserIdsForCategoryTarget({
+      userId: input.userId,
+      roleId: input.roleId
+    });
+
+    publishChannelPermissions(affectedUserIds);
   });
 
 export { deletePermissionsRoute };

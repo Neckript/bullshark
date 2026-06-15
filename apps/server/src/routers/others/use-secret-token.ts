@@ -1,13 +1,32 @@
 import { OWNER_ROLE_ID, sha256 } from '@sharkord/shared';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { db } from '../../db';
 import { publishUser } from '../../db/publishers';
 import { getSettings } from '../../db/queries/server';
 import { userRoles } from '../../db/schema';
 import { invariant } from '../../utils/invariant';
-import { protectedProcedure } from '../../utils/trpc';
+import { rateLimitedProcedure, protectedProcedure } from '../../utils/trpc';
 
-const useSecretTokenRoute = protectedProcedure
+// Constant-time comparison of sha256(token) against the stored owner-claim hash.
+const ownerTokenMatches = async (
+  token: string,
+  storedHash: string | null
+): Promise<boolean> => {
+  if (!storedHash) return false;
+
+  const provided = await sha256(token);
+
+  if (provided.length !== storedHash.length) return false;
+
+  return crypto.timingSafeEqual(Buffer.from(provided), Buffer.from(storedHash));
+};
+
+const useSecretTokenRoute = rateLimitedProcedure(protectedProcedure, {
+  maxRequests: 5,
+  windowMs: 60_000,
+  logLabel: 'useSecretToken'
+})
   .input(
     z.object({
       token: z.string()
@@ -15,9 +34,13 @@ const useSecretTokenRoute = protectedProcedure
   )
   .mutation(async ({ input, ctx }) => {
     const settings = await getSettings();
-    const hashedToken = await sha256(input.token);
 
-    invariant(hashedToken === settings.secretToken, {
+    const matches = await ownerTokenMatches(
+      input.token,
+      settings.ownerClaimTokenHash
+    );
+
+    invariant(matches, {
       code: 'FORBIDDEN',
       message: 'Invalid secret token'
     });
@@ -31,4 +54,4 @@ const useSecretTokenRoute = protectedProcedure
     publishUser(ctx.userId, 'update');
   });
 
-export { useSecretTokenRoute };
+export { ownerTokenMatches, useSecretTokenRoute };

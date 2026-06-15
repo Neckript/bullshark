@@ -190,6 +190,7 @@ describe('others router', () => {
 
     expect(settings.password).toBe('');
     expect(settings.secretToken).toBe('');
+    expect(settings.ownerClaimTokenHash).toBe('');
   });
 
   test('should throw when user lacks permissions (update settings)', async () => {

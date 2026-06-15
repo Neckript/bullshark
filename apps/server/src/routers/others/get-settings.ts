@@ -8,7 +8,7 @@ const getSettingsRoute = protectedProcedure.query(async ({ ctx }) => {
 
   const settings = await getSettings();
 
-  return clearFields(settings, ['password', 'secretToken', 'klipyApiKey']);
+  return clearFields(settings, ['password', 'secretToken', 'klipyApiKey', 'ownerClaimTokenHash']);
 });
 
 export { getSettingsRoute };
