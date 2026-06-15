@@ -22,6 +22,12 @@ import { printDebug } from './utils/print-debug';
 import './utils/updater';
 
 await loadDb();
+
+if (process.argv.includes('--new-owner-token')) {
+  const { newOwnerTokenCli } = await import('./cli/new-owner-token');
+  await newOwnerTokenCli(); // prints the token and process.exit()s
+}
+
 await pluginManager.loadPlugins();
 await createServers();
 await loadMediasoup();
