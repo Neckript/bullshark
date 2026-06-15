@@ -99,8 +99,8 @@ docker run \
 Puis ouvre `http://localhost:4991` dans ton navigateur.  
 Then open `http://localhost:4991` in your browser.
 
-> ⚠️ On first launch, Bullshark prints an **owner token** in the console. This is your master key — store it securely. Paste it in the web UI ("secret token" prompt) to become the server owner.  
-> ⚠️ Au premier lancement, Bullshark affiche un **token owner** dans la console. C'est ta clé maître — garde-la précieusement. Colle-la dans l'interface web (invite « secret token ») pour devenir owner du serveur.
+> ⚠️ On first launch, Bullshark prints an **owner token** in the console. This is your master key — store it securely. To use it: log in, open the browser DevTools Console (`F12`) and run `await useToken("THE_TOKEN")` — see [docs/server-administration.md](./docs/server-administration.md).  
+> ⚠️ Au premier lancement, Bullshark affiche un **token owner** dans la console. C'est ta clé maître — garde-la précieusement. Pour l'utiliser : connecte-toi, ouvre la Console des DevTools (`F12`) et lance `await useToken("LE_TOKEN")` — voir [docs/server-administration.md](./docs/server-administration.md).
 
 ---
 
