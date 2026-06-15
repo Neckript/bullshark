@@ -28,15 +28,36 @@ zBwdbBl9byuW03HMdYCkBW2pqUPuT_0VP946Gy4ESNM
 ────────────────────────────────────────────────────
 ```
 
-**EN** — Paste this token in the web UI (the "secret token" prompt) to grant your
-account the **Owner** role. Anyone holding it can take over the server, so store
-it like a password. The server only ever keeps a SHA-256 **hash** of it — the
-plaintext is shown once and never again.
+**EN** — To claim the **Owner** role, log in with your account, open the browser
+DevTools **Console** (`F12`), and run:
 
-**FR** — Colle ce token dans l'interface web (l'invite « secret token ») pour
-attribuer le rôle **Owner** à ton compte. Quiconque le détient peut prendre le
-contrôle du serveur : garde-le comme un mot de passe. Le serveur n'en conserve
-qu'un **hash** SHA-256 — le texte en clair n'est montré qu'une fois.
+```js
+await useToken("PASTE_THE_TOKEN_HERE")
+```
+
+`undefined` (no error) means success — refresh the page to see the owner UI. There
+is intentionally no visible form for this; it is a console-only action. Anyone
+holding the token can take over the server, so store it like a password. The server
+only ever keeps a SHA-256 **hash** of it — the plaintext is shown once and never
+again.
+
+**FR** — Pour récupérer le rôle **Owner**, connecte-toi avec ton compte, ouvre la
+**Console** des DevTools du navigateur (`F12`) et lance :
+
+```js
+await useToken("COLLE_LE_TOKEN_ICI")
+```
+
+`undefined` (aucune erreur) = succès — rafraîchis la page pour voir l'UI owner. Il
+n'y a volontairement aucun formulaire visible : c'est une action console uniquement.
+Quiconque détient le token peut prendre le contrôle du serveur : garde-le comme un
+mot de passe. Le serveur n'en conserve qu'un **hash** SHA-256 — le texte en clair
+n'est montré qu'une fois.
+
+> The claim endpoint is rate-limited (5 attempts / 60 s per IP). If you retry too
+> fast you'll get a generic "Invalid access token" — wait a minute and try once.  
+> L'endpoint est rate-limité (5 essais / 60 s par IP). Si tu réessaies trop vite tu
+> auras un « Invalid access token » générique — attends une minute et tente une fois.
 
 ---
 
