@@ -45,11 +45,16 @@ const useSecretTokenRoute = rateLimitedProcedure(protectedProcedure, {
       message: 'Invalid secret token'
     });
 
-    await db.insert(userRoles).values({
-      userId: ctx.userId,
-      roleId: OWNER_ROLE_ID,
-      createdAt: Date.now()
-    });
+    // Idempotent: a user who is already owner can re-claim (e.g. after rotating
+    // the token) without hitting the (user_id, role_id) primary-key conflict.
+    await db
+      .insert(userRoles)
+      .values({
+        userId: ctx.userId,
+        roleId: OWNER_ROLE_ID,
+        createdAt: Date.now()
+      })
+      .onConflictDoNothing();
 
     publishUser(ctx.userId, 'update');
   });

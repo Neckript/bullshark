@@ -223,6 +223,21 @@ describe('others router', () => {
     expect(updatedUser?.roleIds).toContain(1);
   });
 
+  test('re-claiming with a valid token while already owner is idempotent', async () => {
+    const { caller } = await initTest(2);
+
+    // first claim grants owner
+    await caller.others.useSecretToken({ token: TEST_SECRET_TOKEN });
+    // second claim must NOT throw on the (user_id, role_id) primary key
+    await caller.others.useSecretToken({ token: TEST_SECRET_TOKEN });
+
+    const allUsers = await caller.users.getAll();
+    const updatedUser = allUsers.find((u) => u.id === 2);
+
+    // still exactly one owner role assignment, no duplicate
+    expect(updatedUser?.roleIds.filter((id) => id === 1)).toEqual([1]);
+  });
+
   test('should change logo', async () => {
     const { caller } = await initTest(1);
 
