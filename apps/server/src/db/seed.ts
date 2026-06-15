@@ -47,7 +47,7 @@ const seedDatabase = async () => {
 
   const firstStart = Date.now();
   // Owner-claim token: always CSPRNG, never a constant (audit C1). Printed once below.
-  const originalToken = generateOwnerToken();
+  const ownerClaimToken = generateOwnerToken();
   // Crypto secret (JWT signing + file HMAC): independent CSPRNG value (audit M3).
   const cryptoSecret = generateOwnerToken();
 
@@ -59,7 +59,7 @@ const seedDatabase = async () => {
     onlyAskForPasswordOnFirstJoin: false,
     serverId: Bun.randomUUIDv7(),
     secretToken: await sha256(cryptoSecret),
-    ownerClaimTokenHash: await hashOwnerToken(originalToken),
+    ownerClaimTokenHash: await hashOwnerToken(ownerClaimToken),
     allowNewUsers: true,
     directMessagesEnabled: true,
     storageUploadEnabled: true,
@@ -221,7 +221,7 @@ const seedDatabase = async () => {
     ),
     chalk.white('Please read the documentation on how to use this token.'),
     chalk.yellowBright('────────────────────────────────────────────────────'),
-    chalk.bold.greenBright(originalToken),
+    chalk.bold.greenBright(ownerClaimToken),
     chalk.yellowBright('────────────────────────────────────────────────────')
   ].join('\n');
 
