@@ -8,10 +8,7 @@ interface NewOwnerTokenDeps {
   setOwnerClaimTokenHash: (hash: string) => Promise<void>;
 }
 
-interface NewOwnerTokenResult {
-  ok: boolean;
-  token?: string;
-}
+type NewOwnerTokenResult = { ok: true; token: string } | { ok: false };
 
 // Default deps wired to the real database.
 const defaultDeps: NewOwnerTokenDeps = {
@@ -60,7 +57,7 @@ const newOwnerTokenCli = async (): Promise<never> => {
       'Save it somewhere safe — it will not be shown again. Anyone with this token can take over the server.'
     ),
     chalk.yellowBright('────────────────────────────────────────────────────'),
-    chalk.bold.greenBright(result.token!),
+    chalk.bold.greenBright(result.token),
     chalk.yellowBright('────────────────────────────────────────────────────')
   ].join('\n');
 

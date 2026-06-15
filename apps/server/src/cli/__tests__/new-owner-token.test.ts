@@ -21,9 +21,10 @@ describe('runNewOwnerToken', () => {
     const result = await runNewOwnerToken(deps);
 
     expect(result.ok).toBe(true);
+    if (!result.ok) throw new Error('expected ok');
     expect(result.token).toBeDefined();
-    expect(result.token!.length).toBe(43);
-    expect(updated.hash).toBe(await sha256(result.token!));
+    expect(result.token.length).toBe(43);
+    expect(updated.hash).toBe(await sha256(result.token));
   });
 
   test('fails when the database is not seeded and does not write a hash', async () => {
@@ -31,7 +32,6 @@ describe('runNewOwnerToken', () => {
     const result = await runNewOwnerToken(deps);
 
     expect(result.ok).toBe(false);
-    expect(result.token).toBeUndefined();
     expect(updated.hash).toBeUndefined();
   });
 });
