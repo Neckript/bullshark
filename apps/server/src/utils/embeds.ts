@@ -68,24 +68,32 @@ const loadEmbeds = async () => {
     process.exit(1);
   }
 
-  try {
-    logger.debug('Extracting mediasoup worker...');
+  // The one-shot `--new-owner-token` CLI runs as a second process while the server
+  // is up; the running server holds the worker binary open, so re-extracting it
+  // here fails with ETXTBSY. The CLI never starts media, and the worker is already
+  // on disk, so skip this extraction entirely in that mode.
+  if (process.argv.includes('--new-owner-token')) {
+    logger.debug('Owner-token CLI mode, skipping mediasoup worker extraction');
+  } else {
+    try {
+      logger.debug('Extracting mediasoup worker...');
 
-    const mediasoupPath = path.join(
-      MEDIASOUP_PATH,
-      getExecutableName('mediasoup-worker')
-    );
+      const mediasoupPath = path.join(
+        MEDIASOUP_PATH,
+        getExecutableName('mediasoup-worker')
+      );
 
-    const arrayBuffer = await mediasoupBlob.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+      const arrayBuffer = await mediasoupBlob.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
-    await fs.writeFile(mediasoupPath, buffer);
-    await fs.chmod(mediasoupPath, 0o755);
-  } catch (error) {
-    logger.error(
-      'Failed to extract mediasoup worker: %s',
-      getErrorMessage(error)
-    );
+      await fs.writeFile(mediasoupPath, buffer);
+      await fs.chmod(mediasoupPath, 0o755);
+    } catch (error) {
+      logger.error(
+        'Failed to extract mediasoup worker: %s',
+        getErrorMessage(error)
+      );
+    }
   }
 };
 
