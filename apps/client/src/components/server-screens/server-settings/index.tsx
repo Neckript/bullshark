@@ -1,10 +1,11 @@
-import { useCan } from '@/features/server/hooks';
+import { useCan, useIsOwnUserOwner } from '@/features/server/hooks';
 import { Permission } from '@sharkord/shared';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sharkord/ui';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TServerScreenBaseProps } from '../screens';
 import { ServerScreenLayout } from '../server-screen-layout';
+import { Backup } from './backup';
 import { Emojis } from './emojis';
 import { General } from './general';
 import { Invites } from './invites';
@@ -19,6 +20,7 @@ type TServerSettingsProps = TServerScreenBaseProps;
 const ServerSettings = memo(({ close }: TServerSettingsProps) => {
   const { t } = useTranslation('settings');
   const can = useCan();
+  const isOwner = useIsOwnUserOwner();
 
   const defaultTab = useMemo(() => {
     if (can(Permission.MANAGE_SETTINGS)) return 'general';
@@ -78,6 +80,9 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
             >
               {t('pluginsTab')}
             </TabsTrigger>
+            {isOwner && (
+              <TabsTrigger value="backup">{t('backupTab')}</TabsTrigger>
+            )}
           </TabsList>
           <TabsContent value="general" className="space-y-6">
             {can(Permission.MANAGE_SETTINGS) && <General />}
@@ -102,6 +107,9 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
           </TabsContent>
           <TabsContent value="plugins" className="space-y-6">
             {can(Permission.MANAGE_PLUGINS) && <Plugins />}
+          </TabsContent>
+          <TabsContent value="backup" className="space-y-6">
+            {isOwner && <Backup />}
           </TabsContent>
         </Tabs>
       </div>
