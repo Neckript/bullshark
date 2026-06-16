@@ -30,13 +30,15 @@ const isPathInside = (parent: string, child: string): boolean => {
   return !rel.startsWith('..') && !path.isAbsolute(rel);
 };
 
-// yauzl validates each entry's fileName itself (rejecting absolute paths and
-// '..' segments) before ever emitting an 'entry' event, so a malicious path
-// surfaces as an 'error' event rather than reaching our own guard below.
-// Normalize that into the same "unsafe" vocabulary our guard uses.
+// Cosmetic normalization of yauzl's own "invalid relative path"/"absolute path"
+// rejections into our "Unsafe zip entry path" wording. NOT a security gate: the
+// entry is rejected either way; isPathInside is the in-code defense-in-depth.
 const isUnsafePathError = (err: Error): boolean =>
   /absolute path|invalid relative path/i.test(err.message);
 
+// NOTE: on rejection, files already written before the failure may remain in
+// `destDir`. Callers MUST extract into a disposable staging directory and remove
+// it on failure (the restore flow stages into restore-staging/ and rm's it).
 // Extract every file entry from `zipPath` into `destDir`. Returns the list of
 // extracted entry names. Rejects on any entry that would escape `destDir`.
 const extractZipEntries = (
@@ -45,21 +47,36 @@ const extractZipEntries = (
 ): Promise<string[]> => {
   return new Promise((resolve, reject) => {
     const extracted: string[] = [];
+    let settled = false;
+    const settle = {
+      resolve: (v: string[]) => {
+        if (!settled) {
+          settled = true;
+          resolve(v);
+        }
+      },
+      reject: (e: unknown) => {
+        if (!settled) {
+          settled = true;
+          reject(e as Error);
+        }
+      }
+    };
 
     yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
       if (err || !zipfile) {
-        reject(err ?? new Error('Failed to open zip'));
+        settle.reject(err ?? new Error('Failed to open zip'));
         return;
       }
 
       zipfile.on('error', (zipErr) => {
         if (isUnsafePathError(zipErr)) {
-          reject(new Error(`Unsafe zip entry path: ${zipErr.message}`));
+          settle.reject(new Error(`Unsafe zip entry path: ${zipErr.message}`));
           return;
         }
-        reject(zipErr);
+        settle.reject(zipErr);
       });
-      zipfile.on('end', () => resolve(extracted));
+      zipfile.on('end', () => settle.resolve(extracted));
       zipfile.readEntry();
 
       zipfile.on('entry', (entry) => {
@@ -72,27 +89,29 @@ const extractZipEntries = (
         const destPath = path.join(destDir, entry.fileName);
 
         if (!isPathInside(destDir, destPath)) {
-          reject(new Error(`Unsafe zip entry path: ${entry.fileName}`));
+          settle.reject(new Error(`Unsafe zip entry path: ${entry.fileName}`));
           zipfile.close();
           return;
         }
 
         zipfile.openReadStream(entry, async (streamErr, readStream) => {
           if (streamErr || !readStream) {
-            reject(streamErr ?? new Error('Failed to read zip entry'));
+            settle.reject(streamErr ?? new Error('Failed to read zip entry'));
             return;
           }
 
           try {
             await fs.mkdir(path.dirname(destPath), { recursive: true });
           } catch (mkdirErr) {
-            reject(mkdirErr);
+            readStream.destroy();
+            zipfile.close();
+            settle.reject(mkdirErr);
             return;
           }
 
           const out = createWriteStream(destPath);
           readStream.pipe(out);
-          out.on('error', reject);
+          out.on('error', settle.reject);
           out.on('close', () => {
             extracted.push(entry.fileName);
             zipfile.readEntry();
