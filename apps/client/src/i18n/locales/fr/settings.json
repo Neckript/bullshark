@@ -17,6 +17,7 @@
   "invitesTab": "Invitations",
   "updatesTab": "Mises à jour",
   "pluginsTab": "Extensions",
+  "backupTab": "Sauvegarde",
   "channelSettingsTitle": "Paramètres du salon",
   "permissionsTab": "Permissions",
   "categorySettingsTitle": "Paramètres de la catégorie",
@@ -430,5 +431,21 @@
   "failedDeleteFile": "Échec de la suppression du fichier",
 
   "standard": "Standard",
-  "experimental": "experimental"
+  "experimental": "experimental",
+
+  "backupTitle": "Sauvegarde et restauration",
+  "backupDesc": "Exportez un instantané complet de ce serveur, ou restaurez-en un.",
+  "backupSecurityWarning": "Une sauvegarde contient la base de données brute, y compris les secrets et les hachages de mots de passe. Conservez-la en lieu sûr et ne la partagez jamais.",
+  "backupExportLabel": "Exporter une sauvegarde",
+  "backupExportDesc": "Téléchargez un fichier .zip contenant la base de données et tous les fichiers téléversés.",
+  "backupExportButton": "Exporter la sauvegarde",
+  "backupExporting": "Exportation…",
+  "backupImportLabel": "Restaurer à partir d'une sauvegarde",
+  "backupImportDesc": "Remplace TOUTES les données du serveur et redémarre le serveur.",
+  "backupImportButton": "Importer une sauvegarde",
+  "backupImporting": "Téléversement…",
+  "backupImportStarted": "Restauration programmée. Le serveur redémarre…",
+  "backupImportConfirmTitle": "Restaurer cette sauvegarde ?",
+  "backupImportConfirmDesc": "Cette action remplace définitivement TOUTES les données actuelles (messages, utilisateurs, fichiers, paramètres) et redémarre le serveur. Cette action est irréversible. Une copie de sécurité ponctuelle des données actuelles est conservée sur le serveur.",
+  "backupImportConfirmAction": "Tout remplacer et redémarrer"
 }
