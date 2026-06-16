@@ -16,6 +16,7 @@ const readJournal = async (): Promise<DrizzleJournal> => {
   return JSON.parse(raw) as DrizzleJournal;
 };
 
+// The tag of the most recently-applied migration this server build knows about.
 const getLatestMigrationTag = async (): Promise<string> => {
   const journal = await readJournal();
   const sorted = [...journal.entries].sort((a, b) => a.idx - b.idx);
@@ -26,6 +27,7 @@ const getLatestMigrationTag = async (): Promise<string> => {
   return last.tag;
 };
 
+// True when `tag` is known to this build (equal or older). An unknown tag means the backup is from a newer build -> not restorable here.
 const isMigrationTagRestorable = async (tag: string): Promise<boolean> => {
   const journal = await readJournal();
   return journal.entries.some((entry) => entry.tag === tag);
@@ -42,6 +44,10 @@ const moveAside = async (src: string, dest: string): Promise<void> => {
   }
 };
 
+// Runs at the very top of boot, before loadDb. Applies a staged restore (if one is pending)
+// and keeps one recoverable pre-restore generation of the current state.
+// Intentionally non-atomic: if it fails mid-swap, the server may need manual CLI recovery
+// from the `.pre-restore` copies. Acceptable for a boot-time one-shot operation.
 const applyPendingRestore = async (): Promise<void> => {
   if (!(await fs.exists(RESTORE_PENDING_PATH))) {
     return;
@@ -50,6 +56,7 @@ const applyPendingRestore = async (): Promise<void> => {
   const stagedDb = path.join(RESTORE_STAGING_PATH, 'db.sqlite');
   const stagedPublic = path.join(RESTORE_STAGING_PATH, 'public');
 
+  // Safety net: keep current state recoverable from the CLI.
   await moveAside(DB_PATH, DB_PRE_RESTORE_PATH);
   await moveAside(PUBLIC_PATH, PUBLIC_PRE_RESTORE_PATH);
 
