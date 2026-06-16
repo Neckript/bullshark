@@ -104,7 +104,7 @@ const Backup = memo(() => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={onConfirmImport}>
+            <AlertDialogAction onClick={onConfirmImport} disabled={importing}>
               {t('backupImportConfirmAction')}
             </AlertDialogAction>
           </AlertDialogFooter>
