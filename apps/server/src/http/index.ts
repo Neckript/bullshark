@@ -12,6 +12,7 @@ import {
   hasPrefixPathSegment,
   type HttpRouteHandler
 } from './helpers';
+import { importRouteHandler } from './import';
 import { infoRouteHandler } from './info';
 import { interfaceRouteHandler } from './interface';
 import { loginRouteHandler } from './login';
@@ -54,7 +55,8 @@ const routeHandlers: Partial<
   POST: {
     exact: {
       '/upload': (req, res) => uploadFileRouteHandler(req, res),
-      '/login': (req, res) => loginRouteHandler(req, res)
+      '/login': (req, res) => loginRouteHandler(req, res),
+      '/import': (req, res) => importRouteHandler(req, res)
     },
     prefix: {}
   }
