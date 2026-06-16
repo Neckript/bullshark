@@ -11,6 +11,7 @@ import {
   hasPrefixPathSegment,
   type HttpRouteHandler
 } from './helpers';
+import { exportRouteHandler } from './export';
 import { infoRouteHandler } from './info';
 import { interfaceRouteHandler } from './interface';
 import { loginRouteHandler } from './login';
@@ -40,6 +41,7 @@ const routeHandlers: Partial<
     exact: {
       '/healthz': (req, res) => healthRouteHandler(req, res),
       '/info': (req, res) => infoRouteHandler(req, res),
+      '/export': (req, res) => exportRouteHandler(req, res),
       '/manifest.json': (req, res) => manifestRouteHandler(req, res)
     },
     prefix: {
