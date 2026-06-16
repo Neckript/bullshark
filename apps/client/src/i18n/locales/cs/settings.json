@@ -17,6 +17,7 @@
   "invitesTab": "Pozvánky",
   "updatesTab": "Aktualizace",
   "pluginsTab": "Rozšíření",
+  "backupTab": "Backup",
   "channelSettingsTitle": "Nastavení kanálu",
   "permissionsTab": "Oprávnění",
   "categorySettingsTitle": "Nastavení kategorie",
@@ -430,5 +431,21 @@
   "failedDeleteFile": "Soubor se odstranit nepodařilo",
 
   "standard": "Standardní",
-  "experimental": "experimentální"
+  "experimental": "experimentální",
+
+  "backupTitle": "Backup & Restore",
+  "backupDesc": "Export a full snapshot of this server, or restore one.",
+  "backupSecurityWarning": "A backup contains the raw database — including secrets and password hashes. Store it somewhere safe and never share it.",
+  "backupExportLabel": "Export a backup",
+  "backupExportDesc": "Download a .zip with the database and all uploaded files.",
+  "backupExportButton": "Export backup",
+  "backupExporting": "Exporting…",
+  "backupImportLabel": "Restore from a backup",
+  "backupImportDesc": "Replaces ALL server data and restarts the server.",
+  "backupImportButton": "Import backup",
+  "backupImporting": "Uploading…",
+  "backupImportStarted": "Restore staged. The server is restarting…",
+  "backupImportConfirmTitle": "Restore this backup?",
+  "backupImportConfirmDesc": "This permanently replaces ALL current data (messages, users, files, settings) and restarts the server. This cannot be undone. A one-time safety copy of the current data is kept on the server.",
+  "backupImportConfirmAction": "Replace everything & restart"
 }

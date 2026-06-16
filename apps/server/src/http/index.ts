@@ -5,12 +5,14 @@ import z from 'zod';
 import { config } from '../config';
 import { getWsInfo } from '../helpers/get-ws-info';
 import { logger } from '../logger';
+import { exportRouteHandler } from './export';
 import { healthRouteHandler } from './healthz';
 import {
   getRequestPathname,
   hasPrefixPathSegment,
   type HttpRouteHandler
 } from './helpers';
+import { importRouteHandler } from './import';
 import { infoRouteHandler } from './info';
 import { interfaceRouteHandler } from './interface';
 import { loginRouteHandler } from './login';
@@ -40,6 +42,7 @@ const routeHandlers: Partial<
     exact: {
       '/healthz': (req, res) => healthRouteHandler(req, res),
       '/info': (req, res) => infoRouteHandler(req, res),
+      '/export': (req, res) => exportRouteHandler(req, res),
       '/manifest.json': (req, res) => manifestRouteHandler(req, res)
     },
     prefix: {
@@ -52,7 +55,8 @@ const routeHandlers: Partial<
   POST: {
     exact: {
       '/upload': (req, res) => uploadFileRouteHandler(req, res),
-      '/login': (req, res) => loginRouteHandler(req, res)
+      '/login': (req, res) => loginRouteHandler(req, res),
+      '/import': (req, res) => importRouteHandler(req, res)
     },
     prefix: {}
   }

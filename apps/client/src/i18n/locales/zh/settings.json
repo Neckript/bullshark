@@ -17,6 +17,7 @@
   "invitesTab": "邀请",
   "updatesTab": "更新",
   "pluginsTab": "插件",
+  "backupTab": "Backup",
   "channelSettingsTitle": "频道设置",
   "permissionsTab": "权限",
   "categorySettingsTitle": "分类设置",
@@ -431,5 +432,21 @@
   "marketplaceInstallSuccess": "\"{{name}}\" 已成功安装。您需要手动启用它才能开始使用。",
 
   "standard": "标准",
-  "experimental": "实验性"
+  "experimental": "实验性",
+
+  "backupTitle": "Backup & Restore",
+  "backupDesc": "Export a full snapshot of this server, or restore one.",
+  "backupSecurityWarning": "A backup contains the raw database — including secrets and password hashes. Store it somewhere safe and never share it.",
+  "backupExportLabel": "Export a backup",
+  "backupExportDesc": "Download a .zip with the database and all uploaded files.",
+  "backupExportButton": "Export backup",
+  "backupExporting": "Exporting…",
+  "backupImportLabel": "Restore from a backup",
+  "backupImportDesc": "Replaces ALL server data and restarts the server.",
+  "backupImportButton": "Import backup",
+  "backupImporting": "Uploading…",
+  "backupImportStarted": "Restore staged. The server is restarting…",
+  "backupImportConfirmTitle": "Restore this backup?",
+  "backupImportConfirmDesc": "This permanently replaces ALL current data (messages, users, files, settings) and restarts the server. This cannot be undone. A one-time safety copy of the current data is kept on the server.",
+  "backupImportConfirmAction": "Replace everything & restart"
 }

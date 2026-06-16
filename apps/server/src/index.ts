@@ -13,6 +13,7 @@ import chalk from 'chalk';
 import { config, SERVER_PRIVATE_IP } from './config';
 import { loadCrons } from './crons';
 import { loadDb } from './db';
+import { applyPendingRestore } from './helpers/restore';
 import { pluginManager } from './plugins';
 import { enqueueActivityLog } from './queues/activity-log';
 import { initVoiceRuntimes } from './runtimes';
@@ -20,6 +21,10 @@ import { createServers } from './utils/create-servers';
 import { loadMediasoup } from './utils/mediasoup';
 import { printDebug } from './utils/print-debug';
 import './utils/updater';
+
+// Apply any restore staged by POST /import BEFORE the DB is opened/migrated.
+// loadDb then forward-migrates the restored DB if the backup was older.
+await applyPendingRestore();
 
 await loadDb();
 
