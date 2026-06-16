@@ -9,7 +9,7 @@ import { PUBLIC_PATH, TMP_PATH } from '../helpers/paths';
 import { getLatestMigrationTag } from '../helpers/restore';
 import { logger } from '../logger';
 import { SERVER_VERSION } from '../utils/env';
-import { getOwnerFromRequest } from './backup-auth';
+import { BACKUP_TOKEN_HEADER, getOwnerFromRequest } from './backup-auth';
 import { addDirToZip } from './zip';
 
 const backupFileName = (): string => {
@@ -24,7 +24,7 @@ const exportRouteHandler = async (
   const owner = await getOwnerFromRequest(req);
 
   if (!owner) {
-    const status = req.headers['x-backup-token'] ? 403 : 401;
+    const status = req.headers[BACKUP_TOKEN_HEADER] ? 403 : 401;
     res.writeHead(status, { 'Content-Type': 'application/json' });
     res.end(
       JSON.stringify({ error: status === 401 ? 'Unauthorized' : 'Forbidden' })
@@ -70,9 +70,10 @@ const exportRouteHandler = async (
     });
 
     await new Promise<void>((resolve, reject) => {
-      zip.outputStream.pipe(res);
-      zip.outputStream.on('end', resolve);
       zip.outputStream.on('error', reject);
+      res.on('error', reject);
+      res.on('close', () => resolve());
+      zip.outputStream.pipe(res);
     });
   } catch (error) {
     logger.error('Export failed: %s', getErrorMessage(error));
