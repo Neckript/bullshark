@@ -18,7 +18,7 @@ const DebugInfo = memo(() => {
       import.meta.env.MODE
     );
     console.log(
-      '%cThis is a open source project, feel free to contribute: https://github.com/Sharkord/sharkord',
+      '%cThis is a open source project, feel free to contribute: https://github.com/Neckript/bullshark',
       'font-size: 12px; font-weight: bold;'
     );
     console.log(
