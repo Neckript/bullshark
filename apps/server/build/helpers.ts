@@ -1,8 +1,8 @@
-import type { TArtifact } from '@sharkord/shared';
 import {
   validateReleaseMetadata,
-  type TReleaseMetadata
-} from 'bun-sfe-autoupdater';
+  type TArtifact,
+  type TVersionInfo
+} from '@sharkord/shared';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -179,7 +179,7 @@ const getFileChecksum = async (filePath: string) => {
 const getVersionInfo = async (
   targets: TTarget[],
   outPath: string
-): Promise<TReleaseMetadata> => {
+): Promise<TVersionInfo> => {
   const version = await getCurrentVersion();
 
   const artifacts: TArtifact[] = [];
