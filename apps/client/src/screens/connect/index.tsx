@@ -130,7 +130,7 @@ const Connect = memo(() => {
           <CardTitle className="flex flex-col items-center gap-2 text-center">
             <img
               src={logoSrc}
-              alt="Sharkord"
+              alt="Bullshark"
               className="block max-h-32 max-w-full rounded-[5px]"
             />
             {info?.name && (
@@ -231,7 +231,7 @@ const Connect = memo(() => {
       <div className="flex justify-center items-center gap-2 text-xs text-muted-foreground select-none">
         <span>v{VITE_APP_VERSION}</span>
         <a
-          href="https://github.com/sharkord/sharkord"
+          href="https://github.com/Neckript/bullshark"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -240,11 +240,11 @@ const Connect = memo(() => {
 
         <a
           className="text-xs"
-          href="https://sharkord.com"
+          href="https://github.com/Sharkord/sharkord"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Sharkord
+          {t('forkCredit')}
         </a>
       </div>
     </div>
