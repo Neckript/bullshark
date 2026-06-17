@@ -4,7 +4,7 @@ import { memo } from 'react';
 const DebugInfo = memo(() => {
   useStrictEffect(() => {
     console.log(
-      '%cSHARKORD',
+      '%cBULLSHARK',
       'font-size: 64px; font-weight: bold; background: linear-gradient(90deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;'
     );
     console.log(
