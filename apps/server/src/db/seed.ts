@@ -52,9 +52,9 @@ const seedDatabase = async () => {
   const cryptoSecret = generateOwnerToken();
 
   const initialSettings: TISettings = {
-    name: 'sharkord Server',
+    name: 'Bullshark Server',
     description:
-      'This is the default Sharkord server description. Change me in the server settings!',
+      'This is the default Bullshark server description. Change me in the server settings!',
     password: '',
     onlyAskForPasswordOnFirstJoin: false,
     serverId: Bun.randomUUIDv7(),
@@ -159,11 +159,11 @@ const seedDatabase = async () => {
   const initialUsers: TIUser[] = [
     {
       identity: await sha256(randomUUIDv7()),
-      name: 'Sharkord',
+      name: 'Bullshark',
       avatarId: null,
       password: 'sharkord',
       bannerId: null,
-      bio: 'Hey, I am Sharkord!',
+      bio: 'Hey, I am Bullshark!',
       bannerColor:
         'linear-gradient(90deg, rgba(67,49,215,1) 30%, rgba(182,1,116,1) 100%)',
       createdAt: firstStart
@@ -173,7 +173,7 @@ const seedDatabase = async () => {
   const initialMessages: TIMessage[] = [
     {
       channelId: 1,
-      content: '<p>Welcome to sharkord!</p>',
+      content: '<p>Welcome to Bullshark!</p>',
       metadata: null,
       userId: 1,
       createdAt: firstStart

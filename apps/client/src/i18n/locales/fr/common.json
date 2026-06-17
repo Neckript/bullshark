@@ -13,7 +13,7 @@
 
   "selectDmPrompt": "Sélectionnez un message privé ou créez-en un nouveau.",
   "welcomeToServer": "Bienvenu à {{name}}.",
-  "mobileNotOptimized": "Sharkord n'est pas encore optimisé pour les appareils mobiles. L'expérience ne sera pas optimale.",
+  "mobileNotOptimized": "Bullshark n'est pas encore optimisé pour les appareils mobiles. L'expérience ne sera pas optimale.",
   "swipeRightForChannels": "Balayez vers la droite pour ouvrir la liste des canneaux",
   "swipeLeftForUsers": "Balayez vers la gauche pour ouvrir la liste des utilisateurs",
 
@@ -53,8 +53,8 @@
   "reloadApp": "Recharger l'application",
   "messageRenderFailed": "Impossible d'afficher ce message.",
   "messageRenderGithubIssue": "Si cette erreur persiste, veuillez créer une issue sur GitHub.",
-  "globalErrorTitle": "Désolé, Sharkord a planté et n'a pas pu récupérer.",
-  "globalErrorDescription": "Sharkord a rencontré une erreur inattendue. Rechargez l'application. Si cela continue, ouvrez une issue sur GitHub avec les détails de l'erreur.",
+  "globalErrorTitle": "Désolé, Bullshark a planté et n'a pas pu récupérer.",
+  "globalErrorDescription": "Bullshark a rencontré une erreur inattendue. Rechargez l'application. Si cela continue, ouvrez une issue sur GitHub avec les détails de l'erreur.",
   "reportIssueOnGithub": "Signaler une issue sur GitHub",
   "pluginRenderError": "Une erreur s'est produite dans le plugin {{pluginId}} à l'emplacement {{slotId}}.",
   "reportToPluginDeveloper": "Veuillez signaler cela au développeur du plugin.",

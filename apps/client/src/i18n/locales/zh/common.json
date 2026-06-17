@@ -13,7 +13,7 @@
 
   "selectDmPrompt": "选择一条私信，或开始新的对话。",
   "welcomeToServer": "欢迎来到 {{name}}。",
-  "mobileNotOptimized": "Sharkord 尚未针对移动设备进行优化，使用体验可能不佳。",
+  "mobileNotOptimized": "Bullshark 尚未针对移动设备进行优化，使用体验可能不佳。",
   "swipeRightForChannels": "向右滑动以打开频道列表",
   "swipeLeftForUsers": "向左滑动以打开用户列表",
 
@@ -53,8 +53,8 @@
   "reloadApp": "重新加载应用",
   "messageRenderFailed": "无法渲染此消息。",
   "messageRenderGithubIssue": "如果此错误持续出现，请在 GitHub 上创建一个 issue。",
-  "globalErrorTitle": "抱歉，Sharkord 崩溃了，而且无法恢复。",
-  "globalErrorDescription": "Sharkord 遇到了一个意外错误。请重新加载应用。如果这种情况持续发生，请在 GitHub 上提交一个包含错误详情的 issue。",
+  "globalErrorTitle": "抱歉，Bullshark 崩溃了，而且无法恢复。",
+  "globalErrorDescription": "Bullshark 遇到了一个意外错误。请重新加载应用。如果这种情况持续发生，请在 GitHub 上提交一个包含错误详情的 issue。",
   "reportIssueOnGithub": "在 GitHub 上报告 issue",
   "pluginRenderError": "插件 {{pluginId}} 在插槽 {{slotId}} 处发生错误。",
   "reportToPluginDeveloper": "请将此问题反馈给该插件的开发者。",

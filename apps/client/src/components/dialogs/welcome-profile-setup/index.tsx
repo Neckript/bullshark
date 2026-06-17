@@ -132,7 +132,7 @@ const WelcomeProfileSetupDialog = memo(
           <DialogHeader>
             <DialogTitle>
               {t('welcomeProfileSetupTitle', {
-                serverName: serverName ?? 'Sharkord'
+                serverName: serverName ?? 'Bullshark'
               })}
             </DialogTitle>
             <DialogDescription>

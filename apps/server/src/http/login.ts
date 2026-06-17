@@ -75,7 +75,7 @@ const registerUser = async (
   const user = await db
     .insert(users)
     .values({
-      name: `SharkordUser${randomNum}`,
+      name: `BullsharkUser${randomNum}`,
       identity,
       createdAt: Date.now(),
       password: hashedPassword

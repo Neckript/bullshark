@@ -27,11 +27,11 @@ const Routing = memo(() => {
 
   useEffect(() => {
     if (isConnected && serverName) {
-      document.title = `${serverName} - Sharkord`;
+      document.title = `${serverName} - Bullshark`;
       return;
     }
 
-    document.title = 'Sharkord';
+    document.title = 'Bullshark';
   }, [isConnected, serverName]);
 
   if (isAppLoading || isPluginsLoading) {

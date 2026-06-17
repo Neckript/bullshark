@@ -13,7 +13,7 @@
 
   "selectDmPrompt": "Seleziona un messaggio diretto o avviane uno nuovo.",
   "welcomeToServer": "Benvenuto su {{name}}.",
-  "mobileNotOptimized": "Sharkord non e ancora ottimizzato per dispositivi mobili. L'esperienza non sara ideale.",
+  "mobileNotOptimized": "Bullshark non e ancora ottimizzato per dispositivi mobili. L'esperienza non sara ideale.",
   "swipeRightForChannels": "Scorri a destra per aprire l'elenco canali",
   "swipeLeftForUsers": "Scorri a sinistra per aprire l'elenco utenti",
 
@@ -53,8 +53,8 @@
   "reloadApp": "Ricarica l'app",
   "messageRenderFailed": "Impossibile visualizzare questo messaggio.",
   "messageRenderGithubIssue": "Se questo errore persiste, crea una issue su GitHub.",
-  "globalErrorTitle": "Ci dispiace, Sharkord si è arrestato e non è riuscito a riprendersi.",
-  "globalErrorDescription": "Sharkord ha riscontrato un errore imprevisto. Ricarica l'app. Se continua a succedere, apri una issue su GitHub con i dettagli dell'errore.",
+  "globalErrorTitle": "Ci dispiace, Bullshark si è arrestato e non è riuscito a riprendersi.",
+  "globalErrorDescription": "Bullshark ha riscontrato un errore imprevisto. Ricarica l'app. Se continua a succedere, apri una issue su GitHub con i dettagli dell'errore.",
   "reportIssueOnGithub": "Segnala issue su GitHub",
   "pluginRenderError": "Si è verificato un errore nel plugin {{pluginId}} nello slot {{slotId}}.",
   "reportToPluginDeveloper": "Segnala il problema allo sviluppatore del plugin.",

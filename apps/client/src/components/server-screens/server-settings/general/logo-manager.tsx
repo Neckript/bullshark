@@ -53,7 +53,7 @@ const LogoManager = memo(({ logo, refetch }: TLogoManagerProps) => {
   return (
     <Group
       label="Logo"
-      description="Square image is recommended. If your image is not perfectly square, the PWA icons will fall back to the default Sharkord icon."
+      description="Square image is recommended. If your image is not perfectly square, the PWA icons will fall back to the default Bullshark icon."
     >
       <ImagePicker
         image={logo}
