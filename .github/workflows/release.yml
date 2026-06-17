@@ -60,13 +60,19 @@ jobs:
             org.opencontainers.image.version=${{ steps.get_version.outputs.version }}
             org.opencontainers.image.source=https://github.com/Sharkord/sharkord
 
-      - name: Push version bump and tag to both remotes
+      - name: Commit version bump
+        if: ${{ inputs.bump != 'none' }}
+        run: |
+          git add .
+          git commit -m "chore: bump version to ${{ steps.get_version.outputs.version }}"
+
+      - name: Tag and push to both remotes
         env:
           CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
         run: |
           set -euo pipefail
           VERSION="${{ steps.get_version.outputs.version }}"
-          git tag "v${VERSION}"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}"
           git push origin HEAD --follow-tags
           git remote add codeberg "https://x-access-token:${CODEBERG_TOKEN}@codeberg.org/The_Neckript/bullshark.git"
           git push codeberg "HEAD:refs/heads/${{ github.ref_name }}"
@@ -90,15 +96,3 @@ jobs:
               -H "Authorization: token ${CODEBERG_TOKEN}" \
               -F "attachment=@${OUT}/${f}"
           done
-
-      - name: Commit version bump
-        if: ${{ inputs.bump != 'none' }}
-        run: |
-          git add .
-          git commit -m "chore: bump version to ${{ steps.get_version.outputs.version }}"
-
-      - name: Create Git tag
-        run: git tag -a "v${{ steps.get_version.outputs.version }}" -m "Release v${{ steps.get_version.outputs.version }}"
-
-      - name: Push commit and tag
-        run: git push --follow-tags
