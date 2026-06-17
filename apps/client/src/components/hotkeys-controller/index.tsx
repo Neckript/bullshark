@@ -1,11 +1,11 @@
+import { getVoiceControlsBridge } from '@/components/voice-provider/controls-bridge';
 import {
   setModifierKeysHeldMap,
   togglePluginSlotDebug
 } from '@/features/app/actions';
-import { getVoiceControlsBridge } from '@/components/voice-provider/controls-bridge';
 import { ownVoiceStateSelector } from '@/features/server/voice/selectors';
-import { useSelector } from 'react-redux';
 import { memo, useCallback, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 
 const HotkeysController = memo(() => {
   const ownVoiceState = useSelector(ownVoiceStateSelector);

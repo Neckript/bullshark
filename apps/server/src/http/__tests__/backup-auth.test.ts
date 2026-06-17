@@ -2,8 +2,8 @@ import { OWNER_ROLE_ID } from '@sharkord/shared';
 import { describe, expect, test } from 'bun:test';
 import http from 'http';
 import { login } from '../../__tests__/helpers';
-import { getUserByIdentity } from '../../db/queries/users';
 import { tdb } from '../../__tests__/setup';
+import { getUserByIdentity } from '../../db/queries/users';
 import { userRoles } from '../../db/schema';
 import { getOwnerFromRequest } from '../backup-auth';
 

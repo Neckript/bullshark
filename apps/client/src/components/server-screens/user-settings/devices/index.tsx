@@ -14,7 +14,7 @@ import {
   getSuppressLocalAudioPlaybackSupport
 } from '@/helpers/get-display-media-support';
 import { useForm } from '@/hooks/use-form';
-import { NoiseSuppression, Resolution, VideoCodec } from '@/types';
+import { InputMode, NoiseSuppression, Resolution, VideoCodec } from '@/types';
 import { DEFAULT_BITRATE } from '@sharkord/shared';
 import {
   Alert,
@@ -50,10 +50,9 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { InputMode } from '@/types';
 import { useMicrophoneTest } from './hooks/use-microphone-test';
-import { InputModeSection } from './input-mode-section';
 import { useWebcamTest } from './hooks/use-webcam-test';
+import { InputModeSection } from './input-mode-section';
 import { MicrophoneTestLevelBar } from './microphone-test-level-bar';
 import ResolutionFpsControl from './resolution-fps-control';
 import { RestrictOwnAudioAlert } from './restrict-own-audio-alert';

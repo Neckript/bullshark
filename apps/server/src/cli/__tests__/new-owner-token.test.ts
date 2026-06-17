@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test';
 import { sha256 } from '@sharkord/shared';
+import { describe, expect, test } from 'bun:test';
 import { runNewOwnerToken } from '../new-owner-token';
 
 const makeDeps = (seeded: boolean) => {

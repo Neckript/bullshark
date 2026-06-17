@@ -3,11 +3,11 @@ import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
 import { publishChannelPermissions } from '../../db/publishers';
+import { getAffectedOnlineUserIdsForCategoryTarget } from '../../db/queries/channels';
 import {
   categoryRolePermissions,
   categoryUserPermissions
 } from '../../db/schema';
-import { getAffectedOnlineUserIdsForCategoryTarget } from '../../db/queries/channels';
 import { protectedProcedure } from '../../utils/trpc';
 
 const allPermissions = Object.values(ChannelPermission);

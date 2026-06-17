@@ -48,9 +48,7 @@ const getUserRoles = async (userId: number): Promise<TJoinedRole[]> => {
     }
   }
 
-  return Array.from(rolesMap.values()).sort(
-    (a, b) => b.position - a.position
-  );
+  return Array.from(rolesMap.values()).sort((a, b) => b.position - a.position);
 };
 
 export { getUserRoles };

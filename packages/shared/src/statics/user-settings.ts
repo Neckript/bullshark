@@ -23,8 +23,8 @@ const isAllowedUserSettingKey = (key: string): boolean => {
 };
 
 export {
-  USER_SETTING_KEYS,
   MUTED_ROLE_MENTION_PREFIX,
+  USER_SETTING_KEYS,
   isAllowedUserSettingKey,
   type TUserSettingKey
 };

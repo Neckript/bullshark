@@ -1,11 +1,11 @@
 import { getTRPCClient } from '@/lib/trpc';
 import {
   DndContext,
-  type DragEndEvent,
   PointerSensor,
   closestCenter,
   useSensor,
-  useSensors
+  useSensors,
+  type DragEndEvent
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -13,7 +13,11 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { OWNER_ROLE_ID, getTrpcError, type TJoinedRole } from '@sharkord/shared';
+import {
+  OWNER_ROLE_ID,
+  getTrpcError,
+  type TJoinedRole
+} from '@sharkord/shared';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@sharkord/ui';
 import { Plus } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
@@ -55,8 +59,14 @@ const StaticRoleRow = memo(({ role, selected, onSelect }: TRoleRowProps) => (
 ));
 
 const SortableRoleRow = memo(({ role, selected, onSelect }: TRoleRowProps) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: role.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: role.id });
 
   return (
     <button

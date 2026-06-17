@@ -9,7 +9,6 @@ import {
   type TJoinedSettings,
   type TTempFile
 } from '@sharkord/shared';
-import { isAnimatedImage } from './is-animated-image';
 import { randomUUIDv7 } from 'bun';
 import { createHash } from 'crypto';
 import { eq } from 'drizzle-orm';
@@ -25,6 +24,7 @@ import { files } from '../db/schema';
 import { PUBLIC_PATH, TMP_PATH, UPLOADS_PATH } from '../helpers/paths';
 import { logger } from '../logger';
 import { pluginManager } from '../plugins';
+import { isAnimatedImage } from './is-animated-image';
 
 /**
  * Files workflow:

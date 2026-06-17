@@ -165,14 +165,13 @@ function createBunPipeSocket(
       },
       // Called by Bun when the write buffer drains and can accept more data.
       // Flush pending writes and signal mediasoup's Channel to resume.
-      drain(_socket: any) {
+      drain() {
         if (destroyed) return;
 
         hasPressure = false;
 
         while (pendingWrites.length > 0 && !hasPressure) {
           // length > 0 guarantees shift() returns a value; non-null safe here.
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           const pending = pendingWrites.shift()!;
 
           try {

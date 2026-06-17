@@ -3,8 +3,8 @@ import { describe, expect, test } from 'bun:test';
 import { initTest } from '../../../__tests__/helpers';
 import {
   channelUserCan,
-  getAllChannelUserPermissions,
-  getAffectedUserIdsForCategoryTarget
+  getAffectedUserIdsForCategoryTarget,
+  getAllChannelUserPermissions
 } from '../channels';
 
 // role 2 = default "Member"; user 2 has role 2 (see seed.ts)

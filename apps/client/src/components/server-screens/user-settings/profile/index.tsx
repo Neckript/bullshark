@@ -210,7 +210,9 @@ const Profile = memo(() => {
           <Button variant="outline" onClick={closeServerScreens}>
             {t('cancel')}
           </Button>
-          <Button onClick={() => void onUpdateUser()}>{t('saveChanges')}</Button>
+          <Button onClick={() => void onUpdateUser()}>
+            {t('saveChanges')}
+          </Button>
         </div>
       </CardContent>
     </Card>

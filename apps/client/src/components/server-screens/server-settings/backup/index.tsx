@@ -67,13 +67,19 @@ const Backup = memo(() => {
       <CardContent className="space-y-4">
         <p className="text-sm text-destructive">{t('backupSecurityWarning')}</p>
 
-        <Group label={t('backupExportLabel')} description={t('backupExportDesc')}>
+        <Group
+          label={t('backupExportLabel')}
+          description={t('backupExportDesc')}
+        >
           <Button onClick={onExport} disabled={exporting}>
             {exporting ? t('backupExporting') : t('backupExportButton')}
           </Button>
         </Group>
 
-        <Group label={t('backupImportLabel')} description={t('backupImportDesc')}>
+        <Group
+          label={t('backupImportLabel')}
+          description={t('backupImportDesc')}
+        >
           <Button
             variant="destructive"
             disabled={importing}

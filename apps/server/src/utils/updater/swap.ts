@@ -33,7 +33,11 @@ const swapBinary = async (
   args: SwapArgs,
   deps: ForgejoDeps = { fetch }
 ): Promise<void> => {
-  const tempPath = await downloadToTemp(args.downloadUrl, args.targetPath, deps);
+  const tempPath = await downloadToTemp(
+    args.downloadUrl,
+    args.targetPath,
+    deps
+  );
 
   try {
     if (!(await verifyChecksum(tempPath, args.expectedChecksum))) {

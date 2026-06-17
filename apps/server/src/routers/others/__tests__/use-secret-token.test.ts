@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test';
 import { sha256 } from '@sharkord/shared';
+import { describe, expect, test } from 'bun:test';
 import { ownerTokenMatches } from '../use-secret-token';
 
 describe('ownerTokenMatches', () => {

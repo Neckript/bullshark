@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import fs from 'fs/promises';
 import { createWriteStream } from 'fs';
+import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
 import yazl from 'yazl';
@@ -30,7 +30,10 @@ const crc32 = (buf: Buffer): number => {
   return ~crc >>> 0;
 };
 
-const buildZipWithRawEntryName = (entryName: string, content: Buffer): Buffer => {
+const buildZipWithRawEntryName = (
+  entryName: string,
+  content: Buffer
+): Buffer => {
   const name = Buffer.from(entryName, 'utf8');
   const crc = crc32(content);
 
@@ -106,16 +109,25 @@ describe('addDirToZip + extractZipEntries round-trip', () => {
     expect(entryNames.sort()).toEqual(
       ['public/a.txt', 'public/nested/b.txt'].sort()
     );
-    expect(await fs.readFile(path.join(destDir, 'public', 'a.txt'), 'utf8')).toBe('AAA');
-    expect(await fs.readFile(path.join(destDir, 'public', 'nested', 'b.txt'), 'utf8')).toBe('BBB');
+    expect(
+      await fs.readFile(path.join(destDir, 'public', 'a.txt'), 'utf8')
+    ).toBe('AAA');
+    expect(
+      await fs.readFile(path.join(destDir, 'public', 'nested', 'b.txt'), 'utf8')
+    ).toBe('BBB');
   });
 
   test('extractZipEntries rejects entries that escape the destination', async () => {
     const zipPath = path.join(workDir, 'evil.zip');
-    const zipBuf = buildZipWithRawEntryName('../escape.txt', Buffer.from('PWNED'));
+    const zipBuf = buildZipWithRawEntryName(
+      '../escape.txt',
+      Buffer.from('PWNED')
+    );
     await fs.writeFile(zipPath, zipBuf);
 
     const destDir = path.join(workDir, 'dest');
-    await expect(extractZipEntries(zipPath, destDir)).rejects.toThrow(/unsafe/i);
+    await expect(extractZipEntries(zipPath, destDir)).rejects.toThrow(
+      /unsafe/i
+    );
   });
 });

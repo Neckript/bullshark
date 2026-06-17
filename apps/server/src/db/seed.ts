@@ -24,8 +24,8 @@ import {
 } from '@sharkord/shared';
 import { randomUUIDv7 } from 'bun';
 import chalk from 'chalk';
-import { logger } from '../logger';
 import { generateOwnerToken, hashOwnerToken } from '../helpers/owner-token';
+import { logger } from '../logger';
 import { db } from './index';
 import {
   categories,

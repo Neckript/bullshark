@@ -9,10 +9,6 @@ import { appSliceActions } from '../app/slice';
 import { openDialog } from '../dialogs/actions';
 import { store } from '../store';
 import {
-  loadUserSettings,
-  migrateLocalSettings
-} from './user-settings/actions';
-import {
   channelReadStateByIdSelector,
   isChannelTextVisibleByIdSelector
 } from './channels/selectors';
@@ -24,6 +20,10 @@ import {
 import { infoSelector } from './selectors';
 import { serverSliceActions } from './slice';
 import { type TDisconnectInfo } from './types';
+import {
+  loadUserSettings,
+  migrateLocalSettings
+} from './user-settings/actions';
 
 let unsubscribeFromServer: (() => void) | null = null;
 

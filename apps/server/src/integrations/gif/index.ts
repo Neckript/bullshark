@@ -8,5 +8,5 @@ const getGifProvider = async (): Promise<GifProvider | null> => {
   return createKlipyProvider(settings.klipyApiKey);
 };
 
-export { getGifProvider };
 export type { GifProvider } from './types';
+export { getGifProvider };

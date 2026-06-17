@@ -24,7 +24,12 @@ import {
 import { getResWidthHeight } from '@/helpers/get-res-with-height';
 import { useScreenShareSupport } from '@/hooks/use-screen-share-support';
 import { getTRPCClient } from '@/lib/trpc';
-import { InputMode, NoiseSuppression, VideoCodec, type TStreamQuality } from '@/types';
+import {
+  InputMode,
+  NoiseSuppression,
+  VideoCodec,
+  type TStreamQuality
+} from '@/types';
 import {
   DEFAULT_BITRATE,
   StreamKind,
@@ -67,13 +72,13 @@ import {
   type TStreamQualitySettings
 } from './helpers';
 import { useLocalStreams } from './hooks/use-local-streams';
+import { usePtt } from './hooks/use-ptt';
 import { useRemoteStreams } from './hooks/use-remote-streams';
 import {
   useTransportStats,
   type TransportStatsData
 } from './hooks/use-transport-stats';
 import { useTransports } from './hooks/use-transports';
-import { usePtt } from './hooks/use-ptt';
 import { useVad } from './hooks/use-vad';
 import { useVoiceControls } from './hooks/use-voice-controls';
 import { useVoiceEvents } from './hooks/use-voice-events';

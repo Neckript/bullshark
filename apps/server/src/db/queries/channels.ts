@@ -322,7 +322,10 @@ const getAllChannelUserPermissions = async (
     const channelMap = rolePermMap.get(perm.channelId)!;
     const existing = channelMap.get(perm.permission as ChannelPermission);
 
-    channelMap.set(perm.permission as ChannelPermission, existing || perm.allow);
+    channelMap.set(
+      perm.permission as ChannelPermission,
+      existing || perm.allow
+    );
   }
 
   const categoryUserPermMap = new Map<

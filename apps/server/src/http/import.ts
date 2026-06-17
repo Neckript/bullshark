@@ -68,7 +68,9 @@ const streamToFileWithGuard = (
   });
 };
 
-const readStagedManifest = async (): Promise<{ latestMigrationTag?: string } | null> => {
+const readStagedManifest = async (): Promise<{
+  latestMigrationTag?: string;
+} | null> => {
   try {
     const raw = await fs.readFile(
       path.join(RESTORE_STAGING_PATH, 'manifest.json'),
@@ -118,9 +120,14 @@ const importRouteHandler = async (
       return;
     }
 
-    if (!entryNames.includes('manifest.json') || !entryNames.includes('db.sqlite')) {
+    if (
+      !entryNames.includes('manifest.json') ||
+      !entryNames.includes('db.sqlite')
+    ) {
       await fs.rm(RESTORE_STAGING_PATH, { recursive: true, force: true });
-      sendJson(res, 400, { error: 'Backup is missing manifest.json or db.sqlite' });
+      sendJson(res, 400, {
+        error: 'Backup is missing manifest.json or db.sqlite'
+      });
       return;
     }
 
@@ -130,7 +137,8 @@ const importRouteHandler = async (
     if (!tag || !(await isMigrationTagRestorable(tag))) {
       await fs.rm(RESTORE_STAGING_PATH, { recursive: true, force: true });
       sendJson(res, 409, {
-        error: 'This backup is from a newer server version and cannot be restored here'
+        error:
+          'This backup is from a newer server version and cannot be restored here'
       });
       return;
     }
