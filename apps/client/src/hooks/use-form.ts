@@ -30,8 +30,8 @@ const useForm = <T extends Record<string, unknown>>(initialValues: T) => {
   );
 
   const registerRaw = useCallback(
-    (key: keyof T) => {
-      const onChange = (value: T[keyof T]) => {
+    <K extends keyof T>(key: K) => {
+      const onChange = (value: T[K]) => {
         setErrors((prev) => ({ ...prev, [key]: undefined }));
         setValues((prev) => ({ ...prev, [key]: value }));
       };

@@ -2,11 +2,11 @@ import { NicknameBadge } from '@/components/nickname-badge';
 import { PluginAvatar } from '@/components/plugin-avatar';
 import { RelativeTime } from '@/components/relative-time';
 import { UserAvatar } from '@/components/user-avatar';
-import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
-import { resolveNameColor } from '@/helpers/resolve-name-color';
 import { useUserRoles } from '@/features/server/hooks';
 import { usePluginMetadata } from '@/features/server/plugins/hooks';
 import { useIsOwnUser, useUserById } from '@/features/server/users/hooks';
+import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
+import { resolveNameColor } from '@/helpers/resolve-name-color';
 import { cn } from '@/lib/utils';
 import {
   DELETED_USER_IDENTITY_AND_NAME,
@@ -86,9 +86,12 @@ const MessagesGroup = memo(
             >
               {authorName}
             </span>
-            {!isDeletedUser && !isPluginMessage && user?.showRoleBadge !== false && (
-              <NicknameBadge userId={firstMessage.userId} size="md" />
-            )}
+            {!isDeletedUser &&
+              !isPluginMessage &&
+              user?.showRoleBadge !== false &&
+              firstMessage.userId != null && (
+                <NicknameBadge userId={firstMessage.userId} size="md" />
+              )}
             {isPluginMessage && (
               <span className="inline-flex items-center rounded-sm bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary/60 uppercase tracking-wide">
                 bot
