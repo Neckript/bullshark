@@ -7,7 +7,7 @@ test.describe('Connect Screen', () => {
   }) => {
     await page.goto('/');
 
-    const logo = page.getByAltText('Sharkord');
+    const logo = page.getByAltText('Bullshark');
     await expect(logo).toBeVisible();
 
     await expect(page.getByText('Identity')).toBeVisible();
