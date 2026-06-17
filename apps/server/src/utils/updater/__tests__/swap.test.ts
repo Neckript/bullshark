@@ -18,7 +18,11 @@ afterEach(async () => {
 });
 
 const okResponse = (bytes: string) =>
-  ({ ok: true, status: 200, arrayBuffer: async () => new TextEncoder().encode(bytes).buffer }) as Response;
+  ({
+    ok: true,
+    status: 200,
+    arrayBuffer: async () => new TextEncoder().encode(bytes).buffer
+  }) as Response;
 
 describe('swapBinary', () => {
   test('replaces the target when the checksum matches', async () => {

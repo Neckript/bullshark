@@ -5,8 +5,18 @@ const meta = (version: string) => ({
   version,
   releaseDate: '2026-06-17T00:00:00.000Z',
   artifacts: [
-    { name: 'bullshark-linux-x64', target: 'linux-x64', size: 1, checksum: 'h' },
-    { name: 'bullshark-linux-arm64', target: 'linux-arm64', size: 1, checksum: 'h' }
+    {
+      name: 'bullshark-linux-x64',
+      target: 'linux-x64',
+      size: 1,
+      checksum: 'h'
+    },
+    {
+      name: 'bullshark-linux-arm64',
+      target: 'linux-arm64',
+      size: 1,
+      checksum: 'h'
+    }
   ]
 });
 
@@ -23,7 +33,9 @@ describe('selectUpdate', () => {
   test('returns null when no artifact matches the arch', () => {
     const noArm = {
       ...meta('9.9.9'),
-      artifacts: meta('9.9.9').artifacts.filter((x) => x.target !== 'linux-arm64')
+      artifacts: meta('9.9.9').artifacts.filter(
+        (x) => x.target !== 'linux-arm64'
+      )
     };
     expect(selectUpdate(noArm, 'linux-arm64', '1.0.0')).toBeNull();
   });

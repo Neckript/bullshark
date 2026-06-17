@@ -133,6 +133,8 @@ describe('POST /import', () => {
     });
     expect(res.status).toBe(200);
     expect(await fs.exists(RESTORE_PENDING_PATH)).toBe(true);
-    expect(await fs.exists(path.join(RESTORE_STAGING_PATH, 'db.sqlite'))).toBe(true);
+    expect(await fs.exists(path.join(RESTORE_STAGING_PATH, 'db.sqlite'))).toBe(
+      true
+    );
   });
 });

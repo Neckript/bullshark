@@ -1,5 +1,5 @@
-import { getErrorMessage } from '@sharkord/shared';
 import type { TArtifact, TVersionInfo } from '@sharkord/shared';
+import { getErrorMessage } from '@sharkord/shared';
 import semver from 'semver';
 import { config } from '../config';
 import { logger } from '../logger';
@@ -16,7 +16,8 @@ const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
 type ServerArch = 'linux-x64' | 'linux-arm64';
 
 const getCurrentArch = (): ServerArch => {
-  if (process.platform === 'linux' && process.arch === 'x64') return 'linux-x64';
+  if (process.platform === 'linux' && process.arch === 'x64')
+    return 'linux-x64';
   if (process.platform === 'linux' && process.arch === 'arm64')
     return 'linux-arm64';
   throw new Error(

@@ -6,7 +6,7 @@ import { publishUser } from '../../db/publishers';
 import { getSettings } from '../../db/queries/server';
 import { userRoles } from '../../db/schema';
 import { invariant } from '../../utils/invariant';
-import { rateLimitedProcedure, protectedProcedure } from '../../utils/trpc';
+import { protectedProcedure, rateLimitedProcedure } from '../../utils/trpc';
 
 // Constant-time comparison of sha256(token) against the stored owner-claim hash.
 const ownerTokenMatches = async (

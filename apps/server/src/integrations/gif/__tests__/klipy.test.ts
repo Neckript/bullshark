@@ -9,31 +9,36 @@ afterEach(() => {
 
 describe('KlipyProvider', () => {
   test('search maps Klipy response to normalized results', async () => {
-    globalThis.fetch = mock(async () =>
-      new Response(
-        JSON.stringify({
-          result: true,
-          data: {
-            data: [
-              {
-                slug: 'abc',
-                title: 'cat',
-                file: {
-                  gif: { url: 'https://cdn.klipy.com/abc.gif', width: 200, height: 150 }
-                },
-                files: {
-                  gif_url: 'https://cdn.klipy.com/abc.gif',
-                  thumbnail_url: 'https://cdn.klipy.com/abc-thumb.gif'
+    globalThis.fetch = mock(
+      async () =>
+        new Response(
+          JSON.stringify({
+            result: true,
+            data: {
+              data: [
+                {
+                  slug: 'abc',
+                  title: 'cat',
+                  file: {
+                    gif: {
+                      url: 'https://cdn.klipy.com/abc.gif',
+                      width: 200,
+                      height: 150
+                    }
+                  },
+                  files: {
+                    gif_url: 'https://cdn.klipy.com/abc.gif',
+                    thumbnail_url: 'https://cdn.klipy.com/abc-thumb.gif'
+                  }
                 }
-              }
-            ],
-            current_page: 1,
-            per_page: 24,
-            has_next: true
-          }
-        }),
-        { status: 200, headers: { 'content-type': 'application/json' } }
-      )
+              ],
+              current_page: 1,
+              per_page: 24,
+              has_next: true
+            }
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } }
+        )
     ) as unknown as typeof fetch;
 
     const provider = createKlipyProvider('TEST_KEY');
@@ -46,8 +51,12 @@ describe('KlipyProvider', () => {
   });
 
   test('search throws on non-ok response', async () => {
-    globalThis.fetch = mock(async () => new Response('nope', { status: 500 })) as unknown as typeof fetch;
+    globalThis.fetch = mock(
+      async () => new Response('nope', { status: 500 })
+    ) as unknown as typeof fetch;
     const provider = createKlipyProvider('TEST_KEY');
-    await expect(provider.search({ query: 'cat', page: 1, perPage: 24 })).rejects.toThrow();
+    await expect(
+      provider.search({ query: 'cat', page: 1, perPage: 24 })
+    ).rejects.toThrow();
   });
 });

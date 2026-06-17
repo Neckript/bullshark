@@ -1,5 +1,5 @@
-import { validateReleaseMetadata } from '@sharkord/shared';
 import type { TVersionInfo } from '@sharkord/shared';
+import { validateReleaseMetadata } from '@sharkord/shared';
 
 const CODEBERG_API_BASE = 'https://codeberg.org/api/v1';
 const REPO_OWNER = 'The_Neckript';
@@ -22,7 +22,9 @@ const fetchLatestRelease = async (
   deps: ForgejoDeps = { fetch }
 ): Promise<ForgejoRelease> => {
   const url = `${CODEBERG_API_BASE}/repos/${REPO_OWNER}/${REPO_NAME}/releases/latest`;
-  const res = await deps.fetch(url, { headers: { Accept: 'application/json' } });
+  const res = await deps.fetch(url, {
+    headers: { Accept: 'application/json' }
+  });
 
   if (!res.ok) {
     throw new Error(`Forgejo releases/latest failed: ${res.status}`);

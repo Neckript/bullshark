@@ -9,7 +9,10 @@ import { useTranslation } from 'react-i18next';
 const formatPttKey = (code: string): string => {
   if (code.startsWith('Key')) return code.slice(3);
   if (code.startsWith('Digit')) return code.slice(5);
-  return code.replace(/([A-Z])/g, ' $1').trim().replace(/\s+/g, ' ');
+  return code
+    .replace(/([A-Z])/g, ' $1')
+    .trim()
+    .replace(/\s+/g, ' ');
 };
 
 type TInputModeSectionProps = {

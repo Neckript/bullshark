@@ -1,10 +1,10 @@
 import { GifPickerDialog } from '@/components/gif-picker/gif-picker-dialog';
+import { usePublicServerSettings } from '@/features/server/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { uploadImage } from '@/helpers/upload-file';
 import { useFilePicker } from '@/hooks/use-file-picker';
 import { getTRPCClient } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import { usePublicServerSettings } from '@/features/server/hooks';
 import type { TJoinedPublicUser } from '@sharkord/shared';
 import { Button, buttonVariants, Group } from '@sharkord/ui';
 import { Upload } from 'lucide-react';
@@ -104,7 +104,11 @@ const BannerManager = memo(({ user }: TBannerManagerProps) => {
           </Button>
         </div>
       )}
-      <GifPickerDialog open={gifOpen} onOpenChange={setGifOpen} onSelect={onSelectGif} />
+      <GifPickerDialog
+        open={gifOpen}
+        onOpenChange={setGifOpen}
+        onSelect={onSelectGif}
+      />
     </Group>
   );
 });

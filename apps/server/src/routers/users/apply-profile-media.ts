@@ -66,7 +66,11 @@ const applyProfileMedia = async (
 
     await db
       .update(users)
-      .set(target === 'avatar' ? { avatarId: newFile.id } : { bannerId: newFile.id })
+      .set(
+        target === 'avatar'
+          ? { avatarId: newFile.id }
+          : { bannerId: newFile.id }
+      )
       .where(eq(users.id, ctx.userId))
       .run();
   }

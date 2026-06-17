@@ -95,7 +95,11 @@ const AvatarManager = memo(({ user }: TAvatarManagerProps) => {
           </Button>
         </div>
       )}
-      <GifPickerDialog open={gifOpen} onOpenChange={setGifOpen} onSelect={onSelectGif} />
+      <GifPickerDialog
+        open={gifOpen}
+        onOpenChange={setGifOpen}
+        onSelect={onSelectGif}
+      />
     </Group>
   );
 });

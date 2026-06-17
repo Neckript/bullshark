@@ -10,7 +10,9 @@ describe('user setting key allowlist', () => {
   });
 
   test('accepts a muted-role-mention key with numeric role id', () => {
-    expect(isAllowedUserSettingKey(`${MUTED_ROLE_MENTION_PREFIX}42`)).toBe(true);
+    expect(isAllowedUserSettingKey(`${MUTED_ROLE_MENTION_PREFIX}42`)).toBe(
+      true
+    );
   });
 
   test('rejects an unknown key', () => {

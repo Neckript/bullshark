@@ -59,11 +59,7 @@ const getRole = async (roleId: number): Promise<TJoinedRole | undefined> => {
 
   if (!role) return undefined;
 
-  return parseRole(
-    role,
-    storageSignedUrlsEnabled,
-    storageSignedUrlsTtlSeconds
-  );
+  return parseRole(role, storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds);
 };
 
 const getRoles = async (): Promise<TJoinedRole[]> => {

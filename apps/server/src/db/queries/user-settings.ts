@@ -40,10 +40,13 @@ const upsertUserSetting = async (
     });
 };
 
-const deleteUserSetting = async (userId: number, key: string): Promise<void> => {
+const deleteUserSetting = async (
+  userId: number,
+  key: string
+): Promise<void> => {
   await db
     .delete(userSettings)
     .where(and(eq(userSettings.userId, userId), eq(userSettings.key, key)));
 };
 
-export { getUserSettings, upsertUserSetting, deleteUserSetting };
+export { deleteUserSetting, getUserSettings, upsertUserSetting };

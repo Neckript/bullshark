@@ -1,9 +1,6 @@
 import { appSliceActions } from '@/features/app/slice';
 import { store } from '@/features/store';
-import {
-  getLocalStorageItemBool,
-  LocalStorageKey
-} from '@/helpers/storage';
+import { getLocalStorageItemBool, LocalStorageKey } from '@/helpers/storage';
 import { getTRPCClient } from '@/lib/trpc';
 import { MUTED_ROLE_MENTION_PREFIX } from '@sharkord/shared';
 
@@ -53,7 +50,10 @@ const migrateLocalSettings = async (
       'browser_notifications_mentions',
       LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_MENTIONS
     ],
-    ['browser_notifications_dms', LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_DMS],
+    [
+      'browser_notifications_dms',
+      LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_DMS
+    ],
     [
       'browser_notifications_replies',
       LocalStorageKey.BROWSER_NOTIFICATIONS_FOR_REPLIES
@@ -87,8 +87,8 @@ const serverKeyToSliceUpdate = (serverKey: string, value: boolean) => {
 };
 
 export {
-  loadUserSettings,
-  writeUserSetting,
   clearUserSetting,
-  migrateLocalSettings
+  loadUserSettings,
+  migrateLocalSettings,
+  writeUserSetting
 };

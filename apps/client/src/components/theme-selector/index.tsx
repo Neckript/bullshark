@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
-import { useTheme, type Theme } from '../theme-provider';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme, type Theme } from '../theme-provider';
 
 type TThemeDef = {
   id: Theme;
@@ -13,9 +13,24 @@ type TThemeDef = {
 const THEME_DEFS: TThemeDef[] = [
   { id: 'dark', labelKey: 'themeDark', bg: '#252525', accent: '#e5e5e5' },
   { id: 'light', labelKey: 'themeLight', bg: '#f5f5f5', accent: '#1a1a1a' },
-  { id: 'gaming-red', labelKey: 'themeGamingRed', bg: '#1e0d0d', accent: '#c93010' },
-  { id: 'deep-ocean', labelKey: 'themeDeepOcean', bg: '#0e1a2e', accent: '#28b3aa' },
-  { id: 'midnight-purple', labelKey: 'themeMidnightPurple', bg: '#130d22', accent: '#8e35cc' }
+  {
+    id: 'gaming-red',
+    labelKey: 'themeGamingRed',
+    bg: '#1e0d0d',
+    accent: '#c93010'
+  },
+  {
+    id: 'deep-ocean',
+    labelKey: 'themeDeepOcean',
+    bg: '#0e1a2e',
+    accent: '#28b3aa'
+  },
+  {
+    id: 'midnight-purple',
+    labelKey: 'themeMidnightPurple',
+    bg: '#130d22',
+    accent: '#8e35cc'
+  }
 ];
 
 const ThemeSelector = memo(() => {

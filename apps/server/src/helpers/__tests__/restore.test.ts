@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import fs from 'fs/promises';
 import path from 'path';
+import { DATA_PATH, DB_PATH, PUBLIC_PATH } from '../paths';
 import {
   applyPendingRestore,
   getLatestMigrationTag,
@@ -9,7 +10,6 @@ import {
   RESTORE_STAGING_PATH,
   writeRestoreMarker
 } from '../restore';
-import { DATA_PATH, DB_PATH, PUBLIC_PATH } from '../paths';
 
 describe('getLatestMigrationTag', () => {
   test('returns the last tag from the drizzle journal', async () => {
@@ -47,17 +47,29 @@ describe('applyPendingRestore', () => {
     await fs.writeFile(DB_PATH, 'LIVE_DB');
     await fs.writeFile(path.join(PUBLIC_PATH, 'live.txt'), 'LIVE_FILE');
 
-    await fs.mkdir(path.join(RESTORE_STAGING_PATH, 'public'), { recursive: true });
+    await fs.mkdir(path.join(RESTORE_STAGING_PATH, 'public'), {
+      recursive: true
+    });
     await fs.writeFile(path.join(RESTORE_STAGING_PATH, 'db.sqlite'), 'NEW_DB');
-    await fs.writeFile(path.join(RESTORE_STAGING_PATH, 'public', 'new.txt'), 'NEW_FILE');
+    await fs.writeFile(
+      path.join(RESTORE_STAGING_PATH, 'public', 'new.txt'),
+      'NEW_FILE'
+    );
     await fs.writeFile(RESTORE_PENDING_PATH, '');
 
     await applyPendingRestore();
 
     expect(await fs.readFile(DB_PATH, 'utf8')).toBe('NEW_DB');
-    expect(await fs.readFile(path.join(PUBLIC_PATH, 'new.txt'), 'utf8')).toBe('NEW_FILE');
+    expect(await fs.readFile(path.join(PUBLIC_PATH, 'new.txt'), 'utf8')).toBe(
+      'NEW_FILE'
+    );
     expect(await fs.readFile(`${DB_PATH}.pre-restore`, 'utf8')).toBe('LIVE_DB');
-    expect(await fs.readFile(path.join(`${PUBLIC_PATH}.pre-restore`, 'live.txt'), 'utf8')).toBe('LIVE_FILE');
+    expect(
+      await fs.readFile(
+        path.join(`${PUBLIC_PATH}.pre-restore`, 'live.txt'),
+        'utf8'
+      )
+    ).toBe('LIVE_FILE');
     expect(await fs.exists(RESTORE_PENDING_PATH)).toBe(false);
     expect(await fs.exists(RESTORE_STAGING_PATH)).toBe(false);
   });

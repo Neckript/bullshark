@@ -1,12 +1,12 @@
 import { NicknameBadge } from '@/components/nickname-badge';
 import { UserAvatar } from '@/components/user-avatar';
 import { useStreamVolumeControl } from '@/components/voice-provider/hooks/use-stream-volume-control';
-import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
-import { resolveNameColor } from '@/helpers/resolve-name-color';
-import type { TVoiceUser } from '@/features/server/types';
 import { useUserRoles } from '@/features/server/hooks';
+import type { TVoiceUser } from '@/features/server/types';
 import { useIsOwnUser } from '@/features/server/users/hooks';
 import { useSpeakingState } from '@/features/server/voice/hooks';
+import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
+import { resolveNameColor } from '@/helpers/resolve-name-color';
 import { cn } from '@sharkord/ui';
 import {
   HeadphoneOff,

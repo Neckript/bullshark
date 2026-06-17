@@ -5,7 +5,12 @@ const valid = {
   version: '1.2.3',
   releaseDate: '2026-06-17T12:00:00.000Z',
   artifacts: [
-    { name: 'bullshark-linux-x64', target: 'linux-x64', size: 123, checksum: 'abc' }
+    {
+      name: 'bullshark-linux-x64',
+      target: 'linux-x64',
+      size: 123,
+      checksum: 'abc'
+    }
   ]
 };
 
@@ -15,7 +20,7 @@ describe('validateReleaseMetadata', () => {
   });
 
   test('throws when version is missing', () => {
-    const { version: _omit, ...bad } = valid;
+    const bad = { releaseDate: valid.releaseDate, artifacts: valid.artifacts };
     expect(() => validateReleaseMetadata(bad)).toThrow();
   });
 
