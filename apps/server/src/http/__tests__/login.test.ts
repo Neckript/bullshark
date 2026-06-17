@@ -60,7 +60,7 @@ describe('/login', () => {
       .get();
 
     expect(newUser).toBeTruthy();
-    expect(newUser?.name).toStartWith('SharkordUser');
+    expect(newUser?.name).toStartWith('BullsharkUser');
   });
 
   test('should mark all existing messages as read for first-time users', async () => {
