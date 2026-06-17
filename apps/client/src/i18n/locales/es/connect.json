@@ -11,6 +11,7 @@
   "inviteCode": "Código de invitación: {{code}}",
   "connectError": "No se pudo conectar: {{message}}",
   "loggingInAutomatically": "Iniciando sesión automáticamente...",
-  "loadingApp": "Cargando Sharkord",
-  "loadingPlugins": "Cargando plugins"
+  "loadingApp": "Cargando Bullshark",
+  "loadingPlugins": "Cargando plugins",
+  "forkCredit": "fork de Sharkord"
 }

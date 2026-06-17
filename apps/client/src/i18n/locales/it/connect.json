@@ -11,6 +11,7 @@
   "inviteCode": "Codice invito: {{code}}",
   "connectError": "Impossibile connettersi: {{message}}",
   "loggingInAutomatically": "Accesso automatico in corso...",
-  "loadingApp": "Caricamento di Sharkord",
-  "loadingPlugins": "Caricamento plugin"
+  "loadingApp": "Caricamento di Bullshark",
+  "loadingPlugins": "Caricamento plugin",
+  "forkCredit": "fork di Sharkord"
 }

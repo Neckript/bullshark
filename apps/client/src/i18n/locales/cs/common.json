@@ -13,7 +13,7 @@
 
   "selectDmPrompt": "Vyberte přímou zprávu nebo napište novou.",
   "welcomeToServer": "Vítejte v {{name}}.",
-  "mobileNotOptimized": "Sharkord ještě není optimalizovaný pro telefony, ne všechno bude fungovat elegantně.",
+  "mobileNotOptimized": "Bullshark ještě není optimalizovaný pro telefony, ne všechno bude fungovat elegantně.",
   "swipeRightForChannels": "Přejetím doprava otevřete seznam kanálů",
   "swipeLeftForUsers": "Přejetím doleva otevřete seznam uživatelů",
 
@@ -53,8 +53,8 @@
   "reloadApp": "Znovu načíst aplikaci",
   "messageRenderFailed": "Tuto zprávu se nepodařilo vykreslit.",
   "messageRenderGithubIssue": "Pokud chyba přetrvává, vytvořte prosím issue na GitHubu.",
-  "globalErrorTitle": "Promiňte, Sharkord spadl a nedokázal se zotavit.",
-  "globalErrorDescription": "V Sharkordu došlo k neočekávané chybě. Znovu načtěte aplikaci. Pokud se to bude opakovat, otevřete prosím issue na GitHubu a přiložte podrobnosti chyby.",
+  "globalErrorTitle": "Promiňte, Bullshark spadl a nedokázal se zotavit.",
+  "globalErrorDescription": "V Bullsharku došlo k neočekávané chybě. Znovu načtěte aplikaci. Pokud se to bude opakovat, otevřete prosím issue na GitHubu a přiložte podrobnosti chyby.",
   "reportIssueOnGithub": "Nahlásit issue na GitHubu",
   "pluginRenderError": "V pluginu {{pluginId}} na slotu {{slotId}} došlo k chybě.",
   "reportToPluginDeveloper": "Nahlašte to prosím vývojáři pluginu.",

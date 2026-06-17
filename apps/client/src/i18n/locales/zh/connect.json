@@ -11,6 +11,7 @@
   "inviteCode": "邀请码：{{code}}",
   "connectError": "连接失败：{{message}}",
   "loggingInAutomatically": "正在自动登录...",
-  "loadingApp": "正在加载 Sharkord",
-  "loadingPlugins": "正在加载插件"
+  "loadingApp": "正在加载 Bullshark",
+  "loadingPlugins": "正在加载插件",
+  "forkCredit": "Sharkord 的分支"
 }

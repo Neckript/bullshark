@@ -11,6 +11,7 @@
   "inviteCode": "Kód pozvánky: {{code}}",
   "connectError": "K serveru se připojit nepodařilo: {{message}}",
   "loggingInAutomatically": "Automaticky se připojuji...",
-  "loadingApp": "Načítám Sharkord",
-  "loadingPlugins": "Načítám rozšíření"
+  "loadingApp": "Načítám Bullshark",
+  "loadingPlugins": "Načítám rozšíření",
+  "forkCredit": "fork projektu Sharkord"
 }
