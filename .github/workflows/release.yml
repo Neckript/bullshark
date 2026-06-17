@@ -28,6 +28,10 @@ jobs:
   build-and-publish:
     needs: [ci, e2e]
     runs-on: ubuntu-latest
+    env:
+      # Only publish to Docker Hub when the credentials secret is configured.
+      # Deferred decision (Docker Hub vs Codeberg registry vs drop) tracked separately.
+      DOCKER_PUBLISH: ${{ secrets.DOCKER_USERNAME != '' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -47,6 +51,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Build and publish Docker image
+        if: ${{ env.DOCKER_PUBLISH == 'true' }}
         uses: ./.github/actions/docker-build-publish
         with:
           docker_username: ${{ secrets.DOCKER_USERNAME }}
@@ -74,7 +79,7 @@ jobs:
           VERSION="${{ steps.get_version.outputs.version }}"
           git tag -a "v${VERSION}" -m "Release v${VERSION}"
           git push origin HEAD --follow-tags
-          CB_URL="https://x-access-token:${CODEBERG_TOKEN}@codeberg.org/The_Neckript/bullshark.git"
+          CB_URL="https://The_Neckript:${CODEBERG_TOKEN}@codeberg.org/The_Neckript/bullshark.git"
           git remote add codeberg "$CB_URL" || git remote set-url codeberg "$CB_URL"
           git push codeberg "HEAD:refs/heads/${{ github.ref_name }}"
           git push codeberg "v${VERSION}"
