@@ -1,53 +1,110 @@
 import { getErrorMessage } from '@sharkord/shared';
-import { BunUpdater } from 'bun-sfe-autoupdater';
+import type { TArtifact, TVersionInfo } from '@sharkord/shared';
+import semver from 'semver';
 import { config } from '../config';
 import { logger } from '../logger';
-import { IS_DOCKER, IS_PRODUCTION, SERVER_VERSION } from './env';
+import { IS_DOCKER, IS_PRODUCTION, IS_TEST, SERVER_VERSION } from './env';
+import {
+  fetchLatestRelease,
+  fetchReleaseMetadata,
+  findAsset
+} from './updater/forgejo';
+import { swapBinary } from './updater/swap';
 
 const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
 
+type ServerArch = 'linux-x64' | 'linux-arm64';
+
+const getCurrentArch = (): ServerArch => {
+  if (process.platform === 'linux' && process.arch === 'x64') return 'linux-x64';
+  if (process.platform === 'linux' && process.arch === 'arm64')
+    return 'linux-arm64';
+  throw new Error(
+    `Unsupported server platform/arch for auto-update: ${process.platform}-${process.arch}`
+  );
+};
+
+// Pure decision: the artifact to install, or null if no applicable newer build.
+const selectUpdate = (
+  metadata: TVersionInfo,
+  arch: ServerArch,
+  currentVersion: string
+): TArtifact | null => {
+  if (!semver.gt(metadata.version, currentVersion)) return null;
+  return metadata.artifacts.find((a) => a.target === arch) ?? null;
+};
+
 class Updater {
-  private bunUpdater: BunUpdater;
-  private isUpdating: boolean = false;
+  private isUpdating = false;
 
   constructor() {
-    this.bunUpdater = new BunUpdater({
-      repoOwner: 'Sharkord',
-      repoName: 'sharkord',
-      currentVersion: SERVER_VERSION
-    });
-
-    if (!this.canUpdate()) {
-      return;
+    if (this.canUpdate()) {
+      void this.setupAutoUpdater();
     }
-
-    this.setupAutoUpdater();
   }
 
   public canUpdate = (): boolean => IS_PRODUCTION && !IS_DOCKER;
 
-  public getLatestVersion = async () => this.bunUpdater.getLatestVersion();
+  public getLatestVersion = async (): Promise<string> => {
+    const release = await fetchLatestRelease();
+    const metadata = await fetchReleaseMetadata(release);
+    return metadata.version;
+  };
 
-  public hasUpdates = async () => this.bunUpdater.hasUpdates();
+  public hasUpdates = async (): Promise<boolean> => {
+    const release = await fetchLatestRelease();
+    const metadata = await fetchReleaseMetadata(release);
+    const artifact = selectUpdate(metadata, getCurrentArch(), SERVER_VERSION);
+    return artifact !== null && findAsset(release, artifact.name) !== undefined;
+  };
 
   public update = async (): Promise<void> => {
-    if (!this.canUpdate()) return;
-
-    if (this.isUpdating) {
-      logger.debug('Update check already in progress, skipping');
-      return;
-    }
+    if (!this.canUpdate() || this.isUpdating) return;
 
     this.isUpdating = true;
 
     try {
       logger.info('Checking for updates...');
 
-      // if an update is available, it will be downloaded automatically
-      // the app will restart to apply the update
-      await this.bunUpdater.checkForUpdates();
+      const release = await fetchLatestRelease();
+      const metadata = await fetchReleaseMetadata(release);
+      const artifact = selectUpdate(metadata, getCurrentArch(), SERVER_VERSION);
+
+      if (!artifact) {
+        logger.debug('No update available');
+        return;
+      }
+
+      const asset = findAsset(release, artifact.name);
+
+      if (!asset) {
+        logger.warn(
+          'Update metadata references a missing asset: %s',
+          artifact.name
+        );
+        return;
+      }
+
+      logger.info('Update %s available, downloading...', metadata.version);
+
+      await swapBinary({
+        downloadUrl: asset.browser_download_url,
+        expectedChecksum: artifact.checksum,
+        targetPath: process.execPath
+      });
+
+      logger.info('Update installed, restarting...');
+
+      if (!IS_TEST) {
+        const child = Bun.spawn([process.execPath, ...process.argv.slice(2)], {
+          stdio: ['inherit', 'inherit', 'inherit'],
+          detached: true
+        });
+        child.unref();
+        process.exit(0);
+      }
     } catch (error) {
-      logger.error('Failed to check for updates: %s', getErrorMessage(error));
+      logger.error('Auto-update failed: %s', getErrorMessage(error));
     } finally {
       this.isUpdating = false;
     }
@@ -70,4 +127,4 @@ class Updater {
 
 const updater = new Updater();
 
-export { updater };
+export { selectUpdate, updater };
