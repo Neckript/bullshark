@@ -88,7 +88,10 @@ jobs:
           CB_URL="https://The_Neckript:${CODEBERG_TOKEN}@codeberg.org/The_Neckript/bullshark.git"
           git remote add codeberg "$CB_URL" || git remote set-url codeberg "$CB_URL"
           git push codeberg "HEAD:refs/heads/${{ github.ref_name }}"
-          git push codeberg "v${VERSION}"
+          # Tag is intentionally NOT pushed here: the Codeberg release API creates
+          # its own lightweight tag via target_commitish. Pushing an annotated tag
+          # and then calling the API causes an internal 500 on Forgejo (Codeberg).
+          echo "COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Create Codeberg release and upload assets
         env:
@@ -100,10 +103,12 @@ jobs:
           OUT="apps/server/build/out"
 
           # --- Create the release (verbose on failure, idempotent on re-run) ---
+          # target_commitish lets Forgejo create its own lightweight tag atomically.
+          # Pushing an annotated tag via git and then calling the API causes HTTP 500.
           resp="$(curl -sS -w $'\n%{http_code}' -X POST "${API}/releases" \
             -H "Authorization: token ${CODEBERG_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "{\"tag_name\":\"v${VERSION}\",\"name\":\"v${VERSION}\",\"draft\":false,\"prerelease\":false}")"
+            -d "{\"tag_name\":\"v${VERSION}\",\"name\":\"v${VERSION}\",\"target_commitish\":\"${COMMIT_SHA}\",\"draft\":false,\"prerelease\":false}")"
           code="${resp##*$'\n'}"
           body="${resp%$'\n'*}"
           echo "Create release -> HTTP ${code}"
