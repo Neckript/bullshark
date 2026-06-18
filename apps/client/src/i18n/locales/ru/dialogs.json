@@ -126,5 +126,14 @@
   "pluginInstallUseDocker": "Мы настоятельно рекомендуем запускать Bullshark в Docker-контейнере для изоляции и снижения рисков.",
   "pluginInstallDocsNote": "Подробнее читайте в документации:",
   "pluginInstallConfirmBtn": "Установить плагин",
-  "pluginInstallConfirmCountdown": "Подождите ({{seconds}}s)"
+  "pluginInstallConfirmCountdown": "Подождите ({{seconds}}s)",
+  "claimOwnerBannerText": "У этого сервера пока нет владельца.",
+  "claimOwnerBannerBtn": "Стать владельцем",
+  "claimOwnerTitle": "Стать владельцем сервера",
+  "claimOwnerDesc": "Введите токен владельца, напечатанный в консоли сервера при первом запуске, чтобы стать владельцем этого сервера.",
+  "claimOwnerTokenLabel": "Токен владельца",
+  "claimOwnerTokenPlaceholder": "Вставьте ваш токен сюда",
+  "claimOwnerBtn": "Стать владельцем",
+  "claimOwnerInvalidToken": "Неверный токен.",
+  "claimOwnerSuccess": "Теперь вы владелец сервера."
 }

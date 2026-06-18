@@ -2,6 +2,7 @@ import { closeDialogs } from '@/features/dialogs/actions';
 import { useDialogInfo } from '@/features/dialogs/hooks';
 import { createElement, memo } from 'react';
 import { AssignRoleDialog } from './assign-role';
+import { ClaimOwnerDialog } from './claim-owner';
 import ConfirmActionDialog from './confirm-action';
 import { CreateCategoryDialog } from './create-category';
 import { CreateChannelDialog } from './create-channel';
@@ -34,7 +35,8 @@ const DialogsMap: any = {
   [Dialog.PLUGIN_INSTALL_CONFIRM]: PluginInstallConfirmDialog,
   [Dialog.DELETE_USER]: DeleteUserDialog,
   [Dialog.SEARCH]: SearchDialog,
-  [Dialog.WELCOME_PROFILE_SETUP]: WelcomeProfileSetupDialog
+  [Dialog.WELCOME_PROFILE_SETUP]: WelcomeProfileSetupDialog,
+  [Dialog.CLAIM_OWNER]: ClaimOwnerDialog
 };
 
 const DialogsProvider = memo(() => {

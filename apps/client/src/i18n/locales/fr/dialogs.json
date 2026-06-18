@@ -126,5 +126,14 @@
   "pluginInstallUseDocker": "Nous recommandons fortement d'executer Bullshark dans un conteneur Docker pour l'isolation et la reduction des risques.",
   "pluginInstallDocsNote": "Pour plus de details, consultez la documentation a l'adresse :",
   "pluginInstallConfirmBtn": "Installer le plugin",
-  "pluginInstallConfirmCountdown": "Attendre ({{seconds}}s)"
+  "pluginInstallConfirmCountdown": "Attendre ({{seconds}}s)",
+  "claimOwnerBannerText": "Ce serveur n'a pas encore de propriétaire.",
+  "claimOwnerBannerBtn": "Réclamer la propriété",
+  "claimOwnerTitle": "Réclamer la propriété du serveur",
+  "claimOwnerDesc": "Entrez le token propriétaire affiché dans la console du serveur au premier démarrage pour revendiquer la propriété de ce serveur.",
+  "claimOwnerTokenLabel": "Token propriétaire",
+  "claimOwnerTokenPlaceholder": "Collez votre token ici",
+  "claimOwnerBtn": "Réclamer la propriété",
+  "claimOwnerInvalidToken": "Token invalide.",
+  "claimOwnerSuccess": "Vous êtes maintenant propriétaire du serveur."
 }
