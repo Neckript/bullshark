@@ -486,5 +486,13 @@
   "backupImportStarted": "Restore staged. The server is restarting…",
   "backupImportConfirmTitle": "Restore this backup?",
   "backupImportConfirmDesc": "This permanently replaces ALL current data (messages, users, files, settings) and restarts the server. This cannot be undone. A one-time safety copy of the current data is kept on the server.",
-  "backupImportConfirmAction": "Replace everything & restart"
+  "backupImportConfirmAction": "Replace everything & restart",
+
+  "ownerTokenTitle": "Owner Token",
+  "ownerTokenDesc": "Regenerate the owner-claim token. The new token will be shown once — save it somewhere safe.",
+  "ownerTokenRotateBtn": "Regenerate Token",
+  "ownerTokenRevealTitle": "New Owner Token",
+  "ownerTokenRevealWarning": "This token will not be shown again. Anyone with it can take over the server.",
+  "ownerTokenCopyBtn": "Copy",
+  "ownerTokenCopied": "Copied!"
 }

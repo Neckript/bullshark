@@ -456,5 +456,13 @@
   "backupImportStarted": "Restore staged. The server is restarting…",
   "backupImportConfirmTitle": "Restore this backup?",
   "backupImportConfirmDesc": "This permanently replaces ALL current data (messages, users, files, settings) and restarts the server. This cannot be undone. A one-time safety copy of the current data is kept on the server.",
-  "backupImportConfirmAction": "Replace everything & restart"
+  "backupImportConfirmAction": "Replace everything & restart",
+
+  "ownerTokenTitle": "Токен владельца",
+  "ownerTokenDesc": "Сгенерируйте новый токен для получения прав владельца. Новый токен будет показан один раз — сохраните его в надёжном месте.",
+  "ownerTokenRotateBtn": "Обновить токен",
+  "ownerTokenRevealTitle": "Новый токен владельца",
+  "ownerTokenRevealWarning": "Этот токен больше не будет показан. Любой, у кого он есть, может взять контроль над сервером.",
+  "ownerTokenCopyBtn": "Копировать",
+  "ownerTokenCopied": "Скопировано!"
 }
