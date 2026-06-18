@@ -1,5 +1,8 @@
-import { generateOwnerToken, hashOwnerToken } from '../../../helpers/owner-token';
 import { describe, expect, test } from 'bun:test';
+import {
+  generateOwnerToken,
+  hashOwnerToken
+} from '../../../helpers/owner-token';
 
 describe('rotate-owner-token helpers', () => {
   test('generateOwnerToken returns a 43-char base64url string', () => {

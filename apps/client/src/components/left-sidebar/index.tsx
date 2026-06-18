@@ -1,6 +1,6 @@
 import { ResizableSidebar } from '@/components/resizable-sidebar';
-import { setSelectedChannelId } from '@/features/server/channels/actions';
 import { openDialog } from '@/features/dialogs/actions';
+import { setSelectedChannelId } from '@/features/server/channels/actions';
 import {
   useDmsOpen,
   usePublicServerSettings,
@@ -60,7 +60,9 @@ const LeftSidebar = memo(({ className }: TLeftSidebarProps) => {
       </div>
       {!serverHasOwner && (
         <div className="flex items-center justify-between gap-2 border-b border-destructive/20 bg-destructive/10 px-4 py-2">
-          <p className="text-xs text-destructive">{t('claimOwnerBannerText')}</p>
+          <p className="text-xs text-destructive">
+            {t('claimOwnerBannerText')}
+          </p>
           <button
             className="shrink-0 text-xs font-medium text-destructive underline"
             onClick={() => openDialog(Dialog.CLAIM_OWNER)}

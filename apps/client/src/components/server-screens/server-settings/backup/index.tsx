@@ -95,7 +95,9 @@ const Backup = memo(() => {
           <CardDescription>{t('backupDesc')}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-destructive">{t('backupSecurityWarning')}</p>
+          <p className="text-sm text-destructive">
+            {t('backupSecurityWarning')}
+          </p>
 
           <Group
             label={t('backupExportLabel')}
@@ -133,7 +135,9 @@ const Backup = memo(() => {
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t('backupImportConfirmTitle')}</AlertDialogTitle>
+              <AlertDialogTitle>
+                {t('backupImportConfirmTitle')}
+              </AlertDialogTitle>
               <AlertDialogDescription>
                 {t('backupImportConfirmDesc')}
               </AlertDialogDescription>

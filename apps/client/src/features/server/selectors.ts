@@ -71,9 +71,8 @@ export const isOwnUserOwnerSelector = createSelector(
   (ownUserRoles) => ownUserRoles.some((role) => role.id === OWNER_ROLE_ID)
 );
 
-export const serverHasOwnerSelector = createSelector(
-  [usersSelector],
-  (users) => users.some((u) => u.roleIds.includes(OWNER_ROLE_ID))
+export const serverHasOwnerSelector = createSelector([usersSelector], (users) =>
+  users.some((u) => u.roleIds.includes(OWNER_ROLE_ID))
 );
 
 export const hasVisibleChannelsInCategorySelector = createCachedSelector(
