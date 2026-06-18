@@ -35,6 +35,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # Full history so the fast-forward push to the Codeberg mirror can be
+          # verified. With the default shallow clone (depth 1) the runner lacks
+          # the commit Codeberg's main points to whenever GitHub main is more
+          # than one commit ahead, and the push is rejected as non-fast-forward.
+          fetch-depth: 0
 
       - name: Build project artifacts
         uses: ./.github/actions/build-sharkord
