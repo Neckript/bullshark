@@ -21,6 +21,7 @@ import {
   ownVoiceUserSelector,
   pluginsEnabledSelector,
   publicServerSettingsSelector,
+  serverHasOwnerSelector,
   serverNameSelector,
   typingUsersByChannelIdSelector,
   typingUsersByThreadIdSelector,
@@ -48,6 +49,8 @@ export const useOwnUserRoles = () => useSelector(ownUserRolesSelector);
 export const useInfo = () => useSelector(infoSelector);
 
 export const useIsOwnUserOwner = () => useSelector(isOwnUserOwnerSelector);
+
+export const useServerHasOwner = () => useSelector(serverHasOwnerSelector);
 
 export const usePluginsEnabled = () => useSelector(pluginsEnabledSelector);
 
