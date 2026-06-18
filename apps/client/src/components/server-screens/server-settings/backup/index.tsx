@@ -163,7 +163,7 @@ const Backup = memo(() => {
           </Button>
         </CardContent>
 
-        <AlertDialog open={!!revealToken}>
+        <AlertDialog open={!!revealToken} onOpenChange={() => {}}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>{t('ownerTokenRevealTitle')}</AlertDialogTitle>

@@ -49,7 +49,7 @@ const ClaimOwnerDialog = memo(({ isOpen, close }: TDialogBaseProps) => {
               {...r('token')}
               className="mt-2 font-mono"
               placeholder={t('claimOwnerTokenPlaceholder')}
-              error={errors._general ?? (errors.token ? t('claimOwnerInvalidToken') : undefined)}
+              error={errors._general ? t('claimOwnerInvalidToken') : undefined}
             />
           </AutoFocus>
         </div>
