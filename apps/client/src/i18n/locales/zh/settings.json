@@ -448,5 +448,13 @@
   "backupImportStarted": "Restore staged. The server is restarting…",
   "backupImportConfirmTitle": "Restore this backup?",
   "backupImportConfirmDesc": "This permanently replaces ALL current data (messages, users, files, settings) and restarts the server. This cannot be undone. A one-time safety copy of the current data is kept on the server.",
-  "backupImportConfirmAction": "Replace everything & restart"
+  "backupImportConfirmAction": "Replace everything & restart",
+
+  "ownerTokenTitle": "所有者令牌",
+  "ownerTokenDesc": "重新生成所有权认领令牌。新令牌将只显示一次——请妥善保存。",
+  "ownerTokenRotateBtn": "重新生成令牌",
+  "ownerTokenRevealTitle": "新的所有者令牌",
+  "ownerTokenRevealWarning": "此令牌将不再显示。任何持有该令牌的人都可以接管服务器。",
+  "ownerTokenCopyBtn": "复制",
+  "ownerTokenCopied": "已复制！"
 }

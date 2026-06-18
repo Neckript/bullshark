@@ -126,5 +126,14 @@
   "pluginInstallUseDocker": "我们强烈建议在 Docker 容器中运行 Bullshark 以实现隔离并降低风险。",
   "pluginInstallDocsNote": "欲了解更多详情，请阅读文档：",
   "pluginInstallConfirmBtn": "安装插件",
-  "pluginInstallConfirmCountdown": "等待 ({{seconds}}s)"
+  "pluginInstallConfirmCountdown": "等待 ({{seconds}}s)",
+  "claimOwnerBannerText": "此服务器尚无所有者。",
+  "claimOwnerBannerBtn": "认领所有权",
+  "claimOwnerTitle": "认领服务器所有权",
+  "claimOwnerDesc": "输入服务器首次启动时在控制台打印的所有者令牌，以认领此服务器的所有权。",
+  "claimOwnerTokenLabel": "所有者令牌",
+  "claimOwnerTokenPlaceholder": "在此粘贴您的令牌",
+  "claimOwnerBtn": "认领所有权",
+  "claimOwnerInvalidToken": "令牌无效。",
+  "claimOwnerSuccess": "您现在是服务器所有者。"
 }

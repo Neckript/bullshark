@@ -447,5 +447,13 @@
   "backupImportStarted": "Restauration programmée. Le serveur redémarre…",
   "backupImportConfirmTitle": "Restaurer cette sauvegarde ?",
   "backupImportConfirmDesc": "Cette action remplace définitivement TOUTES les données actuelles (messages, utilisateurs, fichiers, paramètres) et redémarre le serveur. Cette action est irréversible. Une copie de sécurité ponctuelle des données actuelles est conservée sur le serveur.",
-  "backupImportConfirmAction": "Tout remplacer et redémarrer"
+  "backupImportConfirmAction": "Tout remplacer et redémarrer",
+
+  "ownerTokenTitle": "Token propriétaire",
+  "ownerTokenDesc": "Régénérez le token de revendication de propriété. Le nouveau token s'affichera une seule fois — conservez-le en lieu sûr.",
+  "ownerTokenRotateBtn": "Régénérer le token",
+  "ownerTokenRevealTitle": "Nouveau token propriétaire",
+  "ownerTokenRevealWarning": "Ce token ne sera plus affiché. Quiconque le possède peut prendre le contrôle du serveur.",
+  "ownerTokenCopyBtn": "Copier",
+  "ownerTokenCopied": "Copié !"
 }

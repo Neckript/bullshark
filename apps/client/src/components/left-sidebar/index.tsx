@@ -1,14 +1,18 @@
 import { ResizableSidebar } from '@/components/resizable-sidebar';
+import { openDialog } from '@/features/dialogs/actions';
 import { setSelectedChannelId } from '@/features/server/channels/actions';
 import {
   useDmsOpen,
   usePublicServerSettings,
+  useServerHasOwner,
   useServerName
 } from '@/features/server/hooks';
 import { LocalStorageKey } from '@/helpers/storage';
 import { cn } from '@/lib/utils';
 import { TestId } from '@sharkord/shared';
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Dialog } from '../dialogs/dialogs';
 import { Categories } from './categories';
 import { DirectMessages } from './direct-messages';
 import { DmButton } from './direct-messages/dm-button';
@@ -26,9 +30,11 @@ type TLeftSidebarProps = {
 };
 
 const LeftSidebar = memo(({ className }: TLeftSidebarProps) => {
+  const { t } = useTranslation('dialogs');
   const serverName = useServerName();
   const dmsOpen = useDmsOpen();
   const publicSettings = usePublicServerSettings();
+  const serverHasOwner = useServerHasOwner();
 
   return (
     <ResizableSidebar
@@ -52,6 +58,19 @@ const LeftSidebar = memo(({ className }: TLeftSidebarProps) => {
           <ServerDropdownMenu />
         </div>
       </div>
+      {!serverHasOwner && (
+        <div className="flex items-center justify-between gap-2 border-b border-destructive/20 bg-destructive/10 px-4 py-2">
+          <p className="text-xs text-destructive">
+            {t('claimOwnerBannerText')}
+          </p>
+          <button
+            className="shrink-0 text-xs font-medium text-destructive underline"
+            onClick={() => openDialog(Dialog.CLAIM_OWNER)}
+          >
+            {t('claimOwnerBannerBtn')}
+          </button>
+        </div>
+      )}
       {publicSettings?.directMessagesEnabled && <DmButton />}
       <PluginButtons />
       <div className="flex-1 overflow-y-auto">
