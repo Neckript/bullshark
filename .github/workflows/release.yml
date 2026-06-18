@@ -92,13 +92,42 @@ jobs:
           VERSION="${{ steps.get_version.outputs.version }}"
           API="https://codeberg.org/api/v1/repos/The_Neckript/bullshark"
           OUT="apps/server/build/out"
-          RELEASE_ID=$(curl -sf -X POST "${API}/releases" \
+
+          # --- Create the release (verbose on failure, idempotent on re-run) ---
+          resp="$(curl -sS -w $'\n%{http_code}' -X POST "${API}/releases" \
             -H "Authorization: token ${CODEBERG_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d "{\"tag_name\":\"v${VERSION}\",\"name\":\"v${VERSION}\",\"draft\":false,\"prerelease\":false}" \
-            | jq -r '.id')
+            -d "{\"tag_name\":\"v${VERSION}\",\"name\":\"v${VERSION}\",\"draft\":false,\"prerelease\":false}")"
+          code="${resp##*$'\n'}"
+          body="${resp%$'\n'*}"
+          echo "Create release -> HTTP ${code}"
+
+          case "$code" in
+            201) RELEASE_ID="$(printf '%s' "$body" | jq -r '.id')" ;;
+            409)
+              echo "Release for v${VERSION} already exists; reusing it."
+              RELEASE_ID="$(curl -sS -H "Authorization: token ${CODEBERG_TOKEN}" \
+                "${API}/releases/tags/v${VERSION}" | jq -r '.id')" ;;
+            *)
+              echo "::error::Codeberg release creation failed (HTTP ${code})"
+              echo "Response body: ${body}"
+              exit 1 ;;
+          esac
+
+          if [ -z "${RELEASE_ID}" ] || [ "${RELEASE_ID}" = "null" ]; then
+            echo "::error::Could not determine RELEASE_ID (body: ${body})"; exit 1
+          fi
+          echo "RELEASE_ID=${RELEASE_ID}"
+
+          # --- Upload assets ---
           for f in bullshark-linux-x64 bullshark-linux-arm64 release.json; do
-            curl -sf -X POST "${API}/releases/${RELEASE_ID}/assets?name=${f}" \
+            if [ ! -f "${OUT}/${f}" ]; then
+              echo "::error::Missing artifact ${OUT}/${f}"; ls -la "${OUT}" || true; exit 1
+            fi
+            echo "Uploading ${f}..."
+            curl -sS --fail-with-body -X POST "${API}/releases/${RELEASE_ID}/assets?name=${f}" \
               -H "Authorization: token ${CODEBERG_TOKEN}" \
               -F "attachment=@${OUT}/${f}"
+            echo
           done
+          echo "Codeberg release v${VERSION} published."
