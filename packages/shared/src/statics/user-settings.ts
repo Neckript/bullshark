@@ -6,7 +6,9 @@ const USER_SETTING_KEYS = [
   'browser_notifications_mentions',
   'browser_notifications_dms',
   'browser_notifications_replies',
-  'auto_join_last_channel'
+  'auto_join_last_channel',
+  'custom_theme_bg',
+  'custom_theme_accent'
 ] as const;
 
 type TUserSettingKey = (typeof USER_SETTING_KEYS)[number];

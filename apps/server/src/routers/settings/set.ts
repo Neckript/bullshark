@@ -4,6 +4,8 @@ import { upsertUserSetting } from '../../db/queries/user-settings';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
 
+const HEX_COLOR_RE = /^#[0-9a-fA-F]{6}$/;
+
 const setRoute = protectedProcedure
   .input(
     z.object({
@@ -17,6 +19,15 @@ const setRoute = protectedProcedure
       code: 'BAD_REQUEST',
       message: 'Unknown setting key'
     });
+    if (input.key.startsWith('custom_theme_')) {
+      invariant(
+        typeof input.value === 'string' && HEX_COLOR_RE.test(input.value),
+        {
+          code: 'BAD_REQUEST',
+          message: 'Invalid colour value'
+        }
+      );
+    }
     await upsertUserSetting(ctx.userId, input.key, input.value);
   });
 

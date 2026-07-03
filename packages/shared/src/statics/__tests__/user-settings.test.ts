@@ -24,4 +24,9 @@ describe('user setting key allowlist', () => {
       false
     );
   });
+
+  test('accepts the custom theme keys', () => {
+    expect(isAllowedUserSettingKey('custom_theme_bg')).toBe(true);
+    expect(isAllowedUserSettingKey('custom_theme_accent')).toBe(true);
+  });
 });
