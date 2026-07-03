@@ -5,14 +5,21 @@ import {
 } from '@/helpers/storage';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'dark' | 'light' | 'gaming-red' | 'deep-ocean' | 'midnight-purple';
+type Theme =
+  | 'dark'
+  | 'light'
+  | 'gaming-red'
+  | 'deep-ocean'
+  | 'midnight-purple'
+  | 'bullshark';
 
 const VALID_THEMES = new Set<Theme>([
   'dark',
   'light',
   'gaming-red',
   'deep-ocean',
-  'midnight-purple'
+  'midnight-purple',
+  'bullshark'
 ]);
 
 // All classes this provider may ever add — removed together on each switch.
@@ -21,7 +28,8 @@ const ALL_THEME_CLASSES = [
   'dark',
   'theme-gaming-red',
   'theme-deep-ocean',
-  'theme-midnight-purple'
+  'theme-midnight-purple',
+  'theme-bullshark'
 ] as const;
 
 type ThemeProviderProps = {
@@ -36,7 +44,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: 'dark',
+  theme: 'bullshark',
   setTheme: () => null
 };
 
@@ -44,7 +52,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 function ThemeProvider({
   children,
-  defaultTheme = 'dark',
+  defaultTheme = 'bullshark',
   storageKey = LocalStorageKey.VITE_UI_THEME,
   ...props
 }: ThemeProviderProps) {

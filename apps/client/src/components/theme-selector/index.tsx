@@ -30,6 +30,12 @@ const THEME_DEFS: TThemeDef[] = [
     labelKey: 'themeMidnightPurple',
     bg: '#130d22',
     accent: '#8e35cc'
+  },
+  {
+    id: 'bullshark',
+    labelKey: 'themeBullshark',
+    bg: '#12161d',
+    accent: '#7ba7cc'
   }
 ];
 
