@@ -72,6 +72,7 @@ import {
   type TStreamQualitySettings
 } from './helpers';
 import { useLocalStreams } from './hooks/use-local-streams';
+import { useDesktopBridge } from './hooks/use-desktop-bridge';
 import { usePtt } from './hooks/use-ptt';
 import { useRemoteStreams } from './hooks/use-remote-streams';
 import {
@@ -1237,6 +1238,12 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
     rawStream: rawMicrophoneStreamRef.current,
     transmitTrackRef: transmitMicrophoneTrackRef,
     onSpeakingChange: setIsVadSpeaking
+  });
+
+  useDesktopBridge({
+    inVoice: !!currentVoiceChannelId,
+    micMuted: ownVoiceState.micMuted,
+    toggleMic
   });
 
   useEffect(() => {

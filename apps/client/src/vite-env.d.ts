@@ -9,6 +9,20 @@ declare global {
     printVoiceStats?: () => void;
     DEBUG?: boolean;
 
+    // Bullshark Desktop companion API, exposed by the desktop app's
+    // sandboxed preload (bullshark-desktop src/preload/bridge.ts).
+    // Absent when running in a regular browser.
+    bullshark?: {
+      isDesktop: boolean;
+      notifications: { isMuted: () => boolean };
+      voice: {
+        reportState: (state: { inVoice: boolean; muted: boolean }) => void;
+        onToggleRequest: (cb: () => void) => () => void;
+      };
+      focusWindow: () => void;
+      onMuteChanged: (cb: (muted: boolean) => void) => () => void;
+    };
+
     // plugin store exposed for plugins to use imperatively
     __SHARKORD_STORE__: import('@sharkord/shared').TPluginStore;
 
