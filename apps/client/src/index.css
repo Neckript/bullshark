@@ -247,6 +247,37 @@
   --sidebar-ring: oklch(0.7 0.09 230);
 }
 
+/* User-defined theme: everything is derived from --custom-bg / --custom-accent
+   (set inline on <html> by CustomThemeVars) via CSS relative color syntax. */
+.dark.theme-custom {
+  --background: oklch(from var(--custom-bg, #181818) l c h);
+  --foreground: oklch(0.94 0 0);
+  --card: oklch(from var(--custom-bg, #181818) calc(l + 0.05) c h);
+  --card-foreground: oklch(0.94 0 0);
+  --popover: oklch(from var(--custom-bg, #181818) calc(l + 0.05) c h);
+  --popover-foreground: oklch(0.94 0 0);
+  --primary: oklch(from var(--custom-accent, #7ba7cc) l c h);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(from var(--custom-bg, #181818) calc(l + 0.1) c h);
+  --secondary-foreground: oklch(0.94 0 0);
+  --muted: oklch(from var(--custom-bg, #181818) calc(l + 0.1) c h);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(from var(--custom-bg, #181818) calc(l + 0.14) c h);
+  --accent-foreground: oklch(0.94 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(from var(--custom-accent, #7ba7cc) l c h);
+  --sidebar: oklch(from var(--custom-bg, #181818) calc(l + 0.02) c h);
+  --sidebar-foreground: oklch(0.94 0 0);
+  --sidebar-primary: oklch(from var(--custom-accent, #7ba7cc) l c h);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(from var(--custom-bg, #181818) calc(l + 0.1) c h);
+  --sidebar-accent-foreground: oklch(0.94 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(from var(--custom-accent, #7ba7cc) l c h);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

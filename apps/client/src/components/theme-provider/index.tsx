@@ -11,7 +11,8 @@ type Theme =
   | 'gaming-red'
   | 'deep-ocean'
   | 'midnight-purple'
-  | 'bullshark';
+  | 'bullshark'
+  | 'custom';
 
 const VALID_THEMES = new Set<Theme>([
   'dark',
@@ -19,7 +20,8 @@ const VALID_THEMES = new Set<Theme>([
   'gaming-red',
   'deep-ocean',
   'midnight-purple',
-  'bullshark'
+  'bullshark',
+  'custom'
 ]);
 
 // All classes this provider may ever add — removed together on each switch.
@@ -29,7 +31,8 @@ const ALL_THEME_CLASSES = [
   'theme-gaming-red',
   'theme-deep-ocean',
   'theme-midnight-purple',
-  'theme-bullshark'
+  'theme-bullshark',
+  'theme-custom'
 ] as const;
 
 type ThemeProviderProps = {

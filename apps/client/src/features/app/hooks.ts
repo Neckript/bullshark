@@ -7,6 +7,8 @@ import {
   browserNotificationsForMentionsSelector,
   browserNotificationsForRepliesSelector,
   browserNotificationsSelector,
+  customThemeAccentSelector,
+  customThemeBgSelector,
   devicesSelector,
   isAltHeldSelector,
   isAutoConnectingSelector,
@@ -74,3 +76,8 @@ export const useIsShiftHeld = () => useSelector(isShiftHeldSelector);
 export const useIsCtrlHeld = () => useSelector(isCtrlHeldSelector);
 
 export const useIsAltHeld = () => useSelector(isAltHeldSelector);
+
+export const useCustomThemeBg = () => useSelector(customThemeBgSelector);
+
+export const useCustomThemeAccent = () =>
+  useSelector(customThemeAccentSelector);
