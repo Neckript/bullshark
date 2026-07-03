@@ -31,7 +31,7 @@ await i18nReady;
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider
-      defaultTheme="dark"
+      defaultTheme="bullshark"
       storageKey={LocalStorageKey.VITE_UI_THEME}
     >
       <GlobalErrorBoundary>
