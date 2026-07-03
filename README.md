@@ -58,7 +58,7 @@ Avec Bullshark, rien de tout ça n'existe. Il n'y a pas de "serveurs Bullshark".
 | Voice + Video + Screen share | ✓ | partial | ✓ |
 | Open source & auditable | ✗ | ✗ | ✓ MIT |
 | Zero telemetry | ✗ | ✗ | ✓ |
-| Gaming features (PTT, hotkeys, soundboard) | ✓ | partial | ✓ |
+| Gaming features (PTT, global hotkeys) | ✓ | partial | ✓ |
 
 ---
 
@@ -69,7 +69,7 @@ Avec Bullshark, rien de tout ça n'existe. Il n'y a pas de "serveurs Bullshark".
 - **Video & screen sharing** — built-in, no plugins needed
 - **Push-to-Talk + Voice Activity Detection** — configurable hotkeys
 - **Noise suppression** — processed client-side, never leaves your machine
-- **Soundboard** — inject sounds directly into voice channels
+- **Soundboard** — inject sounds directly into voice channels *(coming soon / à venir)*
 - **Roles & permissions** — per-channel, per-user granular control
 - **Zero telemetry** — no analytics, no tracking, no phoning home
 - **Single binary** — one file, runs anywhere: Linux, Windows, macOS, Docker
@@ -156,7 +156,7 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 - [x] Fork established
 - [ ] `fix` Audio stability — voice freeze after 10s (#695 upstream)
 - [ ] `fix` Emoji reactions on Firefox (#728 upstream)
-- [ ] `fix` Global hotkeys mute/unmute (#678 upstream)
+- [x] `feat` Global mute/unmute hotkey — OS-level, configurable, via [Bullshark Desktop](https://github.com/Neckript/bullshark-desktop) (2026-07-03)
 
 ### Sovereignty / Souveraineté
 - [ ] `docs` HTTPS guide — Caddy + OVH DNS (no Cloudflare dependency)
@@ -165,16 +165,17 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 - [ ] `feat` Replace any remaining US-dependent defaults with EU-sovereign alternatives
 
 ### Gaming features / Fonctionnalités gaming
-- [ ] `feat` Push-to-Talk + VAD advanced
-- [ ] `feat` Client-side noise suppression
+- [x] `feat` Push-to-Talk + VAD (configurable input modes, window-scoped PTT key)
+- [x] `feat` Client-side noise suppression (RNNoise + noise gate worklets)
 - [ ] `feat` Soundboard
 - [ ] `feat` Voice channel grid UI
 - [ ] `feat` In-game overlay
 
 ### Platform / Plateforme
-- [ ] `feat` Roles & permissions granular
+- [x] `feat` Roles & permissions granular (per-channel, per-role)
+- [x] `feat` Threads & discussion channels
+- [x] `feat` Server backup — owner-only export/import (.zip) from the UI (2026-06-17)
 - [ ] `feat` PWA mobile optimized
-- [ ] `feat` Threads & discussion channels
 
 ### Release
 - [ ] `release` v0.1.0 stable — first Bullshark release
