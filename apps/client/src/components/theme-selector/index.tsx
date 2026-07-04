@@ -1,4 +1,5 @@
 import { useCustomThemeAccent, useCustomThemeBg } from '@/features/app/hooks';
+import { saveSelectedTheme } from '@/features/server/user-settings/actions';
 import { cn } from '@/lib/utils';
 import { Button } from '@sharkord/ui';
 import { memo, useState } from 'react';
@@ -50,6 +51,12 @@ const ThemeSelector = memo(() => {
   const [editing, setEditing] = useState(false);
   const hasCustom = !!customBg && !!customAccent;
 
+  // Apply locally and persist as an account-wide preference (syncs devices).
+  const selectTheme = (id: Theme) => {
+    setTheme(id);
+    void saveSelectedTheme(id);
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap gap-3">
@@ -60,7 +67,7 @@ const ThemeSelector = memo(() => {
             <button
               key={id}
               type="button"
-              onClick={() => setTheme(id)}
+              onClick={() => selectTheme(id)}
               title={t(labelKey)}
               className={cn(
                 'flex flex-col items-center gap-1.5 rounded-lg p-2 transition-all',
@@ -90,7 +97,7 @@ const ThemeSelector = memo(() => {
           <button
             key="custom"
             type="button"
-            onClick={() => setTheme('custom')}
+            onClick={() => selectTheme('custom')}
             title={t('themeCustom')}
             className={cn(
               'flex flex-col items-center gap-1.5 rounded-lg p-2 transition-all',

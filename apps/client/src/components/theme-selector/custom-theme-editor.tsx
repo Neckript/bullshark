@@ -1,7 +1,8 @@
 import { useCustomThemeAccent, useCustomThemeBg } from '@/features/app/hooks';
 import {
   clearCustomTheme,
-  saveCustomTheme
+  saveCustomTheme,
+  saveSelectedTheme
 } from '@/features/server/user-settings/actions';
 import { applyCustomThemeVars } from '@/helpers/custom-theme';
 import { Button } from '@sharkord/ui';
@@ -46,6 +47,7 @@ const CustomThemeEditor = memo(({ onClose }: TCustomThemeEditorProps) => {
     setSaving(true);
     try {
       await saveCustomTheme(bg, accent);
+      await saveSelectedTheme('custom');
       onClose();
     } finally {
       setSaving(false);
@@ -58,6 +60,7 @@ const CustomThemeEditor = memo(({ onClose }: TCustomThemeEditorProps) => {
       await clearCustomTheme();
       applyCustomThemeVars(null, null);
       setTheme('bullshark');
+      await saveSelectedTheme('bullshark');
       onClose();
     } finally {
       setSaving(false);

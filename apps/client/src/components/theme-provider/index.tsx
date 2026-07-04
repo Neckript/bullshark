@@ -3,6 +3,7 @@ import {
   LocalStorageKey,
   setLocalStorageItem
 } from '@/helpers/storage';
+import { registerThemeSetter } from '@/helpers/theme-sync';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme =
@@ -64,6 +65,22 @@ function ThemeProvider({
     return VALID_THEMES.has(stored) ? stored : defaultTheme;
   });
 
+  // Apply a theme locally (state + persisted cache) without touching the
+  // server. Used for boot and for server-driven hydration.
+  const applyTheme = (next: Theme) => {
+    setLocalStorageItem(storageKey, next);
+    setTheme(next);
+  };
+
+  // Let settings hydration drive the live theme across devices.
+  useEffect(() => {
+    return registerThemeSetter((next) => {
+      if (VALID_THEMES.has(next as Theme)) applyTheme(next as Theme);
+    });
+    // applyTheme is stable for a fixed storageKey.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
+
   useEffect(() => {
     const root = window.document.documentElement;
 
@@ -86,10 +103,7 @@ function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      setLocalStorageItem(storageKey, theme);
-      setTheme(theme);
-    }
+    setTheme: applyTheme
   };
 
   return (
