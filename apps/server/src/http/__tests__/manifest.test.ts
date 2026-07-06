@@ -19,8 +19,8 @@ describe('/manifest.json', () => {
     expect(manifest).toHaveProperty('description');
     expect(manifest).toHaveProperty('start_url', '/');
     expect(manifest).toHaveProperty('display', 'standalone');
-    expect(manifest).toHaveProperty('background_color', '#171717');
-    expect(manifest).toHaveProperty('theme_color', '#171717');
+    expect(manifest).toHaveProperty('background_color', '#030a10');
+    expect(manifest).toHaveProperty('theme_color', '#030a10');
     expect(manifest).toHaveProperty('icons');
 
     expect(Array.isArray(manifest.icons)).toBe(true);
@@ -55,8 +55,16 @@ describe('/manifest.json', () => {
       (icon) => icon.src === '/icon-512.png' && icon.sizes === '512x512'
     );
 
+    const hasMaskableIcon512 = manifest.icons.some(
+      (icon) =>
+        icon.src === '/icon-512.png' &&
+        icon.sizes === '512x512' &&
+        icon.purpose === 'maskable'
+    );
+
     expect(hasDefaultIcon192).toBe(true);
     expect(hasDefaultIcon512).toBe(true);
+    expect(hasMaskableIcon512).toBe(true);
   });
 
   test('should include required icon properties', async () => {
