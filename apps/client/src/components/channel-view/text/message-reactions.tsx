@@ -137,7 +137,7 @@ const Reaction = memo(
           variant="outline"
           onClick={onClick}
           className={cn(
-            'flex items-center gap-1 h-9',
+            'flex items-center gap-1 h-9 reaction-pill',
             isUserReacted ? 'border-border' : 'border-none'
           )}
         >

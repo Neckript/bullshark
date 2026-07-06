@@ -379,6 +379,14 @@ body {
   }
 }
 
+/* Touch-friendly reaction pills */
+@media (pointer: coarse) {
+  .reaction-pill {
+    min-height: 2.25rem; /* ≥36px hit target, visual size unchanged on desktop */
+    min-width: 2.75rem;
+  }
+}
+
 #portal {
   display: none;
   position: fixed;
