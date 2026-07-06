@@ -38,6 +38,7 @@
   "addReaction": "Ajouter une réaction",
   "copyMessageText": "Copier le texte",
   "copiedToClipboard": "Copié dans le presse-papiers",
+  "failedCopyMessage": "Impossible de copier le texte",
 
   "messageCannotBeEmpty": "Le message ne peut pas être vide.",
   "messageEdited": "Message modifié",

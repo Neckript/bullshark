@@ -38,6 +38,7 @@
   "addReaction": "Add Reaction",
   "copyMessageText": "Copy text",
   "copiedToClipboard": "Copied to clipboard",
+  "failedCopyMessage": "Failed to copy text",
 
   "messageCannotBeEmpty": "Message cannot be empty",
   "messageEdited": "Message edited",

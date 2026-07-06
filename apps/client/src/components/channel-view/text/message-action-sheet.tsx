@@ -90,8 +90,12 @@ const MessageActionSheet = memo(
     );
 
     const onCopy = useCallback(async () => {
-      await navigator.clipboard.writeText(messageText);
-      toast.success(t('copiedToClipboard'));
+      try {
+        await navigator.clipboard.writeText(messageText);
+        toast.success(t('copiedToClipboard'));
+      } catch {
+        toast.error(t('failedCopyMessage'));
+      }
     }, [messageText, t]);
 
     return (
