@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 type TUseLongPressOpts = { delayMs?: number; moveTolerancePx?: number };
 
@@ -16,10 +16,14 @@ const useLongPress = (
     startRef.current = null;
   }, []);
 
+  // cancel any pending timer on unmount (message deleted / row recycled)
+  useEffect(() => clear, [clear]);
+
   const onTouchStart = useCallback(
     (e: React.TouchEvent) => {
       const touch = e.touches[0];
       if (!touch || e.touches.length > 1) return;
+      clear();
       firedRef.current = false;
       startRef.current = { x: touch.clientX, y: touch.clientY };
       timerRef.current = setTimeout(() => {
@@ -27,7 +31,7 @@ const useLongPress = (
         onLongPress();
       }, delayMs);
     },
-    [delayMs, onLongPress]
+    [clear, delayMs, onLongPress]
   );
 
   const onTouchMove = useCallback(
