@@ -1,11 +1,21 @@
 import { appSliceActions } from '@/features/app/slice';
 import { store } from '@/features/store';
 import { getLocalStorageItemBool, LocalStorageKey } from '@/helpers/storage';
+import { applyServerTheme } from '@/helpers/theme-sync';
 import { getTRPCClient } from '@/lib/trpc';
 import { MUTED_ROLE_MENTION_PREFIX } from '@sharkord/shared';
 
 // Apply a server settings payload into the app slice.
 const applyServerSettings = (settings: Record<string, unknown>) => {
+  const customThemeBg =
+    typeof settings['custom_theme_bg'] === 'string'
+      ? settings['custom_theme_bg']
+      : null;
+  const customThemeAccent =
+    typeof settings['custom_theme_accent'] === 'string'
+      ? settings['custom_theme_accent']
+      : null;
+
   store.dispatch(
     appSliceActions.hydrateUserSettings({
       browserNotifications: !!settings['browser_notifications'],
@@ -17,9 +27,23 @@ const applyServerSettings = (settings: Record<string, unknown>) => {
       autoJoinLastChannel: !!settings['auto_join_last_channel'],
       mutedRoleMentionIds: Object.keys(settings)
         .filter((k) => k.startsWith(MUTED_ROLE_MENTION_PREFIX) && settings[k])
-        .map((k) => Number(k.slice(MUTED_ROLE_MENTION_PREFIX.length)))
+        .map((k) => Number(k.slice(MUTED_ROLE_MENTION_PREFIX.length))),
+      customThemeBg,
+      customThemeAccent
     })
   );
+
+  // Apply the account-wide selected theme so a choice on one device follows
+  // the user everywhere. Skip 'custom' when its palette isn't present yet
+  // (nothing to render), leaving the local default in place.
+  const selectedTheme =
+    typeof settings['ui_theme'] === 'string' ? settings['ui_theme'] : null;
+  if (
+    selectedTheme &&
+    !(selectedTheme === 'custom' && !(customThemeBg && customThemeAccent))
+  ) {
+    applyServerTheme(selectedTheme);
+  }
 };
 
 const loadUserSettings = async (): Promise<Record<string, unknown>> => {
@@ -29,7 +53,10 @@ const loadUserSettings = async (): Promise<Record<string, unknown>> => {
   return settings;
 };
 
-const writeUserSetting = async (key: string, value: boolean): Promise<void> => {
+const writeUserSetting = async (
+  key: string,
+  value: boolean | string
+): Promise<void> => {
   const trpc = getTRPCClient();
   await trpc.settings.set.mutate({ key, value });
 };
@@ -86,9 +113,31 @@ const serverKeyToSliceUpdate = (serverKey: string, value: boolean) => {
   }
 };
 
+const saveCustomTheme = async (bg: string, accent: string): Promise<void> => {
+  const trpc = getTRPCClient();
+  await trpc.settings.set.mutate({ key: 'custom_theme_bg', value: bg });
+  await trpc.settings.set.mutate({ key: 'custom_theme_accent', value: accent });
+  store.dispatch(appSliceActions.setCustomTheme({ bg, accent }));
+};
+
+// Persist the account-wide selected theme so it syncs across devices.
+const saveSelectedTheme = async (theme: string): Promise<void> => {
+  await writeUserSetting('ui_theme', theme);
+};
+
+const clearCustomTheme = async (): Promise<void> => {
+  const trpc = getTRPCClient();
+  await trpc.settings.delete.mutate({ key: 'custom_theme_bg' });
+  await trpc.settings.delete.mutate({ key: 'custom_theme_accent' });
+  store.dispatch(appSliceActions.setCustomTheme({ bg: null, accent: null }));
+};
+
 export {
+  clearCustomTheme,
   clearUserSetting,
   loadUserSettings,
   migrateLocalSettings,
+  saveCustomTheme,
+  saveSelectedTheme,
   writeUserSetting
 };

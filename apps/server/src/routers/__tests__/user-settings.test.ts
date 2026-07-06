@@ -31,4 +31,24 @@ describe('userSettings router', () => {
     const all = await caller.settings.getAll();
     expect(all['muted_role_mention:2']).toBeUndefined();
   });
+
+  test('set accepts a valid hex value for a custom theme key', async () => {
+    const { caller } = await initTest();
+    await caller.settings.set({ key: 'custom_theme_bg', value: '#1a2b3c' });
+    const all = await caller.settings.getAll();
+    expect(all['custom_theme_bg']).toBe('#1a2b3c');
+  });
+
+  test('set rejects invalid values for custom theme keys', async () => {
+    const { caller } = await initTest();
+    await expect(
+      caller.settings.set({ key: 'custom_theme_bg', value: 'red' })
+    ).rejects.toThrow();
+    await expect(
+      caller.settings.set({ key: 'custom_theme_accent', value: '#12345' })
+    ).rejects.toThrow();
+    await expect(
+      caller.settings.set({ key: 'custom_theme_bg', value: true })
+    ).rejects.toThrow();
+  });
 });

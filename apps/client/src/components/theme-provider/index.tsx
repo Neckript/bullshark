@@ -3,16 +3,26 @@ import {
   LocalStorageKey,
   setLocalStorageItem
 } from '@/helpers/storage';
+import { registerThemeSetter } from '@/helpers/theme-sync';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'dark' | 'light' | 'gaming-red' | 'deep-ocean' | 'midnight-purple';
+type Theme =
+  | 'dark'
+  | 'light'
+  | 'gaming-red'
+  | 'deep-ocean'
+  | 'midnight-purple'
+  | 'bullshark'
+  | 'custom';
 
 const VALID_THEMES = new Set<Theme>([
   'dark',
   'light',
   'gaming-red',
   'deep-ocean',
-  'midnight-purple'
+  'midnight-purple',
+  'bullshark',
+  'custom'
 ]);
 
 // All classes this provider may ever add — removed together on each switch.
@@ -21,7 +31,9 @@ const ALL_THEME_CLASSES = [
   'dark',
   'theme-gaming-red',
   'theme-deep-ocean',
-  'theme-midnight-purple'
+  'theme-midnight-purple',
+  'theme-bullshark',
+  'theme-custom'
 ] as const;
 
 type ThemeProviderProps = {
@@ -36,7 +48,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: 'dark',
+  theme: 'bullshark',
   setTheme: () => null
 };
 
@@ -44,7 +56,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 function ThemeProvider({
   children,
-  defaultTheme = 'dark',
+  defaultTheme = 'bullshark',
   storageKey = LocalStorageKey.VITE_UI_THEME,
   ...props
 }: ThemeProviderProps) {
@@ -52,6 +64,22 @@ function ThemeProvider({
     const stored = getLocalStorageItem(storageKey) as Theme;
     return VALID_THEMES.has(stored) ? stored : defaultTheme;
   });
+
+  // Apply a theme locally (state + persisted cache) without touching the
+  // server. Used for boot and for server-driven hydration.
+  const applyTheme = (next: Theme) => {
+    setLocalStorageItem(storageKey, next);
+    setTheme(next);
+  };
+
+  // Let settings hydration drive the live theme across devices.
+  useEffect(() => {
+    return registerThemeSetter((next) => {
+      if (VALID_THEMES.has(next as Theme)) applyTheme(next as Theme);
+    });
+    // applyTheme is stable for a fixed storageKey.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -75,10 +103,7 @@ function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      setLocalStorageItem(storageKey, theme);
-      setTheme(theme);
-    }
+    setTheme: applyTheme
   };
 
   return (

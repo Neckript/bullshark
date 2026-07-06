@@ -28,6 +28,8 @@ export interface TAppState {
   pluginSlotDebug: boolean;
   modifierKeysHeldMap: Record<string, boolean>;
   mutedRoleMentionIds: number[];
+  customThemeBg: string | null;
+  customThemeAccent: string | null;
 }
 
 const initialState: TAppState = {
@@ -74,7 +76,9 @@ const initialState: TAppState = {
     false
   ),
   modifierKeysHeldMap: { Shift: false, Control: false, Alt: false },
-  mutedRoleMentionIds: []
+  mutedRoleMentionIds: [],
+  customThemeBg: null,
+  customThemeAccent: null
 };
 
 export const appSlice = createSlice({
@@ -176,6 +180,8 @@ export const appSlice = createSlice({
         browserNotificationsForReplies: boolean;
         autoJoinLastChannel: boolean;
         mutedRoleMentionIds: number[];
+        customThemeBg: string | null;
+        customThemeAccent: string | null;
       }>
     ) => {
       state.browserNotifications = action.payload.browserNotifications;
@@ -187,6 +193,15 @@ export const appSlice = createSlice({
         action.payload.browserNotificationsForReplies;
       state.autoJoinLastChannel = action.payload.autoJoinLastChannel;
       state.mutedRoleMentionIds = action.payload.mutedRoleMentionIds;
+      state.customThemeBg = action.payload.customThemeBg;
+      state.customThemeAccent = action.payload.customThemeAccent;
+    },
+    setCustomTheme: (
+      state,
+      action: PayloadAction<{ bg: string | null; accent: string | null }>
+    ) => {
+      state.customThemeBg = action.payload.bg;
+      state.customThemeAccent = action.payload.accent;
     },
     setMutedRoleMention: (
       state,
