@@ -14,6 +14,7 @@ import { config, SERVER_PRIVATE_IP } from './config';
 import { loadCrons } from './crons';
 import { loadDb } from './db';
 import { applyPendingRestore } from './helpers/restore';
+import { ensureVapidKeys } from './helpers/vapid';
 import { pluginManager } from './plugins';
 import { enqueueActivityLog } from './queues/activity-log';
 import { initVoiceRuntimes } from './runtimes';
@@ -27,6 +28,8 @@ import './utils/updater';
 await applyPendingRestore();
 
 await loadDb();
+
+await ensureVapidKeys();
 
 if (process.argv.includes('--new-owner-token')) {
   const { newOwnerTokenCli } = await import('./cli/new-owner-token');
