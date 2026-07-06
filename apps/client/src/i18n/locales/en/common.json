@@ -36,6 +36,8 @@
   "unpinMessage": "Unpin Message",
   "pinMessage": "Pin Message",
   "addReaction": "Add Reaction",
+  "copyMessageText": "Copy text",
+  "copiedToClipboard": "Copied to clipboard",
 
   "messageCannotBeEmpty": "Message cannot be empty",
   "messageEdited": "Message edited",

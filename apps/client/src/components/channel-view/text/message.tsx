@@ -1,6 +1,8 @@
 import { openThreadSidebar } from '@/features/app/actions';
 import { useCan } from '@/features/server/hooks';
 import { useIsOwnUser, useOwnUserId } from '@/features/server/users/hooks';
+import { useIsCoarsePointer } from '@/hooks/use-is-coarse-pointer';
+import { useLongPress } from '@/hooks/use-long-press';
 import { cn } from '@/lib/utils';
 import {
   hasMention,
@@ -11,9 +13,13 @@ import {
 import { MessageSquareText } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MessageActionSheet } from './message-action-sheet';
 import { MessageActions } from './message-actions';
 import { MessageEditInline } from './message-edit-inline';
 import { MessageRenderer } from './renderer';
+
+const stripHtml = (html: string) =>
+  new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '';
 
 type TMessageProps = {
   message: TJoinedMessage;
@@ -41,10 +47,13 @@ const Message = memo(
   }: TMessageProps) => {
     const { t } = useTranslation('common');
     const [isPencilEditing, setIsPencilEditing] = useState(false);
+    const [sheetOpen, setSheetOpen] = useState(false);
     const isEditing = isPencilEditing || editingMessageId === message.id;
     const isFromOwnUser = useIsOwnUser(message.userId);
     const can = useCan();
     const ownUserId = useOwnUserId();
+    const isCoarse = useIsCoarsePointer();
+    const longPress = useLongPress(() => setSheetOpen(true));
 
     const canManage = useMemo(
       () => can(Permission.MANAGE_MESSAGES) || isFromOwnUser,
@@ -69,10 +78,12 @@ const Message = memo(
           'min-w-0 flex-1 ml-1 relative hover:bg-secondary/50 rounded-md px-1 py-0.5 group',
           isActiveThread && 'bg-primary/10',
           isMentioned && 'border-primary bg-primary/5',
-          isInlineReplyTarget && 'ring-1 ring-primary/50 bg-primary/10'
+          isInlineReplyTarget && 'ring-1 ring-primary/50 bg-primary/10',
+          isCoarse && 'select-none'
         )}
         data-testid={TestId.MESSAGE_ITEM}
         data-message-id={message.id}
+        {...(isCoarse && !disableActions ? longPress : {})}
       >
         {!isEditing ? (
           <>
@@ -102,6 +113,22 @@ const Message = memo(
                 disablePin={!!message.parentMessageId}
                 isThreadReply={isThreadReply}
                 onReply={() => onReplyMessageSelect?.(message)}
+              />
+            )}
+            {!disableActions && isCoarse && (
+              <MessageActionSheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                onEdit={() => setIsPencilEditing(true)}
+                canManage={canManage}
+                messageId={message.id}
+                channelId={message.channelId}
+                editable={message.editable ?? false}
+                isPinned={message.pinned ?? false}
+                disablePin={!!message.parentMessageId}
+                isThreadReply={isThreadReply}
+                onReply={() => onReplyMessageSelect?.(message)}
+                messageText={stripHtml(message.content ?? '')}
               />
             )}
           </>

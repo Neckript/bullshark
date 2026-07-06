@@ -36,6 +36,8 @@
   "unpinMessage": "Désépingler le message",
   "pinMessage": "Épingler le message",
   "addReaction": "Ajouter une réaction",
+  "copyMessageText": "Copier le texte",
+  "copiedToClipboard": "Copié dans le presse-papiers",
 
   "messageCannotBeEmpty": "Le message ne peut pas être vide.",
   "messageEdited": "Message modifié",
