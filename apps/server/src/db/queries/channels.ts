@@ -500,6 +500,18 @@ const getUserChannelPermissions = async (
   return permissions;
 };
 
+const getChannel = async (
+  channelId: number
+): Promise<TChannel | undefined> => {
+  const [channel] = await db
+    .select()
+    .from(channels)
+    .where(eq(channels.id, channelId))
+    .limit(1);
+
+  return channel;
+};
+
 const getAffectedUserIdsForChannel = async (
   channelId: number,
   options?: {
@@ -700,6 +712,7 @@ export {
   getAffectedUserIdsForCategoryTarget,
   getAffectedUserIdsForChannel,
   getAllChannelUserPermissions,
+  getChannel,
   getChannelsForUser,
   getChannelsReadStatesForUser,
   getRoleChannelPermissions,

@@ -6,6 +6,7 @@ import {
 import { count, eq } from 'drizzle-orm';
 import { db } from '.';
 import { pluginManager } from '../plugins';
+import { enqueuePushForMessage } from '../queues/push';
 import { pubsub } from '../utils/pubsub';
 import {
   getAffectedOnlineUserIdsForChannel,
@@ -51,6 +52,8 @@ const publishMessage = async (
   });
 
   pubsub.publishFor(affectedUserIds, targetEvent, message);
+
+  if (type === 'create') enqueuePushForMessage(message, channelId);
 
   // thread replies should not increment the channel's unread count
   if (message.parentMessageId) return;
