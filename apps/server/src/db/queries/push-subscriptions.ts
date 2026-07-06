@@ -1,4 +1,4 @@
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { db } from '..';
 import { pushSubscriptions } from '../schema';
 
@@ -30,7 +30,12 @@ const deletePushSubscriptionsForUser = async (
   if (endpoint) {
     await db
       .delete(pushSubscriptions)
-      .where(eq(pushSubscriptions.endpoint, endpoint));
+      .where(
+        and(
+          eq(pushSubscriptions.userId, userId),
+          eq(pushSubscriptions.endpoint, endpoint)
+        )
+      );
     return;
   }
   await db.delete(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));

@@ -98,6 +98,35 @@ describe('push router', () => {
     expect(user2Rows[0]!.userId).toBe(2);
   });
 
+  test('unsubscribe with another user endpoint does not delete that user subscription', async () => {
+    const { caller: caller1 } = await initTest(1);
+    const { caller: caller2 } = await initTest(2);
+
+    await caller2.push.subscribe({
+      endpoint: 'https://push.example.com/user-2-only-endpoint',
+      p256dh: 'p256dh-2',
+      auth: 'auth-2'
+    });
+
+    // user 1 tries to unsubscribe user 2's endpoint
+    await caller1.push.unsubscribe({
+      endpoint: 'https://push.example.com/user-2-only-endpoint'
+    });
+
+    const user2Rows = await tdb
+      .select()
+      .from(pushSubscriptions)
+      .where(
+        eq(
+          pushSubscriptions.endpoint,
+          'https://push.example.com/user-2-only-endpoint'
+        )
+      );
+
+    expect(user2Rows.length).toBe(1);
+    expect(user2Rows[0]!.userId).toBe(2);
+  });
+
   test('subscribe rejects invalid endpoint', async () => {
     const { caller } = await initTest(1);
 
