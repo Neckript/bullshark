@@ -75,4 +75,38 @@ describe('decidePushForUser', () => {
   it('no settings → false', () => {
     expect(decidePushForUser(base)).toBe(false);
   });
+  it('DM + dms OFF + all-messages ON → true (falls through like the client)', () => {
+    expect(
+      decidePushForUser({
+        ...base,
+        isDmChannel: true,
+        settings: { browser_notifications: 'true' }
+      })
+    ).toBe(true);
+  });
+  it('DM + dms OFF + no other setting → false', () => {
+    expect(
+      decidePushForUser({ ...base, isDmChannel: true, settings: {} })
+    ).toBe(false);
+  });
+  it('DM + dms OFF + mentions ON + mentioned → true (falls through)', () => {
+    expect(
+      decidePushForUser({
+        ...base,
+        isDmChannel: true,
+        messageContent: '<span data-type="mention" data-user-id="2">@u</span>',
+        settings: { browser_notifications_mentions: 'true' }
+      })
+    ).toBe(true);
+  });
+  it('DM + dms OFF + replies ON + reply to own message → true (falls through)', () => {
+    expect(
+      decidePushForUser({
+        ...base,
+        isDmChannel: true,
+        replyToUserId: 2,
+        settings: { browser_notifications_replies: 'true' }
+      })
+    ).toBe(true);
+  });
 });

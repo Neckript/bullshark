@@ -17,8 +17,9 @@ const decidePushForUser = (input: TPushDecisionInput): boolean => {
   if (input.userId === input.authorId) return false;
 
   // precedence mirrors apps/client/src/features/server/messages/actions.ts:150-186
-  if (input.isDmChannel) {
-    return isOn(input.settings, 'browser_notifications_dms');
+  // (a fall-through chain: a DM with dms-off still gets the mentions/all/replies checks)
+  if (input.isDmChannel && isOn(input.settings, 'browser_notifications_dms')) {
+    return true;
   }
 
   if (isOn(input.settings, 'browser_notifications_mentions')) {
