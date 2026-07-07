@@ -169,6 +169,13 @@
       "when": 1781510610085,
       "tag": "0023_great_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1783361697674,
+      "tag": "0024_overrated_ulik",
+      "breakpoints": true
     }
   ]
 }

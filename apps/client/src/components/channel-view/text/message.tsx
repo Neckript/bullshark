@@ -1,6 +1,7 @@
 import { openThreadSidebar } from '@/features/app/actions';
 import { useCan } from '@/features/server/hooks';
 import { useIsOwnUser, useOwnUserId } from '@/features/server/users/hooks';
+import { useIsCoarsePointer } from '@/hooks/use-is-coarse-pointer';
 import { cn } from '@/lib/utils';
 import {
   hasMention,
@@ -8,12 +9,16 @@ import {
   TestId,
   type TJoinedMessage
 } from '@sharkord/shared';
-import { MessageSquareText } from 'lucide-react';
+import { MessageSquareText, MoreVertical } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MessageActionSheet } from './message-action-sheet';
 import { MessageActions } from './message-actions';
 import { MessageEditInline } from './message-edit-inline';
 import { MessageRenderer } from './renderer';
+
+const stripHtml = (html: string) =>
+  new DOMParser().parseFromString(html, 'text/html').body.textContent ?? '';
 
 type TMessageProps = {
   message: TJoinedMessage;
@@ -41,10 +46,12 @@ const Message = memo(
   }: TMessageProps) => {
     const { t } = useTranslation('common');
     const [isPencilEditing, setIsPencilEditing] = useState(false);
+    const [sheetOpen, setSheetOpen] = useState(false);
     const isEditing = isPencilEditing || editingMessageId === message.id;
     const isFromOwnUser = useIsOwnUser(message.userId);
     const can = useCan();
     const ownUserId = useOwnUserId();
+    const isCoarse = useIsCoarsePointer();
 
     const canManage = useMemo(
       () => can(Permission.MANAGE_MESSAGES) || isFromOwnUser,
@@ -102,6 +109,32 @@ const Message = memo(
                 disablePin={!!message.parentMessageId}
                 isThreadReply={isThreadReply}
                 onReply={() => onReplyMessageSelect?.(message)}
+              />
+            )}
+            {!disableActions && isCoarse && (
+              <button
+                type="button"
+                aria-label={t('messageActions')}
+                onClick={() => setSheetOpen(true)}
+                className="absolute right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+            )}
+            {!disableActions && isCoarse && (
+              <MessageActionSheet
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                onEdit={() => setIsPencilEditing(true)}
+                canManage={canManage}
+                messageId={message.id}
+                channelId={message.channelId}
+                editable={message.editable ?? false}
+                isPinned={message.pinned ?? false}
+                disablePin={!!message.parentMessageId}
+                isThreadReply={isThreadReply}
+                onReply={() => onReplyMessageSelect?.(message)}
+                messageText={stripHtml(message.content ?? '')}
               />
             )}
           </>

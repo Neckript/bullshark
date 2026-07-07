@@ -7,7 +7,13 @@ import { PUBLIC_PATH } from '../helpers/paths';
 
 const DEFAULT_ICONS: TWebAppManifest['icons'] = [
   { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-  { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }
+  { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+  {
+    src: '/icon-512.png',
+    sizes: '512x512',
+    type: 'image/png',
+    purpose: 'maskable'
+  }
 ];
 
 const getImageSize = async (filePath: string) => {
@@ -77,8 +83,8 @@ const manifestRouteHandler = async (
     description: settings.description ?? '',
     start_url: '/',
     display: 'standalone',
-    background_color: '#171717',
-    theme_color: '#171717',
+    background_color: '#030a10',
+    theme_color: '#030a10',
     icons
   };
 

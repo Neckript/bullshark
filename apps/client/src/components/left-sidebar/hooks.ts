@@ -104,6 +104,25 @@ const useSelectChannel = () => {
   );
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pushChannelId = Number(params.get('channelId'));
+
+    if (pushChannelId > 0) {
+      const pushChannel = channelsMap[pushChannelId];
+
+      window.history.replaceState({}, '', '/');
+
+      if (pushChannel) {
+        setSelectedChannelId(pushChannel.id);
+        localStorage.setItem(
+          LocalStorageKey.LAST_SELECTED_CHANNEL,
+          pushChannel.id.toString()
+        );
+
+        return;
+      }
+    }
+
     if (!autoJoinLastChannel) return;
 
     const lastSelectedChannelId = localStorage.getItem(

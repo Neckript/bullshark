@@ -9,6 +9,7 @@ import { invitesRouter } from './invites';
 import { messagesRouter } from './messages';
 import { othersRouter } from './others';
 import { pluginsRouter } from './plugins';
+import { pushRouter } from './push';
 import { rolesRouter } from './roles';
 import { settingsRouter } from './settings';
 import { usersRouter } from './users';
@@ -28,7 +29,8 @@ const appRouter = t.router({
   categories: categoriesRouter,
   plugins: pluginsRouter,
   gifs: gifsRouter,
-  settings: settingsRouter
+  settings: settingsRouter,
+  push: pushRouter
 });
 
 type AppRouter = typeof appRouter;

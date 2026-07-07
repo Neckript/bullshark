@@ -107,7 +107,9 @@ const settings = sqliteTable(
       'storage_image_optimization_quality'
     )
       .notNull()
-      .default(80)
+      .default(80),
+    vapidPublicKey: text('vapid_public_key'),
+    vapidPrivateKey: text('vapid_private_key')
   },
   (t) => [
     index('settings_server_idx').on(t.serverId),
@@ -603,6 +605,21 @@ const userSettings = sqliteTable(
   ]
 );
 
+const pushSubscriptions = sqliteTable(
+  'push_subscriptions',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    endpoint: text('endpoint').notNull().unique(),
+    p256dh: text('p256dh').notNull(),
+    auth: text('auth').notNull(),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [index('push_subscriptions_user_idx').on(t.userId)]
+);
+
 export {
   activityLog,
   categories,
@@ -621,6 +638,7 @@ export {
   messageReactions,
   messages,
   pluginData,
+  pushSubscriptions,
   rolePermissions,
   roles,
   settings,

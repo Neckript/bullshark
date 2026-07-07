@@ -1,14 +1,8 @@
 import { EmojiPicker } from '@/components/emoji-picker';
 import { useRecentEmojis } from '@/components/emoji-picker/use-recent-emojis';
 import { Protect } from '@/components/protect';
-import {
-  shouldUseFallbackImage,
-  type TEmojiItem
-} from '@/components/tiptap-input/helpers';
-import { openThreadSidebar } from '@/features/app/actions';
+import { shouldUseFallbackImage } from '@/components/tiptap-input/helpers';
 import { useIsShiftHeld } from '@/features/app/hooks';
-import { requestConfirmation } from '@/features/dialogs/actions';
-import { getTRPCClient } from '@/lib/trpc';
 import { Permission } from '@sharkord/shared';
 import { IconButton } from '@sharkord/ui';
 import {
@@ -21,9 +15,9 @@ import {
   Trash,
   Trash2
 } from 'lucide-react';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { useMessageActionHandlers } from './hooks/use-message-action-handlers';
 
 const MAX_QUICK_EMOJIS = 4;
 
@@ -60,62 +54,8 @@ const MessageActions = memo(
 
     const isShiftHeld = useIsShiftHeld();
 
-    const onDeleteClick = useCallback(async () => {
-      if (!isShiftHeld) {
-        const choice = await requestConfirmation({
-          title: t('deleteMessageTitle'),
-          message: t('deleteMessageConfirm'),
-          confirmLabel: t('deleteLabel'),
-          cancelLabel: t('cancel')
-        });
-
-        if (!choice) return;
-      }
-
-      const trpc = getTRPCClient();
-      try {
-        await trpc.messages.delete.mutate({ messageId });
-        toast.success(t('messageDeleted'));
-      } catch {
-        toast.error(t('failedDeleteMessage'));
-      }
-    }, [isShiftHeld, messageId, t]);
-
-    const onEmojiSelect = useCallback(
-      async (emoji: TEmojiItem) => {
-        const trpc = getTRPCClient();
-
-        try {
-          await trpc.messages.toggleReaction.mutate({
-            messageId,
-            emoji: emoji.shortcodes[0]
-          });
-        } catch (error) {
-          toast.error(t('failedAddReaction'));
-
-          console.error('Error adding reaction:', error);
-        }
-      },
-      [messageId, t]
-    );
-
-    const onReplyClick = useCallback(() => {
-      openThreadSidebar(messageId, channelId);
-    }, [messageId, channelId]);
-
-    const onPinClick = useCallback(async () => {
-      const trpc = getTRPCClient();
-
-      try {
-        await trpc.messages.togglePin.mutate({ messageId });
-
-        toast.success(t('messagePinToggled'));
-      } catch (error) {
-        toast.error(t('failedTogglePin'));
-
-        console.error('Error toggling pin status:', error);
-      }
-    }, [messageId, t]);
+    const { onDeleteClick, onEmojiSelect, onThreadClick, onPinClick } =
+      useMessageActionHandlers({ messageId, channelId });
 
     return (
       <div className="gap-1 absolute right-0 -top-6 z-10 hidden group-hover:flex [&:has([data-state=open])]:flex items-center space-x-1 rounded-lg shadow-lg border border-border p-2 transition-all bg-background">
@@ -133,7 +73,7 @@ const MessageActions = memo(
             size="sm"
             variant="ghost"
             icon={MessageSquareText}
-            onClick={onReplyClick}
+            onClick={onThreadClick}
             title={t('replyInThread')}
           />
         )}

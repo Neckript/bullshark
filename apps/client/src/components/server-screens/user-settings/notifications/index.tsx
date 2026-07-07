@@ -14,6 +14,11 @@ import {
 } from '@/features/app/hooks';
 import { useRoles } from '@/features/server/roles/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
+import {
+  getPushState,
+  subscribeToPush,
+  unsubscribeFromPush
+} from '@/helpers/push-subscription';
 import { isNoColor } from '@/helpers/resolve-name-color';
 import {
   Card,
@@ -24,8 +29,56 @@ import {
   Group,
   Switch
 } from '@sharkord/ui';
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+
+const PushDeviceSection = () => {
+  const { t } = useTranslation('settings');
+  const [state, setState] = useState<
+    | 'loading'
+    | 'unsupported'
+    | 'needs-pwa'
+    | 'denied'
+    | 'subscribed'
+    | 'not-subscribed'
+  >('loading');
+
+  const refresh = useCallback(async () => {
+    setState(await getPushState());
+  }, []);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  const onToggle = useCallback(async () => {
+    if (state === 'subscribed') await unsubscribeFromPush();
+    else if (state === 'not-subscribed') {
+      const ok = await subscribeToPush();
+      if (!ok) toast.error(t('pushSubscribeFailed'));
+    }
+    await refresh();
+  }, [state, refresh, t]);
+
+  if (state === 'loading') return null;
+  if (state === 'unsupported')
+    return (
+      <p className="text-sm text-muted-foreground">{t('pushUnsupported')}</p>
+    );
+  if (state === 'needs-pwa')
+    return (
+      <p className="text-sm text-muted-foreground">{t('pushNeedsPwa')}</p>
+    );
+  if (state === 'denied')
+    return <p className="text-sm text-muted-foreground">{t('pushDenied')}</p>;
+
+  return (
+    <Group label={t('pushDeviceLabel')} description={t('pushDeviceDesc')}>
+      <Switch checked={state === 'subscribed'} onCheckedChange={onToggle} />
+    </Group>
+  );
+};
 
 const Notifications = memo(() => {
   const { t } = useTranslation('settings');
@@ -125,6 +178,8 @@ const Notifications = memo(() => {
             </div>
           </Group>
         )}
+
+        <PushDeviceSection />
       </CardContent>
     </Card>
   );
