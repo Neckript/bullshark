@@ -10,8 +10,7 @@ import {
   useServerName
 } from '@/features/server/hooks';
 import { ChannelType, PluginSlot } from '@sharkord/shared';
-import { Alert, AlertDescription } from '@sharkord/ui';
-import { AlertTriangle, ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -88,10 +87,6 @@ const ContentWrapper = memo(
                 {t('welcomeToServer', { name: serverName })}
               </h2>
             </div>
-            <Alert variant="destructive" className="max-w-md">
-              <AlertTriangle />
-              <AlertDescription>{t('mobileNotOptimized')}</AlertDescription>
-            </Alert>
             <div className="flex flex-col gap-3 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <span className="text-lg">

@@ -13,7 +13,6 @@
 
   "selectDmPrompt": "Sélectionnez un message privé ou créez-en un nouveau.",
   "welcomeToServer": "Bienvenu à {{name}}.",
-  "mobileNotOptimized": "Bullshark n'est pas encore optimisé pour les appareils mobiles. L'expérience ne sera pas optimale.",
   "swipeRightForChannels": "Balayez vers la droite pour ouvrir la liste des canneaux",
   "swipeLeftForUsers": "Balayez vers la gauche pour ouvrir la liste des utilisateurs",
 

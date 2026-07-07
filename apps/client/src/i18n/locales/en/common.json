@@ -13,7 +13,6 @@
 
   "selectDmPrompt": "Select a direct message or start a new one.",
   "welcomeToServer": "Welcome to {{name}}.",
-  "mobileNotOptimized": "Bullshark is not optimized for mobile devices yet. The experience will not be ideal.",
   "swipeRightForChannels": "Swipe right to open the channel list",
   "swipeLeftForUsers": "Swipe left to open the user list",
 
