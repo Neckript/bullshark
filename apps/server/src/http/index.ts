@@ -115,8 +115,9 @@ const createHttpServer = async (port: number = config.server.port) => {
             }
           }
 
-          // fallback to interface route handler for GET requests
-          if (method === 'GET') {
+          // fallback to interface route handler for GET and HEAD requests
+          // (HEAD returns the same headers as GET with no body — health checks)
+          if (method === 'GET' || req.method === 'HEAD') {
             return await interfaceRouteHandler(req, res);
           }
         } catch (error) {
