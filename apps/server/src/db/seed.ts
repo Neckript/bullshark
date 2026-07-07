@@ -1,7 +1,6 @@
 import {
   ChannelType,
   DEFAULT_ROLE_PERMISSIONS,
-  OWNER_ROLE_ID,
   OWNER_ROLE_POSITION,
   Permission,
   sha256,
@@ -161,7 +160,10 @@ const seedDatabase = async () => {
       identity: await sha256(randomUUIDv7()),
       name: 'Bullshark',
       avatarId: null,
-      password: 'sharkord',
+      // System/mascot account (authors the welcome message). It can never be
+      // logged into: the identity is a random hash and the password is a random,
+      // unusable argon2 hash — no hardcoded credential.
+      password: (await Bun.password.hash(randomUUIDv7())).toString(),
       bannerId: null,
       bio: 'Hey, I am Bullshark!',
       bannerColor:
@@ -203,9 +205,12 @@ const seedDatabase = async () => {
     }
   }
 
+  // The mascot account gets the default Member role — NOT Owner. The only path
+  // to the Owner role is the owner-claim token printed below (or the
+  // `--new-owner-token` CLI). Seeding an Owner would contradict that design.
   await db.insert(userRoles).values({
     userId: 1,
-    roleId: OWNER_ROLE_ID,
+    roleId: 2, // Member (default role; Owner is role 1 and must be claimed)
     createdAt: firstStart
   });
 
