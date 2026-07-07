@@ -7,14 +7,15 @@ const isStandalone = () =>
 
 const isIos = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 
-const registerServiceWorker = async (): Promise<ServiceWorkerRegistration | null> => {
-  if (!('serviceWorker' in navigator)) return null;
-  try {
-    return await navigator.serviceWorker.register('/sw.js');
-  } catch {
-    return null;
-  }
-};
+const registerServiceWorker =
+  async (): Promise<ServiceWorkerRegistration | null> => {
+    if (!('serviceWorker' in navigator)) return null;
+    try {
+      return await navigator.serviceWorker.register('/sw.js');
+    } catch {
+      return null;
+    }
+  };
 
 const urlBase64ToUint8Array = (base64: string): Uint8Array => {
   const padding = '='.repeat((4 - (base64.length % 4)) % 4);

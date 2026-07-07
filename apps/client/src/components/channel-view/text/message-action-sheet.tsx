@@ -1,7 +1,6 @@
 import { EmojiPicker } from '@/components/emoji-picker';
 import { Protect } from '@/components/protect';
 import type { TEmojiItem } from '@/components/tiptap-input/helpers';
-import { useMessageActionHandlers } from './hooks/use-message-action-handlers';
 import { Permission } from '@sharkord/shared';
 import { Sheet, SheetContent } from '@sharkord/ui';
 import {
@@ -17,6 +16,7 @@ import {
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useMessageActionHandlers } from './hooks/use-message-action-handlers';
 
 const QUICK_EMOJIS: TEmojiItem[] = [
   { emoji: '👍', name: 'thumbsup', shortcodes: ['+1'] },
@@ -134,7 +134,11 @@ const MessageActionSheet = memo(
           </Protect>
           <div className="pt-2">
             {onReply && (
-              <Row icon={Reply} label={t('replyToMessage')} onClick={wrap(onReply)} />
+              <Row
+                icon={Reply}
+                label={t('replyToMessage')}
+                onClick={wrap(onReply)}
+              />
             )}
             {!isThreadReply && (
               <Row
@@ -143,7 +147,11 @@ const MessageActionSheet = memo(
                 onClick={wrap(onThreadClick)}
               />
             )}
-            <Row icon={Copy} label={t('copyMessageText')} onClick={wrap(onCopy)} />
+            <Row
+              icon={Copy}
+              label={t('copyMessageText')}
+              onClick={wrap(onCopy)}
+            />
             {!disablePin && (
               <Protect permission={Permission.PIN_MESSAGES}>
                 <Row
@@ -156,7 +164,11 @@ const MessageActionSheet = memo(
             {canManage && (
               <>
                 {editable && (
-                  <Row icon={Pencil} label={t('editMessage')} onClick={wrap(onEdit)} />
+                  <Row
+                    icon={Pencil}
+                    label={t('editMessage')}
+                    onClick={wrap(onEdit)}
+                  />
                 )}
                 <Row
                   icon={Trash}

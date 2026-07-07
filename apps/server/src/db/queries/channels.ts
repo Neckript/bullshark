@@ -500,9 +500,7 @@ const getUserChannelPermissions = async (
   return permissions;
 };
 
-const getChannel = async (
-  channelId: number
-): Promise<TChannel | undefined> => {
+const getChannel = async (channelId: number): Promise<TChannel | undefined> => {
   const [channel] = await db
     .select()
     .from(channels)

@@ -48,9 +48,7 @@ describe('push subscriptions — delete by endpoint', () => {
       auth: 'a2'
     });
 
-    await deletePushSubscriptionByEndpoint(
-      'https://push.example.com/remove'
-    );
+    await deletePushSubscriptionByEndpoint('https://push.example.com/remove');
 
     const rows = await getPushSubscriptionsForUsers([2]);
     expect(rows.map((r) => r.endpoint)).toEqual([

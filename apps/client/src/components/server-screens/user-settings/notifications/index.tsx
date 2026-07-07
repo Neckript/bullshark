@@ -67,9 +67,7 @@ const PushDeviceSection = () => {
       <p className="text-sm text-muted-foreground">{t('pushUnsupported')}</p>
     );
   if (state === 'needs-pwa')
-    return (
-      <p className="text-sm text-muted-foreground">{t('pushNeedsPwa')}</p>
-    );
+    return <p className="text-sm text-muted-foreground">{t('pushNeedsPwa')}</p>;
   if (state === 'denied')
     return <p className="text-sm text-muted-foreground">{t('pushDenied')}</p>;
 

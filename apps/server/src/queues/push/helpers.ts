@@ -12,6 +12,9 @@ const toStringSettings = (
 };
 
 const stripHtml = (html: string | null): string =>
-  (html ?? '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  (html ?? '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 export { stripHtml, toStringSettings };

@@ -19,9 +19,16 @@ import { logger } from '../../logger';
 import { getOnlineUserIds } from '../../utils/wss';
 import { stripHtml, toStringSettings } from './helpers';
 
-const pushQueue = new Queue({ concurrency: 2, autostart: true, timeout: 10000 });
+const pushQueue = new Queue({
+  concurrency: 2,
+  autostart: true,
+  timeout: 10000
+});
 
-const enqueuePushForMessage = (message: TJoinedMessage, channelId: number): void => {
+const enqueuePushForMessage = (
+  message: TJoinedMessage,
+  channelId: number
+): void => {
   const vapid = getVapidKeys();
   if (!vapid) return; // push disabled (no VAPID keys)
 
@@ -92,7 +99,10 @@ const enqueuePushForMessage = (message: TJoinedMessage, channelId: number): void
         subs.map(async (sub) => {
           try {
             await webpush.sendNotification(
-              { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+              {
+                endpoint: sub.endpoint,
+                keys: { p256dh: sub.p256dh, auth: sub.auth }
+              },
               payload
             );
           } catch (error) {

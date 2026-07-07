@@ -29,7 +29,9 @@ describe('push router', () => {
     const rows = await tdb
       .select()
       .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.endpoint, 'https://push.example.com/endpoint-1'));
+      .where(
+        eq(pushSubscriptions.endpoint, 'https://push.example.com/endpoint-1')
+      );
 
     expect(rows.length).toBe(1);
     expect(rows[0]!.userId).toBe(1);
@@ -56,7 +58,10 @@ describe('push router', () => {
       .select()
       .from(pushSubscriptions)
       .where(
-        eq(pushSubscriptions.endpoint, 'https://push.example.com/endpoint-upsert')
+        eq(
+          pushSubscriptions.endpoint,
+          'https://push.example.com/endpoint-upsert'
+        )
       );
 
     expect(rows.length).toBe(1);
@@ -86,12 +91,22 @@ describe('push router', () => {
     const user1Rows = await tdb
       .select()
       .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.endpoint, 'https://push.example.com/user-1-endpoint'));
+      .where(
+        eq(
+          pushSubscriptions.endpoint,
+          'https://push.example.com/user-1-endpoint'
+        )
+      );
 
     const user2Rows = await tdb
       .select()
       .from(pushSubscriptions)
-      .where(eq(pushSubscriptions.endpoint, 'https://push.example.com/user-2-endpoint'));
+      .where(
+        eq(
+          pushSubscriptions.endpoint,
+          'https://push.example.com/user-2-endpoint'
+        )
+      );
 
     expect(user1Rows.length).toBe(0);
     expect(user2Rows.length).toBe(1);

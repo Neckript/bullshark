@@ -20,7 +20,9 @@ const addPushSubscription = async (sub: {
 const deletePushSubscriptionByEndpoint = async (
   endpoint: string
 ): Promise<void> => {
-  await db.delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint));
+  await db
+    .delete(pushSubscriptions)
+    .where(eq(pushSubscriptions.endpoint, endpoint));
 };
 
 const deletePushSubscriptionsForUser = async (
@@ -38,7 +40,9 @@ const deletePushSubscriptionsForUser = async (
       );
     return;
   }
-  await db.delete(pushSubscriptions).where(eq(pushSubscriptions.userId, userId));
+  await db
+    .delete(pushSubscriptions)
+    .where(eq(pushSubscriptions.userId, userId));
 };
 
 const getPushSubscriptionsForUsers = async (userIds: number[]) => {

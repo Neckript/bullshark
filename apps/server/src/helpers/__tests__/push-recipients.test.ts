@@ -60,7 +60,10 @@ describe('decidePushForUser', () => {
   });
   it('all-messages enabled → true', () => {
     expect(
-      decidePushForUser({ ...base, settings: { browser_notifications: 'true' } })
+      decidePushForUser({
+        ...base,
+        settings: { browser_notifications: 'true' }
+      })
     ).toBe(true);
   });
   it('replies: reply to own message → true', () => {
