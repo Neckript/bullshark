@@ -7,7 +7,7 @@ DATA_DIR="/home/bun/.config/sharkord"
 # just ensure the data directory exists and run the binary directly.
 if [ "$(id -u)" -ne 0 ]; then
   mkdir -p "$DATA_DIR"
-  exec /sharkord
+  exec /sharkord "$@"
 fi
 
 # running as root: optionally remap the bun user's UID/GID via PUID/PGID env vars
@@ -27,5 +27,7 @@ fi
 mkdir -p "$DATA_DIR"
 chown -R bun:bun /home/bun/.config
 
-# drop privileges and exec the binary
-exec su -s /bin/sh bun -c "exec /sharkord"
+# drop privileges and exec the binary, forwarding any container args (e.g.
+# `--new-owner-token`). The `-- sh "$@"` supplies $0 (sh) so the container args
+# map to $1.. inside the inner shell and reach /sharkord via "$@".
+exec su -s /bin/sh bun -c 'exec /sharkord "$@"' -- sh "$@"
