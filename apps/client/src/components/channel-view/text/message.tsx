@@ -2,7 +2,6 @@ import { openThreadSidebar } from '@/features/app/actions';
 import { useCan } from '@/features/server/hooks';
 import { useIsOwnUser, useOwnUserId } from '@/features/server/users/hooks';
 import { useIsCoarsePointer } from '@/hooks/use-is-coarse-pointer';
-import { useLongPress } from '@/hooks/use-long-press';
 import { cn } from '@/lib/utils';
 import {
   hasMention,
@@ -10,7 +9,7 @@ import {
   TestId,
   type TJoinedMessage
 } from '@sharkord/shared';
-import { MessageSquareText } from 'lucide-react';
+import { MessageSquareText, MoreVertical } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MessageActionSheet } from './message-action-sheet';
@@ -53,7 +52,6 @@ const Message = memo(
     const can = useCan();
     const ownUserId = useOwnUserId();
     const isCoarse = useIsCoarsePointer();
-    const longPress = useLongPress(() => setSheetOpen(true));
 
     const canManage = useMemo(
       () => can(Permission.MANAGE_MESSAGES) || isFromOwnUser,
@@ -78,12 +76,10 @@ const Message = memo(
           'min-w-0 flex-1 ml-1 relative hover:bg-secondary/50 rounded-md px-1 py-0.5 group',
           isActiveThread && 'bg-primary/10',
           isMentioned && 'border-primary bg-primary/5',
-          isInlineReplyTarget && 'ring-1 ring-primary/50 bg-primary/10',
-          isCoarse && 'select-none'
+          isInlineReplyTarget && 'ring-1 ring-primary/50 bg-primary/10'
         )}
         data-testid={TestId.MESSAGE_ITEM}
         data-message-id={message.id}
-        {...(isCoarse && !disableActions ? longPress : {})}
       >
         {!isEditing ? (
           <>
@@ -114,6 +110,16 @@ const Message = memo(
                 isThreadReply={isThreadReply}
                 onReply={() => onReplyMessageSelect?.(message)}
               />
+            )}
+            {!disableActions && isCoarse && (
+              <button
+                type="button"
+                aria-label={t('messageActions')}
+                onClick={() => setSheetOpen(true)}
+                className="absolute right-1 top-1 z-10 flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
             )}
             {!disableActions && isCoarse && (
               <MessageActionSheet

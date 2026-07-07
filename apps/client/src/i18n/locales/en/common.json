@@ -20,6 +20,7 @@
   "deleteMessageTitle": "Delete Message",
   "deleteMessageConfirm": "Are you sure you want to delete this message? This action is irreversible.",
   "deleteLabel": "Delete",
+  "messageActions": "Message actions",
   "messageDeleted": "Message deleted",
   "failedDeleteMessage": "Failed to delete message",
   "failedAddReaction": "Failed to add reaction",
