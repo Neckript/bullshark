@@ -71,6 +71,21 @@ const interfaceRouteHandler = (
   }
 
   const file = Bun.file(requestedPath);
+
+  // HEAD: same headers as GET, no body (health checks, some reverse proxies).
+  if (req.method === 'HEAD') {
+    res.writeHead(200, {
+      'Content-Type': file.type,
+      'Content-Length': file.size,
+      ETag: etag,
+      'Last-Modified': lastModified,
+      'Cache-Control': cacheControl
+    });
+    res.end();
+
+    return res;
+  }
+
   const fileStream = fs.createReadStream(requestedPath);
 
   fileStream.on('open', () => {
