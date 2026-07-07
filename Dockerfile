@@ -5,8 +5,11 @@ ENV RUNNING_IN_DOCKER=true
 
 USER root
 
-COPY apps/server/build/out/bullshark-linux-x64 /tmp/bullshark-linux-x64
-COPY apps/server/build/out/bullshark-linux-arm64 /tmp/bullshark-linux-arm64
+# Copy whichever arch binaries were produced. The glob succeeds as long as at
+# least one match exists, so a single-arch local build (build.ts without
+# --all-targets, which only compiles the host arch) works too — the previous
+# two explicit COPYs failed when the other arch's file was absent.
+COPY apps/server/build/out/bullshark-linux-* /tmp/
 
 RUN set -eux; \
     case "$TARGETARCH" in \
