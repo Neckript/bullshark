@@ -18,7 +18,7 @@ const UserSettings = memo(({ close }: TUserSettingsProps) => {
     <ServerScreenLayout close={close} title={t('userSettingsTitle')}>
       <div className="mx-auto max-w-4xl">
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 h-auto w-full flex-wrap justify-start">
             <TabsTrigger value="profile">{t('profileTab')}</TabsTrigger>
             <TabsTrigger value="devices">{t('devicesTab')}</TabsTrigger>
             <TabsTrigger value="password">{t('passwordTab')}</TabsTrigger>

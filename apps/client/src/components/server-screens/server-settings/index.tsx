@@ -37,7 +37,7 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
     <ServerScreenLayout close={close} title={t('serverSettingsTitle')}>
       <div className="mx-auto max-w-4xl">
         <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="mb-6">
+          <TabsList className="mb-6 h-auto w-full flex-wrap justify-start">
             <TabsTrigger
               value="general"
               disabled={!can(Permission.MANAGE_SETTINGS)}
