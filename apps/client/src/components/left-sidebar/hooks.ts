@@ -108,9 +108,19 @@ const useSelectChannel = () => {
     const pushChannelId = Number(params.get('channelId'));
 
     if (pushChannelId > 0) {
-      setSelectedChannelId(pushChannelId);
+      const pushChannel = channelsMap[pushChannelId];
+
       window.history.replaceState({}, '', '/');
-      return;
+
+      if (pushChannel) {
+        setSelectedChannelId(pushChannel.id);
+        localStorage.setItem(
+          LocalStorageKey.LAST_SELECTED_CHANNEL,
+          pushChannel.id.toString()
+        );
+
+        return;
+      }
     }
 
     if (!autoJoinLastChannel) return;
