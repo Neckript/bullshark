@@ -9,10 +9,7 @@ import { getPrivateIp, getPublicIp } from './helpers/network';
 import { CONFIG_INI_PATH } from './helpers/paths';
 import { IS_DEVELOPMENT } from './utils/env';
 
-const [SERVER_PUBLIC_IP, SERVER_PRIVATE_IP] = await Promise.all([
-  getPublicIp(),
-  getPrivateIp()
-]);
+const SERVER_PRIVATE_IP = await getPrivateIp();
 
 const zConfig = z.object({
   server: z.object({
@@ -178,5 +175,13 @@ config = applyEnvOverrides(config, {
 });
 
 config = Object.freeze(config);
+
+// Only query the external IP-echo services when no announced address is
+// configured. Otherwise getPublicIp() makes 3 third-party requests at every
+// startup whose result would be unused — mediasoup falls back to SERVER_PUBLIC_IP
+// only when webRtc.announcedAddress is empty (utils/mediasoup.ts).
+const SERVER_PUBLIC_IP = config.webRtc.announcedAddress
+  ? undefined
+  : await getPublicIp();
 
 export { config, SERVER_PRIVATE_IP, SERVER_PUBLIC_IP };
