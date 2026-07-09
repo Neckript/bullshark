@@ -154,7 +154,7 @@ const RolesList = memo(
     );
 
     return (
-      <Card className="w-64 flex-shrink-0">
+      <Card className="w-full md:w-64 md:flex-shrink-0">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">{t('rolesTitle')}</CardTitle>

@@ -223,7 +223,7 @@ const Storage = memo(() => {
           label={t('maxFilesPerMessageLabel')}
           description={t('maxFilesPerMessageDesc')}
         >
-          <div className="flex items-center max-w-150 justify-between">
+          <div className="flex max-w-150 flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Input
                 type="number"
@@ -392,7 +392,7 @@ const Storage = memo(() => {
           label={t('signedUrlsTtlLabel')}
           description={t('signedUrlsTtlDesc')}
         >
-          <div className="flex items-center max-w-150 justify-between">
+          <div className="flex max-w-150 flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Input
                 type="number"

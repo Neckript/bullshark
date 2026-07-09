@@ -88,27 +88,29 @@ const PaginatedTableComponent = <T,>({
         />
       </div>
 
-      <div className="rounded-md border">
-        <div
-          className={`grid ${gridCols} gap-4 border-b bg-muted/50 px-4 py-3 text-sm font-medium text-muted-foreground`}
-        >
-          {headerColumns}
-        </div>
+      <div className="overflow-x-auto rounded-md border">
+        <div className="min-w-[640px]">
+          <div
+            className={`grid ${gridCols} gap-4 border-b bg-muted/50 px-4 py-3 text-sm font-medium text-muted-foreground`}
+          >
+            {headerColumns}
+          </div>
 
-        <div className="divide-y">
-          {paginatedItems.length === 0 ? (
-            <div className="px-4 py-8 text-center text-muted-foreground text-sm">
-              {searchTerm.trim()
-                ? `No items found matching "${searchTerm}"`
-                : emptyMessage}
-            </div>
-          ) : (
-            paginatedItems.map((item, index) => (
-              <div key={index}>
-                {renderRow(item, (currentPage - 1) * itemsPerPage + index)}
+          <div className="divide-y">
+            {paginatedItems.length === 0 ? (
+              <div className="px-4 py-8 text-center text-muted-foreground text-sm">
+                {searchTerm.trim()
+                  ? `No items found matching "${searchTerm}"`
+                  : emptyMessage}
               </div>
-            ))
-          )}
+            ) : (
+              paginatedItems.map((item, index) => (
+                <div key={index}>
+                  {renderRow(item, (currentPage - 1) * itemsPerPage + index)}
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
 
