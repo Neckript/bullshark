@@ -71,7 +71,7 @@ const InputModeSection = memo(
                 size="sm"
                 onClick={() => onInputModeChange(value)}
                 className={cn(
-                  'min-w-24',
+                  'h-auto w-full whitespace-normal sm:w-auto sm:min-w-24',
                   inputMode === value && 'pointer-events-none'
                 )}
               >
