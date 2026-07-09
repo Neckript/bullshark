@@ -395,7 +395,7 @@ const Devices = memo(() => {
           </Group>
 
           <Group label={t('microphoneTestLabel')}>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {permissionState !== 'granted' && (
                 <Button variant="outline" onClick={requestMicrophonePermission}>
                   {t('permitMicAccess')}
