@@ -275,7 +275,7 @@ const Devices = memo(() => {
               value={values.playbackId}
               disabled={playbackDevices.length === 0}
             >
-              <SelectTrigger className="w-92">
+              <SelectTrigger className="w-full max-w-96">
                 <SelectValue placeholder={t('playbackPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
@@ -304,7 +304,7 @@ const Devices = memo(() => {
               value={values.microphoneId}
               disabled={inputDevices.length === 0}
             >
-              <SelectTrigger className="w-92">
+              <SelectTrigger className="w-full max-w-96">
                 <SelectValue placeholder={t('microphonePlaceholder')} />
               </SelectTrigger>
               <SelectContent>
@@ -332,7 +332,7 @@ const Devices = memo(() => {
                   onChange('noiseSuppression', value as NoiseSuppression)
                 }
               >
-                <SelectTrigger className="w-92">
+                <SelectTrigger className="w-full max-w-96">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
