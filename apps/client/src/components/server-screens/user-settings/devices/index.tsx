@@ -578,7 +578,7 @@ const Devices = memo(() => {
             />
           </Group>
           <Group label={t('screenSharingLabel')}>
-            <div className="flex">
+            <div className="flex flex-wrap items-end gap-2">
               <ResolutionFpsControl
                 framerate={values.screenFramerate}
                 resolution={values.screenResolution}
@@ -590,7 +590,7 @@ const Devices = memo(() => {
                 }
               />
 
-              <div className="ml-2">
+              <div>
                 <Select
                   value={values.screenCodec ?? VideoCodec.AUTO}
                   onValueChange={(value) =>
