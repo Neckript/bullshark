@@ -57,7 +57,7 @@ const StorageSizeControl = memo(
           rightSlot={<span className="text-sm">{preview}</span>}
         />
 
-        <div className="flex justify-between items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <Input
               type="number"
