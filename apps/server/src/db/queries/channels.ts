@@ -438,68 +438,6 @@ const getAllChannelUserPermissions = async (
   return channelPermissions;
 };
 
-const getRoleChannelPermissions = async (
-  roleId: number,
-  channelId: number
-): Promise<Record<ChannelPermission, boolean>> => {
-  const rolePermissions = await db
-    .select({
-      permission: channelRolePermissions.permission,
-      allow: channelRolePermissions.allow
-    })
-    .from(channelRolePermissions)
-    .where(
-      and(
-        eq(channelRolePermissions.roleId, roleId),
-        eq(channelRolePermissions.channelId, channelId)
-      )
-    );
-
-  const allPermissionTypes = Object.values(ChannelPermission);
-  const permissions: Record<string, boolean> = {};
-
-  const permissionMap = new Map(
-    rolePermissions.map((p) => [p.permission as ChannelPermission, p.allow])
-  );
-
-  for (const permissionType of allPermissionTypes) {
-    permissions[permissionType] = permissionMap.get(permissionType) ?? false;
-  }
-
-  return permissions;
-};
-
-const getUserChannelPermissions = async (
-  userId: number,
-  channelId: number
-): Promise<Record<ChannelPermission, boolean>> => {
-  const userPermissions = await db
-    .select({
-      permission: channelUserPermissions.permission,
-      allow: channelUserPermissions.allow
-    })
-    .from(channelUserPermissions)
-    .where(
-      and(
-        eq(channelUserPermissions.userId, userId),
-        eq(channelUserPermissions.channelId, channelId)
-      )
-    );
-
-  const allPermissionTypes = Object.values(ChannelPermission);
-  const permissions: Record<string, boolean> = {};
-
-  const permissionMap = new Map(
-    userPermissions.map((p) => [p.permission as ChannelPermission, p.allow])
-  );
-
-  for (const permissionType of allPermissionTypes) {
-    permissions[permissionType] = permissionMap.get(permissionType) ?? false;
-  }
-
-  return permissions;
-};
-
 const getChannel = async (channelId: number): Promise<TChannel | undefined> => {
   const [channel] = await db
     .select()
@@ -712,7 +650,5 @@ export {
   getAllChannelUserPermissions,
   getChannel,
   getChannelsForUser,
-  getChannelsReadStatesForUser,
-  getRoleChannelPermissions,
-  getUserChannelPermissions
+  getChannelsReadStatesForUser
 };
