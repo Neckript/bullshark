@@ -72,6 +72,18 @@ const createHttpServer = async (port: number = config.server.port) => {
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', '*');
 
+        // Baseline security headers, applied to every response. Set via
+        // setHeader so they persist through later writeHead calls that don't
+        // override them (interface, /public file serving, etc.).
+        // - nosniff: stop MIME-sniffing of user-uploaded files into HTML/JS.
+        // - SAMEORIGIN: clickjacking protection for the served web interface.
+        // - Referrer-Policy: avoid leaking signed-URL query tokens cross-origin.
+        // Deliberately NOT set: CORP/Permissions-Policy would break cross-origin
+        // media embedding (wildcard CORS is intentional) and voice/screen-share.
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+
         const info = getWsInfo(undefined, req);
 
         logger.debug(
