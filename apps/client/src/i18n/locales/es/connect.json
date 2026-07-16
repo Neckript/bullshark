@@ -13,5 +13,12 @@
   "loggingInAutomatically": "Iniciando sesión automáticamente...",
   "loadingApp": "Cargando Bullshark",
   "loadingPlugins": "Cargando plugins",
-  "forkCredit": "fork de Sharkord"
+  "forkCredit": "fork de Sharkord",
+  "twoFactorTitle": "Two-factor authentication",
+  "twoFactorHelp": "Enter the 6-digit code from your authenticator app.",
+  "twoFactorCodeLabel": "Authentication code",
+  "twoFactorUseRecovery": "Use a recovery code instead",
+  "twoFactorUseCode": "Use an authenticator code instead",
+  "twoFactorSubmit": "Verify",
+  "twoFactorInvalid": "Invalid code, please try again."
 }

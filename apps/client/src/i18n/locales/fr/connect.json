@@ -13,5 +13,12 @@
   "loggingInAutomatically": "Connexion automatique...",
   "loadingApp": "Chargement de Bullshark",
   "loadingPlugins": "Chargement des plugins",
-  "forkCredit": "fork de Sharkord"
+  "forkCredit": "fork de Sharkord",
+  "twoFactorTitle": "Authentification à deux facteurs",
+  "twoFactorHelp": "Saisissez le code à 6 chiffres de votre application d'authentification.",
+  "twoFactorCodeLabel": "Code d'authentification",
+  "twoFactorUseRecovery": "Utiliser un code de récupération",
+  "twoFactorUseCode": "Utiliser un code d'authentification",
+  "twoFactorSubmit": "Vérifier",
+  "twoFactorInvalid": "Code invalide, veuillez réessayer."
 }
