@@ -54,3 +54,63 @@ describe('security router', () => {
     expect((await caller.security.totp.status()).enabled).toBe(true);
   });
 });
+
+describe('security.totp.disable', () => {
+  test('disables with a valid code and password fallback works', async () => {
+    const { caller } = await initTest(2);
+
+    const { secret } = await caller.security.totp.setup();
+    const code = new OTPAuth.TOTP({
+      secret: OTPAuth.Secret.fromBase32(secret)
+    }).generate();
+    await caller.security.totp.enable({ code });
+
+    // wrong second factor + wrong password → throws
+    await expect(
+      caller.security.totp.disable({ code: '000000' })
+    ).rejects.toThrow();
+
+    // password fallback (seed uses "password123")
+    await caller.security.totp.disable({ password: 'password123' });
+    expect((await caller.security.totp.status()).enabled).toBe(false);
+  });
+});
+
+describe('security.totp.regenerateRecoveryCodes', () => {
+  test('rejects an invalid code', async () => {
+    const { caller } = await initTest(2);
+
+    const { secret } = await caller.security.totp.setup();
+    const code = new OTPAuth.TOTP({
+      secret: OTPAuth.Secret.fromBase32(secret)
+    }).generate();
+    await caller.security.totp.enable({ code });
+
+    await expect(
+      caller.security.totp.regenerateRecoveryCodes({ code: '000000' })
+    ).rejects.toThrow();
+  });
+
+  test('issues 10 fresh codes with a valid TOTP code, invalidating the old ones', async () => {
+    const { caller } = await initTest(2);
+
+    const { secret } = await caller.security.totp.setup();
+    const totp = new OTPAuth.TOTP({
+      secret: OTPAuth.Secret.fromBase32(secret)
+    });
+    const { recoveryCodes: originalCodes } = await caller.security.totp.enable({
+      code: totp.generate()
+    });
+
+    const { recoveryCodes } =
+      await caller.security.totp.regenerateRecoveryCodes({
+        code: totp.generate()
+      });
+
+    expect(recoveryCodes).toHaveLength(10);
+    expect(recoveryCodes).not.toEqual(originalCodes);
+    expect((await caller.security.totp.status()).recoveryCodesRemaining).toBe(
+      10
+    );
+  });
+});
