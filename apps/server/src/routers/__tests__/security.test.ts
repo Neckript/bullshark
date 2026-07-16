@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import * as OTPAuth from 'otpauth';
 import { initTest } from '../../__tests__/helpers';
 import { getUserTotp } from '../../db/queries/totp';
 
@@ -25,5 +26,31 @@ describe('security router', () => {
     expect(row?.totpSecret).toBeDefined();
     expect(row?.totpSecret).not.toBe(res.secret);
     expect(row?.totpEnabledAt).toBeNull();
+  });
+
+  test('enable rejects a wrong code', async () => {
+    const { caller } = await initTest(2);
+
+    await caller.security.totp.setup();
+
+    await expect(
+      caller.security.totp.enable({ code: '000000' })
+    ).rejects.toThrow();
+
+    expect((await caller.security.totp.status()).enabled).toBe(false);
+  });
+
+  test('enable enables with a valid code and returns 10 recovery codes', async () => {
+    const { caller } = await initTest(2);
+
+    const { secret } = await caller.security.totp.setup();
+    const code = new OTPAuth.TOTP({
+      secret: OTPAuth.Secret.fromBase32(secret)
+    }).generate();
+
+    const res = await caller.security.totp.enable({ code });
+
+    expect(res.recoveryCodes).toHaveLength(10);
+    expect((await caller.security.totp.status()).enabled).toBe(true);
   });
 });
