@@ -215,7 +215,9 @@ const users = sqliteTable(
       .notNull()
       .$defaultFn(() => Date.now()),
     createdAt: integer('created_at').notNull(),
-    updatedAt: integer('updated_at')
+    updatedAt: integer('updated_at'),
+    totpSecret: text('totp_secret'),
+    totpEnabledAt: integer('totp_enabled_at')
   },
   (t) => [
     uniqueIndex('users_identity_idx').on(t.identity),
@@ -223,6 +225,20 @@ const users = sqliteTable(
     index('users_banned_idx').on(t.banned),
     index('users_last_login_idx').on(t.lastLoginAt)
   ]
+);
+
+const userRecoveryCodes = sqliteTable(
+  'user_recovery_codes',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    codeHash: text('code_hash').notNull(),
+    usedAt: integer('used_at'),
+    createdAt: integer('created_at').notNull()
+  },
+  (t) => [index('user_recovery_codes_user_idx').on(t.userId)]
 );
 
 const userRoles = sqliteTable(
@@ -642,6 +658,7 @@ export {
   rolePermissions,
   roles,
   settings,
+  userRecoveryCodes,
   userRoles,
   users,
   userSettings

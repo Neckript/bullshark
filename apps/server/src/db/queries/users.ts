@@ -263,6 +263,8 @@ const getUserById = async (
       banned: users.banned,
       banReason: users.banReason,
       bannedAt: users.bannedAt,
+      totpSecret: users.totpSecret,
+      totpEnabledAt: users.totpEnabledAt,
       avatar: avatarFiles,
       banner: bannerFiles
     })
@@ -325,6 +327,8 @@ const getUserByIdentity = async (
       banned: users.banned,
       banReason: users.banReason,
       bannedAt: users.bannedAt,
+      totpSecret: users.totpSecret,
+      totpEnabledAt: users.totpEnabledAt,
       avatar: avatarFiles,
       banner: bannerFiles
     })
@@ -401,6 +405,8 @@ const getUsers = async (): Promise<TJoinedUser[]> => {
           banned: users.banned,
           banReason: users.banReason,
           bannedAt: users.bannedAt,
+          totpSecret: users.totpSecret,
+          totpEnabledAt: users.totpEnabledAt,
           avatar: avatarFiles,
           banner: bannerFiles
         })
@@ -457,6 +463,8 @@ const getUsers = async (): Promise<TJoinedUser[]> => {
     banned: result.banned,
     banReason: result.banReason,
     bannedAt: result.bannedAt,
+    totpSecret: result.totpSecret,
+    totpEnabledAt: result.totpEnabledAt,
     roleIds: rolesMap[result.id] || []
   }));
 };

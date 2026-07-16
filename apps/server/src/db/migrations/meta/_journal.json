@@ -176,6 +176,13 @@
       "when": 1783361697674,
       "tag": "0024_overrated_ulik",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1784194195787,
+      "tag": "0025_chemical_blade",
+      "breakpoints": true
     }
   ]
 }
