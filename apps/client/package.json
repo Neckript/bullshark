@@ -51,6 +51,7 @@
     "lucide-react": "^0.544.0",
     "mediasoup-client": "^3.18.0",
     "prosemirror-view": "^1.41.6",
+    "qrcode.react": "^4.2.0",
     "re-reselect": "^5.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

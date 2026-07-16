@@ -8,6 +8,7 @@ import { Notifications } from './notifications';
 import { Others } from './others';
 import { Password } from './password';
 import { Profile } from './profile';
+import { Security } from './security';
 
 type TUserSettingsProps = TServerScreenBaseProps;
 
@@ -22,6 +23,7 @@ const UserSettings = memo(({ close }: TUserSettingsProps) => {
             <TabsTrigger value="profile">{t('profileTab')}</TabsTrigger>
             <TabsTrigger value="devices">{t('devicesTab')}</TabsTrigger>
             <TabsTrigger value="password">{t('passwordTab')}</TabsTrigger>
+            <TabsTrigger value="security">{t('securityTab')}</TabsTrigger>
             <TabsTrigger value="notifications">
               {t('notificationsTab')}
             </TabsTrigger>
@@ -36,6 +38,9 @@ const UserSettings = memo(({ close }: TUserSettingsProps) => {
           </TabsContent>
           <TabsContent value="password" className="space-y-6">
             <Password />
+          </TabsContent>
+          <TabsContent value="security" className="space-y-6">
+            <Security />
           </TabsContent>
           <TabsContent value="notifications" className="space-y-6">
             <Notifications />
