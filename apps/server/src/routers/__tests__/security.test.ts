@@ -56,6 +56,14 @@ describe('security router', () => {
 });
 
 describe('security.totp.disable', () => {
+  test('rejects when 2FA is not enabled', async () => {
+    const { caller } = await initTest(2);
+
+    await expect(
+      caller.security.totp.disable({ password: 'password123' })
+    ).rejects.toThrow();
+  });
+
   test('disables with a valid code and password fallback works', async () => {
     const { caller } = await initTest(2);
 
@@ -74,9 +82,33 @@ describe('security.totp.disable', () => {
     await caller.security.totp.disable({ password: 'password123' });
     expect((await caller.security.totp.status()).enabled).toBe(false);
   });
+
+  test('rejects a wrong password and leaves 2FA enabled', async () => {
+    const { caller } = await initTest(2);
+
+    const { secret } = await caller.security.totp.setup();
+    const code = new OTPAuth.TOTP({
+      secret: OTPAuth.Secret.fromBase32(secret)
+    }).generate();
+    await caller.security.totp.enable({ code });
+
+    await expect(
+      caller.security.totp.disable({ password: 'wrongpassword' })
+    ).rejects.toThrow();
+
+    expect((await caller.security.totp.status()).enabled).toBe(true);
+  });
 });
 
 describe('security.totp.regenerateRecoveryCodes', () => {
+  test('rejects when 2FA is not enabled', async () => {
+    const { caller } = await initTest(2);
+
+    await expect(
+      caller.security.totp.regenerateRecoveryCodes({ code: '000000' })
+    ).rejects.toThrow();
+  });
+
   test('rejects an invalid code', async () => {
     const { caller } = await initTest(2);
 
