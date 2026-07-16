@@ -24,6 +24,7 @@ const Security = memo(() => {
   const [secret, setSecret] = useState('');
   const [code, setCode] = useState('');
   const [recoveryCodes, setRecoveryCodes] = useState<string[]>([]);
+  const [reauthCode, setReauthCode] = useState('');
 
   const refresh = useCallback(async () => {
     setStatus(await getTRPCClient().security.totp.status.query());
@@ -59,6 +60,33 @@ const Security = memo(() => {
     await refresh();
   }, [refresh]);
 
+  const disable = useCallback(async () => {
+    try {
+      await getTRPCClient().security.totp.disable.mutate({
+        code: reauthCode.trim() || undefined
+      });
+      setReauthCode('');
+      await refresh();
+      toast.success(t('security2faDisabled'));
+    } catch {
+      toast.error(t('securityInvalidCode'));
+    }
+  }, [reauthCode, refresh, t]);
+
+  const regenerate = useCallback(async () => {
+    try {
+      const res =
+        await getTRPCClient().security.totp.regenerateRecoveryCodes.mutate({
+          code: reauthCode.trim()
+        });
+      setReauthCode('');
+      setRecoveryCodes(res.recoveryCodes);
+      setPhase('recovery');
+    } catch {
+      toast.error(t('securityInvalidCode'));
+    }
+  }, [reauthCode, t]);
+
   return (
     <Card>
       <CardHeader>
@@ -74,11 +102,29 @@ const Security = memo(() => {
                 : t('security2faDisabled')}
             </p>
             {status.enabled ? (
-              <p className="text-xs text-muted-foreground">
-                {t('securityRecoveryRemaining', {
-                  count: status.recoveryCodesRemaining
-                })}
-              </p>
+              <>
+                <p className="text-xs text-muted-foreground">
+                  {t('securityRecoveryRemaining', {
+                    count: status.recoveryCodesRemaining
+                  })}
+                </p>
+                <Group label={t('securityCodeLabel')}>
+                  <Input
+                    value={reauthCode}
+                    onChange={(e) => setReauthCode(e.target.value)}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                  />
+                </Group>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={regenerate}>
+                    {t('securityRegenerate')}
+                  </Button>
+                  <Button variant="destructive" onClick={disable}>
+                    {t('securityDisable')}
+                  </Button>
+                </div>
+              </>
             ) : (
               <Button onClick={startSetup}>{t('securityEnable')}</Button>
             )}
