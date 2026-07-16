@@ -16,6 +16,7 @@ import { importRouteHandler } from './import';
 import { infoRouteHandler } from './info';
 import { interfaceRouteHandler } from './interface';
 import { loginRouteHandler } from './login';
+import { login2faRouteHandler } from './login-2fa';
 import { manifestRouteHandler } from './manifest';
 import { pluginBundleRouteHandler } from './plugin-bundle';
 import { pluginsComponentsRouteHandler } from './plugins-components';
@@ -56,6 +57,7 @@ const routeHandlers: Partial<
     exact: {
       '/upload': (req, res) => uploadFileRouteHandler(req, res),
       '/login': (req, res) => loginRouteHandler(req, res),
+      '/login/2fa': (req, res) => login2faRouteHandler(req, res),
       '/import': (req, res) => importRouteHandler(req, res)
     },
     prefix: {}
