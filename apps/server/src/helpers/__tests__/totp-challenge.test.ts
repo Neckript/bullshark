@@ -1,9 +1,9 @@
-import { beforeAll, describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { getServerToken } from '../../db/queries/server';
 import { createTotpChallenge, resolveTotpChallenge } from '../totp-challenge';
 
 describe('totp-challenge', () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await getServerToken();
   });
 

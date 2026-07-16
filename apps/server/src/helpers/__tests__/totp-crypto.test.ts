@@ -1,10 +1,10 @@
-import { beforeAll, describe, expect, it } from 'bun:test';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { getServerToken } from '../../db/queries/server';
 import { decryptTotpSecret, encryptTotpSecret } from '../totp-crypto';
 
 describe('totp-crypto', () => {
   // Populate the in-memory server token from the seeded test settings.
-  beforeAll(async () => {
+  beforeEach(async () => {
     await getServerToken();
   });
 
