@@ -161,3 +161,7 @@ export type TJoinedInvite = TInvite & {
   creator: TJoinedPublicUser;
   role: { id: number; name: string; color: string } | null;
 };
+
+export type TLoginResponse =
+  | { success: true; token: string }
+  | { twoFactorRequired: true; challenge: string };

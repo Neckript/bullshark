@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import jwt from 'jsonwebtoken';
 import { login } from '../../__tests__/helpers';
 import { TEST_SECRET_TOKEN } from '../../__tests__/seed';
-import { tdb } from '../../__tests__/setup';
+import { tdb, testsBaseUrl } from '../../__tests__/setup';
 import { getChannelsReadStatesForUser } from '../../db/queries/channels';
 import {
   channelReadStates,
@@ -384,5 +384,27 @@ describe('/login', () => {
 
     expect(decoded2).toHaveProperty('userId');
     expect(decoded2.userId).toBe(firstUser?.id);
+  });
+
+  test('returns a 2FA challenge instead of a token when 2FA is enabled', async () => {
+    // Enable 2FA for the seeded "testuser" (id 2) directly via the db layer.
+    const { setPendingTotpSecret, enableTotp } =
+      await import('../../db/mutations/totp');
+    const { encryptTotpSecret } = await import('../../helpers/totp-crypto');
+    const { generateTotpSecret } = await import('../../helpers/totp');
+    await setPendingTotpSecret(2, encryptTotpSecret(generateTotpSecret()));
+    await enableTotp(2);
+
+    const res = await fetch(`${testsBaseUrl}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identity: 'testuser', password: 'password123' })
+    });
+    const body: any = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.twoFactorRequired).toBe(true);
+    expect(typeof body.challenge).toBe('string');
+    expect(body.token).toBeUndefined();
   });
 });

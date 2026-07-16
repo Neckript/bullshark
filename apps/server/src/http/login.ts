@@ -25,6 +25,7 @@ import {
 } from '../db/schema';
 import { getWsInfo } from '../helpers/get-ws-info';
 import { safeCompare } from '../helpers/safe-compare';
+import { createTotpChallenge } from '../helpers/totp-challenge';
 import { logger } from '../logger';
 import { enqueueActivityLog } from '../queues/activity-log';
 import { invariant } from '../utils/invariant';
@@ -257,6 +258,15 @@ const loginRouteHandler = async (
     );
 
     throw new HttpValidationError('password', 'Invalid password');
+  }
+
+  if (existingUser.totpEnabledAt != null) {
+    const challenge = createTotpChallenge(existingUser.id);
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ twoFactorRequired: true, challenge }));
+
+    return res;
   }
 
   const token = jwt.sign({ userId: existingUser.id }, await getServerToken(), {
