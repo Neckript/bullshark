@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it } from 'bun:test';
+import { eq } from 'drizzle-orm';
 import * as OTPAuth from 'otpauth';
-import { testsBaseUrl } from '../../__tests__/setup';
+import { tdb, testsBaseUrl } from '../../__tests__/setup';
 import { enableTotp, setPendingTotpSecret } from '../../db/mutations/totp';
 import { getServerToken } from '../../db/queries/server';
+import { users } from '../../db/schema';
 import { generateTotpSecret } from '../../helpers/totp';
 import { encryptTotpSecret } from '../../helpers/totp-crypto';
 
@@ -69,5 +71,44 @@ describe('POST /login/2fa', () => {
       })
     });
     expect(res.status).toBe(400);
+  });
+
+  it('rate limits repeated requests from the same client', async () => {
+    let lastStatus = 0;
+
+    for (let i = 0; i < 11; i++) {
+      const res = await fetch(`${testsBaseUrl}/login/2fa`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ challenge: 'x', code: '000000' })
+      });
+      lastStatus = res.status;
+    }
+
+    expect(lastStatus).toBe(429);
+  });
+
+  it('rejects a valid code for a banned user without issuing a token', async () => {
+    const secret = await enable2fa(2);
+    const challenge = await startLogin();
+
+    await tdb
+      .update(users)
+      .set({ banned: true, banReason: 'Test ban reason' })
+      .where(eq(users.id, 2));
+
+    const code = new OTPAuth.TOTP({
+      secret: OTPAuth.Secret.fromBase32(secret)
+    }).generate();
+
+    const res = await fetch(`${testsBaseUrl}/login/2fa`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ challenge, code })
+    });
+    const body = (await res.json()) as { token?: string };
+
+    expect(res.status).toBe(400);
+    expect(body.token).toBeUndefined();
   });
 });
