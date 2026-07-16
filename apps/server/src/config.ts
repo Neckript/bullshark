@@ -66,6 +66,10 @@ const zConfig = z.object({
     handshake: z.object({
       maxRequests: z.coerce.number().int().positive(),
       windowMs: z.coerce.number().int().positive()
+    }),
+    twoFactor: z.object({
+      maxRequests: z.coerce.number().int().positive(),
+      windowMs: z.coerce.number().int().positive()
     })
   })
 });
@@ -125,6 +129,10 @@ const defaultConfig: TConfig = {
       windowMs: 60_000
     },
     handshake: {
+      maxRequests: 10,
+      windowMs: 60_000
+    },
+    twoFactor: {
       maxRequests: 10,
       windowMs: 60_000
     }

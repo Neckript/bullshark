@@ -11,6 +11,7 @@ import { othersRouter } from './others';
 import { pluginsRouter } from './plugins';
 import { pushRouter } from './push';
 import { rolesRouter } from './roles';
+import { securityRouter } from './security';
 import { settingsRouter } from './settings';
 import { usersRouter } from './users';
 import { voiceRouter } from './voice';
@@ -30,7 +31,8 @@ const appRouter = t.router({
   plugins: pluginsRouter,
   gifs: gifsRouter,
   settings: settingsRouter,
-  push: pushRouter
+  push: pushRouter,
+  security: securityRouter
 });
 
 type AppRouter = typeof appRouter;
