@@ -50,6 +50,9 @@ const Connect = memo(() => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [challenge, setChallenge] = useState<string | null>(null);
+  const [twoFactorCode, setTwoFactorCode] = useState('');
+  const [useRecovery, setUseRecovery] = useState(false);
   const info = useInfo();
 
   const inviteCode = useMemo(() => {
@@ -57,6 +60,22 @@ const Connect = memo(() => {
     const invite = urlParams.get('invite');
     return invite || undefined;
   }, []);
+
+  const finishLogin = useCallback(
+    async (token: string) => {
+      setSessionStorageItem(SessionStorageKey.TOKEN, token);
+      setLocalStorageItemBool(LocalStorageKey.AUTO_LOGIN, values.autoLogin);
+
+      if (values.autoLogin) {
+        setLocalStorageItem(LocalStorageKey.AUTO_LOGIN_TOKEN, token);
+      } else {
+        removeLocalStorageItem(LocalStorageKey.AUTO_LOGIN_TOKEN);
+      }
+
+      await connect();
+    },
+    [values.autoLogin]
+  );
 
   const onConnectClick = useCallback(async () => {
     setLoading(true);
@@ -83,18 +102,16 @@ const Connect = memo(() => {
         return;
       }
 
-      const data = (await response.json()) as { token: string };
+      const data = (await response.json()) as
+        | { token: string }
+        | { twoFactorRequired: true; challenge: string };
 
-      setSessionStorageItem(SessionStorageKey.TOKEN, data.token);
-      setLocalStorageItemBool(LocalStorageKey.AUTO_LOGIN, values.autoLogin);
-
-      if (values.autoLogin) {
-        setLocalStorageItem(LocalStorageKey.AUTO_LOGIN_TOKEN, data.token);
-      } else {
-        removeLocalStorageItem(LocalStorageKey.AUTO_LOGIN_TOKEN);
+      if ('twoFactorRequired' in data) {
+        setChallenge(data.challenge);
+        return;
       }
 
-      await connect();
+      await finishLogin(data.token);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -109,8 +126,37 @@ const Connect = memo(() => {
     values.autoLogin,
     setErrors,
     inviteCode,
-    t
+    t,
+    finishLogin
   ]);
+
+  const submitTwoFactor = useCallback(async () => {
+    if (!challenge) return;
+
+    setLoading(true);
+
+    try {
+      const url = getUrlFromServer();
+      const response = await fetch(`${url}/login/2fa`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ challenge, code: twoFactorCode.trim() })
+      });
+
+      if (!response.ok) {
+        toast.error(t('twoFactorInvalid'));
+        return;
+      }
+
+      const data = (await response.json()) as { token: string };
+
+      await finishLogin(data.token);
+    } finally {
+      setLoading(false);
+    }
+  }, [challenge, twoFactorCode, finishLogin, t]);
 
   const logoSrc = useMemo(() => {
     if (info?.logo) {
@@ -148,83 +194,126 @@ const Connect = memo(() => {
             </span>
           )}
 
-          <form
-            className="flex flex-col gap-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              onConnectClick();
-            }}
-          >
-            <Group label={t('identityLabel')} help={t('identityHelp')}>
-              <Input
-                {...r('identity')}
-                autoComplete="username"
-                data-testid={TestId.CONNECT_IDENTITY_INPUT}
-              />
-            </Group>
-            <Group label={t('passwordLabel')}>
-              <Input
-                {...r('password')}
-                type="password"
-                autoComplete="current-password"
-                onEnter={onConnectClick}
-                data-testid={TestId.CONNECT_PASSWORD_INPUT}
-              />
-            </Group>
-          </form>
+          {!challenge && (
+            <>
+              <form
+                className="flex flex-col gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  onConnectClick();
+                }}
+              >
+                <Group label={t('identityLabel')} help={t('identityHelp')}>
+                  <Input
+                    {...r('identity')}
+                    autoComplete="username"
+                    data-testid={TestId.CONNECT_IDENTITY_INPUT}
+                  />
+                </Group>
+                <Group label={t('passwordLabel')}>
+                  <Input
+                    {...r('password')}
+                    type="password"
+                    autoComplete="current-password"
+                    onEnter={onConnectClick}
+                    data-testid={TestId.CONNECT_PASSWORD_INPUT}
+                  />
+                </Group>
+              </form>
 
-          <div
-            className="flex items-center gap-2 w-fit cursor-pointer"
-            data-testid={TestId.CONNECT_AUTO_LOGIN_SWITCH}
-            onClick={() => {
-              onChange('autoLogin', !values.autoLogin);
-            }}
-          >
-            <Switch checked={values.autoLogin} />
-            <Label className="text-sm cursor-pointer">
-              {t('autoLoginLabel')}
-            </Label>
-          </div>
+              <div
+                className="flex items-center gap-2 w-fit cursor-pointer"
+                data-testid={TestId.CONNECT_AUTO_LOGIN_SWITCH}
+                onClick={() => {
+                  onChange('autoLogin', !values.autoLogin);
+                }}
+              >
+                <Switch checked={values.autoLogin} />
+                <Label className="text-sm cursor-pointer">
+                  {t('autoLoginLabel')}
+                </Label>
+              </div>
 
-          <div className="flex flex-col gap-2">
-            {!window.isSecureContext && (
-              <Alert variant="destructive">
-                <AlertTitle>{t('insecureTitle')}</AlertTitle>
-                <AlertDescription>{t('insecureDesc')}</AlertDescription>
-              </Alert>
-            )}
-
-            <Button
-              className="w-full"
-              variant="outline"
-              onClick={onConnectClick}
-              disabled={loading || !values.identity || !values.password}
-              data-testid={TestId.CONNECT_BUTTON}
-            >
-              {t('connectBtn')}
-            </Button>
-
-            {!info?.allowNewUsers && (
-              <>
-                {!inviteCode && (
-                  <span className="text-xs text-muted-foreground text-center">
-                    {t('registrationDisabled')}
-                  </span>
+              <div className="flex flex-col gap-2">
+                {!window.isSecureContext && (
+                  <Alert variant="destructive">
+                    <AlertTitle>{t('insecureTitle')}</AlertTitle>
+                    <AlertDescription>{t('insecureDesc')}</AlertDescription>
+                  </Alert>
                 )}
-              </>
-            )}
 
-            {inviteCode && (
-              <Alert variant="info">
-                <AlertTitle>{t('invitedTitle')}</AlertTitle>
-                <AlertDescription>
-                  <span className="font-mono text-xs">
-                    {t('inviteCode', { code: inviteCode })}
-                  </span>
-                </AlertDescription>
-              </Alert>
-            )}
-          </div>
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  onClick={onConnectClick}
+                  disabled={loading || !values.identity || !values.password}
+                  data-testid={TestId.CONNECT_BUTTON}
+                >
+                  {t('connectBtn')}
+                </Button>
+
+                {!info?.allowNewUsers && (
+                  <>
+                    {!inviteCode && (
+                      <span className="text-xs text-muted-foreground text-center">
+                        {t('registrationDisabled')}
+                      </span>
+                    )}
+                  </>
+                )}
+
+                {inviteCode && (
+                  <Alert variant="info">
+                    <AlertTitle>{t('invitedTitle')}</AlertTitle>
+                    <AlertDescription>
+                      <span className="font-mono text-xs">
+                        {t('inviteCode', { code: inviteCode })}
+                      </span>
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </div>
+            </>
+          )}
+
+          {challenge && (
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium">
+                  {t('twoFactorTitle')}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {t('twoFactorHelp')}
+                </span>
+              </div>
+              <Group label={t('twoFactorCodeLabel')}>
+                <Input
+                  value={twoFactorCode}
+                  onChange={(e) => setTwoFactorCode(e.target.value)}
+                  autoComplete="one-time-code"
+                  inputMode={useRecovery ? 'text' : 'numeric'}
+                  onEnter={submitTwoFactor}
+                />
+              </Group>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground underline w-fit"
+                onClick={() => setUseRecovery((v) => !v)}
+              >
+                {useRecovery
+                  ? t('twoFactorUseCode')
+                  : t('twoFactorUseRecovery')}
+              </button>
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={submitTwoFactor}
+                disabled={loading || twoFactorCode.trim().length < 6}
+              >
+                {t('twoFactorSubmit')}
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 
