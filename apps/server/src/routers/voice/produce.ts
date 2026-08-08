@@ -34,7 +34,10 @@ const produceRoute = protectedProcedure
       message: 'User is not in a voice channel'
     });
 
-    if (input.kind === StreamKind.AUDIO) {
+    if (
+      input.kind === StreamKind.AUDIO ||
+      input.kind === StreamKind.SOUNDBOARD
+    ) {
       await ctx.needsChannelPermission(
         ctx.currentVoiceChannelId,
         ChannelPermission.SPEAK

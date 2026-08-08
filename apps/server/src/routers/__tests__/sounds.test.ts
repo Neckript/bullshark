@@ -1,4 +1,10 @@
-import { MAX_SOUND_FILE_SIZE, type TTempFile } from '@sharkord/shared';
+import {
+  ChannelPermission,
+  ChannelType,
+  MAX_SOUND_FILE_SIZE,
+  StreamKind,
+  type TTempFile
+} from '@sharkord/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest, uploadFile } from '../../__tests__/helpers';
 import { db } from '../../db';
@@ -151,5 +157,42 @@ describe('sounds router', () => {
     const found = initialData.sounds.find((s) => s.name === 'join_test_sound');
 
     expect(found).toBeDefined();
+  });
+});
+
+describe('soundboard producer', () => {
+  test('requires SPEAK on the channel to produce a soundboard stream', async () => {
+    const { caller: owner } = await initTest(1);
+    const { caller: member } = await initTest(2);
+
+    // create a fresh voice channel so a real VoiceRuntime backs it (needed
+    // for voice.join to succeed), then lock it down so the default role has
+    // VIEW_CHANNEL + JOIN but explicitly not SPEAK.
+    const channelId = await owner.channels.add({
+      type: ChannelType.VOICE,
+      name: 'soundboard-test',
+      categoryId: 2
+    });
+
+    await owner.channels.update({ channelId, private: true });
+
+    await owner.channels.updatePermissions({
+      channelId,
+      roleId: 2, // default "Member" role
+      permissions: [ChannelPermission.VIEW_CHANNEL, ChannelPermission.JOIN]
+    });
+
+    await member.voice.join({
+      channelId,
+      state: { micMuted: false, soundMuted: false }
+    });
+
+    await expect(
+      member.voice.produce({
+        transportId: 'test-transport',
+        kind: StreamKind.SOUNDBOARD,
+        rtpParameters: {}
+      })
+    ).rejects.toThrow('Insufficient channel permissions');
   });
 });
