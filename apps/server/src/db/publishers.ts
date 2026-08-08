@@ -16,6 +16,7 @@ import { getEmojiById } from './queries/emojis';
 import { getMessage } from './queries/messages';
 import { getRole } from './queries/roles';
 import { getPublicSettings } from './queries/server';
+import { getSoundById } from './queries/sounds';
 import { getAllUserIds, getPublicUserById } from './queries/users';
 import { categories, channels, messages, users } from './schema';
 
@@ -90,6 +91,27 @@ const publishEmoji = async (
     type === 'create' ? ServerEvents.EMOJI_CREATE : ServerEvents.EMOJI_UPDATE;
 
   pubsub.publish(targetEvent, emoji);
+};
+
+const publishSound = async (
+  soundId: number | undefined,
+  type: 'create' | 'update' | 'delete'
+) => {
+  if (!soundId) return;
+
+  if (type === 'delete') {
+    pubsub.publish(ServerEvents.SOUND_DELETE, soundId);
+    return;
+  }
+
+  const sound = await getSoundById(soundId);
+
+  if (!sound) return;
+
+  const targetEvent =
+    type === 'create' ? ServerEvents.SOUND_CREATE : ServerEvents.SOUND_UPDATE;
+
+  pubsub.publish(targetEvent, sound);
 };
 
 const publishRole = async (
@@ -292,5 +314,6 @@ export {
   publishReplyCount,
   publishRole,
   publishSettings,
+  publishSound,
   publishUser
 };

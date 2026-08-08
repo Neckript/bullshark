@@ -10,6 +10,7 @@ import type {
   TJoinedMessage,
   TJoinedPublicUser,
   TJoinedRole,
+  TJoinedSound,
   TLogEntry,
   TPluginMetadata,
   TPublicServerSettings,
@@ -108,6 +109,10 @@ type Events = {
   [ServerEvents.EMOJI_CREATE]: TJoinedEmoji;
   [ServerEvents.EMOJI_UPDATE]: TJoinedEmoji;
   [ServerEvents.EMOJI_DELETE]: number;
+
+  [ServerEvents.SOUND_CREATE]: TJoinedSound;
+  [ServerEvents.SOUND_UPDATE]: TJoinedSound;
+  [ServerEvents.SOUND_DELETE]: number;
 
   [ServerEvents.ROLE_CREATE]: TJoinedRole;
   [ServerEvents.ROLE_UPDATE]: TJoinedRole;
