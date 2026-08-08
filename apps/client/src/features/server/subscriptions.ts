@@ -8,6 +8,7 @@ import { subscribeToEmojis } from './emojis/subscriptions';
 import { subscribeToMessages } from './messages/subscriptions';
 import { subscribeToPlugins } from './plugins/subscriptions';
 import { subscribeToRoles } from './roles/subscriptions';
+import { subscribeToSounds } from './soundboard/subscriptions';
 import { subscribeToUsers } from './users/subscriptions';
 import { subscribeToVoice } from './voice/subscriptions';
 
@@ -37,6 +38,7 @@ const initSubscriptions = () => {
     subscribeToServer,
     subscribeToEmojis,
     subscribeToRoles,
+    subscribeToSounds,
     subscribeToUsers,
     subscribeToMessages,
     subscribeToVoice,

@@ -13,6 +13,7 @@ import type {
   TJoinedMessage,
   TJoinedPublicUser,
   TJoinedRole,
+  TJoinedSound,
   TPluginComponentsMap,
   TPluginComponentsMapBySlotId,
   TPluginMetadata,
@@ -37,6 +38,7 @@ export interface IServerState {
   categories: TCategory[];
   channels: TChannel[];
   emojis: TJoinedEmoji[];
+  sounds: TJoinedSound[];
   ownUserId: number | undefined;
   selectedChannelId: number | undefined;
   currentVoiceChannelId: number | undefined;
@@ -80,6 +82,7 @@ const initialState: IServerState = {
   categories: [],
   channels: [],
   emojis: [],
+  sounds: [],
   selectedChannelId: undefined,
   currentVoiceChannelId: undefined,
   messagesMap: {},
@@ -163,6 +166,7 @@ export const serverSlice = createSlice({
         ownUserId: number;
         roles: TJoinedRole[];
         emojis: TJoinedEmoji[];
+        sounds: TJoinedSound[];
         publicSettings: TPublicServerSettings | undefined;
         voiceMap: TVoiceMap;
         externalStreamsMap: TExternalStreamsMap;
@@ -175,6 +179,7 @@ export const serverSlice = createSlice({
       state.categories = action.payload.categories;
       state.channels = action.payload.channels;
       state.emojis = action.payload.emojis;
+      state.sounds = action.payload.sounds;
       state.users = action.payload.users;
       state.roles = action.payload.roles;
       state.ownUserId = action.payload.ownUserId;
@@ -434,6 +439,9 @@ export const serverSlice = createSlice({
 
       // remove user from emojis
       state.emojis = state.emojis.filter((e) => e.userId !== userId);
+
+      // remove user from sounds
+      state.sounds = state.sounds.filter((s) => s.userId !== userId);
     },
     reassignUser: (
       state,
@@ -489,6 +497,11 @@ export const serverSlice = createSlice({
       // reassign emojis
       state.emojis = state.emojis.map((e) =>
         e.userId === userId ? { ...e, userId: deletedUserId } : e
+      );
+
+      // reassign sounds
+      state.sounds = state.sounds.map((s) =>
+        s.userId === userId ? { ...s, userId: deletedUserId } : s
       );
     },
 
@@ -625,6 +638,39 @@ export const serverSlice = createSlice({
     removeEmoji: (state, action: PayloadAction<{ emojiId: number }>) => {
       state.emojis = state.emojis.filter(
         (e) => e.id !== action.payload.emojiId
+      );
+    },
+
+    // SOUNDS -------------------------------------------------------------
+
+    setSounds: (state, action: PayloadAction<TJoinedSound[]>) => {
+      state.sounds = action.payload;
+    },
+    updateSound: (
+      state,
+      action: PayloadAction<{ soundId: number; sound: Partial<TJoinedSound> }>
+    ) => {
+      const index = state.sounds.findIndex(
+        (s) => s.id === action.payload.soundId
+      );
+
+      if (index === -1) return;
+
+      state.sounds[index] = {
+        ...state.sounds[index],
+        ...action.payload.sound
+      } as TJoinedSound;
+    },
+    addSound: (state, action: PayloadAction<TJoinedSound>) => {
+      const exists = state.sounds.find((s) => s.id === action.payload.id);
+
+      if (exists) return;
+
+      state.sounds.push(action.payload);
+    },
+    removeSound: (state, action: PayloadAction<{ soundId: number }>) => {
+      state.sounds = state.sounds.filter(
+        (s) => s.id !== action.payload.soundId
       );
     },
 
