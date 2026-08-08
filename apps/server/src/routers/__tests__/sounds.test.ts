@@ -140,8 +140,16 @@ describe('sounds router', () => {
   });
 
   test('join payload includes the sound library', async () => {
-    const { initialData } = await initTest();
+    const { caller, mockedToken } = await initTest();
+    const uploaded = await uploadSoundFile(mockedToken, 'join.mp3');
 
-    expect(Array.isArray(initialData.sounds)).toBe(true);
+    await caller.sounds.add([{ fileId: uploaded.id, name: 'join_test_sound' }]);
+
+    const { handshakeHash } = await caller.others.handshake();
+    const initialData = await caller.others.joinServer({ handshakeHash });
+
+    const found = initialData.sounds.find((s) => s.name === 'join_test_sound');
+
+    expect(found).toBeDefined();
   });
 });
