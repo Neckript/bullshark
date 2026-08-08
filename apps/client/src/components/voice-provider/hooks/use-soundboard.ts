@@ -1,5 +1,6 @@
 import { logVoice } from '@/helpers/browser-logger';
 import { getFileUrl } from '@/helpers/get-file-url';
+import { getTRPCClient } from '@/lib/trpc';
 import {
   SOUND_TRIGGER_COOLDOWN_MS,
   StreamKind,
@@ -109,11 +110,18 @@ const useSoundboard = ({ producerTransport }: TUseSoundboardArgs) => {
       teardown();
 
       const playToken = playTokenRef.current;
-      const audioContext = new AudioContext();
-
-      audioContextRef.current = audioContext;
+      let audioContext: AudioContext | null = null;
 
       try {
+        // Constructed synchronously, before the first await, for two reasons:
+        // it has to happen inside the user-gesture task (Chrome autoplay
+        // policy), and the ref has to be set before anything can await so a
+        // superseding teardown() is guaranteed to be closing this context.
+        // Chrome throws here once the hardware context limit is hit, which is
+        // why the construction lives inside the try.
+        audioContext = new AudioContext();
+        audioContextRef.current = audioContext;
+
         const audioBuffer = await loadBuffer(sound, audioContext);
 
         // A newer trigger (or a channel leave) already tore this one down.
@@ -151,6 +159,24 @@ const useSoundboard = ({ producerTransport }: TUseSoundboardArgs) => {
             opusMaxAverageBitrate: 128000
           },
           appData: { kind: StreamKind.SOUNDBOARD }
+        });
+
+        // Closing the local producer does not tell the server, so mirror the
+        // microphone producer and ask it to drop its own producer. Hanging it
+        // off '@close' keeps teardown() synchronous and idempotent: the event
+        // only fires when a producer actually existed, and only once.
+        producer.on('@close', async () => {
+          logVoice('Soundboard producer closed');
+
+          const trpc = getTRPCClient();
+
+          try {
+            await trpc.voice.closeProducer.mutate({
+              kind: StreamKind.SOUNDBOARD
+            });
+          } catch (error) {
+            logVoice('Error closing soundboard producer', { error });
+          }
         });
 
         if (playTokenRef.current !== playToken) {

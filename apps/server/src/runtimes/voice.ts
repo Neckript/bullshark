@@ -148,6 +148,7 @@ class VoiceRuntime {
   private audioProducers: TProducerMap = {};
   private screenProducers: TProducerMap = {};
   private screenAudioProducers: TProducerMap = {};
+  private soundboardProducers: TProducerMap = {};
   private consumers: TConsumerMap = {};
   private producerQualityLayers: TProducerQualityLayerMap = {};
 
@@ -342,6 +343,10 @@ class VoiceRuntime {
       producer.close();
     });
 
+    Object.values(this.soundboardProducers).forEach((producer) => {
+      producer.close();
+    });
+
     Object.values(this.externalStreamsInternal).forEach((stream) => {
       if (
         stream.producers.videoProducer &&
@@ -423,6 +428,7 @@ class VoiceRuntime {
     this.removeProducer(userId, StreamKind.VIDEO);
     this.removeProducer(userId, StreamKind.SCREEN);
     this.removeProducer(userId, StreamKind.SCREEN_AUDIO);
+    this.removeProducer(userId, StreamKind.SOUNDBOARD);
 
     if (this.consumers[userId]) {
       Object.values(this.consumers[userId]).forEach((consumer) => {
@@ -598,6 +604,8 @@ class VoiceRuntime {
         return this.screenProducers[id];
       case StreamKind.SCREEN_AUDIO:
         return this.screenAudioProducers[id];
+      case StreamKind.SOUNDBOARD:
+        return this.soundboardProducers[id];
       case StreamKind.EXTERNAL_VIDEO:
         return this.externalStreamsInternal[id]?.producers.videoProducer;
       case StreamKind.EXTERNAL_AUDIO:
@@ -626,6 +634,8 @@ class VoiceRuntime {
       this.screenProducers[userId] = producer;
     } else if (type === StreamKind.SCREEN_AUDIO) {
       this.screenAudioProducers[userId] = producer;
+    } else if (type === StreamKind.SOUNDBOARD) {
+      this.soundboardProducers[userId] = producer;
     }
 
     this.setProducerQualityLayers(userId, type, validatedQualityLayers);
@@ -639,6 +649,8 @@ class VoiceRuntime {
         delete this.screenProducers[userId];
       } else if (type === StreamKind.SCREEN_AUDIO) {
         delete this.screenAudioProducers[userId];
+      } else if (type === StreamKind.SOUNDBOARD) {
+        delete this.soundboardProducers[userId];
       }
 
       this.setProducerQualityLayers(userId, type, []);
@@ -661,6 +673,9 @@ class VoiceRuntime {
       case StreamKind.SCREEN_AUDIO:
         producer = this.screenAudioProducers[userId];
         break;
+      case StreamKind.SOUNDBOARD:
+        producer = this.soundboardProducers[userId];
+        break;
       default:
         return;
     }
@@ -677,6 +692,8 @@ class VoiceRuntime {
       delete this.screenProducers[userId];
     } else if (type === StreamKind.SCREEN_AUDIO) {
       delete this.screenAudioProducers[userId];
+    } else if (type === StreamKind.SOUNDBOARD) {
+      delete this.soundboardProducers[userId];
     }
 
     this.setProducerQualityLayers(userId, type, []);
