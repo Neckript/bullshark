@@ -25,6 +25,7 @@ import {
   type TJoinedEmoji,
   type TJoinedInvite,
   type TJoinedRole,
+  type TJoinedSound,
   type TJoinedUser,
   type TLogin,
   type TMessage,
@@ -400,6 +401,27 @@ export const useAdminEmojis = () => {
     errors,
     onChange
   };
+};
+
+export const useAdminSounds = () => {
+  const [loading, setLoading] = useState(true);
+  const [sounds, setSounds] = useState<TJoinedSound[]>([]);
+
+  const fetchSounds = useCallback(async () => {
+    setLoading(true);
+
+    const trpc = getTRPCClient();
+    const sounds = await trpc.sounds.getAll.query();
+
+    setSounds(sounds);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    fetchSounds();
+  }, [fetchSounds]);
+
+  return { sounds, refetch: fetchSounds, loading };
 };
 
 export const useAdminRoles = () => {

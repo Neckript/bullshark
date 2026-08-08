@@ -11,6 +11,7 @@ import { General } from './general';
 import { Invites } from './invites';
 import { Plugins } from './plugins';
 import { Roles } from './roles';
+import { Sounds } from './sounds';
 import { Storage } from './storage';
 import { Updates } from './updates';
 import { Users } from './users';
@@ -26,6 +27,7 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
     if (can(Permission.MANAGE_SETTINGS)) return 'general';
     if (can(Permission.MANAGE_ROLES)) return 'roles';
     if (can(Permission.MANAGE_EMOJIS)) return 'emojis';
+    if (can(Permission.MANAGE_SOUNDS)) return 'sounds';
     if (can(Permission.MANAGE_STORAGE)) return 'storage';
     if (can(Permission.MANAGE_USERS)) return 'users';
     if (can(Permission.MANAGE_INVITES)) return 'invites';
@@ -52,6 +54,12 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
               disabled={!can(Permission.MANAGE_EMOJIS)}
             >
               {t('emojisTab')}
+            </TabsTrigger>
+            <TabsTrigger
+              value="sounds"
+              disabled={!can(Permission.MANAGE_SOUNDS)}
+            >
+              {t('soundsTab')}
             </TabsTrigger>
             <TabsTrigger
               value="storage"
@@ -92,6 +100,9 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
           </TabsContent>
           <TabsContent value="emojis" className="space-y-6">
             {can(Permission.MANAGE_EMOJIS) && <Emojis />}
+          </TabsContent>
+          <TabsContent value="sounds" className="space-y-6">
+            {can(Permission.MANAGE_SOUNDS) && <Sounds />}
           </TabsContent>
           <TabsContent value="storage" className="space-y-6">
             {can(Permission.MANAGE_STORAGE) && <Storage />}
