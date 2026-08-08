@@ -1,0 +1,5 @@
+export const MAX_SOUND_FILE_SIZE = 524288; // 512 KB
+export const MAX_SOUND_DURATION_SECONDS = 10;
+export const MAX_SOUNDS_PER_SERVER = 50;
+export const SOUND_TRIGGER_COOLDOWN_MS = 500;
+export const MAX_SOUND_NAME_LENGTH = 32;

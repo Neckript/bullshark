@@ -183,6 +183,13 @@
       "when": 1784194195787,
       "tag": "0025_chemical_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1786208055093,
+      "tag": "0026_nervous_yellow_claw",
+      "breakpoints": true
     }
   ]
 }

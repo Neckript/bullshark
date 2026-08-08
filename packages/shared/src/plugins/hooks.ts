@@ -6,7 +6,8 @@ export enum FileSaveType {
   BANNER = 'banner',
   EMOJI = 'emoji',
   SERVER_LOGO = 'server_logo',
-  ROLE_ICON = 'role_icon'
+  ROLE_ICON = 'role_icon',
+  SOUND = 'sound'
 }
 
 export type TBeforeFileSavePayload = {

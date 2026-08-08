@@ -7,6 +7,7 @@ const getMediasoupKind = (kind: StreamKind): 'audio' | 'video' => {
     case StreamKind.AUDIO:
     case StreamKind.EXTERNAL_AUDIO:
     case StreamKind.SCREEN_AUDIO:
+    case StreamKind.SOUNDBOARD:
       return 'audio';
     case StreamKind.VIDEO:
     case StreamKind.SCREEN:

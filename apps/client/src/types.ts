@@ -85,7 +85,8 @@ export type TRemoteUserStreamKinds =
   | StreamKind.AUDIO
   | StreamKind.VIDEO
   | StreamKind.SCREEN
-  | StreamKind.SCREEN_AUDIO;
+  | StreamKind.SCREEN_AUDIO
+  | StreamKind.SOUNDBOARD;
 
 export type TRemoteStreams = {
   [userId: number]: {
@@ -93,6 +94,7 @@ export type TRemoteStreams = {
     [StreamKind.VIDEO]: MediaStream | undefined;
     [StreamKind.SCREEN]: MediaStream | undefined;
     [StreamKind.SCREEN_AUDIO]: MediaStream | undefined;
+    [StreamKind.SOUNDBOARD]: MediaStream | undefined;
   };
 };
 

@@ -10,6 +10,7 @@ export enum StreamKind {
   VIDEO = 'video',
   SCREEN = 'screen',
   SCREEN_AUDIO = 'screen_audio',
+  SOUNDBOARD = 'soundboard',
   EXTERNAL_VIDEO = 'external_video',
   EXTERNAL_AUDIO = 'external_audio'
 }

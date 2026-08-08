@@ -1,5 +1,6 @@
 export * from './metrics';
 export * from './permissions';
+export * from './sounds';
 export * from './storage';
 export * from './user-settings';
 
