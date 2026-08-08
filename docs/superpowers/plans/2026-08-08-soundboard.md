@@ -1024,12 +1024,14 @@ git commit -m "feat(server): ship the sound library in the join payload"
 
 - [ ] **Step 1: Write the failing test**
 
-Append to `apps/server/src/routers/__tests__/sounds.test.ts` a new top-level `describe`. Import `StreamKind` from `@sharkord/shared` at the top of the file:
+Append to `apps/server/src/routers/__tests__/sounds.test.ts` a new top-level `describe`. Import `StreamKind` from `@sharkord/shared` at the top of the file.
+
+The behaviour this task adds is the **`SPEAK` requirement**, so that is what the test must pin. A user with no `SPEAK` on the channel must be rejected on permission grounds, not merely bounced by an unrelated guard:
 
 ```ts
 describe('soundboard producer', () => {
-  test('rejects producing when the user is not in a voice channel', async () => {
-    const { caller } = await initTest();
+  test('requires SPEAK on the channel to produce a soundboard stream', async () => {
+    const { caller } = await initTest(2);
 
     await expect(
       caller.voice.produce({
@@ -1037,29 +1039,28 @@ describe('soundboard producer', () => {
         kind: StreamKind.SOUNDBOARD,
         rtpParameters: {}
       })
-    ).rejects.toThrow('User is not in a voice channel');
+    ).rejects.toThrow();
   });
 });
 ```
 
-This asserts the kind is accepted by the input schema and reaches the runtime checks. Full `SPEAK` enforcement is covered by the manual end-to-end pass — the test harness has no mediasoup transport.
+**Before writing the assertion, determine what user 2 actually lacks in the seed** (`apps/server/src/__tests__/seed.ts`) — `JOIN_VOICE_CHANNELS`, `SPEAK`, or both — and assert that specific error message with `.rejects.toThrow('<exact message>')`. A bare `.rejects.toThrow()` passes on *any* throw, including "User is not in a voice channel", which would make this test worthless as a `SPEAK` guard. If the harness cannot reach the `SPEAK` check without a mediasoup transport, say so in your report and assert the furthest guard you can genuinely reach — do not dress up an unrelated rejection as a permission test.
 
-- [ ] **Step 2: Run to confirm it fails**
+- [ ] **Step 2: Run to confirm it fails for the right reason**
 
 Run: `cd apps/server && bun test src/routers/__tests__/sounds.test.ts`
-Expected: FAIL until Task 1's enum change is present; if Task 1 is done, this test may already pass — that is fine, keep it as a regression guard and move to Step 3.
 
-- [ ] **Step 3: Add the permission branch**
+Expected: FAIL. Read the failure text. If it fails because `SOUNDBOARD` is not a valid enum value, Task 1 was not applied — stop and report. If it fails because the permission is not yet enforced, that is the correct red state; proceed.
 
-In `apps/server/src/routers/voice/produce.ts`, extend the kind checks:
+- [ ] **Step 3: Add the permission check**
+
+In `apps/server/src/routers/voice/produce.ts`, widen the existing `AUDIO` condition rather than adding a branch — both kinds require the same permission, so they share one arm:
 
 ```ts
-    if (input.kind === StreamKind.AUDIO) {
-      await ctx.needsChannelPermission(
-        ctx.currentVoiceChannelId,
-        ChannelPermission.SPEAK
-      );
-    } else if (input.kind === StreamKind.SOUNDBOARD) {
+    if (
+      input.kind === StreamKind.AUDIO ||
+      input.kind === StreamKind.SOUNDBOARD
+    ) {
       await ctx.needsChannelPermission(
         ctx.currentVoiceChannelId,
         ChannelPermission.SPEAK
