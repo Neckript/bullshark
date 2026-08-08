@@ -34,6 +34,7 @@ import {
   DEFAULT_BITRATE,
   StreamKind,
   type ConsumerType,
+  type TJoinedSound,
   type TStreamQualityLayer,
   type TVoiceUserState
 } from '@sharkord/shared';
@@ -75,6 +76,7 @@ import { useDesktopBridge } from './hooks/use-desktop-bridge';
 import { useLocalStreams } from './hooks/use-local-streams';
 import { usePtt } from './hooks/use-ptt';
 import { useRemoteStreams } from './hooks/use-remote-streams';
+import { useSoundboard } from './hooks/use-soundboard';
 import {
   useTransportStats,
   type TransportStatsData
@@ -135,6 +137,9 @@ export type TVoiceProvider = {
   ) => Promise<void>;
   isPttActive: boolean;
   isVadSpeaking: boolean;
+  playSoundboardClip: (sound: TJoinedSound) => Promise<void>;
+  stopSoundboardClip: () => void;
+  playingSoundId: number | undefined;
 } & Pick<
   ReturnType<typeof useLocalStreams>,
   | 'localAudioStream'
@@ -181,6 +186,9 @@ const VoiceProviderContext = createContext<TVoiceProvider>({
   init: () => Promise.resolve(),
   isPttActive: false,
   isVadSpeaking: false,
+  playSoundboardClip: () => Promise.resolve(),
+  stopSoundboardClip: () => {},
+  playingSoundId: undefined,
   toggleMic: () => Promise.resolve(),
   toggleSound: () => Promise.resolve(),
   toggleWebcam: () => Promise.resolve(),
@@ -417,6 +425,11 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
     clearRemoteConsumerMetadata,
     getStreamQuality
   });
+
+  const { playSoundboardClip, stopSoundboardClip, playingSoundId } =
+    useSoundboard({
+      producerTransport
+    });
 
   const {
     stats: transportStats,
@@ -1079,6 +1092,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
 
     stopMonitoring();
     resetStats();
+    stopSoundboardClip();
     cleanupMicProcessingResources();
     clearLocalStreams();
     clearRemoteUserStreams();
@@ -1090,6 +1104,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
   }, [
     stopMonitoring,
     resetStats,
+    stopSoundboardClip,
     cleanupMicProcessingResources,
     clearLocalStreams,
     clearRemoteUserStreams,
@@ -1284,6 +1299,9 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       init,
       isPttActive,
       isVadSpeaking,
+      playSoundboardClip,
+      stopSoundboardClip,
+      playingSoundId,
 
       toggleMic,
       toggleSound,
@@ -1313,6 +1331,9 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       init,
       isPttActive,
       isVadSpeaking,
+      playSoundboardClip,
+      stopSoundboardClip,
+      playingSoundId,
 
       toggleMic,
       toggleSound,
