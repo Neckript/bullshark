@@ -90,5 +90,7 @@
   "customTab": "Personnalisés",
   "searchResults": "Résultats de la recherche ({{count}})",
   "wasReactedBy": "{{reacters}} a réagi.",
-  "andMore": "et {{count}} autres"
+  "andMore": "et {{count}} autres",
+  "soundboard": "Bandes-son",
+  "noSoundsAvailable": "Aucun son disponible"
 }

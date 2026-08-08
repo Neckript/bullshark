@@ -87,5 +87,7 @@
   "customTab": "自定义",
   "searchResults": "搜索结果（{{count}}）",
   "wasReactedBy": "{{reacters}} 做出了反应。",
-  "andMore": "以及其他 {{count}} 人"
+  "andMore": "以及其他 {{count}} 人",
+  "soundboard": "Soundboard",
+  "noSoundsAvailable": "No sounds available"
 }

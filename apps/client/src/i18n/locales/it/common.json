@@ -87,5 +87,7 @@
   "customTab": "Personalizzate",
   "searchResults": "Risultati ricerca ({{count}})",
   "wasReactedBy": "ha ricevuto una reazione da {{reacters}}.",
-  "andMore": "e altri {{count}}"
+  "andMore": "e altri {{count}}",
+  "soundboard": "Soundboard",
+  "noSoundsAvailable": "No sounds available"
 }

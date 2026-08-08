@@ -87,5 +87,7 @@
   "customTab": "Vlastní",
   "searchResults": "Výsledky hledání ({{count}})",
   "wasReactedBy": "reagovali {{reacters}}.",
-  "andMore": "a dalších {{count}}"
+  "andMore": "a dalších {{count}}",
+  "soundboard": "Soundboard",
+  "noSoundsAvailable": "No sounds available"
 }

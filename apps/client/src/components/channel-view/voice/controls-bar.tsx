@@ -16,6 +16,7 @@ import {
 import { memo, useMemo } from 'react';
 import { ControlToggleButton } from './control-toggle-button';
 import { useControlsBarVisibility } from './hooks/use-controls-bar-visibility';
+import { SoundboardButton } from './soundboard-button';
 
 type TControlsBarProps = {
   channelId: number;
@@ -86,6 +87,8 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
             disabled={!permissions.canShareScreen}
           />
         )}
+
+        <SoundboardButton disabled={!permissions.canSpeak} />
       </div>
 
       <Tooltip content="Disconnect">

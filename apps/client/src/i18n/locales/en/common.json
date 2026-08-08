@@ -97,5 +97,7 @@
   "gifPickerTitle": "Choose a GIF",
   "gifSearchPlaceholder": "Search GIFs...",
   "gifSearchFailed": "GIF search failed. Please try again.",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "soundboard": "Soundboard",
+  "noSoundsAvailable": "No sounds available"
 }

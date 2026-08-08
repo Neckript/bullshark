@@ -87,5 +87,7 @@
   "customTab": "Кастомные",
   "searchResults": "Результаты поиска ({{count}})",
   "wasReactedBy": "на это отреагировали {{reacters}}.",
-  "andMore": "и еще {{count}}"
+  "andMore": "и еще {{count}}",
+  "soundboard": "Soundboard",
+  "noSoundsAvailable": "No sounds available"
 }
