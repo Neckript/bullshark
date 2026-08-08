@@ -59,6 +59,10 @@ const zConfig = z.object({
       maxRequests: z.coerce.number().int().positive(),
       windowMs: z.coerce.number().int().positive()
     }),
+    addSound: z.object({
+      maxRequests: z.coerce.number().int().positive(),
+      windowMs: z.coerce.number().int().positive()
+    }),
     openDirectMessage: z.object({
       maxRequests: z.coerce.number().int().positive(),
       windowMs: z.coerce.number().int().positive()
@@ -121,6 +125,10 @@ const defaultConfig: TConfig = {
       windowMs: 10_000
     },
     addEmoji: {
+      maxRequests: 10,
+      windowMs: 60_000
+    },
+    addSound: {
       maxRequests: 10,
       windowMs: 60_000
     },
