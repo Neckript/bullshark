@@ -21,35 +21,26 @@ const insertFile = (name: string) =>
     .get();
 
 describe('sounds queries', () => {
+  // No cleanup needed: setup.ts rebuilds a fresh in-memory database before
+  // every test, so rows written here cannot leak into any other test.
   test('countSounds accurately reflects the number of sounds', async () => {
     const initialCount = await countSounds();
 
-    let file: any = null;
-    let soundName: string = '';
+    const file = await insertFile(`test_sound_${Date.now()}.mp3`);
+    const soundName = `test_sound_${Date.now()}`;
 
-    try {
-      // Insert a test file and sound
-      file = await insertFile(`test_sound_${Date.now()}.mp3`);
-      soundName = `test_sound_${Date.now()}`;
-      await db.insert(sounds).values({
-        name: soundName,
-        fileId: file.id,
-        userId: 1,
-        createdAt: Date.now()
-      });
+    await db.insert(sounds).values({
+      name: soundName,
+      fileId: file.id,
+      userId: 1,
+      createdAt: Date.now()
+    });
 
-      const countAfterInsert = await countSounds();
+    expect(await countSounds()).toBe(initialCount + 1);
 
-      // Assert the count increased by exactly 1
-      expect(countAfterInsert).toBe(initialCount + 1);
-    } finally {
-      // Clean up: delete the sound and file we just inserted
-      await db.delete(sounds).where(eq(sounds.name, soundName));
-      await db.delete(files).where(eq(files.id, file.id));
-    }
+    await db.delete(sounds).where(eq(sounds.name, soundName));
 
-    const countAfterDelete = await countSounds();
-    expect(countAfterDelete).toBe(initialCount);
+    expect(await countSounds()).toBe(initialCount);
   });
 
   test('soundExists is false for an unknown name', async () => {
