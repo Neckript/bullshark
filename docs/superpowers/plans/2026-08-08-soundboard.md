@@ -1088,10 +1088,10 @@ git commit -m "feat(server): require SPEAK to produce a soundboard stream"
 
 **Files:**
 
-- Create: `apps/client/src/features/server/sounds/actions.ts`
-- Create: `apps/client/src/features/server/sounds/selectors.ts`
-- Create: `apps/client/src/features/server/sounds/hooks.ts`
-- Create: `apps/client/src/features/server/sounds/subscriptions.ts`
+- Create: `apps/client/src/features/server/soundboard/actions.ts`
+- Create: `apps/client/src/features/server/soundboard/selectors.ts`
+- Create: `apps/client/src/features/server/soundboard/hooks.ts`
+- Create: `apps/client/src/features/server/soundboard/subscriptions.ts`
 - Modify: `apps/client/src/features/server/slice.ts:39, 82, 156-188, 601-630`
 - Modify: `apps/client/src/features/server/subscriptions.ts:7, 38`
 
@@ -1151,7 +1151,7 @@ Also mirror the two user-cleanup lines the emoji state has (around lines 435 and
 
 - [ ] **Step 2: Create the actions**
 
-`apps/client/src/features/server/sounds/actions.ts`:
+`apps/client/src/features/server/soundboard/actions.ts`:
 
 ```ts
 import { store } from '@/features/store';
@@ -1177,7 +1177,7 @@ export const removeSound = (soundId: number) => {
 
 - [ ] **Step 3: Create the selector and hook**
 
-`apps/client/src/features/server/sounds/selectors.ts`:
+`apps/client/src/features/server/soundboard/selectors.ts`:
 
 ```ts
 import type { IRootState } from '@/features/store';
@@ -1185,7 +1185,7 @@ import type { IRootState } from '@/features/store';
 export const soundsSelector = (state: IRootState) => state.server.sounds;
 ```
 
-`apps/client/src/features/server/sounds/hooks.ts`:
+`apps/client/src/features/server/soundboard/hooks.ts`:
 
 ```ts
 import { useSelector } from 'react-redux';
@@ -1196,7 +1196,7 @@ export const useSounds = () => useSelector(soundsSelector);
 
 - [ ] **Step 4: Create the subscriptions**
 
-`apps/client/src/features/server/sounds/subscriptions.ts`:
+`apps/client/src/features/server/soundboard/subscriptions.ts`:
 
 ```ts
 import { logDebug } from '@/helpers/browser-logger';
@@ -1926,8 +1926,8 @@ git commit -m "feat(client): soundboard management in server settings"
 
 - Consumes: `StreamKind.SOUNDBOARD`, `SOUND_TRIGGER_COOLDOWN_MS` (Task 1); `producerTransport` from the voice provider.
 - Produces, exposed on the voice context and consumed by Task 10:
-  - `playSound(sound: TJoinedSound): Promise<void>`
-  - `stopSound(): void`
+  - `playSoundboardClip(sound: TJoinedSound): Promise<void>`
+  - `stopSoundboardClip(): void`
   - `playingSoundId: number | undefined`
 
 **Read first:** `apps/client/src/components/voice-provider/index.tsx:1020-1060` — the screen-share audio producer. This hook produces its track the same way.
@@ -1997,7 +1997,7 @@ const useSoundboard = ({ producerTransport }: TUseSoundboardArgs) => {
     []
   );
 
-  const playSound = useCallback(
+  const playSoundboardClip = useCallback(
     async (sound: TJoinedSound) => {
       const now = Date.now();
 
@@ -2068,11 +2068,11 @@ const useSoundboard = ({ producerTransport }: TUseSoundboardArgs) => {
     [loadBuffer, producerTransport, teardown]
   );
 
-  const stopSound = useCallback(() => {
+  const stopSoundboardClip = useCallback(() => {
     teardown();
   }, [teardown]);
 
-  return { playSound, stopSound, playingSoundId };
+  return { playSoundboardClip, stopSoundboardClip, playingSoundId };
 };
 
 export { useSoundboard };
@@ -2085,7 +2085,7 @@ In `apps/client/src/components/voice-provider/index.tsx`:
 - Call the hook inside the provider component, after `producerTransport` is available:
 
 ```ts
-  const { playSound, stopSound, playingSoundId } = useSoundboard({
+  const { playSoundboardClip, stopSoundboardClip, playingSoundId } = useSoundboard({
     producerTransport
   });
 ```
@@ -2093,22 +2093,22 @@ In `apps/client/src/components/voice-provider/index.tsx`:
 - Add the three fields to the context type (the block at lines 110-130):
 
 ```ts
-  playSound: (sound: TJoinedSound) => Promise<void>;
-  stopSound: () => void;
+  playSoundboardClip: (sound: TJoinedSound) => Promise<void>;
+  stopSoundboardClip: () => void;
   playingSoundId: number | undefined;
 ```
 
 - Add matching entries to the default context object (near line 168):
 
 ```ts
-  playSound: async () => {},
-  stopSound: () => {},
+  playSoundboardClip: async () => {},
+  stopSoundboardClip: () => {},
   playingSoundId: undefined,
 ```
 
-- Add `playSound, stopSound, playingSoundId` to the provider value object (near line 1274) and to its dependency array.
+- Add `playSoundboardClip, stopSoundboardClip, playingSoundId` to the provider value object (near line 1274) and to its dependency array.
 
-- Call `stopSound()` wherever the provider already tears down voice state on leaving a channel, so a clip cannot outlive the call.
+- Call `stopSoundboardClip()` wherever the provider already tears down voice state on leaving a channel, so a clip cannot outlive the call.
 
 - [ ] **Step 3: Verify**
 
@@ -2253,7 +2253,7 @@ git commit -m "feat(client): play remote soundboard streams"
 
 **Interfaces:**
 
-- Consumes: `useSounds()` (Task 6), `playSound` / `stopSound` / `playingSoundId` from the voice context (Task 8), `ChannelPermission.SPEAK`.
+- Consumes: `useSounds()` (Task 6), `playSoundboardClip` / `stopSoundboardClip` / `playingSoundId` from the voice context (Task 8), `ChannelPermission.SPEAK`.
 - Produces: the user-facing entry point. Nothing depends on it.
 
 - [ ] **Step 1: Build the button and popover**
@@ -2261,7 +2261,7 @@ git commit -m "feat(client): play remote soundboard streams"
 `apps/client/src/components/channel-view/voice/soundboard-button.tsx`:
 
 ```tsx
-import { useSounds } from '@/features/server/sounds/hooks';
+import { useSounds } from '@/features/server/soundboard/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
 import { cn } from '@/lib/utils';
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@sharkord/ui';
@@ -2276,7 +2276,7 @@ type TSoundboardButtonProps = {
 const SoundboardButton = memo(({ disabled }: TSoundboardButtonProps) => {
   const { t } = useTranslation('common');
   const sounds = useSounds();
-  const { playSound, playingSoundId } = useVoice();
+  const { playSoundboardClip, playingSoundId } = useVoice();
 
   return (
     <Popover>
@@ -2307,7 +2307,7 @@ const SoundboardButton = memo(({ disabled }: TSoundboardButtonProps) => {
                   'h-16 truncate text-xs',
                   playingSoundId === sound.id && 'ring-primary ring-2'
                 )}
-                onClick={() => playSound(sound)}
+                onClick={() => playSoundboardClip(sound)}
               >
                 {sound.name}
               </Button>
@@ -2384,3 +2384,16 @@ Automated tests cannot exercise mediasoup. After Task 10, the user runs this on 
 - **Do not touch** `startMicStream` or anything between `voice-provider/index.tsx:504-634`. The whole point of this design is that the microphone chain is not modified. A diff that touches it means the approach drifted — stop and flag it.
 - The `sounds` router is a deliberate near-copy of the `emojis` router. Copying it is correct here; do not try to abstract the two into a shared generic.
 - If a task's test reveals the spec is wrong, stop and report rather than quietly changing behaviour.
+
+---
+
+## Amendment (2026-08-08, during execution)
+
+`apps/client/src/features/server/sounds/actions.ts` **already exists** and is unrelated to this feature: it synthesises the client's UI notification tones and exports `playSound` / `getSoundTypes`, imported by six files — including `apps/client/src/components/voice-provider/index.tsx`, the very file Task 8 modifies.
+
+Two renames follow, already applied throughout this document:
+
+- The feature's client state lives in `apps/client/src/features/server/**soundboard**/`, not `sounds/`. The existing `sounds/actions.ts` is left untouched; none of its six importers change.
+- The playback API is `playSoundboardClip` / `stopSoundboardClip`, not `playSound` / `stopSound`, so it cannot collide with the notification-tone `playSound` already imported into the voice provider.
+
+Server-side naming (`sounds` table, `sounds` router, `TJoinedSound`) is unaffected.
