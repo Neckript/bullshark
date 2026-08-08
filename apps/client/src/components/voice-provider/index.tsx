@@ -85,6 +85,7 @@ import { useTransports } from './hooks/use-transports';
 import { useVad } from './hooks/use-vad';
 import { useVoiceControls } from './hooks/use-voice-controls';
 import { useVoiceEvents } from './hooks/use-voice-events';
+import { SoundboardPlayers } from './soundboard-players';
 import { SIMULCAST_WEBCAM_MAX_BITRATE } from './statics';
 import { VolumeControlProvider } from './volume-control-context';
 
@@ -1360,6 +1361,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
             localScreenShareStream={localScreenShareStream}
             localVideoStream={localVideoStream}
           />
+          <SoundboardPlayers />
           {children}
         </div>
       </VolumeControlProvider>
