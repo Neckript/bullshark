@@ -87,13 +87,27 @@ Name collisions are resolved by a `getUniqueSoundName` query helper, copied from
 
 Structural copy of `apps/server/src/routers/emojis/`:
 
-| Procedure  | Guard                      | Notes                                    |
-| ---------- | -------------------------- | ---------------------------------------- |
-| `add`      | `MANAGE_SOUNDS`            | rate-limited; validates file; publishes   |
-| `update`   | `MANAGE_SOUNDS`            | rename only                               |
-| `delete`   | `MANAGE_SOUNDS`            | cascade removes the file row              |
-| `getAll`   | `protectedProcedure`       | any member can list, to play them         |
-| `onCreate` / `onUpdate` / `onDelete` | `protectedProcedure` | pubsub subscriptions      |
+| Procedure                            | Guard                | Notes                                   |
+| ------------------------------------ | -------------------- | --------------------------------------- |
+| `add`                                | `MANAGE_SOUNDS`      | rate-limited; validates file; publishes |
+| `update`                             | `MANAGE_SOUNDS`      | rename only                             |
+| `delete`                             | `MANAGE_SOUNDS`      | cascade removes the file row            |
+| `getAll`                             | `MANAGE_SOUNDS`      | admin settings screen only              |
+| `onCreate` / `onUpdate` / `onDelete` | `protectedProcedure` | pubsub subscriptions                    |
+
+### How members get the library
+
+`getAll` is admin-gated, exactly like `emojis.getAll`. Regular members receive the
+sound list through the **join bootstrap**, the same channel emojis already use:
+
+- `apps/server/src/routers/others/join.ts` calls `getSounds()` in its `Promise.all`
+  (next to `getEmojis()` at line 88) and returns `sounds` in the payload (next to
+  `emojis` at line 153).
+- The client stores it in the server slice via `setInitialData`
+  (`apps/client/src/features/server/slice.ts:156-188`).
+- Live updates arrive through the `onCreate` / `onUpdate` / `onDelete`
+  subscriptions, registered in `apps/client/src/features/server/subscriptions.ts`
+  alongside `subscribeToEmojis`.
 
 Supporting pieces, all following the emoji equivalents:
 
@@ -164,19 +178,29 @@ through the local output device for **local echo**.
 
 ### Hearing a sound (receiver)
 
-`SOUNDBOARD` is threaded through the existing remote-stream plumbing:
+Most of the receive path already works unchanged: `use-voice-events.ts:50-88`
+handles `VOICE_NEW_PRODUCER` by calling `consume(remoteId, kind, …)` without
+switching on the kind, and `use-transports.ts:224-294` plus
+`use-remote-streams.ts:108-144` are likewise kind-agnostic. What is needed:
 
-- `apps/client/src/types.ts:84-97` — add to the `TRemoteStreamKind` union and the
-  `TRemoteStreams` map
-- `apps/client/src/components/voice-provider/hooks/use-transports.ts` — consume
-  existing soundboard producers when joining, next to the `SCREEN_AUDIO` loop
-  (~line 430)
-- `apps/client/src/components/voice-provider/hooks/use-voice-events.ts` — handle
-  `VOICE_NEW_PRODUCER` with `kind: SOUNDBOARD`
-- `apps/client/src/components/voice-provider/hooks/use-remote-streams.ts` — store
-  and tear down the stream
-- `apps/client/src/components/channel-view/voice/hooks/use-voice-refs.ts` — expose
-  it as an audio element source, subject to the existing per-user volume
+- `apps/client/src/types.ts:84-97` — add `SOUNDBOARD` to the
+  `TRemoteUserStreamKinds` union and the `TRemoteStreams` map, so the consumed
+  stream can be stored.
+- A new `SoundboardPlayers` component mounted once inside the voice provider. It
+  maps over `remoteUserStreams`, rendering one hidden `<audio autoPlay>` per user
+  that currently has a `SOUNDBOARD` stream, applying that user's existing volume
+  setting, `ownVoiceState.soundMuted`, and `applyAudioOutputDevice`.
+
+**Why a dedicated component, not the per-card refs:** the existing audio elements
+hang off `getOrCreateRefs(remoteId)` and are rendered inside user/screen-share
+cards (`screen-share-card.tsx:243-248`). Those cards are not mounted in every
+layout, so routing soundboard audio through them would make playback depend on
+what is on screen. A single top-level player avoids that and leaves
+`AudioVideoRefs` untouched.
+
+**Not implemented:** consuming already-running soundboard producers on join.
+`voice.getProducers` is left alone; a clip playing at the moment you join is
+missed. Clips are ≤10 s, so this is not worth the plumbing.
 
 ### UI
 
@@ -207,12 +231,14 @@ label and description in each `permissions.json`.
 - `add` rejects once the 50-sound quota is reached
 - `add` de-duplicates a colliding name
 - `delete` rejects a caller without `MANAGE_SOUNDS`, and removes the file row
-- `getAll` is readable by a plain member
+- `getAll` rejects a caller without `MANAGE_SOUNDS`
 - `produce` with `kind: SOUNDBOARD` is rejected without `SPEAK` on the channel,
   and accepted with it
 
-**Client:** unit tests for pure logic only (name normalisation, cooldown gate).
-No component tests — the codebase does not have that harness.
+**Client:** none. `apps/client` has no `test` script and contains no test files —
+there is no harness to add tests to, and standing one up is out of scope for this
+feature. All client-side behaviour is covered by the manual pass below. Client
+correctness otherwise rests on `check-types`, `lint` and `format:check`.
 
 **End-to-end:** manual, two clients on the deployed server. Verified by the user.
 Checklist: upload a sound; a second client hears it; the sender hears local echo;
