@@ -11,6 +11,7 @@ import { getEmojis } from '../../db/queries/emojis';
 import { hasUserJoinedBefore } from '../../db/queries/logins';
 import { getRoles } from '../../db/queries/roles';
 import { getPublicSettings, getSettings } from '../../db/queries/server';
+import { getSounds } from '../../db/queries/sounds';
 import { getPublicUsers } from '../../db/queries/users';
 import { categories, users } from '../../db/schema';
 import { shouldAskServerPassword } from '../../helpers/should-ask-server-password';
@@ -75,6 +76,7 @@ const joinServerRoute = rateLimitedProcedure(t.procedure, {
       publicUsers,
       roles,
       emojis,
+      sounds,
       channelPermissions,
       readStates,
       publicSettings,
@@ -86,6 +88,7 @@ const joinServerRoute = rateLimitedProcedure(t.procedure, {
       getPublicUsers(true), // return identity to get status of already connected users
       getRoles(),
       getEmojis(),
+      getSounds(),
       getAllChannelUserPermissions(ctx.user.id),
       getChannelsReadStatesForUser(ctx.user.id),
       getPublicSettings(),
@@ -151,6 +154,7 @@ const joinServerRoute = rateLimitedProcedure(t.procedure, {
       voiceMap,
       roles,
       emojis,
+      sounds,
       publicSettings,
       channelPermissions,
       readStates,

@@ -138,4 +138,10 @@ describe('sounds router', () => {
 
     expect(remaining).toBeUndefined();
   });
+
+  test('join payload includes the sound library', async () => {
+    const { initialData } = await initTest();
+
+    expect(Array.isArray(initialData.sounds)).toBe(true);
+  });
 });
