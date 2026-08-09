@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { eq } from 'drizzle-orm';
 import { db } from '../..';
-import { files, roles } from '../../schema';
+import { files, roles, sounds } from '../../schema';
 import { getOrphanedFileIds, isFileOrphaned } from '../files';
 
 const insertFile = (name: string) =>
@@ -25,6 +25,22 @@ describe('orphaned files — references that keep a file alive', () => {
     const file = await insertFile('role-icon.png');
     // role 1 = "Owner" (see seed); attach the file as its icon
     await db.update(roles).set({ iconFileId: file.id }).where(eq(roles.id, 1));
+
+    expect(await getOrphanedFileIds()).not.toContain(file.id);
+    expect(await isFileOrphaned(file.id)).toBe(false);
+  });
+
+  test('a file used by a soundboard sound is NOT considered orphaned', async () => {
+    const file = await insertFile('clip.mp3');
+    await db
+      .insert(sounds)
+      .values({
+        name: `orphan_check_${file.id}`,
+        fileId: file.id,
+        userId: 1,
+        createdAt: Date.now()
+      })
+      .run();
 
     expect(await getOrphanedFileIds()).not.toContain(file.id);
     expect(await isFileOrphaned(file.id)).toBe(false);
