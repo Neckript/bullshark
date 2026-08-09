@@ -615,6 +615,31 @@ class VoiceRuntime {
     }
   };
 
+  /**
+   * Returns the per-user producer registry backing a stream kind, or undefined
+   * for kinds that are not keyed by user id (the external stream kinds).
+   * Sharing one accessor keeps the "close the superseded producer" and
+   * "only delete the entry you still own" invariants identical for every kind.
+   */
+  private getProducerRegistry = (
+    type: StreamKind
+  ): TProducerMap | undefined => {
+    switch (type) {
+      case StreamKind.VIDEO:
+        return this.videoProducers;
+      case StreamKind.AUDIO:
+        return this.audioProducers;
+      case StreamKind.SCREEN:
+        return this.screenProducers;
+      case StreamKind.SCREEN_AUDIO:
+        return this.screenAudioProducers;
+      case StreamKind.SOUNDBOARD:
+        return this.soundboardProducers;
+      default:
+        return undefined;
+    }
+  };
+
   public addProducer = (
     userId: number,
     type: StreamKind,
@@ -626,31 +651,37 @@ class VoiceRuntime {
       qualityLayers
     );
 
-    if (type === StreamKind.VIDEO) {
-      this.videoProducers[userId] = producer;
-    } else if (type === StreamKind.AUDIO) {
-      this.audioProducers[userId] = producer;
-    } else if (type === StreamKind.SCREEN) {
-      this.screenProducers[userId] = producer;
-    } else if (type === StreamKind.SCREEN_AUDIO) {
-      this.screenAudioProducers[userId] = producer;
-    } else if (type === StreamKind.SOUNDBOARD) {
-      this.soundboardProducers[userId] = producer;
+    const registry = this.getProducerRegistry(type);
+
+    if (registry) {
+      const superseded = registry[userId];
+
+      // Close the producer we are about to replace BEFORE storing the new one.
+      // Its close observer deletes the registry entry, so closing after the
+      // assignment would wipe the entry we just wrote for the new producer.
+      // Without this, a lost/failed `closeProducer` leaves an orphaned
+      // mediasoup producer that nothing can reach until the send transport
+      // closes - which soundboard clips, one producer each, would accumulate.
+      if (superseded && superseded !== producer) {
+        superseded.close();
+      }
+
+      registry[userId] = producer;
     }
 
     this.setProducerQualityLayers(userId, type, validatedQualityLayers);
 
     producer.observer.on('close', () => {
-      if (type === StreamKind.VIDEO) {
-        delete this.videoProducers[userId];
-      } else if (type === StreamKind.AUDIO) {
-        delete this.audioProducers[userId];
-      } else if (type === StreamKind.SCREEN) {
-        delete this.screenProducers[userId];
-      } else if (type === StreamKind.SCREEN_AUDIO) {
-        delete this.screenAudioProducers[userId];
-      } else if (type === StreamKind.SOUNDBOARD) {
-        delete this.soundboardProducers[userId];
+      const currentRegistry = this.getProducerRegistry(type);
+
+      // Only clear the slot if this producer is still the one registered for
+      // (userId, type). A stale producer closing late must not evict the live
+      // entry, which would break consume/closeProducer for the rest of the
+      // session.
+      if (currentRegistry) {
+        if (currentRegistry[userId] !== producer) return;
+
+        delete currentRegistry[userId];
       }
 
       this.setProducerQualityLayers(userId, type, []);
@@ -658,42 +689,18 @@ class VoiceRuntime {
   };
 
   public removeProducer(userId: number, type: StreamKind) {
-    let producer: Producer | undefined;
+    const registry = this.getProducerRegistry(type);
 
-    switch (type) {
-      case StreamKind.VIDEO:
-        producer = this.videoProducers[userId];
-        break;
-      case StreamKind.AUDIO:
-        producer = this.audioProducers[userId];
-        break;
-      case StreamKind.SCREEN:
-        producer = this.screenProducers[userId];
-        break;
-      case StreamKind.SCREEN_AUDIO:
-        producer = this.screenAudioProducers[userId];
-        break;
-      case StreamKind.SOUNDBOARD:
-        producer = this.soundboardProducers[userId];
-        break;
-      default:
-        return;
-    }
+    if (!registry) return;
+
+    const producer = registry[userId];
 
     if (!producer) return;
 
     producer.close();
 
-    if (type === StreamKind.VIDEO) {
-      delete this.videoProducers[userId];
-    } else if (type === StreamKind.AUDIO) {
-      delete this.audioProducers[userId];
-    } else if (type === StreamKind.SCREEN) {
-      delete this.screenProducers[userId];
-    } else if (type === StreamKind.SCREEN_AUDIO) {
-      delete this.screenAudioProducers[userId];
-    } else if (type === StreamKind.SOUNDBOARD) {
-      delete this.soundboardProducers[userId];
+    if (registry[userId] === producer) {
+      delete registry[userId];
     }
 
     this.setProducerQualityLayers(userId, type, []);
