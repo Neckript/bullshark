@@ -1,7 +1,7 @@
 import { openDialog, requestConfirmation } from '@/features/dialogs/actions';
 import { openServerScreen } from '@/features/server-screens/actions';
 import { disconnectFromServer } from '@/features/server/actions';
-import { Permission } from '@sharkord/shared';
+import { Permission, TestId } from '@sharkord/shared';
 import {
   Button,
   DropdownMenu,
@@ -48,7 +48,11 @@ const ServerDropdownMenu = memo(() => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button
+          variant="ghost"
+          size="icon"
+          data-testid={TestId.SERVER_DROPDOWN_TRIGGER}
+        >
           <Menu className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
@@ -71,6 +75,7 @@ const ServerDropdownMenu = memo(() => {
         <DropdownMenuItem
           onClick={handleDisconnectClick}
           className="text-destructive focus:text-destructive"
+          data-testid={TestId.SERVER_DROPDOWN_DISCONNECT}
         >
           {t('disconnect')}
         </DropdownMenuItem>

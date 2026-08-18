@@ -1,3 +1,4 @@
+import { TestId } from '@sharkord/shared';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,7 +52,10 @@ const ConfirmActionDialog = memo(
               {cancelLabel ?? t('cancel')}
             </AlertDialogCancel>
             <AutoFocus>
-              <AlertDialogAction onClick={onConfirm}>
+              <AlertDialogAction
+                onClick={onConfirm}
+                data-testid={TestId.CONFIRMATION_CONFIRM_BUTTON}
+              >
                 {confirmLabel ?? t('confirm')}
               </AlertDialogAction>
             </AutoFocus>

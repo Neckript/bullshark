@@ -10,6 +10,10 @@ export enum TestId {
   MESSAGE_COMPOSE_EDITOR = 'message-compose-editor',
   CATEGORY_ITEM = 'category-item',
 
+  SERVER_DROPDOWN_TRIGGER = 'server-dropdown-trigger',
+  SERVER_DROPDOWN_DISCONNECT = 'server-dropdown-disconnect',
+  CONFIRMATION_CONFIRM_BUTTON = 'confirmation-confirm-button',
+
   LEFT_SIDEBAR = 'left-sidebar',
   LEFT_SIDEBAR_SERVER_NAME = 'left-sidebar-server-name'
 }
