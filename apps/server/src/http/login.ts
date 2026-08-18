@@ -7,14 +7,13 @@ import {
 import chalk from 'chalk';
 import { eq, isNull, max, sql } from 'drizzle-orm';
 import http from 'http';
-import jwt from 'jsonwebtoken';
 import z from 'zod';
 import { config } from '../config';
 import { db } from '../db';
 import { publishUser } from '../db/publishers';
 import { isInviteValid } from '../db/queries/invites';
 import { getDefaultRole } from '../db/queries/roles';
-import { getServerToken, getSettings } from '../db/queries/server';
+import { getSettings } from '../db/queries/server';
 import { getUserByIdentity } from '../db/queries/users';
 import {
   channelReadStates,
@@ -23,6 +22,7 @@ import {
   userRoles,
   users
 } from '../db/schema';
+import { signAuthToken } from '../helpers/auth-token';
 import { getWsInfo } from '../helpers/get-ws-info';
 import { safeCompare } from '../helpers/safe-compare';
 import { createTotpChallenge } from '../helpers/totp-challenge';
@@ -269,9 +269,7 @@ const loginRouteHandler = async (
     return res;
   }
 
-  const token = jwt.sign({ userId: existingUser.id }, await getServerToken(), {
-    expiresIn: '604800s' // 7 days
-  });
+  const token = await signAuthToken(existingUser.id);
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ success: true, token }));

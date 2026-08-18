@@ -1,10 +1,9 @@
 import http from 'http';
-import jwt from 'jsonwebtoken';
 import z from 'zod';
 import { config } from '../config';
-import { getServerToken } from '../db/queries/server';
 import { getUserTotp } from '../db/queries/totp';
 import { getUserById } from '../db/queries/users';
+import { signAuthToken } from '../helpers/auth-token';
 import { getWsInfo } from '../helpers/get-ws-info';
 import { resolveTotpChallenge } from '../helpers/totp-challenge';
 import { decryptTotpSecret } from '../helpers/totp-crypto';
@@ -75,9 +74,7 @@ const login2faRouteHandler = async (
     return;
   }
 
-  const token = jwt.sign({ userId }, await getServerToken(), {
-    expiresIn: '604800s' // 7 days
-  });
+  const token = await signAuthToken(userId);
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ success: true, token }));
