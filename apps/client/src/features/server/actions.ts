@@ -122,7 +122,7 @@ export const joinServer = async (handshakeHash: string, password?: string) => {
 };
 
 export const disconnectFromServer = () => {
-  cleanup();
+  cleanup({ forgetSession: true });
   unsubscribeFromServer?.();
 };
 

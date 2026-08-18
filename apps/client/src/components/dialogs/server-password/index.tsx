@@ -54,7 +54,8 @@ const ServerPasswordDialog = memo(
     }, [handshakeHash, values.password, close, setTrpcErrors]);
 
     const onCancel = useCallback(() => {
-      cleanup();
+      // the user chose not to enter the server password, so drop the session
+      cleanup({ forgetSession: true });
       close();
     }, [close]);
 
