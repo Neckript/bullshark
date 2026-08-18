@@ -14,6 +14,7 @@ import { HotkeysController } from './components/hotkeys-controller/index.tsx';
 import { PluginsController } from './components/plugins-controller/index.tsx';
 import { AutoLoginController } from './components/routing/auto-login-controller.tsx';
 import { Routing } from './components/routing/index.tsx';
+import { SessionRefreshController } from './components/routing/session-refresh-controller.tsx';
 import { ServerScreensProvider } from './components/server-screens/index.tsx';
 import { ThemeProvider } from './components/theme-provider/index.tsx';
 import { exposePluginStore } from './features/server/plugins/plugin-store.ts';
@@ -46,6 +47,7 @@ createRoot(document.getElementById('root')!).render(
             <DialogsProvider />
             <ServerScreensProvider />
             <AutoLoginController />
+            <SessionRefreshController />
             <Routing />
           </DevicesProvider>
         </Provider>
