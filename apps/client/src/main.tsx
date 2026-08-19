@@ -20,12 +20,13 @@ import { ThemeProvider } from './components/theme-provider/index.tsx';
 import { exposePluginStore } from './features/server/plugins/plugin-store.ts';
 import { store } from './features/store.ts';
 import { exposeLibs, exposeReact } from './helpers/exposes.ts';
-import { LocalStorageKey } from './helpers/storage.ts';
+import { LocalStorageKey, purgeLegacyCredentials } from './helpers/storage.ts';
 import './index.css';
 
 exposeReact();
 exposeLibs();
 exposePluginStore();
+purgeLegacyCredentials();
 
 await i18nReady;
 

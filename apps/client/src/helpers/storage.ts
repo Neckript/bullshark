@@ -1,7 +1,4 @@
 export enum LocalStorageKey {
-  IDENTITY = 'sharkord-identity',
-  REMEMBER_CREDENTIALS = 'sharkord-remember-identity',
-  USER_PASSWORD = 'sharkord-user-password',
   SERVER_PASSWORD = 'sharkord-server-password',
   VITE_UI_THEME = 'vite-ui-theme',
   DEVICES_SETTINGS = 'sharkord-devices-settings',
@@ -141,6 +138,25 @@ const removeLocalStorageItem = (key: LocalStorageKey): void => {
   }
 };
 
+// Legacy keys from the removed "remember credentials" option, which kept the
+// user password in plaintext in localStorage. Nothing writes them any more,
+// but a browser that stored one still holds it, so wipe them on every boot.
+const LEGACY_CREDENTIAL_KEYS = [
+  'sharkord-identity',
+  'sharkord-remember-identity',
+  'sharkord-user-password'
+];
+
+const purgeLegacyCredentials = (): void => {
+  try {
+    for (const key of LEGACY_CREDENTIAL_KEYS) {
+      localStorage.removeItem(key);
+    }
+  } catch {
+    /* ignore */
+  }
+};
+
 const getSessionStorageItem = (key: SessionStorageKey): string | null => {
   try {
     return sessionStorage.getItem(key);
@@ -171,6 +187,7 @@ export {
   getLocalStorageItemAsNumber,
   getLocalStorageItemBool,
   getSessionStorageItem,
+  purgeLegacyCredentials,
   removeLocalStorageItem,
   removeSessionStorageItem,
   setLocalStorageItem,
