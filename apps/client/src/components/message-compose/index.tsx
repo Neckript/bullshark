@@ -243,7 +243,7 @@ const MessageCompose = memo(
     return (
       <div
         ref={containerRef}
-        className="compose-container relative shrink-0 min-h-14 flex flex-col pb-[env(safe-area-inset-bottom)] bg-white/[0.03]"
+        className="compose-container relative shrink-0 min-h-14 flex flex-col mx-3 mb-[max(0.75rem,env(safe-area-inset-bottom))] rounded-[var(--radius)] border border-border bg-white/[0.03] shadow-[inset_0_1px_0_var(--edge-hi)]"
       >
         <UsersTypingIndicator typingUsers={typingUsers} />
 
