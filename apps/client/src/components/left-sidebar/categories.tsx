@@ -84,7 +84,7 @@ const Category = memo(({ categoryId }: TCategoryProps) => {
       data-testid={TestId.CATEGORY_ITEM}
       data-category-id={category.id}
     >
-      <div className="mb-1 flex w-full items-center px-2 py-1 text-xs font-semibold text-muted-foreground">
+      <div className="mb-1 flex w-full items-center px-2 py-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         <div className="flex w-full items-stretch gap-1">
           <IconButton
             variant="ghost"
