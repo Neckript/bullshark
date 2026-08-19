@@ -87,9 +87,9 @@ Les éditions ciblées se limitent aux surfaces du shell :
 - `components/left-sidebar/categories.tsx` — libellés de section en capitales,
   approche large, suivis d'un filet.
 - `components/left-sidebar/user-control.tsx` — liseré haut, fond de panneau.
-- `components/top-bar/index.tsx` — fond de panneau, liseré haut, nom du salon en
-  `--font-display` en casse normale.
-- `components/right-sidebar/` — même traitement de section que la colonne gauche.
+- `components/channel-view/text/text-top-bar.tsx:58` — le nom du salon (et lui seul, la barre du haut n'en contient pas) passe en `--font-display`, casse normale.
+- `components/top-bar/index.tsx:27` — liseré haut sur la barre.
+- `components/right-sidebar/index.tsx:58` — **rien à faire** : les libellés de section y sont déjà en capitales avec approche large. C'est la colonne gauche qui doit s'aligner dessus, pas l'inverse.
 - `components/message-compose/` — rayon `--radius` et liseré haut.
 
 ## Ce qui est explicitement écarté
