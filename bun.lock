@@ -19,6 +19,7 @@
         "@floating-ui/dom": "^1.7.4",
         "@fontsource/bebas-neue": "^5.2.7",
         "@fontsource/exo-2": "^5.2.8",
+        "@fontsource/geist-sans": "5.3.0",
         "@fontsource/orbitron": "^5.2.8",
         "@fontsource/press-start-2p": "^5.2.7",
         "@fontsource/rajdhani": "^5.2.7",
@@ -378,6 +379,8 @@
     "@fontsource/bebas-neue": ["@fontsource/bebas-neue@5.2.7", "", {}, "sha512-DsmBrmq55d9BCU0mt4DT4RZDdH8vhWRKEUOfbuNB1EEjMuwbtFvM8N+3gIlkYSFbsb10P8Q19BV5OdpMu2h0fA=="],
 
     "@fontsource/exo-2": ["@fontsource/exo-2@5.2.8", "", {}, "sha512-cOZuiqW+gKg2SJAjymCicup0A8qto4M/lpyGahal3twMeLCRma8x/okFCdLYlTvYeQesF7d3WLKi+N04iPb40A=="],
+
+    "@fontsource/geist-sans": ["@fontsource/geist-sans@5.3.0", "", {}, "sha512-AmG7cE1AvE4NHROPaOl1sN+a02cB5xy6pA/ZV76HXqWTCsJTV2SCBc9DTFHfJqnVOODm7HhXIYtUIb75NP5QXQ=="],
 
     "@fontsource/orbitron": ["@fontsource/orbitron@5.2.8", "", {}, "sha512-ruzrDl5vnqNykk5DZWY0Ezj4aeFZSbCnwJTc/98ojNJHSsHhlhT2r7rwQrA5sptmF8JtB8TQTAvlfRvcV28RPw=="],
 
