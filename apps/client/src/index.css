@@ -27,6 +27,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-pill: 999px;
   --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --color-background: var(--background);
@@ -63,7 +64,7 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
