@@ -75,15 +75,13 @@ const VoiceUserCard = memo(
           className
         )}
       >
-        {voiceUser.banner && showUserBanners ? (
+        {voiceUser.banner && showUserBanners && (
           <div
             className="h-full w-full rounded-t-md bg-cover bg-center blur-sm brightness-50 bg-no-repeat absolute inset-0"
             style={{
               backgroundImage: `url("${getFileUrl(voiceUser.banner)}")`
             }}
           />
-        ) : (
-          <CardGradient />
         )}
 
         <CardControls>
@@ -121,6 +119,9 @@ const VoiceUserCard = memo(
           />
         )}
 
+        {/* scrim sits above the video so the name stays readable on bright frames */}
+        <CardGradient />
+
         <div className="absolute bottom-0 left-0 right-0 p-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 min-w-0">
@@ -131,19 +132,19 @@ const VoiceUserCard = memo(
 
             <div className="flex items-center gap-1">
               {voiceUser.state.micMuted && (
-                <MicOff className="size-3.5 text-red-500/80" />
+                <MicOff className="size-3.5 text-destructive" />
               )}
 
               {voiceUser.state.soundMuted && (
-                <HeadphoneOff className="size-3.5 text-red-500/80" />
+                <HeadphoneOff className="size-3.5 text-destructive" />
               )}
 
               {voiceUser.state.webcamEnabled && (
-                <Video className="size-3.5 text-blue-600/80" />
+                <Video className="size-3.5 text-white/70" />
               )}
 
               {voiceUser.state.sharingScreen && (
-                <Monitor className="size-3.5 text-purple-500/80" />
+                <Monitor className="size-3.5 text-white/70" />
               )}
             </div>
           </div>
