@@ -28,8 +28,8 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-pill: 999px;
-  --font-sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-display: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-sans: 'Geist Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-display: 'Geist Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
