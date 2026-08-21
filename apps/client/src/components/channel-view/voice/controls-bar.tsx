@@ -49,8 +49,8 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
       <div
         className={cn(
           'flex items-center gap-2 pointer-events-auto',
-          'h-14 px-2 rounded-md border shadow-xl',
-          'bg-card border-border/50 backdrop-blur-md'
+          'h-14 px-2 rounded-pill border shadow-xl',
+          'bg-card/80 border-border/50 backdrop-blur-md'
         )}
       >
         <ControlToggleButton
@@ -59,7 +59,7 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
           disabledLabel="Mute"
           enabledIcon={MicOff}
           disabledIcon={Mic}
-          enabledClassName="bg-red-500/20 text-red-500 hover:bg-red-500/30 hover:text-red-500"
+          enabledClassName="bg-destructive/20 text-destructive hover:bg-destructive/30 hover:text-destructive"
           onClick={toggleMic}
           disabled={!permissions.canSpeak || ownVoiceState.soundMuted}
         />
@@ -70,7 +70,7 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
           disabledLabel="Start Video"
           enabledIcon={Video}
           disabledIcon={VideoOff}
-          enabledClassName="bg-green-500/20 text-green-500 hover:bg-green-500/30 hover:text-green-500"
+          enabledClassName="bg-primary/20 text-primary hover:bg-primary/30 hover:text-primary"
           onClick={toggleWebcam}
           disabled={!permissions.canWebcam}
         />
@@ -82,7 +82,7 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
             disabledLabel="Share Screen"
             enabledIcon={ScreenShareOff}
             disabledIcon={Monitor}
-            enabledClassName="bg-blue-500/20 text-blue-500 hover:bg-blue-500/30 hover:text-blue-500"
+            enabledClassName="bg-primary/20 text-primary hover:bg-primary/30 hover:text-primary"
             onClick={toggleScreenShare}
             disabled={!permissions.canShareScreen}
           />
@@ -95,8 +95,8 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
         <Button
           size="icon"
           className={cn(
-            'pointer-events-auto h-14 w-18 rounded-md text-white shadow-xl transition-all active:scale-95',
-            'bg-[#ec4245] hover:bg-[#da373c]'
+            'pointer-events-auto h-14 w-18 rounded-pill text-white shadow-xl transition-all active:scale-95',
+            'bg-destructive hover:bg-destructive/85'
           )}
           onClick={() => leaveVoice()}
           aria-label="Disconnect"
