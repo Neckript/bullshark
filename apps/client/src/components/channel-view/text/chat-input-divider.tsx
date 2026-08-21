@@ -151,13 +151,13 @@ const ChatInputDivider = ({
   return (
     <div
       onPointerDown={onPointerDown}
-      className="group relative h-0 shrink-0 overflow-visible cursor-row-resize select-none z-10"
+      className="group relative h-2 shrink-0 overflow-visible cursor-row-resize select-none z-10"
       role="separator"
       aria-orientation="horizontal"
       aria-label="Resize chat input"
     >
-      <div className="absolute inset-x-3 top-0 h-px bg-border transition-all origin-top group-hover:scale-y-[4] group-hover:bg-primary/50 group-active:scale-y-[4] group-active:bg-primary" />
-      <div className="absolute inset-x-3 -top-0.5 h-4" />
+      <div className="absolute inset-x-0 -top-1 h-4" />
+      <div className="absolute top-1/2 left-1/2 h-1 w-10 -translate-x-1/2 -translate-y-1/2 rounded-pill bg-muted-foreground/40 transition-all duration-200 group-hover:w-16 group-hover:bg-primary/70 group-active:w-16 group-active:bg-primary" />
     </div>
   );
 };
