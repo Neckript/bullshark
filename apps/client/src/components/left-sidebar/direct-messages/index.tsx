@@ -40,7 +40,7 @@ const DirectMessageItem = memo(
       <button
         type="button"
         className={cn(
-          'flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+          'flex w-full items-center gap-2 rounded-pill px-2.5 py-1.5 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground',
           selected && 'bg-accent text-accent-foreground'
         )}
         onClick={onSelect}
