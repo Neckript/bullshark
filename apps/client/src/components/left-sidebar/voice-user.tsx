@@ -8,15 +8,7 @@ import { useSpeakingState } from '@/features/server/voice/hooks';
 import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
 import { resolveNameColor } from '@/helpers/resolve-name-color';
 import { cn } from '@sharkord/ui';
-import {
-  HeadphoneOff,
-  Headphones,
-  Mic,
-  MicOff,
-  Monitor,
-  Video,
-  VolumeX
-} from 'lucide-react';
+import { HeadphoneOff, MicOff, Monitor, Video, VolumeX } from 'lucide-react';
 import { memo } from 'react';
 import { UserPopover } from '../user-popover';
 import { StreamContextMenu } from './stream-context-menu';
@@ -35,7 +27,7 @@ const VoiceUser = memo(({ user, isOwnChannel = false }: TVoiceUserProps) => {
   const shouldShowMuteIndicator = isOwnChannel && !isOwnUser && isMuted;
 
   const userRow = (
-    <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-accent/30 text-sm">
+    <div className="flex items-center gap-2 px-2.5 py-1 rounded-pill hover:bg-accent/30 text-sm">
       <UserAvatar
         userId={user.id}
         className={cn('h-5 w-5', isActivelySpeaking && speakingEffectClass)}
@@ -56,33 +48,24 @@ const VoiceUser = memo(({ user, isOwnChannel = false }: TVoiceUserProps) => {
         <NicknameBadge userId={user.id} size="sm" />
       )}
 
-      <div className="flex items-center gap-1 opacity-60">
+      {/* only exceptions are shown: a row with nothing wrong stays clean */}
+      <div className="flex items-center gap-1">
         {shouldShowMuteIndicator && (
-          <VolumeX className="h-3 w-3 text-red-500" />
+          <VolumeX className="h-3 w-3 text-destructive" />
         )}
 
-        <div>
-          {user.state.micMuted ? (
-            <MicOff className="h-3 w-3 text-red-500" />
-          ) : (
-            <Mic className="h-3 w-3 text-green-500" />
-          )}
-        </div>
+        {user.state.micMuted && <MicOff className="h-3 w-3 text-destructive" />}
 
-        <div>
-          {user.state.soundMuted ? (
-            <HeadphoneOff className="h-3 w-3 text-red-500" />
-          ) : (
-            <Headphones className="h-3 w-3 text-green-500" />
-          )}
-        </div>
+        {user.state.soundMuted && (
+          <HeadphoneOff className="h-3 w-3 text-destructive" />
+        )}
 
         {user.state.webcamEnabled && (
-          <Video className="h-3 w-3 text-blue-500" />
+          <Video className="h-3 w-3 text-muted-foreground" />
         )}
 
         {user.state.sharingScreen && (
-          <Monitor className="h-3 w-3 text-purple-500" />
+          <Monitor className="h-3 w-3 text-muted-foreground" />
         )}
       </div>
     </div>

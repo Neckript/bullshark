@@ -36,7 +36,7 @@ const ExternalStream = memo(
     const shouldShowMuteIndicator = isOwnChannel && isMuted;
 
     const row = (
-      <div className="flex items-center gap-2 px-2 py-1 rounded hover:bg-accent/30 text-sm">
+      <div className="flex items-center gap-2 px-2.5 py-1 rounded-pill hover:bg-accent/30 text-sm">
         <Tooltip
           content={
             pluginId
