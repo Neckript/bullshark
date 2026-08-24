@@ -10,12 +10,18 @@ import {
 } from '@/features/server/channels/hooks';
 import {
   useActiveFullscreenPluginId,
+  useCan,
   useChannelCan,
   useInfo,
   useServerName
 } from '@/features/server/hooks';
 import { usePluginComponentsBySlot } from '@/features/server/plugins/hooks';
-import { ChannelPermission, ChannelType, PluginSlot } from '@sharkord/shared';
+import {
+  ChannelPermission,
+  ChannelType,
+  Permission,
+  PluginSlot
+} from '@sharkord/shared';
 import { Button } from '@sharkord/ui';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { memo, useMemo } from 'react';
@@ -32,6 +38,7 @@ const HomeEmpty = memo(() => {
   const info = useInfo();
   const channels = useChannels();
   const homePlugins = usePluginComponentsBySlot(PluginSlot.HOME_SCREEN);
+  const can = useCan();
 
   const firstTextChannel = useMemo(
     () => channels.find((channel) => channel.type === ChannelType.TEXT),
@@ -42,7 +49,8 @@ const HomeEmpty = memo(() => {
   const canOpenFirstChannel =
     !!firstTextChannel && channelCan(ChannelPermission.VIEW_CHANNEL);
 
-  const hasHomePlugin = Object.keys(homePlugins).length > 0;
+  const canUsePlugins = can(Permission.USE_PLUGINS);
+  const hasHomePlugin = canUsePlugins && Object.keys(homePlugins).length > 0;
 
   if (hasHomePlugin) {
     return (
