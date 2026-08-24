@@ -109,4 +109,8 @@ const useForm = <T extends Record<string, unknown>>(initialValues: T) => {
   };
 };
 
-export { useForm };
+type TUseForm<T extends Record<string, unknown>> = ReturnType<
+  typeof useForm<T>
+>;
+
+export { useForm, type TUseForm };
