@@ -12,7 +12,9 @@
   "unknownUser": "Utilisateur Inconnu",
 
   "selectDmPrompt": "Sélectionnez un message privé ou créez-en un nouveau.",
-  "welcomeToServer": "Bienvenu à {{name}}.",
+  "welcomeToServer": "Bienvenue sur {{name}}.",
+  "homeEmptyDescription": "Choisis un salon à gauche pour commencer à parler.",
+  "homeEmptyAction": "Ouvrir #{{name}}",
   "swipeRightForChannels": "Balayez vers la droite pour ouvrir la liste des canneaux",
   "swipeLeftForUsers": "Balayez vers la gauche pour ouvrir la liste des utilisateurs",
 

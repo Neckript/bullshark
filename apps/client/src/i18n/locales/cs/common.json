@@ -13,6 +13,8 @@
 
   "selectDmPrompt": "Vyberte přímou zprávu nebo napište novou.",
   "welcomeToServer": "Vítejte v {{name}}.",
+  "homeEmptyDescription": "Vyber kanál vlevo a začni si povídat.",
+  "homeEmptyAction": "Otevřít #{{name}}",
   "mobileNotOptimized": "Bullshark ještě není optimalizovaný pro telefony, ne všechno bude fungovat elegantně.",
   "swipeRightForChannels": "Přejetím doprava otevřete seznam kanálů",
   "swipeLeftForUsers": "Přejetím doleva otevřete seznam uživatelů",

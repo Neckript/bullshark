@@ -1,17 +1,24 @@
 import { TextChannel } from '@/components/channel-view/text';
 import { VoiceChannel } from '@/components/channel-view/voice';
+import { EmptyState } from '@/components/empty-state';
 import { PluginSlotRenderer } from '@/components/plugin-slot-renderer';
+import { setSelectedChannelId } from '@/features/server/channels/actions';
 import {
+  useChannels,
   useSelectedChannelId,
   useSelectedChannelType
 } from '@/features/server/channels/hooks';
 import {
   useActiveFullscreenPluginId,
+  useChannelCan,
+  useInfo,
   useServerName
 } from '@/features/server/hooks';
-import { ChannelType, PluginSlot } from '@sharkord/shared';
+import { usePluginComponentsBySlot } from '@/features/server/plugins/hooks';
+import { ChannelPermission, ChannelType, PluginSlot } from '@sharkord/shared';
+import { Button } from '@sharkord/ui';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type TContentWrapperProps = {
@@ -19,12 +26,66 @@ type TContentWrapperProps = {
   selectedDmChannelId?: number;
 };
 
+const HomeEmpty = memo(() => {
+  const { t } = useTranslation();
+  const serverName = useServerName();
+  const info = useInfo();
+  const channels = useChannels();
+  const homePlugins = usePluginComponentsBySlot(PluginSlot.HOME_SCREEN);
+
+  const firstTextChannel = useMemo(
+    () => channels.find((channel) => channel.type === ChannelType.TEXT),
+    [channels]
+  );
+
+  const channelCan = useChannelCan(firstTextChannel?.id);
+  const canOpenFirstChannel =
+    !!firstTextChannel && channelCan(ChannelPermission.VIEW_CHANNEL);
+
+  const hasHomePlugin = Object.keys(homePlugins).length > 0;
+
+  if (hasHomePlugin) {
+    return (
+      <div className="flex h-full w-full flex-col gap-2 overflow-auto">
+        <PluginSlotRenderer slotId={PluginSlot.HOME_SCREEN} />
+      </div>
+    );
+  }
+
+  return (
+    <EmptyState
+      title={t('welcomeToServer', { name: serverName })}
+      description={info?.description || t('homeEmptyDescription')}
+      action={
+        canOpenFirstChannel ? (
+          <Button
+            className="rounded-full"
+            onClick={() => setSelectedChannelId(firstTextChannel.id)}
+          >
+            {t('homeEmptyAction', { name: firstTextChannel.name })}
+          </Button>
+        ) : undefined
+      }
+    >
+      <div className="mt-4 flex flex-col gap-2 text-sm text-muted-foreground md:hidden">
+        <div className="flex items-center gap-2">
+          <ArrowRight className="h-4 w-4" />
+          <span>{t('swipeRightForChannels')}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          <span>{t('swipeLeftForUsers')}</span>
+        </div>
+      </div>
+    </EmptyState>
+  );
+});
+
 const ContentWrapper = memo(
   ({ isDmMode, selectedDmChannelId }: TContentWrapperProps) => {
     const { t } = useTranslation();
     const selectedChannelId = useSelectedChannelId();
     const selectedChannelType = useSelectedChannelType();
-    const serverName = useServerName();
     const activeFullscreenPluginId = useActiveFullscreenPluginId();
 
     if (activeFullscreenPluginId) {
@@ -76,34 +137,7 @@ const ContentWrapper = memo(
         );
       }
     } else {
-      content = (
-        <>
-          <div className="flex-col gap-2 h-full w-full hidden lg:flex overflow-auto">
-            <PluginSlotRenderer slotId={PluginSlot.HOME_SCREEN} />
-          </div>
-          <div className="flex flex-col items-center justify-center h-full gap-6 p-8 text-center md:hidden">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-semibold text-foreground">
-                {t('welcomeToServer', { name: serverName })}
-              </h2>
-            </div>
-            <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">
-                  <ArrowRight />
-                </span>
-                <span>{t('swipeRightForChannels')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-lg">
-                  <ArrowLeft />
-                </span>
-                <span>{t('swipeLeftForUsers')}</span>
-              </div>
-            </div>
-          </div>
-        </>
-      );
+      content = <HomeEmpty />;
     }
 
     return (

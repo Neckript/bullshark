@@ -13,6 +13,8 @@
 
   "selectDmPrompt": "Select a direct message or start a new one.",
   "welcomeToServer": "Welcome to {{name}}.",
+  "homeEmptyDescription": "Pick a channel on the left to start talking.",
+  "homeEmptyAction": "Open #{{name}}",
   "swipeRightForChannels": "Swipe right to open the channel list",
   "swipeLeftForUsers": "Swipe left to open the user list",
 

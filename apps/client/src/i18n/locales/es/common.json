@@ -13,6 +13,8 @@
 
   "selectDmPrompt": "Selecciona un mensaje directo o inicia uno nuevo.",
   "welcomeToServer": "Bienvenido a {{name}}.",
+  "homeEmptyDescription": "Elige un canal a la izquierda para empezar a hablar.",
+  "homeEmptyAction": "Abrir #{{name}}",
   "mobileNotOptimized": "Bullshark aún no está optimizado para dispositivos móviles. La experiencia no será ideal.",
   "swipeRightForChannels": "Desliza a la derecha para abrir la lista de canales",
   "swipeLeftForUsers": "Desliza a la izquierda para abrir la lista de usuarios",

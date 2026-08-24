@@ -13,6 +13,8 @@
 
   "selectDmPrompt": "选择一条私信，或开始新的对话。",
   "welcomeToServer": "欢迎来到 {{name}}。",
+  "homeEmptyDescription": "从左侧选择一个频道开始聊天。",
+  "homeEmptyAction": "打开 #{{name}}",
   "mobileNotOptimized": "Bullshark 尚未针对移动设备进行优化，使用体验可能不佳。",
   "swipeRightForChannels": "向右滑动以打开频道列表",
   "swipeLeftForUsers": "向左滑动以打开用户列表",
