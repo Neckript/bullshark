@@ -17,6 +17,8 @@
   "homeEmptyAction": "Open #{{name}}",
   "swipeRightForChannels": "Swipe right to open the channel list",
   "swipeLeftForUsers": "Swipe left to open the user list",
+  "channelEmptyTitle": "This is the very beginning of #{{name}}",
+  "channelEmptyDescription": "No one has said anything here yet. Go first.",
 
   "deleteMessageTitle": "Delete Message",
   "deleteMessageConfirm": "Are you sure you want to delete this message? This action is irreversible.",

@@ -120,11 +120,7 @@ const ContentWrapper = memo(
           />
         );
       } else {
-        content = (
-          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            {t('selectDmPrompt')}
-          </div>
-        );
+        content = <EmptyState title={t('selectDmPrompt')} />;
       }
 
       return (

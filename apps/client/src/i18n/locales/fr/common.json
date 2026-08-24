@@ -17,6 +17,8 @@
   "homeEmptyAction": "Ouvrir #{{name}}",
   "swipeRightForChannels": "Balayez vers la droite pour ouvrir la liste des canneaux",
   "swipeLeftForUsers": "Balayez vers la gauche pour ouvrir la liste des utilisateurs",
+  "channelEmptyTitle": "C'est le tout début de #{{name}}",
+  "channelEmptyDescription": "Personne n'a encore parlé ici. Lance-toi.",
 
   "deleteMessageTitle": "Supprimer le Message",
   "deleteMessageConfirm": "Êtes-vous sûr de vouloir supprimer ce message ? Cette action est irréversible.",

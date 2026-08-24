@@ -18,6 +18,8 @@
   "mobileNotOptimized": "Bullshark 尚未针对移动设备进行优化，使用体验可能不佳。",
   "swipeRightForChannels": "向右滑动以打开频道列表",
   "swipeLeftForUsers": "向左滑动以打开用户列表",
+  "channelEmptyTitle": "这是 #{{name}} 的起点",
+  "channelEmptyDescription": "这里还没有人发言，来说第一句吧。",
 
   "deleteMessageTitle": "删除消息",
   "deleteMessageConfirm": "您确定要删除此消息吗？此操作不可撤销。",

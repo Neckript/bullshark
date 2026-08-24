@@ -18,6 +18,8 @@
   "mobileNotOptimized": "Bullshark aún no está optimizado para dispositivos móviles. La experiencia no será ideal.",
   "swipeRightForChannels": "Desliza a la derecha para abrir la lista de canales",
   "swipeLeftForUsers": "Desliza a la izquierda para abrir la lista de usuarios",
+  "channelEmptyTitle": "Este es el comienzo de #{{name}}",
+  "channelEmptyDescription": "Nadie ha escrito aquí todavía. Empieza tú.",
 
   "deleteMessageTitle": "Eliminar mensaje",
   "deleteMessageConfirm": "¿Estás seguro de que quieres eliminar este mensaje? Esta acción es irreversible.",

@@ -1,5 +1,7 @@
+import { EmptyState } from '@/components/empty-state';
 import { MessageCompose } from '@/components/message-compose';
 import { useThreadSidebar } from '@/features/app/hooks';
+import { useChannelById } from '@/features/server/channels/hooks';
 import {
   useChannelCan,
   useTypingUsersByChannelId
@@ -52,6 +54,8 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
     groupedMessages,
     scrollToMessage
   } = useMessages(channelId);
+
+  const channel = useChannelById(channelId);
 
   useScrollToJumpTarget(channelId, scrollToMessage);
 
@@ -197,19 +201,26 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
         data-messages-container
         className="flex-1 overflow-y-auto overflow-x-hidden px-2 pt-2 pb-7 animate-in fade-in duration-500"
       >
-        <div className="space-y-4">
-          {groupedMessages.map((group) => (
-            <MessagesGroup
-              key={group.key}
-              group={group.messages}
-              onReplyMessageSelect={onReplyMessageSelect}
-              replyTargetMessageId={replyingToMessage?.id}
-              activeThreadMessageId={activeThreadMessageId}
-              editingMessageId={editingMessageId}
-              onEditComplete={handleEditComplete}
-            />
-          ))}
-        </div>
+        {groupedMessages.length === 0 && !fetching ? (
+          <EmptyState
+            title={t('channelEmptyTitle', { name: channel?.name ?? '' })}
+            description={t('channelEmptyDescription')}
+          />
+        ) : (
+          <div className="space-y-4">
+            {groupedMessages.map((group) => (
+              <MessagesGroup
+                key={group.key}
+                group={group.messages}
+                onReplyMessageSelect={onReplyMessageSelect}
+                replyTargetMessageId={replyingToMessage?.id}
+                activeThreadMessageId={activeThreadMessageId}
+                editingMessageId={editingMessageId}
+                onEditComplete={handleEditComplete}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <ChatInputDivider
