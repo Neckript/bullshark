@@ -1,18 +1,27 @@
-import { useEffect, useRef, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefCallback } from 'react';
 
 type TUseFileDragOptions = {
   onFiles: (files: File[]) => void;
   disabled?: boolean;
 };
 
+type TUseFileDragResult = {
+  dropTargetRef: RefCallback<HTMLElement>;
+  isDragging: boolean;
+};
+
 // Un glisser de texte ou d'un message interne ne doit rien allumer.
 const carriesFiles = (event: DragEvent) =>
   Array.from(event.dataTransfer?.types ?? []).includes('Files');
 
-const useFileDrag = (
-  targetRef: RefObject<HTMLElement | null>,
-  { onFiles, disabled = false }: TUseFileDragOptions
-) => {
+const useFileDrag = ({
+  onFiles,
+  disabled = false
+}: TUseFileDragOptions): TUseFileDragResult => {
+  // Un simple useRef ne re-déclenche jamais l'effet quand l'élément
+  // apparaît après le premier rendu (ex : squelette de chargement) : un
+  // callback ref adossé à du state fait de l'élément une dépendance réelle.
+  const [target, setTarget] = useState<HTMLElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const depthRef = useRef(0);
   const onFilesRef = useRef(onFiles);
@@ -20,8 +29,6 @@ const useFileDrag = (
   onFilesRef.current = onFiles;
 
   useEffect(() => {
-    const target = targetRef.current;
-
     if (!target || disabled) return;
 
     const reset = () => {
@@ -99,9 +106,9 @@ const useFileDrag = (
       window.removeEventListener('dragend', reset);
       window.removeEventListener('drop', reset);
     };
-  }, [targetRef, disabled]);
+  }, [target, disabled]);
 
-  return isDragging;
+  return { dropTargetRef: setTarget, isDragging };
 };
 
 export { useFileDrag };

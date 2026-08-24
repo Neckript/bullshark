@@ -46,7 +46,6 @@ const ThreadContent = memo(
 
     const typingUsers = useTypingUsersByThreadId(parentMessageId);
     const composeContainerRef = useRef<HTMLDivElement>(null);
-    const dropRef = useRef<HTMLDivElement>(null);
     const settings = usePublicServerSettings();
     const channelCan = useChannelCan(channelId);
     const canSend = channelCan(ChannelPermission.SEND_MESSAGES);
@@ -61,7 +60,7 @@ const ThreadContent = memo(
       [composeRef, uploadPermission.allowed]
     );
 
-    const isDraggingFiles = useFileDrag(dropRef, {
+    const { dropTargetRef, isDragging: isDraggingFiles } = useFileDrag({
       onFiles: onDropFiles,
       disabled: !canSend
     });
@@ -91,7 +90,7 @@ const ThreadContent = memo(
     }, []);
 
     return (
-      <div ref={dropRef} className="relative flex flex-col h-full w-full">
+      <div ref={dropTargetRef} className="relative flex flex-col h-full w-full">
         <ThreadHeader />
         <ParentMessagePreview messageId={parentMessageId} />
 
