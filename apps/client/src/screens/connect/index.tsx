@@ -172,9 +172,6 @@ const Connect = memo(() => {
               {info.description}
             </p>
           )}
-          <span className="font-mono text-xs text-muted-foreground">
-            v{VITE_APP_VERSION}
-          </span>
         </div>
 
         <ConnectForm
@@ -194,7 +191,7 @@ const Connect = memo(() => {
         />
       </div>
 
-      <div className="flex justify-center items-center gap-2 text-xs text-muted-foreground select-none">
+      <div className="relative flex justify-center items-center gap-2 text-xs text-muted-foreground select-none">
         <span>v{VITE_APP_VERSION}</span>
         <a
           href="https://codeberg.org/The_Neckript/bullshark"
