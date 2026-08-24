@@ -64,6 +64,7 @@ type TMessageComposeProps = {
 type TMessageComposeHandle = {
   clearFiles: () => void;
   focus: () => void;
+  addFiles: (files: File[]) => void;
 };
 
 const MessageCompose = memo(
@@ -141,7 +142,8 @@ const MessageCompose = memo(
       uploadingSize,
       uploadSpeed,
       openFileDialog,
-      fileInputProps
+      fileInputProps,
+      processFiles
     } = useUploadFiles(channelId, containerRef, !canSendMessages);
 
     useFileAwareHeight({
@@ -154,8 +156,14 @@ const MessageCompose = memo(
 
     useImperativeHandle(
       ref,
-      () => ({ clearFiles, focus: () => tiptapRef.current?.focus() }),
-      [clearFiles]
+      () => ({
+        clearFiles,
+        focus: () => tiptapRef.current?.focus(),
+        addFiles: (droppedFiles: File[]) => {
+          void processFiles(droppedFiles);
+        }
+      }),
+      [clearFiles, processFiles]
     );
 
     const handleSend = useCallback(async () => {

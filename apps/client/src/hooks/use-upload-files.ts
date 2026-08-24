@@ -309,48 +309,10 @@ const useUploadFiles = (
       await processFiles(filesToUpload);
     };
 
-    const handleDrop = async (event: DragEvent) => {
-      event.preventDefault();
-
-      const items = event.dataTransfer?.items ?? [];
-      const dFiles = event.dataTransfer?.files ?? [];
-      const hasFiles =
-        Array.from(items).some((item) => item.kind === 'file') ||
-        dFiles.length > 0;
-
-      if (hasFiles && !checkUploadPermissions()) return;
-
-      const filesToUpload: File[] = [];
-
-      if (items) {
-        for (let i = 0; i < items.length; i++) {
-          if (items[i].kind === 'file') {
-            const file = items[i].getAsFile();
-
-            if (file) filesToUpload.push(file);
-          }
-        }
-      } else {
-        for (let i = 0; i < dFiles.length; i++) {
-          filesToUpload.push(dFiles[i]);
-        }
-      }
-
-      await processFiles(filesToUpload);
-    };
-
-    const handleDragOver = (event: DragEvent) => {
-      event.preventDefault();
-    };
-
     container.addEventListener('paste', handlePaste);
-    container.addEventListener('dragover', handleDragOver);
-    container.addEventListener('drop', handleDrop);
 
     return () => {
       container.removeEventListener('paste', handlePaste);
-      container.removeEventListener('dragover', handleDragOver);
-      container.removeEventListener('drop', handleDrop);
     };
   }, [
     checkUploadPermissions,
@@ -430,7 +392,8 @@ const useUploadFiles = (
       uploadingSize,
       uploadSpeed,
       openFileDialog,
-      fileInputProps
+      fileInputProps,
+      processFiles
     }),
     [
       files,
@@ -441,7 +404,8 @@ const useUploadFiles = (
       uploadingSize,
       uploadSpeed,
       openFileDialog,
-      fileInputProps
+      fileInputProps,
+      processFiles
     ]
   );
 };

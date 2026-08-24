@@ -15,5 +15,7 @@ export enum TestId {
   CONFIRMATION_CONFIRM_BUTTON = 'confirmation-confirm-button',
 
   LEFT_SIDEBAR = 'left-sidebar',
-  LEFT_SIDEBAR_SERVER_NAME = 'left-sidebar-server-name'
+  LEFT_SIDEBAR_SERVER_NAME = 'left-sidebar-server-name',
+
+  DROP_OVERLAY = 'drop-overlay'
 }
