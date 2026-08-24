@@ -393,7 +393,8 @@ const useUploadFiles = (
       uploadSpeed,
       openFileDialog,
       fileInputProps,
-      processFiles
+      processFiles,
+      checkUploadPermissions
     }),
     [
       files,
@@ -405,7 +406,8 @@ const useUploadFiles = (
       uploadSpeed,
       openFileDialog,
       fileInputProps,
-      processFiles
+      processFiles,
+      checkUploadPermissions
     ]
   );
 };

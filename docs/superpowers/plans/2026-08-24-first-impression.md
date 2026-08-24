@@ -751,8 +751,12 @@ Contraintes :
 Dans `connect-form.tsx` :
 
 - Le `Card` reçoit
-  `className="w-full border-white/10 bg-card/80 shadow-2xl backdrop-blur-xl"`.
+  `className="w-full bg-card/80 shadow-2xl backdrop-blur-xl"`.
   Le `/80` est obligatoire : sans lui le `backdrop-blur` n'a rien à flouter.
+  (`border-white/10` a été retiré après revue : `Card` porte déjà `border` et
+  `border-border` via la règle globale, et `border-white/10` l'écrasait — en
+  thème clair `--card` et `--background` valent tous deux
+  `oklch(1 0 0)`, donc la bordure disparaissait complètement.)
 - Le bouton de connexion perd `variant="outline"` (donc `variant` par défaut) et
   reçoit `className="w-full rounded-full"`. **Pas `rounded-pill`.**
 - Pendant `loading`, le libellé est remplacé par `<Spinner size="xs" />`
@@ -1565,5 +1569,34 @@ Commande de déploiement à lui donner telle quelle :
 ```bash
 cd ~/bullshark && git fetch origin && git reset --hard origin/feat/first-impression && bun install && ( cd apps/server && bun run build ) && docker build -t bullshark:local . && docker compose up -d --build
 ```
+
+## Amendements pendant l'implémentation
+
+- **Hook de dépôt.** La spec (§C) décrivait un paramètre supplémentaire sur
+  `use-upload-files.ts` exposant `isDraggingFiles`. Ce plan s'en écarte dès le
+  tableau des fichiers touchés : la détection du glisser vit dans un hook
+  séparé, `hooks/use-file-drag.ts`, adossé à un callback ref plutôt qu'à un
+  `RefObject` (pour re-déclencher son effet quand la cible apparaît après le
+  premier rendu, cas d'un squelette de chargement) ; le motif de refus vient
+  d'un second hook, `hooks/use-upload-permission.ts`. `use-upload-files.ts`
+  perd seulement `dragover`/`drop` et garde `processFiles`. Ce plan fait
+  autorité sur ce point.
+- **Colonne de gauche, version.** Le Step 3 ci-dessus garde
+  `v{VITE_APP_VERSION}` dans la colonne de gauche de l'écran de connexion. Il a
+  été retiré à l'implémentation : le pied de page en bas de l'écran affiche
+  déjà la version, et le dupliquer n'ajoutait rien.
+- **Fondu de l'incrustation.** La spec promettait une garde
+  `prefers-reduced-motion` sur le fondu d'entrée/sortie de l'incrustation de
+  dépôt. L'incrustation livrée utilise `animate-in fade-in duration-150` sans
+  garde, et il n'y a pas de fondu de sortie : le composant se démonte
+  directement. Reste dans le périmètre du chantier 2 (balayage
+  `prefers-reduced-motion`).
+- **Carte de connexion, bordure.** Le Step 4 ci-dessus a été corrigé après
+  revue : `border-white/10` a été retiré du `className` de la carte en verre
+  (voir la note insérée directement dans le Step 4). Il écrasait
+  `border-border` posé par `Card` et la règle globale, et en thème clair
+  `--card` et `--background` valent tous deux `oklch(1 0 0)`, donc la bordure
+  disparaissait complètement. Pas de remplacement par `--edge-hi`, qui a le
+  même défaut en thème clair.
 
 Vider le cache Safari ou resupprimer la PWA, sinon l'ancien bundle est servi.

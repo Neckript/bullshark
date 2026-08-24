@@ -86,7 +86,7 @@
   "uploadFileTooLarge": "«{{name}}» превышает максимально допустимый размер файла.",
   "dropToSendInChannel": "Перетащите, чтобы отправить в #{{name}}",
   "dropToSendHere": "Перетащите, чтобы отправить сюда",
-  "dropLimits": "Максимум {{count}} файлов · {{size}} на файл",
+  "dropLimits": "Лимит: {{count}} на сообщение · {{size}} на файл",
   "dropRefusedTitle": "Сюда нельзя перетаскивать файлы",
   "fetchingOlderMessages": "Загрузка более старых сообщений…",
   "edited": "(отредактировано)",

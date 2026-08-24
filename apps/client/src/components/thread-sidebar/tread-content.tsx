@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/empty-state';
 import { useThreadSidebar } from '@/features/app/hooks';
 import {
   useChannelCan,
@@ -115,9 +116,12 @@ const ThreadContent = memo(
               >
                 {messages.length === 0 && !fetching ? (
                   <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm">
-                    <MessageSquareText className="h-8 w-8 mb-2 opacity-50" />
-                    <p>{t('noRepliesYet')}</p>
-                    <p className="text-xs">{t('beFirstToReply')}</p>
+                    <EmptyState
+                      variant="compact"
+                      icon={<MessageSquareText className="h-5 w-5" />}
+                      title={t('noRepliesYet')}
+                      description={t('beFirstToReply')}
+                    />
                   </div>
                 ) : (
                   <div className="space-y-4">

@@ -270,3 +270,31 @@ n'a de navigateur, c'est une limite assumée depuis le chantier 1.
 - Les points laissés ouverts au chantier 1 : Geist sans `unicode-range` (rendu
   mixte en ru/zh/tchèque), `--edge-hi` sans effet en thème clair,
   `--radius-pill` doublon de `rounded-full`, colonne du thème clair.
+
+## Amendements pendant l'implémentation
+
+- **Section C, hook de dépôt.** Cette section décrivait un paramètre
+  supplémentaire sur `use-upload-files.ts` exposant `isDraggingFiles`. Le plan
+  d'implémentation s'en écarte : la détection du glisser vit dans un hook
+  séparé, `hooks/use-file-drag.ts`, adossé à un callback ref plutôt qu'à un
+  `RefObject` pour re-déclencher son effet quand la cible apparaît après le
+  premier rendu ; le motif de refus vient d'un second hook,
+  `hooks/use-upload-permission.ts`. `use-upload-files.ts` n'a pas bougé sur ce
+  point. Le plan fait autorité ici.
+- **Colonne de gauche, version.** La maquette de cette section garde
+  `v{VITE_APP_VERSION}` dans la colonne de gauche de l'écran de connexion. Il a
+  été retiré à l'implémentation : le pied de page en bas de l'écran affiche
+  déjà la version, et le dupliquer n'ajoutait rien.
+- **Fondu de l'incrustation.** Cette section promettait une garde
+  `prefers-reduced-motion` sur le fondu d'entrée/sortie de l'incrustation.
+  L'incrustation livrée utilise `animate-in fade-in duration-150` sans garde,
+  et il n'y a pas de fondu de sortie : le composant se démonte directement.
+  Reste dans le périmètre du chantier 2 (balayage `prefers-reduced-motion`).
+- **Carte de connexion, bordure.** Cette section (« La mise en page ») ne
+  prescrit que `bg-card/80 backdrop-blur-xl` pour la carte en verre, mais le
+  plan d'implémentation avait ajouté `border-white/10` à cette classe. Une
+  revue a montré qu'il écrasait `border-border` posé par `Card` et la règle
+  globale, et qu'en thème clair `--card` et `--background` valent tous deux
+  `oklch(1 0 0)` : la bordure du verre disparaissait complètement. Corrigé en
+  retirant `border-white/10`, sans le remplacer — `--edge-hi` a le même
+  problème en thème clair (voir « Hors périmètre, assumé » ci-dessus).

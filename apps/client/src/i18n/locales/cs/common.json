@@ -86,7 +86,7 @@
   "uploadFileTooLarge": "\"{{name}}\" přesahuje maximální povolenou velikost souboru.",
   "dropToSendInChannel": "Přetáhněte pro odeslání do #{{name}}",
   "dropToSendHere": "Přetáhněte pro odeslání sem",
-  "dropLimits": "Max. {{count}} souborů · {{size}} na soubor",
+  "dropLimits": "Limit: {{count}} na zprávu · {{size}} na soubor",
   "dropRefusedTitle": "Sem soubory nelze přetáhnout",
   "fetchingOlderMessages": "Načítání starších zpráv…",
   "edited": "(upraveno)",

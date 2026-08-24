@@ -105,6 +105,7 @@ const useFileDrag = ({
       target.removeEventListener('drop', handleDrop);
       window.removeEventListener('dragend', reset);
       window.removeEventListener('drop', reset);
+      reset();
     };
   }, [target, disabled]);
 

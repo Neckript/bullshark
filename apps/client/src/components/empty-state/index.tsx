@@ -19,15 +19,29 @@ const WATERMARK_STYLE = {
   maskImage: 'radial-gradient(closest-side, #000 40%, transparent 100%)'
 } as const;
 
-const EmptyState = memo(
-  ({
-    title,
-    description,
-    action,
-    icon,
-    variant = 'full',
-    children
-  }: TEmptyStateProps) => {
+type TEmptyStateVariantProps = Omit<TEmptyStateProps, 'variant'>;
+
+// Variante compacte : ni `useInfo()` ni le filigrane ne servent ici. Elle vit
+// dans son propre composant pour que ce travail (abonnement aux infos du
+// serveur, calcul de l'URL) ne tourne jamais pour la sidebar DM ou la
+// recherche, qui ne rendent jamais le filigrane.
+const EmptyStateCompact = memo(
+  ({ title, description, icon, children }: TEmptyStateVariantProps) => {
+    return (
+      <div className="flex flex-col items-center gap-1 px-4 py-6 text-center">
+        {icon && <div className="text-muted-foreground/70">{icon}</div>}
+        <span className="text-sm font-medium">{title}</span>
+        {description && (
+          <span className="text-xs text-muted-foreground">{description}</span>
+        )}
+        {children}
+      </div>
+    );
+  }
+);
+
+const EmptyStateFull = memo(
+  ({ title, description, action, icon, children }: TEmptyStateVariantProps) => {
     const info = useInfo();
 
     const watermarkSrc = useMemo(() => {
@@ -37,19 +51,6 @@ const EmptyState = memo(
 
       return '/logo.webp';
     }, [info]);
-
-    if (variant === 'compact') {
-      return (
-        <div className="flex flex-col items-center gap-1 px-4 py-6 text-center">
-          {icon && <div className="text-muted-foreground/70">{icon}</div>}
-          <span className="text-sm font-medium">{title}</span>
-          {description && (
-            <span className="text-xs text-muted-foreground">{description}</span>
-          )}
-          {children}
-        </div>
-      );
-    }
 
     return (
       <div className="relative flex h-full w-full items-center justify-center overflow-hidden px-8 text-center">
@@ -75,6 +76,41 @@ const EmptyState = memo(
           {children}
         </div>
       </div>
+    );
+  }
+);
+
+const EmptyState = memo(
+  ({
+    title,
+    description,
+    action,
+    icon,
+    variant = 'full',
+    children
+  }: TEmptyStateProps) => {
+    if (variant === 'compact') {
+      return (
+        <EmptyStateCompact
+          title={title}
+          description={description}
+          action={action}
+          icon={icon}
+        >
+          {children}
+        </EmptyStateCompact>
+      );
+    }
+
+    return (
+      <EmptyStateFull
+        title={title}
+        description={description}
+        action={action}
+        icon={icon}
+      >
+        {children}
+      </EmptyStateFull>
     );
   }
 );

@@ -143,7 +143,8 @@ const MessageCompose = memo(
       uploadSpeed,
       openFileDialog,
       fileInputProps,
-      processFiles
+      processFiles,
+      checkUploadPermissions
     } = useUploadFiles(channelId, containerRef, !canSendMessages);
 
     useFileAwareHeight({
@@ -160,10 +161,12 @@ const MessageCompose = memo(
         clearFiles,
         focus: () => tiptapRef.current?.focus(),
         addFiles: (droppedFiles: File[]) => {
+          if (!checkUploadPermissions()) return;
+
           void processFiles(droppedFiles);
         }
       }),
-      [clearFiles, processFiles]
+      [clearFiles, processFiles, checkUploadPermissions]
     );
 
     const handleSend = useCallback(async () => {

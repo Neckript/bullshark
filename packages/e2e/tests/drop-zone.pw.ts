@@ -51,4 +51,38 @@ test.describe('Drop zone', () => {
     await messages.dispatchEvent('dragleave', { dataTransfer });
     await expect(page.getByTestId(TestId.DROP_OVERLAY)).toBeHidden();
   });
+
+  test('does not show the overlay when dragging plain text', async ({
+    page
+  }) => {
+    await loginAs(page, 'testowner', 'password123');
+
+    await page
+      .getByTestId(TestId.CHANNEL_ITEM)
+      .filter({ hasText: 'General' })
+      .click();
+
+    const messages = page.locator('[data-messages-container]');
+    await expect(messages).toBeVisible();
+
+    // No File added here: `dataTransfer.types` will not contain 'Files',
+    // which is exactly the `carriesFiles` filter this test is meant to cover.
+    const dataTransfer = await page.evaluateHandle(() => {
+      const DataTransferCtor = (
+        globalThis as unknown as {
+          DataTransfer: new () => {
+            setData: (format: string, data: string) => void;
+          };
+        }
+      ).DataTransfer;
+      const transfer = new DataTransferCtor();
+
+      transfer.setData('text/plain', 'just some selected text');
+
+      return transfer;
+    });
+
+    await messages.dispatchEvent('dragenter', { dataTransfer });
+    await expect(page.getByTestId(TestId.DROP_OVERLAY)).toBeHidden();
+  });
 });

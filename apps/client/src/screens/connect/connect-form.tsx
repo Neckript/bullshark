@@ -59,7 +59,7 @@ const ConnectForm = memo(
     const { t } = useTranslation('connect');
 
     return (
-      <Card className="w-full border-white/10 bg-card/80 shadow-2xl backdrop-blur-xl">
+      <Card className="w-full bg-card/80 shadow-2xl backdrop-blur-xl">
         <CardHeader>
           <PluginSlotRenderer slotId={PluginSlot.CONNECT_SCREEN} />
         </CardHeader>
