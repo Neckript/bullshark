@@ -1,7 +1,7 @@
-import { useChannelById } from '@/features/server/channels/hooks';
-import { useCan, usePublicServerSettings } from '@/features/server/hooks';
+import { usePublicServerSettings } from '@/features/server/hooks';
 import { uploadFile, type TUploadProgress } from '@/helpers/upload-file';
-import { isPreviewable, Permission, type TTempFile } from '@sharkord/shared';
+import { useUploadPermission } from '@/hooks/use-upload-permission';
+import { isPreviewable, type TTempFile } from '@sharkord/shared';
 import {
   useCallback,
   useEffect,
@@ -10,6 +10,7 @@ import {
   useState,
   type RefObject
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 type TDisplayItem = {
@@ -44,13 +45,8 @@ const useUploadFiles = (
   const [displayOrder, setDisplayOrder] = useState<string[]>([]);
   const pendingToFileRef = useRef<Record<string, string>>({});
   const settings = usePublicServerSettings();
-  const selectedChannel = useChannelById(channelId);
-  const can = useCan();
-
-  const isDmChannel = !!selectedChannel?.isDm;
-
-  const canShareFilesInDirectMessages =
-    !isDmChannel || !!settings?.storageFileSharingInDirectMessages;
+  const { t } = useTranslation();
+  const uploadPermission = useUploadPermission(channelId, disabled);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -66,7 +62,7 @@ const useUploadFiles = (
 
       if (remainingSlots <= 0) {
         toast.warning(
-          `Maximum attachments reached (${maxFilesPerMessage} per message).`
+          t('uploadMaxFilesReached', { count: maxFilesPerMessage })
         );
         return [];
       }
@@ -74,14 +70,12 @@ const useUploadFiles = (
       if (filesToUpload.length > remainingSlots) {
         const discardedCount = filesToUpload.length - remainingSlots;
 
-        toast.warning(
-          `${discardedCount} file${discardedCount > 1 ? 's were' : ' was'} ignored due to the per-message attachment limit.`
-        );
+        toast.warning(t('uploadFileIgnored', { count: discardedCount }));
       }
 
       return filesToUpload.slice(0, remainingSlots);
     },
-    [settings?.storageMaxFilesPerMessage]
+    [settings?.storageMaxFilesPerMessage, t]
   );
 
   const removeFile = useCallback((id: string) => {
@@ -121,35 +115,22 @@ const useUploadFiles = (
   }, []);
 
   const checkUploadPermissions = useCallback(() => {
-    if (disabled) return false;
+    if (uploadPermission.allowed) return true;
 
-    if (!settings?.storageUploadEnabled) {
-      toast.warning('File uploads are disabled on this server.');
-
-      return false;
+    switch (uploadPermission.reason) {
+      case 'uploadsDisabled':
+        toast.warning(t('uploadsDisabled'));
+        break;
+      case 'dmSharingDisabled':
+        toast.warning(t('dmSharingDisabled'));
+        break;
+      case 'noUploadPermission':
+        toast.error(t('noUploadPermission'));
+        break;
     }
 
-    if (!canShareFilesInDirectMessages) {
-      toast.warning(
-        'File sharing in direct messages is disabled on this server.'
-      );
-
-      return false;
-    }
-
-    if (!can(Permission.UPLOAD_FILES)) {
-      toast.error('You do not have permission to upload files.');
-
-      return false;
-    }
-
-    return true;
-  }, [
-    disabled,
-    settings?.storageUploadEnabled,
-    canShareFilesInDirectMessages,
-    can
-  ]);
+    return false;
+  }, [uploadPermission, t]);
 
   const openFileDialog = useCallback(() => {
     if (!checkUploadPermissions()) return;
@@ -172,7 +153,7 @@ const useUploadFiles = (
 
       for (const file of allowed) {
         if (file.size > maxFileSize) {
-          toast.error(`"${file.name}" exceeds the maximum file size limit.`);
+          toast.error(t('uploadFileTooLarge', { name: file.name }));
         } else {
           withinLimit.push(file);
         }
@@ -288,7 +269,7 @@ const useUploadFiles = (
       loadedPerFileRef.current = {};
       totalLoadedRef.current = 0;
     },
-    [takeAllowedFiles, settings?.storageUploadMaxFileSize]
+    [takeAllowedFiles, settings?.storageUploadMaxFileSize, t]
   );
 
   const onFileDialogChange = useCallback(

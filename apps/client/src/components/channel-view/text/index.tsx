@@ -182,7 +182,7 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
           <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg">
             <Spinner size="xs" />
             <span className="text-sm text-muted-foreground">
-              Fetching older messages...
+              {t('fetchingOlderMessages')}
             </span>
           </div>
         </div>
