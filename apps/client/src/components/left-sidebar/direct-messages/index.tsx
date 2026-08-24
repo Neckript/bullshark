@@ -1,3 +1,4 @@
+import { EmptyState } from '@/components/empty-state';
 import { UnreadCount } from '@/components/unread-count';
 import { UserAvatar } from '@/components/user-avatar';
 import { setSelectedDmChannelId } from '@/features/app/actions';
@@ -16,6 +17,7 @@ import {
   type TDirectMessageConversation
 } from '@sharkord/shared';
 import { Spinner } from '@sharkord/ui';
+import { MessageSquare } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -154,9 +156,11 @@ const DirectMessages = memo(() => {
             />
           ))}
           {conversations.length === 0 && (
-            <div className="px-2 py-4 text-xs text-muted-foreground">
-              {t('noDMsYet')}
-            </div>
+            <EmptyState
+              variant="compact"
+              icon={<MessageSquare className="h-5 w-5" />}
+              title={t('noDMsYet')}
+            />
           )}
         </div>
       )}

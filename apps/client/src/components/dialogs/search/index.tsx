@@ -1,4 +1,5 @@
 import type { TDialogBaseProps } from '@/components/dialogs/types';
+import { EmptyState } from '@/components/empty-state';
 import { PaginatedList } from '@/components/paginated-list';
 import { jumpToMessage } from '@/features/server/actions';
 import { useOnEsc } from '@/hooks/use-on-esc';
@@ -12,6 +13,7 @@ import {
   Input,
   Spinner
 } from '@sharkord/ui';
+import { SearchX } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from './hooks';
@@ -78,8 +80,12 @@ const SearchDialog = memo(({ isOpen, close }: TSearchDialogProps) => {
                 items={unifiedResults}
                 itemsPerPage={ITEMS_PER_PAGE}
               >
-                <PaginatedList.Empty className="flex h-full min-h-55 items-center justify-center rounded-lg bg-muted/20 px-6 text-sm text-muted-foreground">
-                  {t('noResults')}
+                <PaginatedList.Empty className="flex h-full min-h-55 items-center justify-center rounded-lg bg-muted/20 px-6">
+                  <EmptyState
+                    variant="compact"
+                    icon={<SearchX className="h-5 w-5" />}
+                    title={t('noResults')}
+                  />
                 </PaginatedList.Empty>
 
                 <PaginatedList.List<TUnifiedSearchResult>
