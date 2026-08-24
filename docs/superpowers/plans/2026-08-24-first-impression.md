@@ -257,6 +257,7 @@ const HomeEmpty = memo(() => {
   const info = useInfo();
   const channels = useChannels();
   const homePlugins = usePluginComponentsBySlot(PluginSlot.HOME_SCREEN);
+  const can = useCan();
 
   const firstTextChannel = useMemo(
     () => channels.find((channel) => channel.type === ChannelType.TEXT),
@@ -267,7 +268,11 @@ const HomeEmpty = memo(() => {
   const canOpenFirstChannel =
     !!firstTextChannel && channelCan(ChannelPermission.VIEW_CHANNEL);
 
-  const hasHomePlugin = Object.keys(homePlugins).length > 0;
+  // PluginSlotRenderer renvoie null si le membre n'a pas USE_PLUGINS : sans
+  // cette garde, un serveur à plugin d'accueil affiche un panneau VIDE à qui
+  // n'a pas la permission.
+  const canUsePlugins = can(Permission.USE_PLUGINS);
+  const hasHomePlugin = canUsePlugins && Object.keys(homePlugins).length > 0;
 
   if (hasHomePlugin) {
     return (
@@ -313,9 +318,9 @@ Imports à ajouter en tête du fichier :
 import { EmptyState } from '@/components/empty-state';
 import { setSelectedChannelId } from '@/features/server/channels/actions';
 import { useChannels } from '@/features/server/channels/hooks';
-import { useChannelCan, useInfo } from '@/features/server/hooks';
+import { useCan, useChannelCan, useInfo } from '@/features/server/hooks';
 import { usePluginComponentsBySlot } from '@/features/server/plugins/hooks';
-import { ChannelPermission } from '@sharkord/shared';
+import { ChannelPermission, Permission } from '@sharkord/shared';
 import { Button } from '@sharkord/ui';
 import { useMemo } from 'react';
 ```
