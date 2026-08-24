@@ -1,13 +1,20 @@
 import { useThreadSidebar } from '@/features/app/hooks';
-import { useTypingUsersByThreadId } from '@/features/server/hooks';
+import {
+  useChannelCan,
+  usePublicServerSettings,
+  useTypingUsersByThreadId
+} from '@/features/server/hooks';
 import { useThreadMessages } from '@/features/server/messages/hooks';
 import { LocalStorageKey } from '@/helpers/storage';
-import type { TJoinedMessage } from '@sharkord/shared';
+import { useFileDrag } from '@/hooks/use-file-drag';
+import { useUploadPermission } from '@/hooks/use-upload-permission';
+import { ChannelPermission, type TJoinedMessage } from '@sharkord/shared';
 import { Spinner } from '@sharkord/ui';
 import { MessageSquareText } from 'lucide-react';
 import { memo, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChatInputDivider } from '../channel-view/text/chat-input-divider';
+import { DropOverlay } from '../channel-view/text/drop-overlay';
 import { DEFAULT_MAX_HEIGHT_VH } from '../channel-view/text/helpers';
 import { useArrowUpEdit } from '../channel-view/text/hooks/use-arrow-up-edit';
 import { useScrollController } from '../channel-view/text/hooks/use-scroll-controller';
@@ -39,6 +46,25 @@ const ThreadContent = memo(
 
     const typingUsers = useTypingUsersByThreadId(parentMessageId);
     const composeContainerRef = useRef<HTMLDivElement>(null);
+    const dropRef = useRef<HTMLDivElement>(null);
+    const settings = usePublicServerSettings();
+    const channelCan = useChannelCan(channelId);
+    const canSend = channelCan(ChannelPermission.SEND_MESSAGES);
+    const uploadPermission = useUploadPermission(channelId, !canSend);
+
+    const onDropFiles = useCallback(
+      (droppedFiles: File[]) => {
+        if (!uploadPermission.allowed) return;
+
+        composeRef.current?.addFiles(droppedFiles);
+      },
+      [composeRef, uploadPermission.allowed]
+    );
+
+    const isDraggingFiles = useFileDrag(dropRef, {
+      onFiles: onDropFiles,
+      disabled: !canSend
+    });
 
     const {
       containerRef,
@@ -65,7 +91,7 @@ const ThreadContent = memo(
     }, []);
 
     return (
-      <div className="flex flex-col h-full w-full">
+      <div ref={dropRef} className="relative flex flex-col h-full w-full">
         <ThreadHeader />
         <ParentMessagePreview messageId={parentMessageId} />
 
@@ -135,6 +161,14 @@ const ThreadContent = memo(
             onResize={onComposeResize}
           />
         </div>
+
+        {isDraggingFiles && (
+          <DropOverlay
+            refusal={uploadPermission.reason}
+            maxFiles={settings?.storageMaxFilesPerMessage}
+            maxFileSize={settings?.storageUploadMaxFileSize}
+          />
+        )}
       </div>
     );
   }

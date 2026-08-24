@@ -4,12 +4,15 @@ import { useThreadSidebar } from '@/features/app/hooks';
 import { useChannelById } from '@/features/server/channels/hooks';
 import {
   useChannelCan,
+  usePublicServerSettings,
   useTypingUsersByChannelId
 } from '@/features/server/hooks';
 import { useMessages } from '@/features/server/messages/hooks';
 import { playSound } from '@/features/server/sounds/actions';
 import { SoundType } from '@/features/server/types';
 import { LocalStorageKey } from '@/helpers/storage';
+import { useFileDrag } from '@/hooks/use-file-drag';
+import { useUploadPermission } from '@/hooks/use-upload-permission';
 import { getTRPCClient } from '@/lib/trpc';
 import type { TReplyTarget } from '@/types';
 import {
@@ -25,6 +28,7 @@ import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ChatInputDivider } from './chat-input-divider';
+import { DropOverlay } from './drop-overlay';
 import { DEFAULT_MAX_HEIGHT_VH } from './helpers';
 import { useArrowUpEdit } from './hooks/use-arrow-up-edit';
 import { useScrollController } from './hooks/use-scroll-controller';
@@ -110,6 +114,24 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
   }, [isAtBottom, scrollToBottom]);
 
   const channelCan = useChannelCan(channelId);
+  const canSend = channelCan(ChannelPermission.SEND_MESSAGES);
+  const dropRef = useRef<HTMLDivElement>(null);
+  const settings = usePublicServerSettings();
+  const uploadPermission = useUploadPermission(channelId, !canSend);
+
+  const onDropFiles = useCallback(
+    (droppedFiles: File[]) => {
+      if (!uploadPermission.allowed) return;
+
+      composeRef.current?.addFiles(droppedFiles);
+    },
+    [composeRef, uploadPermission.allowed]
+  );
+
+  const isDraggingFiles = useFileDrag(dropRef, {
+    onFiles: onDropFiles,
+    disabled: !canSend
+  });
 
   const sendTypingSignal = useMemo(
     () =>
@@ -176,7 +198,7 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
   }
 
   return (
-    <>
+    <div ref={dropRef} className="relative flex flex-1 flex-col min-h-0">
       {fetching && (
         <div className="absolute top-0 left-0 right-0 h-12 z-10 flex items-center justify-center">
           <div className="flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-border rounded-full px-4 py-2 shadow-lg">
@@ -246,7 +268,16 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
         onArrowUp={handleArrowUpEdit}
         onResize={onComposeResize}
       />
-    </>
+
+      {isDraggingFiles && (
+        <DropOverlay
+          channelName={channel?.isDm ? undefined : channel?.name}
+          refusal={uploadPermission.reason}
+          maxFiles={settings?.storageMaxFilesPerMessage}
+          maxFileSize={settings?.storageUploadMaxFileSize}
+        />
+      )}
+    </div>
   );
 });
 
