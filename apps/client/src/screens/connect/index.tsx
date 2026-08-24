@@ -16,6 +16,7 @@ import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ConnectForm } from './connect-form';
+import { ConnectScene } from './connect-scene';
 
 const Connect = memo(() => {
   const { t } = useTranslation('connect');
@@ -147,29 +148,51 @@ const Connect = memo(() => {
   }, [info]);
 
   return (
-    <div className="flex flex-col gap-2 justify-center items-center h-full relative">
+    <div className="relative flex h-full flex-col items-center justify-center gap-2 overflow-hidden">
+      <ConnectScene />
+
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
         <LanguageSwitcher variant="icon" />
       </div>
 
-      <ConnectForm
-        values={values}
-        r={r}
-        onChange={onChange}
-        loading={loading}
-        challenge={challenge}
-        twoFactorCode={twoFactorCode}
-        setTwoFactorCode={setTwoFactorCode}
-        useRecovery={useRecovery}
-        setUseRecovery={setUseRecovery}
-        onConnectClick={onConnectClick}
-        submitTwoFactor={submitTwoFactor}
-        inviteCode={inviteCode}
-        allowNewUsers={info?.allowNewUsers}
-        logoSrc={logoSrc}
-        name={info?.name}
-        description={info?.description}
-      />
+      <div className="relative grid w-full max-w-4xl items-center gap-8 px-6 lg:grid-cols-2">
+        <div className="flex flex-col items-center gap-3 text-center lg:items-start lg:text-left">
+          <img
+            src={logoSrc}
+            alt="Bullshark"
+            className="block max-h-24 max-w-full rounded-[var(--radius)] lg:max-h-40"
+          />
+          {info?.name && (
+            <h1 className="font-display text-3xl font-semibold tracking-tight lg:text-4xl">
+              {info.name}
+            </h1>
+          )}
+          {info?.description && (
+            <p className="max-w-sm text-sm text-muted-foreground">
+              {info.description}
+            </p>
+          )}
+          <span className="font-mono text-xs text-muted-foreground">
+            v{VITE_APP_VERSION}
+          </span>
+        </div>
+
+        <ConnectForm
+          values={values}
+          r={r}
+          onChange={onChange}
+          loading={loading}
+          challenge={challenge}
+          twoFactorCode={twoFactorCode}
+          setTwoFactorCode={setTwoFactorCode}
+          useRecovery={useRecovery}
+          setUseRecovery={setUseRecovery}
+          onConnectClick={onConnectClick}
+          submitTwoFactor={submitTwoFactor}
+          inviteCode={inviteCode}
+          allowNewUsers={info?.allowNewUsers}
+        />
+      </div>
 
       <div className="flex justify-center items-center gap-2 text-xs text-muted-foreground select-none">
         <span>v{VITE_APP_VERSION}</span>

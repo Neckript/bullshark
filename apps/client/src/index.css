@@ -602,3 +602,31 @@ body {
   width: 100% !important;
   max-width: 100% !important;
 }
+
+.connect-halo-a {
+  background: color-mix(in oklab, var(--primary) 42%, transparent);
+  animation: connect-drift-a 34s ease-in-out infinite alternate;
+}
+
+.connect-halo-b {
+  background: color-mix(in oklab, var(--primary) 26%, transparent);
+  animation: connect-drift-b 41s ease-in-out infinite alternate;
+}
+
+@keyframes connect-drift-a {
+  to {
+    transform: translate3d(3rem, 2rem, 0) scale(1.12);
+  }
+}
+
+@keyframes connect-drift-b {
+  to {
+    transform: translate3d(-2.5rem, -1.5rem, 0) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .connect-halo {
+    animation: none;
+  }
+}

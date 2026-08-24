@@ -9,10 +9,10 @@ import {
   Card,
   CardContent,
   CardHeader,
-  CardTitle,
   Group,
   Input,
   Label,
+  Spinner,
   Switch
 } from '@sharkord/ui';
 import { memo, type Dispatch, type SetStateAction } from 'react';
@@ -38,9 +38,6 @@ type TConnectFormProps = {
   submitTwoFactor: () => void;
   inviteCode?: string;
   allowNewUsers?: boolean;
-  logoSrc: string;
-  name?: string | null;
-  description?: string | null;
 };
 
 const ConnectForm = memo(
@@ -57,33 +54,16 @@ const ConnectForm = memo(
     onConnectClick,
     submitTwoFactor,
     inviteCode,
-    allowNewUsers,
-    logoSrc,
-    name,
-    description
+    allowNewUsers
   }: TConnectFormProps) => {
     const { t } = useTranslation('connect');
 
     return (
-      <Card className="w-full max-w-sm">
+      <Card className="w-full border-white/10 bg-card/80 shadow-2xl backdrop-blur-xl">
         <CardHeader>
-          <CardTitle className="flex flex-col items-center gap-2 text-center">
-            <img
-              src={logoSrc}
-              alt="Bullshark"
-              className="block max-h-32 max-w-full rounded-[5px]"
-            />
-            {name && (
-              <span className="text-xl font-bold leading-tight">{name}</span>
-            )}
-          </CardTitle>
           <PluginSlotRenderer slotId={PluginSlot.CONNECT_SCREEN} />
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {description && (
-            <span className="text-sm text-muted-foreground">{description}</span>
-          )}
-
           {!challenge && (
             <>
               <form
@@ -133,13 +113,12 @@ const ConnectForm = memo(
                 )}
 
                 <Button
-                  className="w-full"
-                  variant="outline"
+                  className="w-full rounded-full"
                   onClick={onConnectClick}
                   disabled={loading || !values.identity || !values.password}
                   data-testid={TestId.CONNECT_BUTTON}
                 >
-                  {t('connectBtn')}
+                  {loading ? <Spinner size="xs" /> : t('connectBtn')}
                 </Button>
 
                 {!allowNewUsers && (
@@ -195,12 +174,11 @@ const ConnectForm = memo(
                   : t('twoFactorUseRecovery')}
               </button>
               <Button
-                className="w-full"
-                variant="outline"
+                className="w-full rounded-full"
                 onClick={submitTwoFactor}
                 disabled={loading || twoFactorCode.trim().length < 6}
               >
-                {t('twoFactorSubmit')}
+                {loading ? <Spinner size="xs" /> : t('twoFactorSubmit')}
               </Button>
             </div>
           )}
