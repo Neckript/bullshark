@@ -15,7 +15,7 @@ import {
   Label,
   Switch
 } from '@sharkord/ui';
-import { memo } from 'react';
+import { memo, type Dispatch, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type TConnectValues = {
@@ -33,7 +33,7 @@ type TConnectFormProps = {
   twoFactorCode: string;
   setTwoFactorCode: (value: string) => void;
   useRecovery: boolean;
-  setUseRecovery: (value: boolean) => void;
+  setUseRecovery: Dispatch<SetStateAction<boolean>>;
   onConnectClick: () => void;
   submitTwoFactor: () => void;
   inviteCode?: string;
@@ -188,7 +188,7 @@ const ConnectForm = memo(
               <button
                 type="button"
                 className="text-xs text-muted-foreground underline w-fit"
-                onClick={() => setUseRecovery(!useRecovery)}
+                onClick={() => setUseRecovery((v) => !v)}
               >
                 {useRecovery
                   ? t('twoFactorUseCode')
