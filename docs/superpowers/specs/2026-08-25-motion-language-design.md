@@ -91,6 +91,14 @@ Les deux familles ont volontairement les mêmes valeurs : elles ne diffèrent qu
 par leur comportement en mouvement réduit. Le nom encode l'intention, pas une
 durée différente.
 
+Amendement d'implémentation (2026-08-25) : quatre jetons du vocabulaire n'ont
+pas encore de consommateur après le chantier 2 — `--transition-duration-slow`,
+`--transition-duration-move-fast`, `--ease-in`, `--ease-move`. C'est une tension
+assumée avec la vérification §3 (« aucun jeton sans usage ») : `@theme static`
+émet le vocabulaire complet exprès, pour que la migration « au fil de l'eau »
+des autres surfaces puisse s'appuyer dessus sans re-toucher le thème. À
+consommer ou à retirer lors de cette migration.
+
 Deux distances, et deux seulement, pour que rien ne dérive :
 
 | Jeton    | Valeur | Pour                                                   |
@@ -122,7 +130,13 @@ les 2 `ease-out` déjà présents dans le client changent de courbe : c'est voul
 
 ## B. La garde
 
-Un seul bloc, à la suite des jetons.
+Un seul bloc. Amendement d'implémentation (2026-08-25) : il est placé en **fin
+de fichier**, pas immédiatement après les jetons. Les variables des jetons sont
+émises par `@theme` dans une couche `@layer`, et du CSS hors couche l'emporte
+toujours sur du CSS en couche quel que soit l'ordre source ; placer la garde
+hors couche, en fin de fichier, est donc ce qui lui permet de redéfinir les
+jetons. Vérifié dans le bundle : `--transition-duration-move-base` y passe bien
+de `.2s` à `.01ms`.
 
 ```css
 @media (prefers-reduced-motion: reduce) {
