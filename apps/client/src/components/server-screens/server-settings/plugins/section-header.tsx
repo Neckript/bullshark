@@ -37,6 +37,7 @@ const SectionHeader = memo(
               className="shrink-0"
             >
               <RefreshCw
+                data-motion-keep
                 className={cn('w-4 h-4 mr-2', isRefreshing && 'animate-spin')}
               />
               {refreshLabel}

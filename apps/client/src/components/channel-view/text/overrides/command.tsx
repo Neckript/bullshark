@@ -38,7 +38,10 @@ const CommandOverride = memo(({ command }: TCommandOverrideProps) => {
       case 'pending':
       default:
         return (
-          <Loader2 className="size-3 animate-spin text-muted-foreground" />
+          <Loader2
+            data-motion-keep
+            className="size-3 animate-spin text-muted-foreground"
+          />
         );
     }
   }, [command.status]);

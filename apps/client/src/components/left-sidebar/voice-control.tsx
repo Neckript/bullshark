@@ -38,7 +38,7 @@ const VoiceControl = memo(() => {
     switch (connectionStatus) {
       case 'connecting':
         return {
-          icon: <Loader2 className="h-4 w-4 animate-spin" />,
+          icon: <Loader2 data-motion-keep className="h-4 w-4 animate-spin" />,
           text: t('voiceConnecting'),
           color: 'text-yellow-500'
         };
