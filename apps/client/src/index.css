@@ -649,6 +649,21 @@ body {
   animation-delay: 0.8s;
 }
 
+/* Entrée d'un message reçu en direct. Gardée sans règle supplémentaire : la
+   durée vient de la famille « déplacement » et la distance de `--rise`, que le
+   bloc `prefers-reduced-motion` remet toutes deux à zéro. */
+@keyframes message-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise));
+  }
+}
+
+.message-enter {
+  animation: message-enter var(--transition-duration-move-base) var(--ease-out)
+    both;
+}
+
 .media-masonry-grid {
   --masonry-max-width: 56rem;
   --masonry-gutter: 8px;

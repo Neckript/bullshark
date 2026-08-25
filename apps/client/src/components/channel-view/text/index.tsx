@@ -31,6 +31,7 @@ import { ChatInputDivider } from './chat-input-divider';
 import { DropOverlay } from './drop-overlay';
 import { DEFAULT_MAX_HEIGHT_VH } from './helpers';
 import { useArrowUpEdit } from './hooks/use-arrow-up-edit';
+import { FreshMessagesProvider } from './hooks/use-fresh-messages';
 import { useScrollController } from './hooks/use-scroll-controller';
 import { useScrollToJumpTarget } from './hooks/use-scroll-to-jump-target';
 import { MessagesGroup } from './messages-group';
@@ -228,19 +229,25 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
             description={t('channelEmptyDescription')}
           />
         ) : (
-          <div className="space-y-4">
-            {groupedMessages.map((group) => (
-              <MessagesGroup
-                key={group.key}
-                group={group.messages}
-                onReplyMessageSelect={onReplyMessageSelect}
-                replyTargetMessageId={replyingToMessage?.id}
-                activeThreadMessageId={activeThreadMessageId}
-                editingMessageId={editingMessageId}
-                onEditComplete={handleEditComplete}
-              />
-            ))}
-          </div>
+          <FreshMessagesProvider
+            channelId={channelId}
+            messages={messages}
+            loading={loading}
+          >
+            <div className="space-y-4">
+              {groupedMessages.map((group) => (
+                <MessagesGroup
+                  key={group.key}
+                  group={group.messages}
+                  onReplyMessageSelect={onReplyMessageSelect}
+                  replyTargetMessageId={replyingToMessage?.id}
+                  activeThreadMessageId={activeThreadMessageId}
+                  editingMessageId={editingMessageId}
+                  onEditComplete={handleEditComplete}
+                />
+              ))}
+            </div>
+          </FreshMessagesProvider>
         )}
       </div>
 

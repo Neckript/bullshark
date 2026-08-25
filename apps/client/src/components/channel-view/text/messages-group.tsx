@@ -15,6 +15,7 @@ import {
 import { format } from 'date-fns';
 import { memo } from 'react';
 import { areGroupsEqual } from './helpers';
+import { useFreshMessages } from './hooks/use-fresh-messages';
 import { useMessageAuthorName } from './hooks/use-message-author-name';
 import { Message } from './message';
 import { MessageReplyPreviewWrapper } from './message-reply-preview-wrapper';
@@ -55,6 +56,8 @@ const MessagesGroup = memo(
 
     const isReplyToMessage =
       group.length === 1 && !!firstMessage.replyToMessageId;
+
+    const { isFresh, markPlayed } = useFreshMessages();
 
     const groupContent = (
       <div className="flex min-w-0 max-w-dvw gap-1 pl-2 pt-2 pr-2">
@@ -113,7 +116,17 @@ const MessagesGroup = memo(
               <div
                 key={message.id}
                 id={`message-${message.id}`}
-                className="rounded-md transition-colors duration-1000"
+                className={cn(
+                  'rounded-md transition-colors duration-1000',
+                  isFresh(message.id) && 'message-enter'
+                )}
+                onAnimationEnd={(event) => {
+                  // L'évènement remonte depuis les enfants : sans ce filtre,
+                  // n'importe quelle animation interne au message effacerait
+                  // la classe avant que l'entrée n'ait joué.
+                  if (event.animationName !== 'message-enter') return;
+                  markPlayed(message.id);
+                }}
               >
                 <Message
                   message={message}

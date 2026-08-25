@@ -191,4 +191,115 @@ test.describe('Langage de mouvement', () => {
     expect(styles.duration).toBe('0.2s');
     expect(styles.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)');
   });
+
+  test("l'historique n'anime pas son entrée au chargement", async ({
+    page
+  }) => {
+    await loginAs(page, 'testowner', 'password123');
+
+    await page
+      .getByTestId(TestId.CHANNEL_ITEM)
+      .filter({ hasText: 'General' })
+      .click();
+
+    await expect(page.getByTestId(TestId.MESSAGE_ITEM).first()).toBeVisible();
+
+    // Le salon amorcé contient déjà un message : aucun ne doit avoir joué son
+    // entrée, sinon tout l'historique s'animerait à chaque ouverture de salon.
+    await expect(page.locator('.message-enter')).toHaveCount(0);
+  });
+
+  test('un message reçu en direct anime son entrée', async ({ page }) => {
+    await loginAs(page, 'testowner', 'password123');
+
+    await page
+      .getByTestId(TestId.CHANNEL_ITEM)
+      .filter({ hasText: 'General' })
+      .click();
+
+    const messages = page.locator('[data-messages-container]');
+    await expect(messages).toBeVisible();
+
+    // On observe l'insertion plutôt que d'interroger le DOM après coup :
+    // l'animation dure 200 ms et la classe se retire toute seule à la fin,
+    // une assertion différée serait une course perdue d'avance.
+    //
+    // This package's tsconfig has no "DOM" lib (see tests/drop-zone.pw.ts
+    // for why): reach `document`/`MutationObserver`/`HTMLElement` through
+    // `globalThis` cast to a minimal shape instead of widening the whole
+    // package's lib contract for one file.
+    await page.evaluate(() => {
+      const scope = globalThis as unknown as { __entered: number };
+      scope.__entered = 0;
+
+      type TMinimalElement = {
+        classList: { contains: (name: string) => boolean };
+        querySelectorAll: (selector: string) => { length: number };
+      };
+      type TMinimalNode = { nodeType: number };
+      type TMutationRecord = { addedNodes: TMinimalNode[] };
+
+      const { document, MutationObserver, HTMLElement } =
+        globalThis as unknown as {
+          document: {
+            querySelector: (selector: string) => unknown;
+          };
+          MutationObserver: new (
+            callback: (records: TMutationRecord[]) => void
+          ) => {
+            observe: (
+              target: unknown,
+              options: { childList: boolean; subtree: boolean }
+            ) => void;
+          };
+          HTMLElement: new () => unknown;
+        };
+
+      const container = document.querySelector('[data-messages-container]');
+      if (!container) return;
+
+      const observer = new MutationObserver((records) => {
+        records.forEach((record) => {
+          record.addedNodes.forEach((node) => {
+            if (!(node instanceof HTMLElement)) return;
+
+            const element = node as unknown as TMinimalElement;
+
+            if (element.classList.contains('message-enter'))
+              scope.__entered += 1;
+            scope.__entered +=
+              element.querySelectorAll('.message-enter').length;
+          });
+        });
+      });
+
+      observer.observe(container, { childList: true, subtree: true });
+    });
+
+    // TipTap's contenteditable does not behave like a form field: `fill()`
+    // leaves the typed text sitting unsent in the editor instead of
+    // triggering the compose state that submitting on Enter relies on.
+    // `pressSequentially` types real key events instead.
+    const editor = page.getByTestId(TestId.MESSAGE_COMPOSE_EDITOR);
+    await editor.click();
+    await editor.pressSequentially('salut le mouvement');
+    await editor.press('Enter');
+
+    // Waiting on `getByText` alone races the send: the typed text is
+    // visible inside the still-open composer the instant it's typed, well
+    // before the mutation round-trip lands the real message. Waiting on the
+    // message item specifically only resolves once the message has actually
+    // joined the list.
+    await expect(
+      page
+        .getByTestId(TestId.MESSAGE_ITEM)
+        .filter({ hasText: 'salut le mouvement' })
+    ).toBeVisible();
+
+    const entered = await page.evaluate(
+      () => (globalThis as unknown as { __entered: number }).__entered
+    );
+
+    expect(entered).toBeGreaterThan(0);
+  });
 });
