@@ -10,7 +10,7 @@ import {
 } from '@sharkord/shared';
 import { Button, Tooltip } from '@sharkord/ui';
 import { gitHubEmojis } from '@tiptap/extension-emoji';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -95,10 +95,21 @@ type TReactionProps = {
   onClick: () => void;
   file: TFile | null;
   userIds: number[];
+  isPopping: boolean;
+  onPopEnd: (emoji: string) => void;
 };
 
 const Reaction = memo(
-  ({ emoji, count, isUserReacted, onClick, file, userIds }: TReactionProps) => {
+  ({
+    emoji,
+    count,
+    isUserReacted,
+    onClick,
+    file,
+    userIds,
+    isPopping,
+    onPopEnd
+  }: TReactionProps) => {
     const { t } = useTranslation('common');
     const usernames = useUsernames();
     const tooltipContent = useMemo(() => {
@@ -136,9 +147,14 @@ const Reaction = memo(
           size="sm"
           variant="outline"
           onClick={onClick}
+          onAnimationEnd={(event) => {
+            if (event.animationName !== 'reaction-pop') return;
+            onPopEnd(emoji);
+          }}
           className={cn(
             'flex items-center gap-1 h-9 reaction-pill',
-            isUserReacted ? 'border-border' : 'border-none'
+            isUserReacted ? 'border-border' : 'border-none',
+            isPopping && 'reaction-pop'
           )}
         >
           <Emoji emoji={emoji} file={file} />
@@ -217,6 +233,40 @@ const MessageReactions = memo(
       );
     }, [reactions, ownUserId]);
 
+    // Même règle que pour les messages : on se déclenche sur l'apparition
+    // d'un emoji, pas sur un rendu. Les réactions déjà présentes au premier
+    // rendu sont adoptées telles quelles et n'animent rien.
+    const knownEmojisRef = useRef<Set<string> | null>(null);
+    const [popping, setPopping] = useState<ReadonlySet<string>>(
+      () => new Set()
+    );
+
+    const currentEmojis = aggregatedReactions.map((reaction) => reaction.emoji);
+
+    if (knownEmojisRef.current === null) {
+      knownEmojisRef.current = new Set(currentEmojis);
+    } else {
+      const appeared = currentEmojis.filter(
+        (emoji) => !knownEmojisRef.current!.has(emoji)
+      );
+
+      if (appeared.length) {
+        knownEmojisRef.current = new Set(currentEmojis);
+        setPopping((current) => new Set([...current, ...appeared]));
+      }
+    }
+
+    const markPopped = useCallback((emoji: string) => {
+      setPopping((current) => {
+        if (!current.has(emoji)) return current;
+
+        const next = new Set(current);
+        next.delete(emoji);
+
+        return next;
+      });
+    }, []);
+
     if (!aggregatedReactions.length) return null;
 
     return (
@@ -230,6 +280,8 @@ const MessageReactions = memo(
             isUserReacted={reaction.isUserReacted}
             onClick={() => handleReactionClick(reaction.emoji)}
             file={reaction.file}
+            isPopping={popping.has(reaction.emoji)}
+            onPopEnd={markPopped}
           />
         ))}
       </div>

@@ -664,6 +664,20 @@ body {
     both;
 }
 
+/* Seul effet à rebond du client. `--pop-from` vaut 1 en mouvement réduit : le
+   dépassement disparait alors de lui-même, il ne reste qu'un fondu. */
+@keyframes reaction-pop {
+  from {
+    opacity: 0;
+    transform: scale(var(--pop-from));
+  }
+}
+
+.reaction-pop {
+  animation: reaction-pop var(--transition-duration-move-base) var(--ease-pop)
+    both;
+}
+
 .media-masonry-grid {
   --masonry-max-width: 56rem;
   --masonry-gutter: 8px;
