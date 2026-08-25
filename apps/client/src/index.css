@@ -63,9 +63,45 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* --------------------------------------------------------------------------
+   Jetons de mouvement.
+
+   Bloc `@theme static` et SURTOUT PAS `inline` : `inline` figerait la valeur
+   dans l'utilitaire généré, et la garde `prefers-reduced-motion` en bas de
+   fichier n'aurait plus rien à redéfinir. `static` force l'émission des
+   variables sur :root même quand aucun utilitaire ne les consomme encore.
+
+   Deux familles de durée, volontairement identiques en valeur : elles ne
+   diffèrent que par leur comportement en mouvement réduit. `*-move-*` anime un
+   transform ou une position ; le reste anime une opacité ou une couleur.
+
+   Spec : docs/superpowers/specs/2026-08-25-motion-language-design.md
+   -------------------------------------------------------------------------- */
+@theme static {
+  --transition-duration-fast: 120ms;
+  --transition-duration-base: 200ms;
+  --transition-duration-slow: 320ms;
+
+  --transition-duration-move-fast: 120ms;
+  --transition-duration-move-base: 200ms;
+  --transition-duration-move-slow: 320ms;
+
+  /* Écrase volontairement les courbes Tailwind du même nom. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 :root {
   --radius: 0.75rem;
   --edge-hi: oklch(1 0 0 / 5%);
+  /* Les deux seules distances de déplacement autorisées, et l'échelle de
+     départ du seul effet à rebond. Redéfinies à zéro par la garde. */
+  --rise: 6px;
+  --lift: 12px;
+  --pop-from: 0.6;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -628,5 +664,25 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .connect-halo {
     animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mouvement réduit. La garde est portée par les jetons : tout ce qui consomme
+   `duration-move-*`, `--rise`, `--lift` ou `--pop-from` est couvert sans
+   qu'aucune règle supplémentaire n'ait à être écrite.
+
+   Ce bloc n'est dans aucune couche `@layer`, contrairement aux variables
+   émises par `@theme` : du CSS hors couche l'emporte toujours sur du CSS en
+   couche, quel que soit l'ordre. C'est ce qui permet la redéfinition.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-duration-move-fast: 0.01ms;
+    --transition-duration-move-base: 0.01ms;
+    --transition-duration-move-slow: 0.01ms;
+    --rise: 0px;
+    --lift: 0px;
+    --pop-from: 1;
   }
 }
