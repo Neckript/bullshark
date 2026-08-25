@@ -587,6 +587,68 @@ body {
   animation: speaking-glow-high 0.8s ease-in-out infinite;
 }
 
+/* Sorties des `<style>` inline de left-sidebar/waveform.tsx : une animation
+   déclarée dans le JSX n'est ni greppable ni gardable avec les autres. */
+@keyframes eye-blink {
+  0%,
+  90%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  95% {
+    transform: scale(0.1);
+    opacity: 0.5;
+  }
+}
+
+.animate-eye-blink {
+  transform-origin: center;
+  animation: eye-blink 4s infinite;
+}
+
+@keyframes wf-pulsate {
+  0%,
+  100% {
+    height: 6px;
+    y: 9px;
+  }
+  50% {
+    height: var(--max-h);
+    y: var(--y-pos);
+  }
+}
+
+.animate-wf-loop {
+  animation: wf-pulsate 2.5s ease-in-out infinite;
+}
+
+.animate-wf-loop:nth-child(1) {
+  --max-h: 10px;
+  --y-pos: 7px;
+  animation-delay: 0s;
+}
+.animate-wf-loop:nth-child(2) {
+  --max-h: 16px;
+  --y-pos: 4px;
+  animation-delay: 0.2s;
+}
+.animate-wf-loop:nth-child(3) {
+  --max-h: 12px;
+  --y-pos: 6px;
+  animation-delay: 0.4s;
+}
+.animate-wf-loop:nth-child(4) {
+  --max-h: 20px;
+  --y-pos: 2px;
+  animation-delay: 0.6s;
+}
+.animate-wf-loop:nth-child(5) {
+  --max-h: 10px;
+  --y-pos: 7px;
+  animation-delay: 0.8s;
+}
+
 .media-masonry-grid {
   --masonry-max-width: 56rem;
   --masonry-gutter: 8px;
@@ -684,5 +746,23 @@ body {
     --rise: 0px;
     --lift: 0px;
     --pop-from: 1;
+  }
+
+  /* Filet de sécurité : les boucles décoratives n'utilisent aucun jeton de
+     durée, elles portent leur propre `animation`. On ne coupe donc que la
+     répétition, et jamais sur une surface marquée `data-motion-keep`. */
+  *:not([data-motion-keep]):not([data-motion-keep] *) {
+    animation-iteration-count: 1 !important;
+  }
+
+  /* La parole porte de l'information, mais sa classe est posée dynamiquement
+     par use-audio-level.ts : une règle explicite évite de plomber le composant
+     consommateur. `animation: none` neutralise l'animation, donc le
+     `!important` du filet n'a rien à contredire. */
+  .speaking-effect-low,
+  .speaking-effect-medium,
+  .speaking-effect-high {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--speaking);
   }
 }

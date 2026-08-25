@@ -36,16 +36,6 @@ const Waveform = memo(({ className, isScreenSharing }: TIndicatorProps) => {
             fill="currentColor"
           />
         </svg>
-        <style>{`
-          @keyframes eye-blink {
-            0%, 90%, 100% { transform: scale(1); opacity: 1; }
-            95% { transform: scale(0.1); opacity: 0.5; }
-          }
-          .animate-eye-blink {
-            transform-origin: center;
-            animation: eye-blink 4s infinite;
-          }
-        `}</style>
       </div>
     );
   }
@@ -100,23 +90,6 @@ const Waveform = memo(({ className, isScreenSharing }: TIndicatorProps) => {
           x="19"
         />
       </svg>
-
-      <style>{`
-        @keyframes wf-pulsate {
-          0%, 100% { height: 6px; y: 9px; }
-          50% { height: var(--max-h); y: var(--y-pos); }
-        }
-
-        .animate-wf-loop {
-          animation: wf-pulsate 2.5s ease-in-out infinite;
-        }
-
-        .animate-wf-loop:nth-child(1) { --max-h: 10px; --y-pos: 7px; animation-delay: 0.0s; }
-        .animate-wf-loop:nth-child(2) { --max-h: 16px; --y-pos: 4px; animation-delay: 0.2s; }
-        .animate-wf-loop:nth-child(3) { --max-h: 12px; --y-pos: 6px; animation-delay: 0.4s; }
-        .animate-wf-loop:nth-child(4) { --max-h: 20px; --y-pos: 2px; animation-delay: 0.6s; }
-        .animate-wf-loop:nth-child(5) { --max-h: 10px; --y-pos: 7px; animation-delay: 0.8s; }
-      `}</style>
     </div>
   );
 });
