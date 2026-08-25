@@ -3,6 +3,16 @@ import { loginAs } from './fixtures';
 
 const readTokens = async (page: import('@playwright/test').Page) =>
   page.evaluate(() => {
+    // This package's tsconfig has no "DOM" lib (see tests/drop-zone.pw.ts for
+    // why): reach `document`/`getComputedStyle` through `globalThis` cast to
+    // a minimal shape instead of widening the whole package's lib contract
+    // for one file.
+    const { document, getComputedStyle } = globalThis as unknown as {
+      document: { documentElement: unknown };
+      getComputedStyle: (element: unknown) => {
+        getPropertyValue: (name: string) => string;
+      };
+    };
     const style = getComputedStyle(document.documentElement);
 
     return {
