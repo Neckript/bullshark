@@ -56,10 +56,23 @@ const FreshMessagesProvider = memo(
     // frame sans la classe, donc le message à sa position finale avant de
     // sauter à l'opacité zéro : un clignotement.
     if (watermarkRef.current.channelId !== channelId) {
-      watermarkRef.current = { channelId, highestId: 0, seeded: false };
+      // Le fournisseur reste monté même quand le salon est vide (sinon le
+      // tout premier message d'un salon vide ne serait jamais frais : il
+      // n'y aurait personne pour poser la ligne d'eau avant son arrivée).
+      // On seed donc DÈS ce rendu de changement de salon si les données sont
+      // déjà là : pour un salon avec historique, tout l'historique est
+      // absorbé d'un coup (rien n'anime, scénario 1) ; pour un salon vide,
+      // la ligne d'eau se pose à 0 et le premier message qui arrive (id > 0)
+      // est fresh par construction (scénario 4). Si le changement de salon
+      // rend AVANT que les données soient chargées, `seeded` reste false et
+      // la branche suivante rattrape dès que `loading` retombe.
+      watermarkRef.current = { channelId, highestId, seeded: !loading };
       if (fresh.size) setFresh(new Set());
     } else if (!loading && !watermarkRef.current.seeded) {
-      // Premier lot du salon : il devient la ligne d'eau, sans rien animer.
+      // Filet de sécurité : le rendu de changement de salon est arrivé
+      // pendant que `loading` était encore vrai, donc rien n'a été seedé.
+      // Ce rendu-ci a maintenant les données : elles deviennent la ligne
+      // d'eau, sans rien animer.
       watermarkRef.current = { channelId, highestId, seeded: true };
     } else if (
       watermarkRef.current.seeded &&

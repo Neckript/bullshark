@@ -197,6 +197,57 @@ test.describe('Langage de mouvement', () => {
   }) => {
     await loginAs(page, 'testowner', 'password123');
 
+    // A deferred `.message-enter` query races the 200ms window: the class
+    // removes itself via `markPlayed` once the entrance animation ends, so
+    // querying after the fact can land after it already cleared and pass
+    // even if the whole history briefly animated. Install the observer
+    // BEFORE clicking into the channel — before `[data-messages-container]`
+    // even exists — so it catches the class appearing at any point while
+    // the history renders, transient or not. Same technique as the "un
+    // message reçu en direct" test below, just anchored on `document.body`
+    // since the messages container isn't mounted yet at this point.
+    await page.evaluate(() => {
+      const scope = globalThis as unknown as { __enteredOnLoad: number };
+      scope.__enteredOnLoad = 0;
+
+      type TMinimalElement = {
+        classList: { contains: (name: string) => boolean };
+        querySelectorAll: (selector: string) => { length: number };
+      };
+      type TMutationRecord = { addedNodes: { nodeType: number }[] };
+
+      const { document, MutationObserver, HTMLElement } =
+        globalThis as unknown as {
+          document: { body: unknown };
+          MutationObserver: new (
+            callback: (records: TMutationRecord[]) => void
+          ) => {
+            observe: (
+              target: unknown,
+              options: { childList: boolean; subtree: boolean }
+            ) => void;
+          };
+          HTMLElement: new () => unknown;
+        };
+
+      const observer = new MutationObserver((records) => {
+        records.forEach((record) => {
+          record.addedNodes.forEach((node) => {
+            if (!(node instanceof HTMLElement)) return;
+
+            const element = node as unknown as TMinimalElement;
+
+            if (element.classList.contains('message-enter'))
+              scope.__enteredOnLoad += 1;
+            scope.__enteredOnLoad +=
+              element.querySelectorAll('.message-enter').length;
+          });
+        });
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+
     await page
       .getByTestId(TestId.CHANNEL_ITEM)
       .filter({ hasText: 'General' })
@@ -205,7 +256,15 @@ test.describe('Langage de mouvement', () => {
     await expect(page.getByTestId(TestId.MESSAGE_ITEM).first()).toBeVisible();
 
     // Le salon amorcé contient déjà un message : aucun ne doit avoir joué son
-    // entrée, sinon tout l'historique s'animerait à chaque ouverture de salon.
+    // entrée, sinon tout l'historique s'animerait à chaque ouverture de salon
+    // — que la classe soit encore présente (forme permanente) ou déjà
+    // retirée par `markPlayed` (forme transitoire).
+    const enteredOnLoad = await page.evaluate(
+      () =>
+        (globalThis as unknown as { __enteredOnLoad: number }).__enteredOnLoad
+    );
+
+    expect(enteredOnLoad).toBe(0);
     await expect(page.locator('.message-enter')).toHaveCount(0);
   });
 

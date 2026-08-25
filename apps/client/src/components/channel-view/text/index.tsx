@@ -223,17 +223,17 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
         data-messages-container
         className="flex-1 overflow-y-auto overflow-x-hidden px-2 pt-2 pb-7 animate-in fade-in duration-500"
       >
-        {groupedMessages.length === 0 && !fetching ? (
-          <EmptyState
-            title={t('channelEmptyTitle', { name: channel?.name ?? '' })}
-            description={t('channelEmptyDescription')}
-          />
-        ) : (
-          <FreshMessagesProvider
-            channelId={channelId}
-            messages={messages}
-            loading={loading}
-          >
+        <FreshMessagesProvider
+          channelId={channelId}
+          messages={messages}
+          loading={loading}
+        >
+          {groupedMessages.length === 0 && !fetching ? (
+            <EmptyState
+              title={t('channelEmptyTitle', { name: channel?.name ?? '' })}
+              description={t('channelEmptyDescription')}
+            />
+          ) : (
             <div className="space-y-4">
               {groupedMessages.map((group) => (
                 <MessagesGroup
@@ -247,8 +247,8 @@ const TextChannel = memo(({ channelId, onClose }: TChannelProps) => {
                 />
               ))}
             </div>
-          </FreshMessagesProvider>
-        )}
+          )}
+        </FreshMessagesProvider>
       </div>
 
       <ChatInputDivider
