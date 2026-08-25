@@ -1,18 +1,18 @@
 # Langage de mouvement — design
 
-Date : 2026-08-25
-Statut : validé en chat sur maquette, prêt pour le plan d'implémentation
-Chantier 2 du programme « rendre Bullshark beau »
+- Date : 2026-08-25
+- Statut : validé en chat sur maquette, prêt pour le plan d'implémentation
+- Chantier 2 du programme « rendre Bullshark beau »
 
 Maquette avant/après validée :
 https://claude.ai/code/artifact/305a5836-985d-48c6-aa87-2864973d1e10
 
 ## Problème
 
-Les chantiers 1, 3 et 4 ont donné au client une identité, une scène vocale et une
-première impression. Le mouvement, lui, n'a jamais été traité : il n'existe aucun
-jeton de durée ni de courbe, chaque valeur est écrite à la main, et la garde
-d'accessibilité couvre un seul sélecteur de toute l'application.
+Les chantiers 1, 3 et 4 ont donné au client une identité, une scène vocale et
+une première impression. Le mouvement, lui, n'a jamais été traité : il n'existe
+aucun jeton de durée ni de courbe, chaque valeur est écrite à la main, et la
+garde d'accessibilité couvre un seul sélecteur de toute l'application.
 
 Chiffres relevés dans `apps/client/src` le 2026-08-25, sur `main` à `f9916ed` :
 
@@ -54,8 +54,8 @@ D'où la séparation en **deux familles de durée** :
 
 - ce qui **fond** (opacité, couleur) : un fondu n'est pas un mouvement, il reste
   actif en mouvement réduit, sinon l'interface parait saccadée ;
-- ce qui **bouge** (`transform`, position, échelle) : cette famille seule tombe à
-  zéro en mouvement réduit, avec les distances de déplacement.
+- ce qui **bouge** (`transform`, position, échelle) : cette famille seule tombe
+  à zéro en mouvement réduit, avec les distances de déplacement.
 
 Piège vérifié : `index.css:25` déclare `@theme inline`, et `inline` fige la
 valeur dans l'utilitaire généré, ce qui rendrait toute redéfinition par media
@@ -98,8 +98,8 @@ Deux distances, et deux seulement, pour que rien ne dérive :
 | `--rise` | 6px    | Montée d'un élément qui apparait dans le flux          |
 | `--lift` | 12px   | Arrivée d'une surface ancrée à un bord (barre, tiroir) |
 
-S'y ajoute `--pop-from`, l'échelle de départ du seul effet à rebond du chantier :
-`0.6` par défaut, `1` en mouvement réduit.
+S'y ajoute `--pop-from`, l'échelle de départ du seul effet à rebond du chantier
+: `0.6` par défaut, `1` en mouvement réduit.
 
 `--rise`, `--lift` et `--pop-from` sont des variables CSS ordinaires (déclarées
 dans `:root`), pas des jetons `@theme` : elles sont consommées en
@@ -154,25 +154,30 @@ infinie, et rien d'autre :
 }
 ```
 
-`data-motion-keep` est posé sur les **trois** surfaces dont la boucle porte de
-l'information, et nulle part ailleurs :
+`data-motion-keep` est posé sur les **deux** surfaces dont la boucle porte de
+l'information et qu'aucune autre règle ne traite, et nulle part ailleurs :
 
 - `Spinner` (`packages/ui/src/components/spinner.tsx`) : un chargement figé se
   lit comme une panne ;
-- `TypingDots` (`apps/client/src/components/typing-dots/index.tsx`) : idem ;
-- l'indicateur de parole, traité juste en dessous.
+- `TypingDots` (`apps/client/src/components/typing-dots/index.tsx`) : idem.
+
+L'indicateur de parole porte de l'information lui aussi, mais sa classe est
+posée dynamiquement par `use-audio-level.ts` : il est traité par une règle CSS
+explicite (juste en dessous) plutôt que par un attribut, ce qui évite de plomber
+le composant consommateur. `animation: none` y neutralise l'animation sans que
+le `!important` du filet ait quoi que ce soit à contredire.
 
 Les squelettes (`animate-pulse`) ne sont **pas** marqués : figés, ils restent
 parfaitement lisibles comme squelettes.
 
 ### Les cinq boucles existantes
 
-- `speaking-effect-low|medium|high` : la pulsation est coupée et remplacée par un
-  anneau fixe en `var(--speaking)`, qui dit la même chose sans clignoter.
-  L'élément porte `data-motion-keep` pour que le filet ne l'attrape pas avant.
-- `eye-blink` et `wf-loop` (`left-sidebar/waveform.tsx`) : décoratifs, coupés par
-  le filet. Leurs keyframes sont sorties du `<style>` inline vers `index.css` au
-  passage, pour être gardables et greppables comme les autres.
+- `speaking-effect-low|medium|high` : la pulsation est coupée par un
+  `animation: none` explicite et remplacée par un anneau fixe en
+  `var(--speaking)`, qui dit la même chose sans clignoter.
+- `eye-blink` et `wf-loop` (`left-sidebar/waveform.tsx`) : décoratifs, coupés
+  par le filet. Leurs keyframes sont sorties du `<style>` inline vers
+  `index.css` au passage, pour être gardables et greppables comme les autres.
 - `connect-drift-a|b` : déjà gardées par le chantier 4, laissées telles quelles.
 
 ## C. Les six surfaces
@@ -214,11 +219,12 @@ sur tout l'historique.
 
 Règle : **l'animation se déclenche sur l'identifiant du message, jamais sur le
 rendu.** Un hook retient l'identifiant le plus élevé connu au montage du salon ;
-seuls les messages d'identifiant strictement supérieur, et arrivés pendant que le
-composant est monté, reçoivent la classe d'entrée, une seule fois. Ni au premier
-rendu, ni au changement de salon, ni à la pagination.
+seuls les messages d'identifiant strictement supérieur, et arrivés pendant que
+le composant est monté, reçoivent la classe d'entrée, une seule fois. Ni au
+premier rendu, ni au changement de salon, ni à la pagination.
 
-Animation : fondu plus `translateY(var(--rise))`, en `duration-move-base ease-out`.
+Animation : fondu plus `translateY(var(--rise))`, en
+`duration-move-base ease-out`.
 
 ### 4. Réaction ajoutée
 
@@ -229,20 +235,20 @@ d'une réaction déjà présente n'anime rien ; seule une réaction qui apparait
 pendant que le message est à l'écran fait son entrée, en
 `scale(var(--pop-from))` vers 1, `duration-move-base ease-pop`.
 
-`--pop-from` vaut `0.6`, et `1` en mouvement réduit : le dépassement disparait de
-lui-même, il ne reste qu'un fondu.
+`--pop-from` vaut `0.6`, et `1` en mouvement réduit : le dépassement disparait
+de lui-même, il ne reste qu'un fondu.
 
 ### 5. Barre de contrôles vocale
 
 `controls-bar.tsx:45` : `transition-all duration-300 ease-in-out` avec
-`translate-y-10`, soit 40px. C'est précisément ce qui avait ressemblé à un défaut
-sur la capture du chantier 3 : 40px de décalage contre un `bottom-8` de 32px font
-sortir la barre du conteneur `overflow-hidden` de `voice/index.tsx:146` en cours
-de fondu.
+`translate-y-10`, soit 40px. C'est précisément ce qui avait ressemblé à un
+défaut sur la capture du chantier 3 : 40px de décalage contre un `bottom-8` de
+32px font sortir la barre du conteneur `overflow-hidden` de
+`voice/index.tsx:146` en cours de fondu.
 
 Remplacer par `transition-[opacity,transform] duration-move-base ease-out` et
-`translate-y-[var(--lift)]` (12px). Le `transition-all` disparait au passage : il
-faisait aussi transiter `gap` et la couleur.
+`translate-y-[var(--lift)]` (12px). Le `transition-all` disparait au passage :
+il faisait aussi transiter `gap` et la couleur.
 
 ### 6. Indicateur de parole
 
@@ -263,18 +269,18 @@ chargée.
 
 ## Vérification
 
-Les portes (`format:check`, `check-types`, `lint`) ne peuvent pas attraper ce qui
-casse dans ce genre de chantier. Ce programme en a déjà fait trois fois
+Les portes (`format:check`, `check-types`, `lint`) ne peuvent pas attraper ce
+qui casse dans ce genre de chantier. Ce programme en a déjà fait trois fois
 l'expérience : la police Geist jamais chargée, `--sidebar` sans consommateur, la
 zone de dépôt qui ne s'abonnait à rien. **Vérifier dans le bundle construit, pas
 seulement au vert des portes.**
 
 1. **Les jetons sortent en `var()`, pas en littéral.** Grep dans le CSS
    construit : `.duration-move-base` doit contenir
-   `var(--transition-duration-move-base)`. S'il contient `200ms` en dur, le
-   bloc `@theme` a été traité comme `inline` et **toute la garde est morte**.
-   Repli dans ce cas : déclarer les durées en variables CSS ordinaires et fournir
-   les utilitaires via `@utility`.
+   `var(--transition-duration-move-base)`. S'il contient `200ms` en dur, le bloc
+   `@theme` a été traité comme `inline` et **toute la garde est morte**. Repli
+   dans ce cas : déclarer les durées en variables CSS ordinaires et fournir les
+   utilitaires via `@utility`.
 2. **La garde s'applique.** Le bloc `@media (prefers-reduced-motion: reduce)`
    est présent dans le bundle et redéfinit bien les trois `move-*`.
 3. **Les jetons ont des consommateurs.** Chaque jeton ajouté est grepé dans le
@@ -283,8 +289,8 @@ seulement au vert des portes.**
    vaut `cubic-bezier(0.16, 1, 0.3, 1)` et non `cubic-bezier(0, 0, 0.2, 1)`.
 5. **`tw-animate-css` obéit.** Sur un popover, `--tw-duration` et `--tw-ease`
    sont bien posés par les nouvelles classes.
-6. **Test E2E** sur l'animation d'arrivée de message : l'assertion qui compte est
-   qu'un message de l'historique ne porte **pas** la classe d'entrée après
+6. **Test E2E** sur l'animation d'arrivée de message : l'assertion qui compte
+   est qu'un message de l'historique ne porte **pas** la classe d'entrée après
    pagination. C'est le seul défaut de ce chantier qu'aucune relecture
    n'attrapera, comme la zone de dépôt du chantier 4.
 7. **Validation visuelle par l.user sur le Kimsufi**, y compris avec le réglage
@@ -296,8 +302,8 @@ seulement au vert des portes.**
   le remplacement de toute la liste des messages, rendue d'un bloc. Gros risque
   de à-coups, gain incertain, sans rapport avec le reste du chantier.
 - **Pas de bibliothèque d'animation.** Rien à installer.
-- **Pas de réécriture des composants de `packages/ui`.** Ils sont déjà cohérents,
-  ils reçoivent seulement durée et courbe.
+- **Pas de réécriture des composants de `packages/ui`.** Ils sont déjà
+  cohérents, ils reçoivent seulement durée et courbe.
 - **Pas de chasse aux 21 `transition-all`** hors des surfaces traitées ici.
 - **Dettes des chantiers précédents non reprises ici** : `rounded-pill` que
   twMerge ne connait pas, `--edge-hi` sans effet en thème clair, Geist en latin
