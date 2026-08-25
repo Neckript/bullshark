@@ -153,4 +153,42 @@ test.describe('Langage de mouvement', () => {
 
     expect(duration).toBe('0.12s');
   });
+
+  test('un menu déroulant ouvre à la durée de base sur la courbe de sortie', async ({
+    page
+  }) => {
+    await loginAs(page, 'testowner', 'password123');
+    await page.getByTestId(TestId.SERVER_DROPDOWN_TRIGGER).click();
+
+    const menu = page.getByTestId(TestId.SERVER_DROPDOWN_DISCONNECT);
+    await expect(menu).toBeVisible();
+
+    const styles = await menu.evaluate((element) => {
+      // This package's tsconfig has no "DOM" lib (see tests/drop-zone.pw.ts
+      // for why): reach `getComputedStyle` through `globalThis` cast to a
+      // minimal shape instead of widening the whole package's lib contract
+      // for one file.
+      const { getComputedStyle } = globalThis as unknown as {
+        getComputedStyle: (element: unknown) => {
+          animationDuration: string;
+          animationTimingFunction: string;
+        };
+      };
+      const typedElement = element as unknown as {
+        closest: (selector: string) => unknown;
+      };
+
+      // Le contenu du menu est l'ancêtre qui porte l'animation, pas l'entrée.
+      const content = typedElement.closest('[data-state="open"]') ?? element;
+      const computed = getComputedStyle(content);
+
+      return {
+        duration: computed.animationDuration,
+        easing: computed.animationTimingFunction
+      };
+    });
+
+    expect(styles.duration).toBe('0.2s');
+    expect(styles.easing).toBe('cubic-bezier(0.16, 1, 0.3, 1)');
+  });
 });
