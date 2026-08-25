@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { TestId } from '@sharkord/shared';
 import { loginAs } from './fixtures';
 
 const readTokens = async (page: import('@playwright/test').Page) =>
@@ -126,5 +127,30 @@ test.describe('Langage de mouvement', () => {
     expect(result.essential.iterations).toBe('infinite');
     // La parole ne clignote plus du tout, elle devient un anneau fixe.
     expect(result.speaking.name).toBe('none');
+  });
+
+  test('la ligne de salon adoucit son survol à la durée courte', async ({
+    page
+  }) => {
+    await loginAs(page, 'testowner', 'password123');
+
+    const duration = await page
+      .getByTestId(TestId.CHANNEL_ITEM)
+      .first()
+      .evaluate((element) => {
+        // This package's tsconfig has no "DOM" lib (see tests/drop-zone.pw.ts
+        // for why): reach `getComputedStyle` through `globalThis` cast to a
+        // minimal shape instead of widening the whole package's lib contract
+        // for one file.
+        const { getComputedStyle } = globalThis as unknown as {
+          getComputedStyle: (element: unknown) => {
+            transitionDuration: string;
+          };
+        };
+
+        return getComputedStyle(element).transitionDuration;
+      });
+
+    expect(duration).toBe('0.12s');
   });
 });

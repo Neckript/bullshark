@@ -180,7 +180,7 @@ const ItemWrapper = memo(
         data-testid={TestId.CHANNEL_ITEM}
         style={style}
         className={cn(
-          'flex w-full items-center gap-2 rounded-pill px-2.5 py-1.5 text-sm text-muted-foreground select-none cursor-pointer',
+          'flex w-full items-center gap-2 rounded-pill px-2.5 py-1.5 text-sm text-muted-foreground transition-colors duration-fast ease-out select-none cursor-pointer',
           {
             'hover:bg-accent hover:text-accent-foreground': !isSelected,
             'bg-primary/15 text-foreground font-semibold shadow-[inset_0_1px_0_var(--edge-hi)] hover:bg-primary/20':
