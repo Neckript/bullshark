@@ -97,7 +97,7 @@ const ControlsBar = memo(({ channelId }: TControlsBarProps) => {
         <Button
           size="icon"
           className={cn(
-            'pointer-events-auto h-14 w-18 rounded-pill text-white shadow-xl transition-all active:scale-95',
+            'pointer-events-auto h-14 w-18 rounded-pill text-destructive-foreground shadow-xl transition-all active:scale-95',
             'bg-destructive hover:bg-destructive/85'
           )}
           onClick={() => leaveVoice()}
