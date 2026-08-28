@@ -5,6 +5,7 @@ import {
   clampMicrophoneDecibels,
   microphoneDecibelsToPercent
 } from '@/helpers/audio-gate';
+import { cn } from '@/lib/utils';
 import { Slider } from '@sharkord/ui';
 import { memo, useEffect, useRef, useState } from 'react';
 
@@ -138,7 +139,14 @@ const MicrophoneTestLevelBar = memo(
             )}
 
             <div
-              className="absolute inset-y-0 left-0 bg-success"
+              className={cn(
+                'absolute inset-y-0 left-0 transition-[background-color] duration-75',
+                audioLevel >= 66
+                  ? 'bg-success'
+                  : audioLevel >= 33
+                    ? 'bg-success/80'
+                    : 'bg-success/55'
+              )}
               style={{ width: `${audioLevel}%` }}
             />
 
@@ -151,7 +159,7 @@ const MicrophoneTestLevelBar = memo(
           {noiseGateEnabled && (
             <Slider
               aria-label="Noise gate threshold"
-              className="absolute inset-0 z-10 [&_[data-slot=slider-track]]:h-full [&_[data-slot=slider-track]]:bg-transparent [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-thumb]]:size-[26px] [&_[data-slot=slider-thumb]]:border-warning [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:shadow-sm"
+              className="absolute inset-0 z-10 [&_[data-slot=slider-track]]:h-full [&_[data-slot=slider-track]]:bg-transparent [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-thumb]]:size-[26px] [&_[data-slot=slider-thumb]]:border-warning [&_[data-slot=slider-thumb]]:bg-background [&_[data-slot=slider-thumb]]:shadow-sm"
               min={MICROPHONE_LEVEL_METER_MIN_DB}
               max={MICROPHONE_LEVEL_METER_MAX_DB}
               step={1}
