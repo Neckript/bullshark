@@ -1,6 +1,7 @@
 type TVoiceControlsBridge = {
   setMicMuted: (muted: boolean) => Promise<void>;
   setSoundMuted: (muted: boolean) => Promise<void>;
+  joinChannel: (channelId: number) => Promise<void>;
 };
 
 // Server settings screens are rendered from a top-level portal and may live

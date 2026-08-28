@@ -1,11 +1,19 @@
+import { getVoiceControlsBridge } from '@/components/voice-provider/controls-bridge';
 import { assertVoiceChatClose } from '@/features/app/actions';
 import { store } from '@/features/store';
-import type { TChannel, TChannelUserPermissionsMap } from '@sharkord/shared';
+import { LocalStorageKey, setLocalStorageItem } from '@/helpers/storage';
+import {
+  ChannelType,
+  type TChannel,
+  type TChannelUserPermissionsMap
+} from '@sharkord/shared';
 import { markChannelAsRead } from '../actions';
 import { serverSliceActions } from '../slice';
 import {
   channelByIdSelector,
   channelReadStateByIdSelector,
+  channelsMapSelector,
+  currentVoiceChannelIdSelector,
   isChannelTextVisibleByIdSelector,
   selectedChannelIdSelector
 } from './selectors';
@@ -113,4 +121,31 @@ export const setChannelReadState = (
   store.dispatch(
     serverSliceActions.setChannelReadState({ channelId, count: actualCount })
   );
+};
+
+export const selectChannel = async (channelId: number) => {
+  const state = store.getState();
+  const channel = channelsMapSelector(state)[channelId];
+
+  if (!channel) return;
+
+  // La vue affiche le salon pendant que le vocal se connecte : poser la
+  // sélection avant toute attente réseau, comme le faisait useSelectChannel.
+  setSelectedChannelId(channel.id);
+
+  if (channel.type !== ChannelType.VOICE) {
+    // persist selected channel for non-voice channels
+    setLocalStorageItem(
+      LocalStorageKey.LAST_SELECTED_CHANNEL,
+      channel.id.toString()
+    );
+
+    return;
+  }
+
+  if (currentVoiceChannelIdSelector(state) === channel.id) return;
+
+  // Pont absent = on n'est pas dans la vue serveur, donc il n'y a pas de vocal
+  // à rejoindre. Même sémantique silencieuse que les raccourcis de coupure.
+  await getVoiceControlsBridge()?.joinChannel(channel.id);
 };

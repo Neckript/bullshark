@@ -1,7 +1,9 @@
+import { setSelectedChannelId } from '@/features/server/channels/actions';
 import { useCurrentVoiceChannelId } from '@/features/server/channels/hooks';
 import { useWebRtcSimulcastEnabled } from '@/features/server/hooks';
 import { playSound } from '@/features/server/sounds/actions';
 import { SoundType } from '@/features/server/types';
+import { joinVoice } from '@/features/server/voice/actions';
 import { useOwnVoiceState } from '@/features/server/voice/hooks';
 import {
   clampMicrophoneDecibels,
@@ -53,6 +55,7 @@ import {
   useRef,
   useState
 } from 'react';
+import { toast } from 'sonner';
 import { useDevices } from '../devices-provider/hooks/use-devices';
 import {
   clearVoiceControlsBridge,
@@ -1207,16 +1210,39 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
     [ownVoiceState.soundMuted, toggleSound]
   );
 
+  const joinChannelForBridge = useCallback(
+    async (channelId: number) => {
+      const response = await joinVoice(channelId);
+
+      if (!response) {
+        // joining voice failed
+        setSelectedChannelId(undefined);
+        toast.error('Failed to join voice channel');
+
+        return;
+      }
+
+      try {
+        await init(response, channelId);
+      } catch {
+        setSelectedChannelId(undefined);
+        toast.error('Failed to initialize voice connection');
+      }
+    },
+    [init]
+  );
+
   useEffect(() => {
     setVoiceControlsBridge({
       setMicMuted: setMicMutedForBridge,
-      setSoundMuted: setSoundMutedForBridge
+      setSoundMuted: setSoundMutedForBridge,
+      joinChannel: joinChannelForBridge
     });
 
     return () => {
       clearVoiceControlsBridge();
     };
-  }, [setMicMutedForBridge, setSoundMutedForBridge]);
+  }, [setMicMutedForBridge, setSoundMutedForBridge, joinChannelForBridge]);
 
   useVoiceEvents({
     consume,
