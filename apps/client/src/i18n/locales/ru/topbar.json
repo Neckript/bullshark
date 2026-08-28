@@ -4,6 +4,7 @@
   "closeMembersSidebar": "Закрыть боковую панель участников",
   "openMembersSidebar": "Открыть боковую панель участников",
   "searchContent": "Поиск по содержимому...",
+  "searchShortcut": "Ctrl+Shift+F",
   "voiceOptions": "Опции голосового управления",
   "hideNonVideoParticipants": "Скрыть участников без видео",
   "displayUserBanners": "Показывать баннеры пользователей",

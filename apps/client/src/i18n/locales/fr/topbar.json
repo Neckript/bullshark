@@ -4,6 +4,7 @@
   "closeMembersSidebar": "Fermer le panneau latéral des membres",
   "openMembersSidebar": "Ouvrir le panneau latéral des membres",
   "searchContent": "Recherche de contenu...",
+  "searchShortcut": "Ctrl+Maj+F",
   "voiceOptions": "Options vocales",
   "hideNonVideoParticipants": "Masquer les participants non-vidéo",
   "displayUserBanners": "Afficher les bannières des utilisateurs",

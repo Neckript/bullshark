@@ -19,7 +19,7 @@ const ServerSearch = memo(() => {
       <Search className="h-3.5 w-3.5" />
       <span className="truncate text-left">{t('searchContent')}</span>
       <span className="ml-auto hidden rounded border border-border bg-background px-1.5 py-0.5 text-[10px] md:inline">
-        Ctrl+Maj+F
+        {t('searchShortcut')}
       </span>
     </button>
   );
