@@ -70,7 +70,7 @@ const UserControl = memo(() => {
           className={cn(
             'h-8 w-8 hover:bg-muted/50',
             ownVoiceState.micMuted
-              ? 'text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20'
+              ? 'text-destructive hover:text-destructive bg-destructive/10 hover:bg-destructive/20'
               : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={toggleMic}
@@ -92,7 +92,7 @@ const UserControl = memo(() => {
           className={cn(
             'h-8 w-8 hover:bg-muted/50',
             ownVoiceState.soundMuted
-              ? 'text-red-500 hover:text-red-400 bg-red-500/10 hover:bg-red-500/20'
+              ? 'text-destructive hover:text-destructive bg-destructive/10 hover:bg-destructive/20'
               : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={toggleSound}

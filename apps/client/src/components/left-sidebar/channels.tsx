@@ -75,9 +75,8 @@ const Voice = memo(
           {...props}
           isSelected={isSelected}
           className={cn(props.className, {
-            'text-blue-500':
-              someoneIsSharingScreen && (isOwnChannel || isSelected),
-            'text-green-500':
+            'text-info': someoneIsSharingScreen && (isOwnChannel || isSelected),
+            'text-success':
               (isOwnChannel && !someoneIsSharingScreen) ||
               (isSelected &&
                 !someoneIsSharingScreen &&
