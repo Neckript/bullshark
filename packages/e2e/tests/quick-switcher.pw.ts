@@ -51,7 +51,18 @@ test.describe('Sélecteur rapide', () => {
     await expect(rows.nth(1)).toHaveAttribute('data-active', 'true');
   });
 
-  test('un salon prive non autorise n apparait jamais', async ({ page }) => {
+  // Ce test couvre uniquement l'exclusion des salons de messages directs
+  // (filtre `!channel.isDm`) : le seul salon prive du seed ('DM Channel')
+  // est un DM, donc ce test passerait meme si la clause de permission
+  // `canViewChannel` de `visibleChannelsSelector` etait entierement
+  // supprimee. Cette clause reste donc non couverte, faute d'un salon
+  // prive non-DM dans le seed. On reste connecte en tant que 'testuser'
+  // (et non 'testowner') car `canViewChannel` renvoie toujours true pour
+  // le proprietaire du serveur : executer ce test en tant qu'owner
+  // prouverait donc encore moins de choses.
+  test('un salon de message direct n apparait jamais dans la palette', async ({
+    page
+  }) => {
     await loginAs(page, 'testuser', 'password123');
 
     await page.keyboard.press('Control+k');
