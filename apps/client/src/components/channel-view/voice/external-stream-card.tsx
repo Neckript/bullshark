@@ -273,12 +273,12 @@ const ExternalStreamCard = memo(
                     src={stream.avatarUrl}
                     alt={stream.title || 'External Stream'}
                   />
-                  <AvatarFallback className="bg-gradient-to-br from-success/30 to-success/30">
+                  <AvatarFallback className="bg-success/30">
                     <Headphones className="size-10 text-success" />
                   </AvatarFallback>
                 </Avatar>
               ) : (
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-success/30 to-success/30 flex items-center justify-center border-2 border-success/50">
+                <div className="w-20 h-20 rounded-full bg-success/30 flex items-center justify-center border-2 border-success/50">
                   <Headphones className="size-10 text-success" />
                 </div>
               )}
@@ -298,7 +298,7 @@ const ExternalStreamCard = memo(
                 className="h-5 flex-shrink-0 rounded-full"
               />
             ) : (
-              <Router className="size-3.5 text-purple-400 flex-shrink-0" />
+              <Router className="size-3.5 text-muted-foreground flex-shrink-0" />
             )}
             <span className="text-white font-medium text-xs truncate">
               {stream.title || 'External Stream'}

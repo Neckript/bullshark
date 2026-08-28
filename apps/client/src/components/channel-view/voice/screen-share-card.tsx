@@ -249,7 +249,7 @@ const ScreenShareCard = memo(
 
         <div className="absolute bottom-0 left-0 right-0 p-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="flex items-center gap-2 min-w-0">
-            <Monitor className="size-3.5 text-purple-400 shrink-0" />
+            <Monitor className="size-3.5 text-muted-foreground shrink-0" />
             <span className="text-white font-medium text-xs truncate">
               {user.name}'s screen
             </span>
