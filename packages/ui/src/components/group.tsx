@@ -37,7 +37,7 @@ const Group = memo(
         <div className="flex flex-col">
           <div className="flex">
             <Label>
-              {label} {required && <span className="text-red-500">*</span>}
+              {label} {required && <span className="text-destructive">*</span>}
             </Label>
             {helpComponent}
           </div>

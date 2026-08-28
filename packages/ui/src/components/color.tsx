@@ -26,7 +26,7 @@ const Color = ({
             className={cn(
               'w-10 cursor-pointer',
               buttonVariants({ variant: 'outline' }),
-              error && '!border-red-500'
+              error && '!border-destructive'
             )}
           />
         </PopoverTrigger>
@@ -42,7 +42,7 @@ const Color = ({
           </Button>
         </PopoverContent>
       </Popover>
-      {error && <span className="text-sm text-red-500 mt-1">{error}</span>}
+      {error && <span className="text-sm text-destructive mt-1">{error}</span>}
     </div>
   );
 };
