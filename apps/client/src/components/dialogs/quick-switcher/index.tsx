@@ -157,7 +157,9 @@ const QuickSwitcherDialog = memo(({ isOpen, close }: TDialogBaseProps) => {
             aria-activedescendant={
               items[boundedIndex]
                 ? `quick-switcher-${items[boundedIndex]!.key}`
-                : undefined
+                : hasEscapeHatch && boundedIndex === items.length
+                  ? 'quick-switcher-escape-hatch'
+                  : undefined
             }
             placeholder={t('quickSwitcherPlaceholder')}
             className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
@@ -202,6 +204,7 @@ const QuickSwitcherDialog = memo(({ isOpen, close }: TDialogBaseProps) => {
           {hasEscapeHatch && (
             <div
               role="option"
+              id="quick-switcher-escape-hatch"
               aria-selected={boundedIndex === items.length}
               data-active={boundedIndex === items.length}
               onClick={openContentSearch}
