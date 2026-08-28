@@ -9,6 +9,7 @@ import {
   channelReadStateByIdSelector,
   channelsByCategoryIdSelector,
   channelsReadStatesSelector,
+  channelsSelector,
   currentVoiceChannelIdSelector
 } from './channels/selectors';
 import { canViewChannel, hasUnreadMentionInMessages } from './helpers';
@@ -109,6 +110,15 @@ export const visibleChannelsInCategorySelector = createCachedSelector(
       canViewChannel(channel, channelPermissions, isOwner)
     )
 )((_, categoryId: number) => categoryId);
+
+export const visibleChannelsSelector = createSelector(
+  [channelsSelector, channelPermissionsSelector, isOwnUserOwnerSelector],
+  (channels, channelPermissions, isOwner) =>
+    channels.filter(
+      (channel) =>
+        !channel.isDm && canViewChannel(channel, channelPermissions, isOwner)
+    )
+);
 
 export const userRolesSelector = createSelector(
   [rolesSelector, userByIdSelector],

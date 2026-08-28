@@ -26,6 +26,7 @@ import {
   typingUsersByChannelIdSelector,
   typingUsersByThreadIdSelector,
   userRolesSelector,
+  visibleChannelsSelector,
   voiceUsersByChannelIdSelector,
   webRtcSimulcastEnabledSelector
 } from './selectors';
@@ -169,3 +170,5 @@ export const useActiveFullscreenPluginId = () =>
   useSelector(activeFullscreenPluginIdSelector);
 
 export const useDmsOpen = () => useSelector(dmsOpenSelector);
+
+export const useVisibleChannels = () => useSelector(visibleChannelsSelector);
