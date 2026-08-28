@@ -61,10 +61,10 @@ const ExternalStream = memo(
 
         <div className="flex items-center gap-1 opacity-60">
           {shouldShowMuteIndicator && (
-            <VolumeX className="h-3 w-3 text-red-500" />
+            <VolumeX className="h-3 w-3 text-destructive" />
           )}
-          {hasVideo && <Video className="h-3 w-3 text-blue-500" />}
-          {hasAudio && <Headphones className="h-3 w-3 text-green-500" />}
+          {hasVideo && <Video className="h-3 w-3 text-info" />}
+          {hasAudio && <Headphones className="h-3 w-3 text-success" />}
         </div>
       </div>
     );

@@ -121,9 +121,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
           </h3>
           <div className="grid grid-cols-2 gap-4 mb-3">
             <div>
-              <h4 className="font-medium text-green-400 mb-1">
-                {t('outgoing')}
-              </h4>
+              <h4 className="font-medium text-success mb-1">{t('outgoing')}</h4>
               {producer ? (
                 <div className="space-y-1">
                   <div>
@@ -175,7 +173,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
                         text={t('packetsLost', {
                           lost: formatBigNumber(consumer.packetsLost)
                         })}
-                        valueClassName="text-red-400"
+                        valueClassName="text-destructive"
                       />
                     </div>
                   )}
@@ -190,9 +188,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
 
           {screenShare && (
             <div className="border-t border-border/50 pt-2 mb-3">
-              <h4 className="font-medium text-blue-400 mb-1">
-                {t('screenShare')}
-              </h4>
+              <h4 className="font-medium text-info mb-1">{t('screenShare')}</h4>
               <div className="space-y-1">
                 {screenShare.codec && (
                   <div>
@@ -206,9 +202,9 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
                       value={encoder.label}
                       valueClassName={
                         encoder.isHardware === true
-                          ? 'text-green-400'
+                          ? 'text-success'
                           : encoder.isHardware === false
-                            ? 'text-yellow-400'
+                            ? 'text-warning'
                             : undefined
                       }
                     />
@@ -298,7 +294,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
                                   text={t('qualityLimited', {
                                     reason: layer.qualityLimitationReason
                                   })}
-                                  valueClassName="text-yellow-400"
+                                  valueClassName="text-warning"
                                 />
                               </div>
                             )}
@@ -321,7 +317,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
                       text={t('qualityLimited', {
                         reason: screenShare.qualityLimitationReason
                       })}
-                      valueClassName="text-yellow-400"
+                      valueClassName="text-warning"
                     />
                   </div>
                 )}
@@ -330,7 +326,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
           )}
 
           <div className="border-t border-border/50 pt-2">
-            <h4 className="font-medium text-yellow-400 mb-1">
+            <h4 className="font-medium text-warning mb-1">
               {t('sessionTotals')}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-muted-foreground">

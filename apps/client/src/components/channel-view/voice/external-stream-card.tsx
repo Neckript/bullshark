@@ -268,22 +268,22 @@ const ExternalStreamCard = memo(
           <div className="flex flex-col items-center justify-center gap-4 p-8">
             <div className="relative">
               {stream.avatarUrl ? (
-                <Avatar className="w-20 h-20 border-2 border-green-500/50">
+                <Avatar className="w-20 h-20 border-2 border-success/50">
                   <AvatarImage
                     src={stream.avatarUrl}
                     alt={stream.title || 'External Stream'}
                   />
-                  <AvatarFallback className="bg-gradient-to-br from-green-500/30 to-emerald-500/30">
-                    <Headphones className="size-10 text-green-400" />
+                  <AvatarFallback className="bg-gradient-to-br from-success/30 to-success/30">
+                    <Headphones className="size-10 text-success" />
                   </AvatarFallback>
                 </Avatar>
               ) : (
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500/30 to-emerald-500/30 flex items-center justify-center border-2 border-green-500/50">
-                  <Headphones className="size-10 text-green-400" />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-success/30 to-success/30 flex items-center justify-center border-2 border-success/50">
+                  <Headphones className="size-10 text-success" />
                 </div>
               )}
               {hasAudio && !isMuted && (
-                <div className="absolute inset-0 rounded-full animate-pulse bg-green-500/20" />
+                <div className="absolute inset-0 rounded-full animate-pulse bg-success/20" />
               )}
             </div>
           </div>
@@ -310,12 +310,12 @@ const ExternalStreamCard = memo(
             )}
 
             <div className="flex items-center gap-1 ml-auto">
-              {hasVideo && <Video className="size-3 text-blue-400" />}
+              {hasVideo && <Video className="size-3 text-info" />}
               {hasAudio && (
                 <Headphones
                   className={cn(
                     'size-3',
-                    isMuted ? 'text-red-400' : 'text-green-400'
+                    isMuted ? 'text-destructive' : 'text-success'
                   )}
                 />
               )}

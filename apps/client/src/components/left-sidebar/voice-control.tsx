@@ -40,26 +40,26 @@ const VoiceControl = memo(() => {
         return {
           icon: <Loader2 data-motion-keep className="h-4 w-4 animate-spin" />,
           text: t('voiceConnecting'),
-          color: 'text-yellow-500'
+          color: 'text-warning'
         };
       case 'connected':
         return {
-          icon: <Wifi className="h-4 w-4 text-green-600" />,
+          icon: <Wifi className="h-4 w-4 text-success" />,
           text: t('voiceConnected'),
-          color: 'text-green-600'
+          color: 'text-success'
         };
       case 'failed':
         return {
-          icon: <AlertTriangle className="h-4 w-4 text-red-500" />,
+          icon: <AlertTriangle className="h-4 w-4 text-destructive" />,
           text: t('voiceFailed'),
-          color: 'text-red-500'
+          color: 'text-destructive'
         };
       case 'disconnected':
       default:
         return {
-          icon: <WifiOff className="h-4 w-4 text-red-500" />,
+          icon: <WifiOff className="h-4 w-4 text-destructive" />,
           text: t('voiceDisconnected'),
-          color: 'text-red-500'
+          color: 'text-destructive'
         };
     }
   }, [connectionStatus, t]);
@@ -99,7 +99,7 @@ const VoiceControl = memo(() => {
               className={cn(
                 'h-8 w-8 rounded-md transition-all duration-200',
                 ownVoiceState.webcamEnabled
-                  ? 'bg-green-500/15 hover:bg-green-500/25 text-green-400 hover:text-green-300'
+                  ? 'bg-success/15 hover:bg-success/25 text-success'
                   : 'bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground'
               )}
               onClick={toggleWebcam}
@@ -124,7 +124,7 @@ const VoiceControl = memo(() => {
                 className={cn(
                   'h-8 w-8 rounded-md transition-all duration-200',
                   ownVoiceState.sharingScreen
-                    ? 'bg-blue-500/15 hover:bg-blue-500/25 text-blue-400 hover:text-blue-300'
+                    ? 'bg-info/15 hover:bg-info/25 text-info'
                     : 'bg-secondary hover:bg-secondary/80 text-muted-foreground hover:text-foreground'
                 )}
                 onClick={toggleScreenShare}
