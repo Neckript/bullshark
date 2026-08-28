@@ -157,7 +157,7 @@ const WelcomeProfileSetupDialog = memo(
                   <div
                     className="w-full h-28 border-b border-border transition-opacity group-hover:opacity-70"
                     style={{
-                      background: ownPublicUser.bannerColor || '#5865f2'
+                      background: ownPublicUser.bannerColor || 'var(--primary)'
                     }}
                   />
                 )}
