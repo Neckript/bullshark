@@ -23,105 +23,113 @@ import type { TUnifiedSearchResult } from './types';
 
 const ITEMS_PER_PAGE = 12;
 
-type TSearchDialogProps = TDialogBaseProps;
+type TSearchDialogProps = TDialogBaseProps & {
+  initialQuery?: string;
+};
 
-const SearchDialog = memo(({ isOpen, close }: TSearchDialogProps) => {
-  const { t } = useTranslation('dialogs');
-  useOnEsc(close);
+const SearchDialog = memo(
+  ({ isOpen, close, initialQuery = '' }: TSearchDialogProps) => {
+    const { t } = useTranslation('dialogs');
+    useOnEsc(close);
 
-  const { query, setQuery, loading, canSearch, unifiedResults } =
-    useSearch(isOpen);
+    const { query, setQuery, loading, canSearch, unifiedResults } = useSearch(
+      isOpen,
+      initialQuery
+    );
 
-  const onJump = useCallback(
-    (target: TMessageJumpToTarget) => {
-      jumpToMessage(target);
-      close();
-    },
-    [close]
-  );
+    const onJump = useCallback(
+      (target: TMessageJumpToTarget) => {
+        jumpToMessage(target);
+        close();
+      },
+      [close]
+    );
 
-  return (
-    <Dialog open={isOpen}>
-      <DialogContent
-        className="h-[86vh] max-h-[94vh] lg:min-w-7xl gap-0 overflow-hidden p-0"
-        onInteractOutside={close}
-        close={close}
-      >
-        <div className="flex h-full min-h-0 flex-col">
-          <DialogHeader className="border-b border-border bg-card/70 px-5 py-4 text-left">
-            <DialogTitle className="text-base">{t('searchTitle')}</DialogTitle>
-            <DialogDescription>{t('searchDesc')}</DialogDescription>
-            <div className="mt-3">
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={t('searchPlaceholder')}
-                autoFocus
-                className="h-10"
-              />
-            </div>
-          </DialogHeader>
-
-          <div className="flex min-h-0 flex-1 flex-col px-5 py-4">
-            {!canSearch && !loading && (
-              <div className="flex h-full min-h-55 items-center justify-center rounded-lg bg-muted/20 px-6 text-sm text-muted-foreground">
-                {t('searchHint')}
+    return (
+      <Dialog open={isOpen}>
+        <DialogContent
+          className="h-[86vh] max-h-[94vh] lg:min-w-7xl gap-0 overflow-hidden p-0"
+          onInteractOutside={close}
+          close={close}
+        >
+          <div className="flex h-full min-h-0 flex-col">
+            <DialogHeader className="border-b border-border bg-card/70 px-5 py-4 text-left">
+              <DialogTitle className="text-base">
+                {t('searchTitle')}
+              </DialogTitle>
+              <DialogDescription>{t('searchDesc')}</DialogDescription>
+              <div className="mt-3">
+                <Input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={t('searchPlaceholder')}
+                  autoFocus
+                  className="h-10"
+                />
               </div>
-            )}
+            </DialogHeader>
 
-            {loading && (
-              <div className="flex h-full min-h-55 items-center justify-center">
-                <Spinner size="sm" />
-              </div>
-            )}
+            <div className="flex min-h-0 flex-1 flex-col px-5 py-4">
+              {!canSearch && !loading && (
+                <div className="flex h-full min-h-55 items-center justify-center rounded-lg bg-muted/20 px-6 text-sm text-muted-foreground">
+                  {t('searchHint')}
+                </div>
+              )}
 
-            {canSearch && !loading && (
-              <PaginatedList
-                items={unifiedResults}
-                itemsPerPage={ITEMS_PER_PAGE}
-              >
-                <PaginatedList.Empty className="flex h-full min-h-55 items-center justify-center rounded-lg bg-muted/20 px-6">
-                  <EmptyState
-                    variant="compact"
-                    icon={<SearchX className="h-5 w-5" />}
-                    title={t('noResults')}
-                  />
-                </PaginatedList.Empty>
+              {loading && (
+                <div className="flex h-full min-h-55 items-center justify-center">
+                  <Spinner size="sm" />
+                </div>
+              )}
 
-                <PaginatedList.List<TUnifiedSearchResult>
-                  className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1"
-                  getItemKey={(entry) => entry.key}
+              {canSearch && !loading && (
+                <PaginatedList
+                  items={unifiedResults}
+                  itemsPerPage={ITEMS_PER_PAGE}
                 >
-                  {(entry) => {
-                    if (entry.type === 'message') {
+                  <PaginatedList.Empty className="flex h-full min-h-55 items-center justify-center rounded-lg bg-muted/20 px-6">
+                    <EmptyState
+                      variant="compact"
+                      icon={<SearchX className="h-5 w-5" />}
+                      title={t('noResults')}
+                    />
+                  </PaginatedList.Empty>
+
+                  <PaginatedList.List<TUnifiedSearchResult>
+                    className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1"
+                    getItemKey={(entry) => entry.key}
+                  >
+                    {(entry) => {
+                      if (entry.type === 'message') {
+                        return (
+                          <SearchResultMessageCard
+                            message={entry.item}
+                            onJump={onJump}
+                          />
+                        );
+                      }
+
                       return (
-                        <SearchResultMessageCard
-                          message={entry.item}
+                        <SearchResultFileCard
+                          result={entry.item}
                           onJump={onJump}
                         />
                       );
-                    }
+                    }}
+                  </PaginatedList.List>
 
-                    return (
-                      <SearchResultFileCard
-                        result={entry.item}
-                        onJump={onJump}
-                      />
-                    );
-                  }}
-                </PaginatedList.List>
-
-                <PaginatedList.Pagination
-                  alwaysShow
-                  className="flex shrink-0 items-center justify-center gap-1 border-t border-border pt-3"
-                />
-              </PaginatedList>
-            )}
+                  <PaginatedList.Pagination
+                    alwaysShow
+                    className="flex shrink-0 items-center justify-center gap-1 border-t border-border pt-3"
+                  />
+                </PaginatedList>
+              )}
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-});
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);
 
 export { SearchDialog };

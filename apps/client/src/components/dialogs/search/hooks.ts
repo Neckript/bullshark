@@ -8,8 +8,8 @@ const EMPTY_RESULTS: TSearchResults = { messages: [], files: [] };
 const MIN_QUERY_LENGTH = 2;
 const DEBOUNCE_MS = 300;
 
-export const useSearch = (isOpen: boolean) => {
-  const [query, setQuery] = useState('');
+export const useSearch = (isOpen: boolean, initialQuery: string = '') => {
+  const [query, setQuery] = useState(initialQuery);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<TSearchResults>(EMPTY_RESULTS);
 
@@ -19,8 +19,12 @@ export const useSearch = (isOpen: boolean) => {
       setQuery('');
       setResults(EMPTY_RESULTS);
       setLoading(false);
+
+      return;
     }
-  }, [isOpen]);
+
+    setQuery(initialQuery);
+  }, [isOpen, initialQuery]);
 
   useEffect(() => {
     const trimmed = query.trim();

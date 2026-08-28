@@ -1,8 +1,12 @@
+import { Dialog } from '@/components/dialogs/dialogs';
 import { getVoiceControlsBridge } from '@/components/voice-provider/controls-bridge';
 import {
   setModifierKeysHeldMap,
   togglePluginSlotDebug
 } from '@/features/app/actions';
+import { closeDialogs, openDialog } from '@/features/dialogs/actions';
+import { dialogInfoSelector } from '@/features/dialogs/selectors';
+import { connectedSelector } from '@/features/server/selectors';
 import { ownVoiceStateSelector } from '@/features/server/voice/selectors';
 import { memo, useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,6 +21,20 @@ const HotkeysController = memo(() => {
     ownVoiceStateRef.current = ownVoiceState;
   }, [ownVoiceState]);
 
+  const isConnected = useSelector(connectedSelector);
+  const isConnectedRef = useRef(isConnected);
+
+  useEffect(() => {
+    isConnectedRef.current = isConnected;
+  }, [isConnected]);
+
+  const openDialogName = useSelector(dialogInfoSelector).openDialog;
+  const openDialogRef = useRef(openDialogName);
+
+  useEffect(() => {
+    openDialogRef.current = openDialogName;
+  }, [openDialogName]);
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'F4') {
       togglePluginSlotDebug();
@@ -24,6 +42,32 @@ const HotkeysController = memo(() => {
 
     if (e.key === 'Alt') {
       e.preventDefault();
+    }
+
+    // Ctrl+K ouvre le sélecteur rapide, Ctrl+Maj+F la recherche de contenu.
+    // Les deux vivent ici et non dans leurs surfaces : deux écouteurs
+    // « keydown » concurrents sur window se disputeraient la touche, et le
+    // dernier monté gagnerait.
+    if ((e.ctrlKey || e.metaKey) && !e.repeat) {
+      const key = e.key.toLowerCase();
+
+      if (key === 'k' && !e.shiftKey) {
+        e.preventDefault();
+
+        if (!isConnectedRef.current) return;
+
+        if (openDialogRef.current === Dialog.QUICK_SWITCHER) {
+          closeDialogs();
+        } else {
+          openDialog(Dialog.QUICK_SWITCHER);
+        }
+      } else if (key === 'f' && e.shiftKey) {
+        e.preventDefault();
+
+        if (isConnectedRef.current) {
+          openDialog(Dialog.SEARCH);
+        }
+      }
     }
 
     // Global voice hotkeys (Ctrl+Shift+M / Ctrl+Shift+D).
