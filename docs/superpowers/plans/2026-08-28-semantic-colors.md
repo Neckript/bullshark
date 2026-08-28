@@ -536,13 +536,16 @@ en thème clair — où une ombre noire sur un marqueur blanc n'avait aucun sens
 C'est la vérification centrale de tout le chantier :
 
 ```bash
-grep -rE "(text|bg|border|ring|from|to|via|shadow|outline|decoration|accent|caret|divide|fill|stroke)-(red|green|blue|yellow|amber|orange|purple|pink|emerald|sky|slate|gray|zinc)-[0-9]{2,3}" \
+grep -rE "(text|bg|border|ring|from|to|via|shadow|outline|decoration|accent|caret|divide|fill|stroke)-(red|green|blue|yellow|amber|orange|purple|pink|emerald|sky|slate|gray|zinc|cyan|teal|indigo|violet|lime|rose|fuchsia|stone|neutral)-[0-9]{2,3}" \
   apps/client/src packages/ui/src --include=*.tsx | wc -l
 ```
 
 Ce compte valait **105** avant le chantier. Il doit valoir **0**. Toute autre
 valeur signifie une migration partielle, c'est-à-dire l'incohérence qu'on
-voulait supprimer, en plus petit.
+voulait supprimer, en plus petit. La liste de familles ci-dessus omettait à
+l'origine `cyan`, `teal`, `indigo`, `violet`, `lime`, `rose`, `fuchsia`,
+`stone` et `neutral` ; cette omission a produit un faux négatif qui a laissé
+passer un `text-cyan-400`, d'où leur ajout.
 
 **La liste des préfixes est plus large que celle des tâches 2 à 5, et c'est
 voulu.** Les greps de relevé ne cherchaient que `text|bg|border|ring` ; la

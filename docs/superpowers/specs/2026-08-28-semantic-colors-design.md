@@ -78,11 +78,12 @@ Trois paires neuves, sur le modèle exact de `--destructive` :
 occurrences, greffons) va sur `--primary` — à vérifier au cas par cas, ce sont
 les deux seules dont le sens n'est pas évident.
 
-**Les `-foreground` ne sont pas optionnels.** Sur les 105 usages, une partie
-sont des fonds (`bg-red-500` sur les pastilles de mention, `bg-green-500` sur
-les points de présence) qui portent du texte. Sans la paire, la migration
-remplacerait un fond mais laisserait le texte en blanc codé en dur —
-exactement le défaut qu'on retire.
+**Les `-foreground` de `--success`, `--warning` et `--info` sont déclarés par
+symétrie du vocabulaire, pas parce qu'un fond solide de ces couleurs porte du
+texte aujourd'hui** — vérification faite, aucun `bg-success`, `bg-warning` ou
+`bg-info` n'en porte. Seul `--destructive-foreground` a un consommateur réel
+(voir ci-dessous) ; les trois autres restent inertes tant qu'aucun usage ne
+les réclame, ce qui n'a rien de cassé.
 
 Noter que `--destructive-foreground` **n'existe pas** aujourd'hui : le chantier
 l'ajoute aussi, pour que les quatre familles aient la même forme.
@@ -210,12 +211,16 @@ Portes habituelles à zéro erreur : `format:check`, `check-types`, `lint`.
 rendre zéro :
 
 ```bash
-grep -rE "(text|bg|border|ring)-(red|green|blue|yellow|amber|orange|purple|pink|emerald|sky|slate|gray|zinc)-[0-9]{2,3}" \
+grep -rE "(text|bg|border|ring)-(red|green|blue|yellow|amber|orange|purple|pink|emerald|sky|slate|gray|zinc|cyan|teal|indigo|violet|lime|rose|fuchsia|stone|neutral)-[0-9]{2,3}" \
   apps/client/src packages/ui/src --include=*.tsx
 ```
 
 Il vaut 105 aujourd'hui. Il doit valoir 0 à la fin, et c'est la seule preuve
-que la migration est complète plutôt que partielle.
+que la migration est complète plutôt que partielle. La première version de
+cette liste omettait `cyan`, `teal`, `indigo`, `violet`, `lime`, `rose`,
+`fuchsia`, `stone` et `neutral`, ce qui lui a laissé passer un `text-cyan-400`
+en faux négatif ; la liste ci-dessus est celle qui aurait dû exister depuis le
+début.
 
 **Vérification centrale dans le bundle construit**, leçon des trois codes morts
 du programme beauté : après `bun run build`, confirmer que la feuille émise
