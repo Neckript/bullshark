@@ -121,7 +121,9 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
           </h3>
           <div className="grid grid-cols-2 gap-4 mb-3">
             <div>
-              <h4 className="font-medium text-success mb-1">{t('outgoing')}</h4>
+              <h4 className="font-medium text-muted-foreground mb-1">
+                {t('outgoing')}
+              </h4>
               {producer ? (
                 <div className="space-y-1">
                   <div>
@@ -148,7 +150,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
             </div>
 
             <div>
-              <h4 className="font-medium text-cyan-400 mb-1">
+              <h4 className="font-medium text-muted-foreground mb-1">
                 {t('incoming')}
               </h4>
               {consumer ? (
@@ -188,7 +190,9 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
 
           {screenShare && (
             <div className="border-t border-border/50 pt-2 mb-3">
-              <h4 className="font-medium text-info mb-1">{t('screenShare')}</h4>
+              <h4 className="font-medium text-muted-foreground mb-1">
+                {t('screenShare')}
+              </h4>
               <div className="space-y-1">
                 {screenShare.codec && (
                   <div>
@@ -326,7 +330,7 @@ const StatsPopover = memo(({ children }: StatsPopoverProps) => {
           )}
 
           <div className="border-t border-border/50 pt-2">
-            <h4 className="font-medium text-warning mb-1">
+            <h4 className="font-medium text-muted-foreground mb-1">
               {t('sessionTotals')}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-muted-foreground">
