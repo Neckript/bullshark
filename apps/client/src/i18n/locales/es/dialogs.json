@@ -135,5 +135,20 @@
   "claimOwnerTokenPlaceholder": "Pega tu token aquí",
   "claimOwnerBtn": "Reclamar propiedad",
   "claimOwnerInvalidToken": "Token inválido.",
-  "claimOwnerSuccess": "Ahora eres el propietario del servidor."
+  "claimOwnerSuccess": "Ahora eres el propietario del servidor.",
+  "quickSwitcherTitle": "Selector rápido",
+  "quickSwitcherPlaceholder": "Ir a un canal o una persona...",
+  "quickSwitcherRecents": "Recientes",
+  "quickSwitcherChannels": "Canales",
+  "quickSwitcherVoice": "Voz",
+  "quickSwitcherUsers": "Personas",
+  "quickSwitcherVoiceUsers_one": "{{count}} persona",
+  "quickSwitcherVoiceUsers_other": "{{count}} personas",
+  "quickSwitcherOnline": "conectado",
+  "quickSwitcherOffline": "desconectado",
+  "quickSwitcherSearchMessages": "Buscar \"{{query}}\" en los mensajes",
+  "quickSwitcherCouldNotOpenDm": "No se pudo abrir la conversación.",
+  "quickSwitcherHintNavigate": "↑↓ navegar",
+  "quickSwitcherHintOpen": "↵ abrir",
+  "quickSwitcherHintSearch": "Ctrl+Shift+F buscar mensajes"
 }

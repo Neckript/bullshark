@@ -135,5 +135,20 @@
   "claimOwnerTokenPlaceholder": "Vložte svůj token zde",
   "claimOwnerBtn": "Převzít vlastnictví",
   "claimOwnerInvalidToken": "Neplatný token.",
-  "claimOwnerSuccess": "Nyní jste vlastníkem serveru."
+  "claimOwnerSuccess": "Nyní jste vlastníkem serveru.",
+  "quickSwitcherTitle": "Rychlý přepínač",
+  "quickSwitcherPlaceholder": "Přejít na kanál nebo osobu...",
+  "quickSwitcherRecents": "Nedávné",
+  "quickSwitcherChannels": "Kanály",
+  "quickSwitcherVoice": "Hlasové",
+  "quickSwitcherUsers": "Lidé",
+  "quickSwitcherVoiceUsers_one": "{{count}} osoba",
+  "quickSwitcherVoiceUsers_other": "{{count}} osob",
+  "quickSwitcherOnline": "online",
+  "quickSwitcherOffline": "offline",
+  "quickSwitcherSearchMessages": "Hledat „{{query}}“ ve zprávách",
+  "quickSwitcherCouldNotOpenDm": "Konverzaci se nepodařilo otevřít.",
+  "quickSwitcherHintNavigate": "↑↓ navigace",
+  "quickSwitcherHintOpen": "↵ otevřít",
+  "quickSwitcherHintSearch": "Ctrl+Shift+F hledat zprávy"
 }

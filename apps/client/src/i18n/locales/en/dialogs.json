@@ -135,5 +135,20 @@
   "claimOwnerTokenPlaceholder": "Paste your token here",
   "claimOwnerBtn": "Claim Ownership",
   "claimOwnerInvalidToken": "Invalid token.",
-  "claimOwnerSuccess": "You are now the server owner."
+  "claimOwnerSuccess": "You are now the server owner.",
+  "quickSwitcherTitle": "Quick switcher",
+  "quickSwitcherPlaceholder": "Jump to a channel or a person...",
+  "quickSwitcherRecents": "Recent",
+  "quickSwitcherChannels": "Channels",
+  "quickSwitcherVoice": "Voice",
+  "quickSwitcherUsers": "People",
+  "quickSwitcherVoiceUsers_one": "{{count}} person",
+  "quickSwitcherVoiceUsers_other": "{{count}} people",
+  "quickSwitcherOnline": "online",
+  "quickSwitcherOffline": "offline",
+  "quickSwitcherSearchMessages": "Search \"{{query}}\" in messages",
+  "quickSwitcherCouldNotOpenDm": "Could not open the conversation.",
+  "quickSwitcherHintNavigate": "↑↓ navigate",
+  "quickSwitcherHintOpen": "↵ open",
+  "quickSwitcherHintSearch": "Ctrl+Shift+F search messages"
 }

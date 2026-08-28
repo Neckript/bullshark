@@ -135,5 +135,20 @@
   "claimOwnerTokenPlaceholder": "Вставьте ваш токен сюда",
   "claimOwnerBtn": "Стать владельцем",
   "claimOwnerInvalidToken": "Неверный токен.",
-  "claimOwnerSuccess": "Теперь вы владелец сервера."
+  "claimOwnerSuccess": "Теперь вы владелец сервера.",
+  "quickSwitcherTitle": "Быстрый переключатель",
+  "quickSwitcherPlaceholder": "Перейти к каналу или пользователю...",
+  "quickSwitcherRecents": "Недавние",
+  "quickSwitcherChannels": "Каналы",
+  "quickSwitcherVoice": "Голосовые",
+  "quickSwitcherUsers": "Люди",
+  "quickSwitcherVoiceUsers_one": "{{count}} человек",
+  "quickSwitcherVoiceUsers_other": "{{count}} человек",
+  "quickSwitcherOnline": "в сети",
+  "quickSwitcherOffline": "не в сети",
+  "quickSwitcherSearchMessages": "Искать «{{query}}» в сообщениях",
+  "quickSwitcherCouldNotOpenDm": "Не удалось открыть беседу.",
+  "quickSwitcherHintNavigate": "↑↓ навигация",
+  "quickSwitcherHintOpen": "↵ открыть",
+  "quickSwitcherHintSearch": "Ctrl+Shift+F поиск по сообщениям"
 }

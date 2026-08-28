@@ -135,5 +135,20 @@
   "claimOwnerTokenPlaceholder": "在此粘贴您的令牌",
   "claimOwnerBtn": "认领所有权",
   "claimOwnerInvalidToken": "令牌无效。",
-  "claimOwnerSuccess": "您现在是服务器所有者。"
+  "claimOwnerSuccess": "您现在是服务器所有者。",
+  "quickSwitcherTitle": "快速切换",
+  "quickSwitcherPlaceholder": "跳转到频道或用户...",
+  "quickSwitcherRecents": "最近",
+  "quickSwitcherChannels": "频道",
+  "quickSwitcherVoice": "语音",
+  "quickSwitcherUsers": "用户",
+  "quickSwitcherVoiceUsers_one": "{{count}} 人",
+  "quickSwitcherVoiceUsers_other": "{{count}} 人",
+  "quickSwitcherOnline": "在线",
+  "quickSwitcherOffline": "离线",
+  "quickSwitcherSearchMessages": "在消息中搜索“{{query}}”",
+  "quickSwitcherCouldNotOpenDm": "无法打开对话。",
+  "quickSwitcherHintNavigate": "↑↓ 导航",
+  "quickSwitcherHintOpen": "↵ 打开",
+  "quickSwitcherHintSearch": "Ctrl+Shift+F 搜索消息"
 }
