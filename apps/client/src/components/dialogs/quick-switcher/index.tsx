@@ -5,6 +5,7 @@ import { setDmsOpen } from '@/features/server/actions';
 import { selectChannel } from '@/features/server/channels/actions';
 import { useOnEsc } from '@/hooks/use-on-esc';
 import { getTRPCClient } from '@/lib/trpc';
+import { TestId } from '@sharkord/shared';
 import { Dialog, DialogContent, DialogTitle } from '@sharkord/ui';
 import { Search } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -136,6 +137,7 @@ const QuickSwitcherDialog = memo(({ isOpen, close }: TDialogBaseProps) => {
     <Dialog open={isOpen}>
       <DialogContent
         aria-describedby={undefined}
+        data-testid={TestId.QUICK_SWITCHER}
         className="top-[14vh] block max-w-xl translate-y-0 gap-0 overflow-hidden p-0 sm:max-w-xl"
         onInteractOutside={close}
       >
@@ -145,6 +147,7 @@ const QuickSwitcherDialog = memo(({ isOpen, close }: TDialogBaseProps) => {
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
           <input
             autoFocus
+            data-testid={TestId.QUICK_SWITCHER_INPUT}
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);

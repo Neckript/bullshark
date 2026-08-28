@@ -6,7 +6,7 @@ import {
 } from '@/features/server/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { cn } from '@/lib/utils';
-import { UserStatus } from '@sharkord/shared';
+import { TestId, UserStatus } from '@sharkord/shared';
 import { Hash, Volume2 } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -79,6 +79,7 @@ const QuickSwitcherRow = memo(
     <div
       role="option"
       id={`quick-switcher-${item.key}`}
+      data-testid={TestId.QUICK_SWITCHER_ROW}
       aria-selected={isActive}
       data-active={isActive}
       onClick={onSelect}

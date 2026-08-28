@@ -17,5 +17,9 @@ export enum TestId {
   LEFT_SIDEBAR = 'left-sidebar',
   LEFT_SIDEBAR_SERVER_NAME = 'left-sidebar-server-name',
 
-  DROP_OVERLAY = 'drop-overlay'
+  DROP_OVERLAY = 'drop-overlay',
+
+  QUICK_SWITCHER = 'quick-switcher',
+  QUICK_SWITCHER_INPUT = 'quick-switcher-input',
+  QUICK_SWITCHER_ROW = 'quick-switcher-row'
 }
