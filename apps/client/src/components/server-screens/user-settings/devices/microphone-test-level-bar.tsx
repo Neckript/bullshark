@@ -115,7 +115,6 @@ const MicrophoneTestLevelBar = memo(
       };
     }, [isTesting, getAudioLevelSnapshot]);
 
-    const meterFillColorClass = 'bg-success';
     const clampedThresholdDb = clampMicrophoneDecibels(
       noiseGateThresholdDb ?? MICROPHONE_GATE_DEFAULT_THRESHOLD_DB
     );
@@ -139,12 +138,12 @@ const MicrophoneTestLevelBar = memo(
             )}
 
             <div
-              className={`absolute inset-y-0 left-0 ${meterFillColorClass} transition-[background-color] duration-75`}
+              className="absolute inset-y-0 left-0 bg-success"
               style={{ width: `${audioLevel}%` }}
             />
 
             <div
-              className="absolute inset-y-0 w-[2px] -translate-x-1/2 rounded-full bg-white/90 shadow-[0_0_0_1px_rgba(0,0,0,0.25)]"
+              className="absolute inset-y-0 w-[2px] -translate-x-1/2 rounded-full bg-foreground/90 shadow-[0_0_0_1px_var(--background)]"
               style={{ left: `${peakLevel}%` }}
             />
           </div>

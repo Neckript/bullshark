@@ -411,82 +411,36 @@ body,
   height: 100%;
 }
 
-/* Define CSS variables for light and dark themes */
-:root {
-  --scrollbar-width: 12px;
-  --scrollbar-track-color-light: #f1f1f1;
-  --scrollbar-thumb-color-light: #888;
-  --scrollbar-thumb-hover-color-light: #555;
-
-  --scrollbar-track-color-dark: #2e2e2e;
-  --scrollbar-thumb-color-dark: #555;
-  --scrollbar-thumb-hover-color-dark: #888;
-}
-
-/* Light theme scrollbars */
-body {
+/* Scrollbars: colors come from theme tokens, no light/dark split needed */
+* {
   scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb-color-light)
-    var(--scrollbar-track-color-light);
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 45%, transparent)
+    var(--background);
 }
 
 /* Webkit Browsers */
 ::-webkit-scrollbar {
-  width: var(--scrollbar-width);
-  height: var(--scrollbar-width);
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--scrollbar-track-color-light);
+  background: var(--background);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--scrollbar-thumb-color-light);
+  background-color: color-mix(
+    in oklch,
+    var(--muted-foreground) 45%,
+    transparent
+  );
   border-radius: 10px;
-  border: 2px solid var(--scrollbar-track-color-light);
+  border: 2px solid var(--background);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-thumb-hover-color-light);
-}
-
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-  body {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb-color-dark)
-      var(--scrollbar-track-color-dark);
-  }
-
-  /* Webkit Browsers */
-  ::-webkit-scrollbar-track {
-    background: var(--scrollbar-track-color-dark);
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb-color-dark);
-    border: 2px solid var(--scrollbar-track-color-dark);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--scrollbar-thumb-hover-color-dark);
-  }
-}
-
-/* Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb-color-light)
-    var(--scrollbar-track-color-light);
-}
-
-@media (prefers-color-scheme: dark) {
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--scrollbar-thumb-color-dark)
-      var(--scrollbar-track-color-dark);
-  }
+  background: color-mix(in oklch, var(--muted-foreground) 65%, transparent);
 }
 
 /* Touch-friendly reaction pills */
