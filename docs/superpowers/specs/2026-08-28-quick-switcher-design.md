@@ -123,8 +123,10 @@ côté, sur le même modèle et avec le même `canViewChannel`
 export const visibleChannelsSelector = createSelector(
   [channelsSelector, channelPermissionsSelector, isOwnUserOwnerSelector],
   (channels, channelPermissions, isOwner) =>
-    channels.filter((channel) =>
-      canViewChannel(channel, channelPermissions, isOwner)
+    channels.filter(
+      (channel) =>
+        !channel.isDm &&
+        canViewChannel(channel, channelPermissions, isOwner)
     )
 );
 ```
@@ -132,6 +134,16 @@ export const visibleChannelsSelector = createSelector(
 Un salon privé non autorisé ne doit jamais apparaître dans la palette : c'est
 la seule règle de sécurité du chantier, et elle est déjà écrite ailleurs — on
 la réutilise, on ne la réécrit pas.
+
+Le `!channel.isDm` n'est pas décoratif non plus. **Les salons de conversation
+privée vivent dans la même liste** `state.server.channels` : le seed en
+fabrique un nommé « DM Channel », de type `VOICE`, `private`, `categoryId`
+nul (`apps/server/src/__tests__/seed.ts:280`). S'ils n'apparaissent nulle part
+dans la colonne gauche, c'est uniquement parce qu'elle passe par
+`channelsByCategoryIdSelector`, qui filtre sur `categoryId`. Un sélecteur
+global qui oublierait ce filtre listerait « DM Channel » comme un salon vocal
+à rejoindre. Le dépôt le sait déjà ailleurs
+(`features/server/channels/selectors.ts:123`).
 
 **Catégories.** `useCategories()`
 (`features/server/categories/hooks.ts:5`) donne le nom affiché à droite d'une
