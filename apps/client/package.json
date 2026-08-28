@@ -9,6 +9,7 @@
     "lint": "eslint ./src --ext ts,tsx",
     "lint:fix": "eslint ./src --ext ts,tsx --report-unused-disable-directives --fix",
     "check-types": "tsc --noEmit --project tsconfig.app.json",
+    "test": "bun test",
     "format": "prettier --write \"**/*.ts*\" --config ./.prettierrc.json",
     "format:check": "prettier --check \"**/*.ts*\" --config ./.prettierrc.json",
     "magic": "bun --bun run lint:fix && bun --bun run format && bun --bun run check-types"
