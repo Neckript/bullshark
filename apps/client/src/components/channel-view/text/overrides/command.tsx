@@ -32,9 +32,9 @@ const CommandOverride = memo(({ command }: TCommandOverrideProps) => {
   const getStatusIcon = useCallback(() => {
     switch (command.status) {
       case 'completed':
-        return <CheckCircle2 className="size-3 text-green-500" />;
+        return <CheckCircle2 className="size-3 text-success" />;
       case 'failed':
-        return <XCircle className="size-3 text-red-500" />;
+        return <XCircle className="size-3 text-destructive" />;
       case 'pending':
       default:
         return (

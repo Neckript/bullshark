@@ -18,7 +18,7 @@ const Disconnected = memo(({ info }: TDisconnectedProps) => {
 
     if (code === DisconnectCode.KICKED) {
       return {
-        icon: <AlertCircle className="h-8 w-8 text-yellow-500" />,
+        icon: <AlertCircle className="h-8 w-8 text-warning" />,
         title: t('kicked'),
         message: info.reason || t('noReasonProvided'),
         canReconnect: true
@@ -27,7 +27,7 @@ const Disconnected = memo(({ info }: TDisconnectedProps) => {
 
     if (code === DisconnectCode.BANNED) {
       return {
-        icon: <Gavel className="h-8 w-8 text-red-500" />,
+        icon: <Gavel className="h-8 w-8 text-destructive" />,
         title: t('banned'),
         message: info.reason || t('noReasonProvided'),
         canReconnect: false
@@ -35,7 +35,7 @@ const Disconnected = memo(({ info }: TDisconnectedProps) => {
     }
 
     return {
-      icon: <WifiOff className="h-8 w-8 text-gray-500" />,
+      icon: <WifiOff className="h-8 w-8 text-muted-foreground" />,
       title: t('connectionLost'),
       message: t('lostConnectionMessage'),
       canReconnect: true

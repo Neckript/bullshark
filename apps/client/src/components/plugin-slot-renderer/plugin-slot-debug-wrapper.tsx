@@ -65,8 +65,8 @@ const PlugSlotDebugWrapper = memo(
               height: rect.height
             }}
           >
-            <div className="absolute inset-0 border border-dashed border-red-500" />
-            <span className="absolute top-1 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[9px] px-1 rounded whitespace-nowrap">
+            <div className="absolute inset-0 border border-dashed border-destructive" />
+            <span className="absolute top-1 left-1/2 -translate-x-1/2 bg-destructive text-destructive-foreground text-[9px] px-1 rounded whitespace-nowrap">
               {pluginId} - {slotId}
             </span>
           </div>

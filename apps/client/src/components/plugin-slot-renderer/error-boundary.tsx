@@ -45,29 +45,29 @@ const ErrorBoundary = ({
           <PopoverTrigger asChild>
             <IconButton
               icon={Bug}
-              className="text-red-500 border-red-500"
+              className="text-destructive border-destructive"
               size="xs"
               title={t('pluginRenderErrorTitle')}
             />
           </PopoverTrigger>
           <PopoverContent className="w-96">
             <div>
-              <span className="text-xs text-red-500 mb-2 block">
+              <span className="text-xs text-destructive mb-2 block">
                 {t('pluginRenderError', { pluginId, slotId })}
               </span>
 
-              <span className="text-xs text-red-500 mb-2 block">
+              <span className="text-xs text-destructive mb-2 block">
                 {t('reportToPluginDeveloper')}
               </span>
 
               <details>
-                <summary className="text-[10px] text-red-500">
+                <summary className="text-[10px] text-destructive">
                   {t('errorDetails')}
                 </summary>
 
                 <div>
                   <span
-                    className="text-red-500 underline text-xs cursor-pointer"
+                    className="text-destructive underline text-xs cursor-pointer"
                     onClick={() => {
                       copyErrorDetails(
                         error,
@@ -80,7 +80,7 @@ const ErrorBoundary = ({
                     {t('copyDetails')}
                   </span>
 
-                  <pre className="text-xs text-red-500 overflow-auto max-h-48">
+                  <pre className="text-xs text-destructive overflow-auto max-h-48">
                     {error.message}
                     <br />
                     {error.stack}

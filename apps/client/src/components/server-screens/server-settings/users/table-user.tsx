@@ -100,8 +100,8 @@ const TableUser = memo(({ user, refetch }: TTableUserProps) => {
         <div className="flex items-center text-muted-foreground">
           <span
             className={cn('capitalize text-xs', {
-              'text-green-500': status === UserStatus.ONLINE,
-              'text-yellow-500': status === UserStatus.IDLE
+              'text-success': status === UserStatus.ONLINE,
+              'text-warning': status === UserStatus.IDLE
             })}
           >
             {status}

@@ -115,12 +115,7 @@ const MicrophoneTestLevelBar = memo(
       };
     }, [isTesting, getAudioLevelSnapshot]);
 
-    const meterFillColorClass =
-      audioLevel >= 66
-        ? 'bg-green-600'
-        : audioLevel >= 33
-          ? 'bg-green-500'
-          : 'bg-green-300';
+    const meterFillColorClass = 'bg-success';
     const clampedThresholdDb = clampMicrophoneDecibels(
       noiseGateThresholdDb ?? MICROPHONE_GATE_DEFAULT_THRESHOLD_DB
     );
@@ -134,7 +129,7 @@ const MicrophoneTestLevelBar = memo(
             {noiseGateEnabled ? (
               <div className="absolute inset-0 flex">
                 <div
-                  className="bg-yellow-200/70"
+                  className="bg-warning/70"
                   style={{ width: `${noiseGateThresholdPercent}%` }}
                 />
                 <div className="flex-1 bg-muted" />
@@ -157,7 +152,7 @@ const MicrophoneTestLevelBar = memo(
           {noiseGateEnabled && (
             <Slider
               aria-label="Noise gate threshold"
-              className="absolute inset-0 z-10 [&_[data-slot=slider-track]]:h-full [&_[data-slot=slider-track]]:bg-transparent [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-thumb]]:size-[26px] [&_[data-slot=slider-thumb]]:border-yellow-500 [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:shadow-sm"
+              className="absolute inset-0 z-10 [&_[data-slot=slider-track]]:h-full [&_[data-slot=slider-track]]:bg-transparent [&_[data-slot=slider-range]]:bg-transparent [&_[data-slot=slider-thumb]]:size-[26px] [&_[data-slot=slider-thumb]]:border-warning [&_[data-slot=slider-thumb]]:bg-white [&_[data-slot=slider-thumb]]:shadow-sm"
               min={MICROPHONE_LEVEL_METER_MIN_DB}
               max={MICROPHONE_LEVEL_METER_MAX_DB}
               step={1}

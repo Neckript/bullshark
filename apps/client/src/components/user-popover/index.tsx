@@ -69,13 +69,13 @@ const UserPopover = memo(({ userId, children }: TUserPopoverProps) => {
       <PopoverContent className="w-80 p-0" align="start" side="right">
         <div className="relative">
           {user.banned && (
-            <div className="absolute right-2 top-2 bg-red-500 text-white text-xs px-2 py-1 rounded-md flex items-center gap-1">
+            <div className="absolute right-2 top-2 bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded-md flex items-center gap-1">
               <ShieldCheck className="h-3 w-3" />
               {t('bannedBadge')}
             </div>
           )}
           {isDeleted && (
-            <div className="absolute right-2 top-2 bg-gray-600 text-white text-xs px-2 py-1 rounded-md flex items-center gap-1">
+            <div className="absolute right-2 top-2 bg-muted-foreground text-background text-xs px-2 py-1 rounded-md flex items-center gap-1">
               <Trash className="h-3 w-3" />
               {t('deletedBadge')}
             </div>
