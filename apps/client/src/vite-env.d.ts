@@ -21,6 +21,13 @@ declare global {
       };
       focusWindow: () => void;
       onMuteChanged: (cb: (muted: boolean) => void) => () => void;
+      // Optionnel: le client sort avant le shell qui l'implemente. Sur un
+      // shell plus ancien le membre n'existe pas, d'ou le chainage optionnel
+      // a l'appel.
+      setTitleBarColors?: (colors: {
+        color: string;
+        symbolColor: string;
+      }) => void;
     };
 
     // plugin store exposed for plugins to use imperatively

@@ -12,6 +12,7 @@ import { setSelectedChannelId } from '@/features/server/channels/actions';
 import { useDmsOpen, usePublicServerSettings } from '@/features/server/hooks';
 import { getLocalStorageItemBool, LocalStorageKey } from '@/helpers/storage';
 import { useSwipeGestures } from '@/hooks/use-swipe-gestures';
+import { useTitleBarColors } from '@/hooks/use-title-bar-colors';
 import { cn } from '@/lib/utils';
 import { Permission, TestId } from '@sharkord/shared';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -63,6 +64,8 @@ const ServerView = memo(() => {
     onSwipeRight: handleSwipeRight,
     onSwipeLeft: handleSwipeLeft
   });
+
+  useTitleBarColors();
 
   useEffect(() => {
     if (publicSettings?.directMessagesEnabled === false && dmsOpen) {
