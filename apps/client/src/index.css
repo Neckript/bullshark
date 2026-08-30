@@ -805,3 +805,21 @@ body,
     box-shadow: 0 0 0 3px var(--speaking);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Zone de glissement de la fenêtre desktop.
+
+   Le shell Electron ouvre la fenêtre sans cadre : c'est la page qui doit dire
+   par où on attrape la fenêtre. Ces deux classes ne sont posées que lorsque
+   `window.bullshark?.isDesktop` est vrai, donc jamais dans un navigateur.
+
+   Spec : docs/superpowers/specs/2026-08-28-window-chrome-design.md (dépôt
+   bullshark-desktop)
+   -------------------------------------------------------------------------- */
+.app-drag {
+  -webkit-app-region: drag;
+}
+
+.app-no-drag {
+  -webkit-app-region: no-drag;
+}
