@@ -1,4 +1,4 @@
-import { setIsAutoConnecting } from '@/features/app/actions';
+import { fetchServerInfo, setIsAutoConnecting } from '@/features/app/actions';
 import { useIsAppLoading, useIsPluginsLoading } from '@/features/app/hooks';
 import { connect, setDisconnectInfo } from '@/features/server/actions';
 import { useDisconnectInfo, useIsConnected } from '@/features/server/hooks';
@@ -13,6 +13,7 @@ import {
 } from '@/helpers/storage';
 import { DisconnectCode } from '@sharkord/shared';
 import { memo, useEffect, useRef } from 'react';
+import { decideAfterConnectFailure } from './auto-login-policy';
 
 // delays between reconnection attempts, in milliseconds - the length of the
 // array is also the number of attempts we make before giving up
@@ -25,14 +26,11 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const isSessionRefused = (code: number | undefined) =>
   code === DisconnectCode.KICKED || code === DisconnectCode.BANNED;
 
-// The server rejected the token itself (expired, rotated server secret), so no
-// number of retries will make it work.
-const isAuthenticationError = (error: unknown) =>
-  typeof error === 'object' &&
-  error !== null &&
-  'data' in error &&
-  typeof (error as { data?: { code?: string } }).data?.code === 'string' &&
-  (error as { data: { code: string } }).data.code === 'UNAUTHORIZED';
+// /info is public and needs no session, so it answers whenever the server is
+// up. That is the only signal separating "the server refused our token" from
+// "the server is not there right now" - the connection error itself is
+// identical in both cases.
+const isServerReachable = async () => Boolean(await fetchServerInfo());
 
 const AutoLoginController = memo(() => {
   const isConnected = useIsConnected();
@@ -95,7 +93,12 @@ const AutoLoginController = memo(() => {
 
           return;
         } catch (error) {
-          if (isAuthenticationError(error)) {
+          const decision = decideAfterConnectFailure(
+            error,
+            await isServerReachable()
+          );
+
+          if (decision === 'forget') {
             forgetSession();
 
             return;
