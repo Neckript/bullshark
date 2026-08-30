@@ -121,6 +121,8 @@ const FullScreenImage = memo(
       };
     }, [open, onCloseClick, applyTransform]);
 
+    const isDesktopShell = Boolean(window.bullshark?.isDesktop);
+
     const onClickOutside = useCallback(() => {
       if (!draggingRef.current) {
         onCloseClick();
@@ -151,7 +153,13 @@ const FullScreenImage = memo(
               className={cn(
                 'fixed inset-0 flex justify-center items-center backdrop-blur-sm bg-black/30 z-50 transition-opacity duration-300',
                 visible ? 'opacity-100' : 'opacity-0',
-                open ? 'pointer-events-auto' : 'pointer-events-none'
+                open ? 'pointer-events-auto' : 'pointer-events-none',
+                // Cette surface couvre la barre du haut, donc sa zone de
+                // glissement. Ce qui est peint au-dessus ne perce pas le trou :
+                // sans `no-drag`, le haut de la visionneuse serait mort, boutons
+                // comme deplacement de l'image. C'est une vue transitoire, la
+                // marquer entierement est sans consequence.
+                isDesktopShell && 'app-no-drag'
               )}
               onClick={onClickOutside}
             >
@@ -169,7 +177,14 @@ const FullScreenImage = memo(
                   e.stopPropagation()
                 }
               />
-              <div className="flex gap-2 absolute top-2 right-2 z-50">
+              <div
+                className={cn(
+                  'flex gap-2 absolute right-2 z-50',
+                  // Windows peint ses boutons PAR-DESSUS la page : sans cette
+                  // descente, le lien et la croix seraient recouverts par eux.
+                  isDesktopShell ? 'top-14' : 'top-2'
+                )}
+              >
                 <IconButton icon={Link} variant="ghost" onClick={onCopyLink} />
                 <IconButton onClick={onCloseClick} icon={X} variant="ghost" />
               </div>
