@@ -40,7 +40,7 @@ describe('/login', () => {
     const data: any = await response.json();
 
     expect(data).toHaveProperty('errors');
-    expect(data.errors).toHaveProperty('password', 'Invalid password');
+    expect(data.errors).toHaveProperty('identity', 'Invalid credentials');
   });
 
   test('should auto-register new user when allowNewUsers is true', async () => {
@@ -126,7 +126,40 @@ describe('/login', () => {
     const data: any = await response.json();
 
     expect(data).toHaveProperty('errors');
-    expect(data.errors).toHaveProperty('identity', 'Invalid invite code');
+    expect(data.errors).toHaveProperty('identity', 'Invalid credentials');
+  });
+
+  test('unknown identity and wrong password on an existing identity render the same error', async () => {
+    await tdb.update(settings).set({ allowNewUsers: false });
+
+    const unknownResponse = await login('nosuchidentity', 'password123');
+    const wrongPasswordResponse = await login('testowner', 'wrongpassword');
+
+    expect(unknownResponse.status).toBe(wrongPasswordResponse.status);
+
+    const unknownData: any = await unknownResponse.json();
+    const wrongPasswordData: any = await wrongPasswordResponse.json();
+
+    expect(unknownData.errors).toEqual(wrongPasswordData.errors);
+  });
+
+  test('a banned account is indistinguishable from a non-existent one when the password is wrong', async () => {
+    await tdb
+      .update(users)
+      .set({ banned: true, banReason: 'Test ban reason' })
+      .where(eq(users.identity, 'testuser'));
+
+    await tdb.update(settings).set({ allowNewUsers: false });
+
+    const bannedResponse = await login('testuser', 'wrongpassword');
+    const unknownResponse = await login('nosuchidentity', 'password123');
+
+    expect(bannedResponse.status).toBe(unknownResponse.status);
+
+    const bannedData: any = await bannedResponse.json();
+    const unknownData: any = await unknownResponse.json();
+
+    expect(bannedData.errors).toEqual(unknownData.errors);
   });
 
   test('should allow registration with valid invite when allowNewUsers is false', async () => {
