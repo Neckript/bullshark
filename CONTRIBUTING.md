@@ -7,11 +7,11 @@ Avant tout — merci d'être là. Bullshark existe parce que des gens comme toi 
 
 ## Before anything else / Avant toute chose
 
-Bullshark is a **community-driven fork** of [Bullshark](https://github.com/Bullshark/bullshark), focused on gaming communities and digital sovereignty. We are not trying to clone Discord feature-for-feature. We are building something focused, reliable, and genuinely free.
+Bullshark is a **community-driven fork** of [Sharkord](https://github.com/Sharkord/sharkord), focused on gaming communities and digital sovereignty. We are not trying to clone Discord feature-for-feature. We are building something focused, reliable, and genuinely free.
 
-Bullshark est un **fork communautaire** de [Bullshark](https://github.com/Bullshark/bullshark), orienté communautés gaming et souveraineté numérique. On n'essaie pas de cloner Discord fonctionnalité par fonctionnalité. On construit quelque chose de ciblé, fiable et vraiment libre.
+Bullshark est un **fork communautaire** de [Sharkord](https://github.com/Sharkord/sharkord), orienté communautés gaming et souveraineté numérique. On n'essaie pas de cloner Discord fonctionnalité par fonctionnalité. On construit quelque chose de ciblé, fiable et vraiment libre.
 
-> 💙 Support the original Bullshark creator: [ko-fi.com/diogomartino](https://ko-fi.com/B0B71U3476)
+> 💙 Support the original Sharkord creator: [ko-fi.com/diogomartino](https://ko-fi.com/B0B71U3476)
 
 ---
 

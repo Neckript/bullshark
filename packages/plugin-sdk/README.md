@@ -1,3 +1,3 @@
 # Bullshark Plugin SDK
 
-For docs, see [docs](https://bullshark.com/docs/plugins/overview).
+For docs, see [docs](https://codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/overview.md).

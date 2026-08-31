@@ -31,5 +31,5 @@ jobs:
           labels: |
             org.opencontainers.image.title=Bullshark
             org.opencontainers.image.description=Bullshark Server (dev)
-            org.opencontainers.image.source=https://github.com/Bullshark/bullshark
+            org.opencontainers.image.source=https://codeberg.org/The_Neckript/bullshark
             org.opencontainers.image.revision=${{ github.sha }}

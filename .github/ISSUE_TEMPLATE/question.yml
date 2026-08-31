@@ -10,7 +10,7 @@ body:
       value: |
         Please search for existing questions before submitting a new one. It's possible your question has already been answered in the documentation or in a previous issue.
 
-         Check [Common Questions](https://bullshark.com/docs/common-questions) for answers to frequently asked questions.
+         Check the [project repository](https://codeberg.org/The_Neckript/bullshark) for existing discussions and answers to frequently asked questions.
 
   - type: textarea
     id: question
