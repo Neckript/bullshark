@@ -3,7 +3,10 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
-import { migrateLegacyDataDirectory } from '../data-dir-migration';
+import {
+  assertDataDirNotShadowedByVolume,
+  migrateLegacyDataDirectory
+} from '../data-dir-migration';
 
 const createdDirs: string[] = [];
 
@@ -75,5 +78,48 @@ describe('migrateLegacyDataDirectory', () => {
 
     await expect(fs.stat(legacyDir)).rejects.toThrow();
     await expect(fs.stat(currentDir)).rejects.toThrow();
+  });
+});
+
+describe('assertDataDirNotShadowedByVolume', () => {
+  test('does not throw when the current directory already has data', async () => {
+    const { legacyDir, currentDir } = makeDirPair();
+
+    await fs.mkdir(currentDir, { recursive: true });
+    await fs.writeFile(path.join(currentDir, 'db.sqlite'), 'current-data');
+
+    await expect(
+      assertDataDirNotShadowedByVolume(legacyDir, currentDir, async () => false)
+    ).resolves.toBeUndefined();
+  });
+
+  test('does not throw when the legacy directory is empty or absent', async () => {
+    const { legacyDir, currentDir } = makeDirPair();
+
+    await expect(
+      assertDataDirNotShadowedByVolume(legacyDir, currentDir, async () => false)
+    ).resolves.toBeUndefined();
+  });
+
+  test('does not throw when the legacy directory is writable', async () => {
+    const { legacyDir, currentDir } = makeDirPair();
+
+    await fs.mkdir(legacyDir, { recursive: true });
+    await fs.writeFile(path.join(legacyDir, 'db.sqlite'), 'legacy-data');
+
+    await expect(
+      assertDataDirNotShadowedByVolume(legacyDir, currentDir, async () => true)
+    ).resolves.toBeUndefined();
+  });
+
+  test('throws a clear error for an empty current dir shadowing a non-writable legacy one', async () => {
+    const { legacyDir, currentDir } = makeDirPair();
+
+    await fs.mkdir(legacyDir, { recursive: true });
+    await fs.writeFile(path.join(legacyDir, 'db.sqlite'), 'legacy-data');
+
+    await expect(
+      assertDataDirNotShadowedByVolume(legacyDir, currentDir, async () => false)
+    ).rejects.toThrow(/volume/i);
   });
 });

@@ -1,5 +1,8 @@
 import path from 'path';
-import { migrateLegacyDataDirectory } from './data-dir-migration';
+import {
+  assertDataDirNotShadowedByVolume,
+  migrateLegacyDataDirectory
+} from './data-dir-migration';
 import { ensureDir } from './fs';
 import * as serverPaths from './paths';
 
@@ -13,6 +16,11 @@ const ensureServerDirs = async () => {
 
   if (legacyDataDirCandidate) {
     await migrateLegacyDataDirectory(
+      legacyDataDirCandidate,
+      serverPaths.DATA_PATH
+    );
+
+    await assertDataDirNotShadowedByVolume(
       legacyDataDirCandidate,
       serverPaths.DATA_PATH
     );

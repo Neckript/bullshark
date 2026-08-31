@@ -157,3 +157,46 @@ base de données **additive** (elle ajoute seulement une colonne et la remplit).
 La mise à jour est sûre sur une base peuplée : les données existantes sont
 intactes, et tout token owner imprimé auparavant reste valide jusqu'à ce que tu le
 régénères.
+
+### Data directory rename: sharkord → bullshark / Renommage du répertoire de données : sharkord → bullshark
+
+**EN** — This release moves the server's data directory from `.../sharkord` to
+`.../bullshark`. On the native binary and on a Docker volume mounted on the
+**parent** directory (`/home/bun/.config`), the server migrates it for you on
+first boot — no action needed.
+
+**Docker — check your volume before upgrading.** If your `docker-compose.yml` (or
+`docker run`) mounts a volume **directly on** `/home/bun/.config/sharkord`, change
+it to `/home/bun/.config/bullshark` **before** starting the new container. Left
+as-is, the server refuses to start with an explicit error rather than silently
+losing data — but fixing the volume target first avoids the restart:
+
+```
+Refusing to start: "/home/bun/.config/bullshark" is empty but
+"/home/bun/.config/sharkord" still holds data and can't be written to. This is
+the signature of a Docker volume mounted directly on the old data directory.
+Check your docker-compose.yml: if it mounts a volume on
+"/home/bun/.config/sharkord", point it at "/home/bun/.config/bullshark" instead,
+then restart.
+```
+
+**FR** — Cette version déplace le répertoire de données du serveur de
+`.../sharkord` vers `.../bullshark`. Sur le binaire natif et sur un volume Docker
+monté sur le répertoire **parent** (`/home/bun/.config`), le serveur le migre tout
+seul au premier démarrage — aucune action requise.
+
+**Docker — vérifie ton volume avant de monter en version.** Si ton
+`docker-compose.yml` (ou `docker run`) monte un volume **directement sur**
+`/home/bun/.config/sharkord`, change-le pour `/home/bun/.config/bullshark`
+**avant** de démarrer le nouveau conteneur. Laissé tel quel, le serveur refuse de
+démarrer avec une erreur explicite plutôt que de perdre des données en silence —
+mais corriger la cible du volume en amont évite ce redémarrage :
+
+```
+Refusing to start: "/home/bun/.config/bullshark" is empty but
+"/home/bun/.config/sharkord" still holds data and can't be written to. This is
+the signature of a Docker volume mounted directly on the old data directory.
+Check your docker-compose.yml: if it mounts a volume on
+"/home/bun/.config/sharkord", point it at "/home/bun/.config/bullshark" instead,
+then restart.
+```
