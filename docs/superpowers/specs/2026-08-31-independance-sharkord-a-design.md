@@ -1,147 +1,158 @@
-# Chantier A — Couper le cordon réseau avec Sharkord
+# Chantier A — Effacer Sharkord
 
-Premier des trois chantiers qui rendent Bullshark indépendant de Sharkord, dont
-il est un fork (point de fork : `d8def12`, 2026-05-22, Sharkord v0.0.22).
+Bullshark est un fork de Sharkord (point de fork `d8def12`, 2026-05-22, Sharkord
+v0.0.22). Ce chantier supprime toute trace de Sharkord : les dépendances réseau,
+les identifiants, les chemins, les clés de stockage et les liens.
 
-- **Chantier A (cette spec)** — supprimer toute dépendance réseau à
-  l'infrastructure Sharkord, et reprendre le correctif de sécurité amont.
-  **Aucun renommage**, pour que rapatrier de l'amont reste possible pendant ce
-  chantier.
-- **Chantier B (à venir)** — le renommage : `@sharkord/*` → `@bullshark/*`,
-  globales `window.__SHARKORD_*`, variables `SHARKORD_*`, clés de stockage,
-  répertoire de configuration, noms des binaires.
-- **Chantier C (à venir)** — la chaîne d'outils : forks de `plugin-builder` et
-  `plugin-example`, distribution du SDK, contrat de compatibilité par capacités.
+Un second chantier suivra — **chantier B, la chaîne d'outils de plugins** : forks
+de `plugin-builder` et `plugin-example`, distribution du SDK, et contrat de
+compatibilité par capacités déclarées. Il est séparé parce qu'il crée du code
+neuf dans de nouveaux dépôts, là où celui-ci ne fait que transformer l'existant.
 
 ---
 
 ## Le problème
 
-Une revue du code menée le 2026-08-31 a établi trois faits vérifiés.
+Une revue du code menée le 2026-08-31 a établi cinq faits vérifiés.
 
 **1. La marketplace repose entièrement sur Sharkord.**
 `packages/shared/src/plugins/marketplace.ts:4` code en dur
 `https://raw.githubusercontent.com/Sharkord/plugins/refs/heads/main/plugins.json`.
 Cette URL est consommée aux deux bouts : le client pour afficher le catalogue
 (`marketplace/hooks.ts:23`) et le serveur pour résoudre la version à installer
-(`helpers/marketplace.ts:12`). Le badge « vérifié » affiché à l'utilisateur est
+(`helpers/marketplace.ts:12`). Le badge « vérifié » montré à l'utilisateur est
 le champ `verified` de leur JSON : c'est Sharkord qui décide de ce que les
-utilisateurs de Bullshark voient comme sûr. Si leur dépôt change de forme ou
-disparaît, la marketplace tombe sans repli.
+utilisateurs de Bullshark voient comme sûr.
 
 **2. Le JSON du registre n'est jamais validé.** Les deux consommateurs font
 `(await response.json()) as TMarketplaceEntry[]` — un transtypage, pas une
-vérification. Un registre malformé casse l'interface, et rien ne garantit la
-forme des champs qui alimentent ensuite le téléchargement. Le `checksum` est
-bien vérifié après téléchargement (`helpers/downloads.ts:78`), mais il provient
-du registre lui-même : qui contrôle le registre contrôle les deux.
+vérification. Le `checksum` est bien contrôlé après téléchargement
+(`helpers/downloads.ts:78`), mais il provient du registre lui-même : qui
+contrôle le registre contrôle les deux.
 
 **3. Chaque navigateur d'utilisateur appelle GitHub directement.** Ouvrir
 l'onglet marketplace fait partir une requête depuis le poste de l'utilisateur
-vers `raw.githubusercontent.com`. Cela révèle à un tiers l'adresse IP de chaque
-utilisateur de chaque serveur Bullshark, sans que personne l'ait choisi.
+vers `raw.githubusercontent.com`, révélant son adresse IP à un tiers.
 
 **4. Une énumération de comptes est ouverte sur l'écran de connexion.**
-`apps/server/src/http/login.ts` renvoie une erreur sur le champ `password`
-(`Invalid password`, ligne 260) quand l'identité existe, et une erreur portant
-sur le champ `identity` quand elle n'existe pas (ligne 168). Le temps de réponse
-diffère aussi : le chemin « identité inconnue » ne fait aucun hachage argon2. Un
-attaquant énumère donc les comptes existants. L'amont a corrigé cela le
-2026-07-04 (`c786521`) ; Bullshark ne l'a jamais repris.
+`apps/server/src/http/login.ts` renvoie `Invalid password` sur le champ
+`password` (ligne 260) quand l'identité existe, et une erreur sur le champ
+`identity` quand elle n'existe pas (ligne 168). Le temps de réponse diffère
+aussi : le chemin « identité inconnue » ne fait aucun hachage argon2. L'amont a
+corrigé cela le 2026-07-04 (`c786521`) ; Bullshark ne l'a jamais repris.
 
-Par ailleurs, `apps/client/src/screens/connect/index.tsx`,
-`global-error-boundary.tsx`, `plugin-install-confirm/index.tsx` et
-`packages/plugin-sdk/README.md` renvoient les utilisateurs vers
-`sharkord.com` ou `github.com/Sharkord/sharkord` : un utilisateur de Bullshark
-qui clique sur « signaler un problème » ouvre une issue chez un autre projet.
+**5. Le nom Sharkord est partout.** 510 imports `@sharkord/shared`, 181
+`@sharkord/ui`, 16 variables d'environnement, 7 globales de navigateur, 36 clés
+de stockage, les répertoires de données, les noms des binaires compilés, et des
+liens qui envoient les utilisateurs de Bullshark ouvrir des issues chez un autre
+projet.
 
 ---
 
 ## Objectifs
 
-À la fin de ce chantier :
+1. Le mot `sharkord` n'apparaît plus nulle part dans le dépôt, à une exception
+   près, ci-dessous.
+2. Aucun code de Bullshark n'appelle une infrastructure Sharkord à l'exécution.
+3. Le navigateur de l'utilisateur ne contacte plus l'hôte du registre : le
+   serveur seul le fait, et valide ce qu'il reçoit.
+4. L'énumération de comptes est fermée, avec des tests.
+5. **Aucune donnée n'est perdue** : ni la configuration des serveurs déployés,
+   ni les préférences des utilisateurs dans leur navigateur.
 
-1. Aucun code de Bullshark n'appelle une infrastructure Sharkord à l'exécution.
-2. L'URL du registre est une donnée de configuration du serveur, pas une
-   constante ; sa valeur par défaut est un dépôt Bullshark.
-3. Le navigateur de l'utilisateur ne contacte plus jamais l'hôte du registre :
-   le serveur seul le fait.
-4. Le contenu du registre est validé avant d'être utilisé.
-5. Un registre vide, injoignable ou malformé dégrade proprement — catalogue vide
-   avec un message clair, jamais d'écran cassé.
-6. L'énumération de comptes par l'écran de connexion est fermée, avec des tests.
-7. Les liens visibles par l'utilisateur pointent vers Bullshark.
-8. **Aucun identifiant `sharkord` n'est renommé** : ni les paquets, ni les
-   globales, ni les variables d'environnement, ni les chemins.
+### La seule exception, et elle n'est pas négociable
 
-### Hors périmètre, explicitement
+`LICENSE` porte `Copyright (c) 2025 Sharkord Team`. **Cette ligne reste.** La
+licence MIT sous laquelle Bullshark a hérité de ce code exige que la mention de
+copyright soit conservée dans toute copie. La retirer rendrait la distribution
+de Bullshark illicite. L'indépendance technique est totale ; l'attribution
+légale ne s'efface pas.
 
-- Tout renommage (chantier B) et toute migration de données associée.
-- La chaîne d'outils de construction de plugins (chantier C).
-- Le contrat de compatibilité par capacités (chantier C). Ce chantier laisse
-  `PLUGIN_SDK_VERSION = 1` tel quel.
+C'est la seule occurrence de « Sharkord » qui subsistera dans le dépôt.
+
+### Hors périmètre
+
+- La chaîne d'outils de plugins (chantier B).
+- Le contrat de compatibilité par capacités (chantier B) : ce chantier laisse
+  `PLUGIN_SDK_VERSION = 1`.
 - Les 25 autres commits amont non repris. Seul le correctif d'énumération est
-  rapatrié ici, parce qu'il concerne un serveur en production.
-- La ligne `Copyright (c) 2025 Sharkord Team` du `LICENSE` : elle **reste**. La
-  licence MIT l'exige, et l'indépendance technique n'efface pas l'attribution.
+  rapatrié, parce qu'il concerne un serveur en production.
 
 ---
 
 ## Architecture
 
-### A1 — Le registre devient une ressource du serveur
+### S1 — Le correctif de sécurité, en premier
 
-Aujourd'hui, client et serveur récupèrent le registre chacun de leur côté, avec
-deux implémentations distinctes de la même chose. Le client passe à une
-procédure tRPC ; le serveur devient le seul à parler à l'hôte du registre.
+**Cette étape passe avant le renommage, et l'ordre n'est pas négociable.** Une
+fois `@sharkord/*` renommé, tout rapatriement depuis l'amont devient un exercice
+de résolution de conflits sur des centaines de fichiers. Ce correctif se reprend
+proprement aujourd'hui ; demain, non.
 
-Nouveau module `apps/server/src/helpers/marketplace.ts`, réécrit :
+Reprise adaptée de `c786521` — reprise manuelle et non `cherry-pick`, le fichier
+ayant divergé (Bullshark porte un contrôle « identité réservée » absent de
+l'amont). Trois changements dans `apps/server/src/http/login.ts` :
+
+1. Un message unique `Invalid credentials`, porté par le champ `identity`, pour
+   « identité inconnue » comme pour « mot de passe faux ». Aujourd'hui les deux
+   diffèrent par le message **et** par le champ visé.
+2. Sur le chemin « identité inconnue », vérifier argon2 contre un condensat
+   factice calculé une fois et mémorisé, pour que les deux chemins prennent le
+   même temps. Sans cela le message unique ne sert à rien : le chronomètre
+   répond à sa place.
+3. Déplacer le contrôle `existingUser.banned` **après** la vérification du mot de
+   passe. Il est aujourd'hui avant (ligne 217) : un attaquant qui soumet un mot
+   de passe quelconque distingue « banni » de « inexistant », ce qui rétablit à
+   lui seul l'énumération que les deux premiers points ferment.
+
+Le message « identité réservée » (ligne 129) reste : il concerne des noms
+réservés connus de tous et ne révèle l'existence d'aucun compte.
+
+La tentative sur identité inconnue est journalisée avec l'IP, comme l'amont.
+
+### S2 — Le registre devient une ressource du serveur
+
+Client et serveur récupèrent aujourd'hui le registre chacun de leur côté, avec
+deux implémentations de la même chose. Le client passe à une procédure tRPC ; le
+serveur devient le seul à parler à l'hôte du registre.
+
+`apps/server/src/helpers/marketplace.ts` est réécrit :
 
 ```
-fetchMarketplaceRegistry(): Promise<TMarketplaceEntry[]>
+fetchMarketplaceRegistry(options?: { refresh?: boolean })
   - lit l'URL depuis la configuration
   - URL vide  -> rend [] sans requête (marketplace désactivée)
-  - requête HTTP ; échec -> lève une erreur explicite
-  - valide le corps avec un schéma zod ; invalide -> lève une erreur explicite
-  - mémorise le résultat pendant 5 minutes
+  - requête HTTP ; échec -> erreur explicite
+  - valide chaque entrée avec zod ; les invalides sont écartées avec un
+    avertissement au journal, les valides sont rendues
+  - un corps qui n'est pas un tableau -> erreur explicite
+  - mémorise le résultat 5 minutes ; refresh:true ignore le cache
 
-fetchMarketplaceVersion(pluginId, version)  // signature inchangée
-  - s'appuie désormais sur fetchMarketplaceRegistry()
+fetchMarketplaceVersion(pluginId, version)   // signature inchangée
+  - s'appuie sur fetchMarketplaceRegistry()
 ```
 
-Le cache de 5 minutes existe parce que le client refait la requête à chaque
-montage de l'onglet, et que `install` et `update` la refont encore. Sans lui, on
-frappe l'hôte du registre plusieurs fois pour un seul geste de l'utilisateur.
+Le cache existe parce que le client refait la requête à chaque montage de
+l'onglet, et que `install` et `update` la refont encore.
 
-Nouvelle procédure `plugins.getMarketplace`, dans
+Nouvelle procédure `plugins.getMarketplace` dans
 `apps/server/src/routers/plugins/get-marketplace.ts`, calquée sur
-`install-plugin.ts` : `protectedProcedure`, `ctx.needsPermission(Permission.MANAGE_PLUGINS)`,
+`install-plugin.ts` : `protectedProcedure`,
+`ctx.needsPermission(Permission.MANAGE_PLUGINS)`, entrée `{ refresh?: boolean }`,
 rend `TMarketplaceEntry[]`. La marketplace est déjà une vue d'administration :
-elle n'élargit aucun accès.
-
-Elle prend une seule entrée, `{ refresh?: boolean }`. À `true`, elle ignore le
-cache et le remplit à nouveau — c'est ce que le bouton « rafraîchir » existant
-de l'interface envoie. C'est le seul moyen de vider le cache : rien d'autre ne
-l'expose.
-
-Côté client, `marketplace/hooks.ts` remplace son `fetch` par cette requête tRPC.
-Le tri des versions et la recherche restent côté client, inchangés.
-
-### A2 — Le schéma de validation
+aucun accès n'est élargi. Le bouton « rafraîchir » existant envoie
+`refresh: true` — c'est le seul moyen de vider le cache.
 
 Dans `packages/shared/src/plugins/marketplace.ts`, les types `TMarketplace*`
-deviennent des schémas zod, et les types en sont dérivés. Le paquet dépend déjà
-de zod (`packages/shared` l'utilise dans `plugins/index.ts`).
+deviennent des schémas zod dont les types sont dérivés (le paquet utilise déjà
+zod dans `plugins/index.ts`). La constante `MARKETPLACE_REGISTRY_URL` disparaît :
+l'URL n'est plus une constante partagée mais une donnée de configuration du
+serveur.
 
-Une entrée invalide ne fait pas tomber tout le registre : les entrées sont
-validées une par une, les invalides sont écartées avec un avertissement dans le
-journal du serveur, et le reste s'affiche. Un registre entièrement illisible
-(JSON invalide, ou pas un tableau) est une erreur, et l'interface montre son
-message de repli existant `marketplaceFetchError`.
+Côté client, `marketplace/hooks.ts` remplace son `fetch` par la requête tRPC. Le
+tri des versions et la recherche restent côté client, inchangés.
 
-### A3 — L'URL devient configurable
-
-Ajout dans `zConfig` (`apps/server/src/config.ts`) :
+**Configuration.** Ajout dans `zConfig` (`apps/server/src/config.ts`) :
 
 ```
 plugins: z.object({
@@ -149,147 +160,192 @@ plugins: z.object({
 })
 ```
 
-Valeur par défaut :
-`https://codeberg.org/The_Neckript/bullshark-plugins/raw/branch/main/plugins.json`
-(forme d'URL brute de Codeberg vérifiée : HTTP 200, `text/plain`).
+Défaut : `https://codeberg.org/The_Neckript/bullshark-plugins/raw/branch/main/plugins.json`
+(forme d'URL brute de Codeberg vérifiée : HTTP 200, `text/plain`). Surcharge
+d'environnement `BULLSHARK_MARKETPLACE_REGISTRY_URL`.
 
-Surcharge d'environnement : `BULLSHARK_MARKETPLACE_REGISTRY_URL`, ajoutée à la
-table de `applyEnvOverrides`. **Ce nouveau nom porte déjà le préfixe Bullshark**
-alors que les six variables existantes gardent `SHARKORD_` : une variable neuve
-n'a aucune compatibilité à préserver, et la renommer plus tard au chantier B
-coûterait une migration pour rien. Le mélange est temporaire et assumé.
+Le dépôt `bullshark-plugins` est créé par l'utilisateur sur Codeberg et GitHub.
+Il contient `plugins.json` valant `[]` et un `README.md` décrivant le format
+d'une entrée. Le format reste celui d'aujourd'hui (`plugin` + `versions[]`),
+pour que le chantier B n'ait pas à le redéfinir.
 
-Un `marketplaceRegistryUrl` vide désactive la marketplace : `getMarketplace`
-rend `[]`, et l'onglet affiche l'état vide existant. C'est l'état attendu tant
-que le dépôt de registre n'a pas de contenu.
+Tant que ce fichier vaut `[]`, la marketplace s'affiche vide. C'est l'état
+attendu jusqu'au chantier B.
 
-### A4 — Le dépôt de registre
+### S3 — Le renommage, par catégorie
 
-Nouveau dépôt `bullshark-plugins`, sur Codeberg (`The_Neckript/bullshark-plugins`)
-avec miroir GitHub, contenant :
+| Catégorie | Occurrences | De → vers |
+| --- | --- | --- |
+| Paquets de l'espace de travail | ~700 | `@sharkord/{shared,ui,plugin-sdk,server,scripts,e2e}` → `@bullshark/…` |
+| Globales du navigateur (ABI) | 7 | `window.__SHARKORD_*` → `window.__BULLSHARK_*` |
+| Variables d'environnement | 16 | `SHARKORD_*` → `BULLSHARK_*` |
+| Clés de stockage navigateur | 36 | `sharkord-*` → `bullshark-*` |
+| Noms de travailleurs audio | 2 | `sharkord-noise-gate`, `sharkord-audio-meter` |
+| Répertoire de données | 3 | `…/sharkord` → `…/bullshark` |
+| Binaires compilés | 5 | `sharkord-linux-x64`… → `bullshark-…` |
+| Identifiants internes | ~16 | `diskSharkordUsed`, `sharkordUsedSpace`, `TSharkordState` |
+| Action CI | 1 dossier | `.github/actions/build-sharkord` → `build-bullshark` |
+| Liens et documentation | ~25 | voir S6 |
 
-- `plugins.json` — un tableau JSON vide au départ : `[]`
-- `README.md` — le format d'une entrée et la marche à suivre pour proposer un
-  plugin
+Le renommage des paquets et des identifiants internes est mécanique et sans
+risque : le typage et les tests le prouvent. **Les quatre catégories qui
+demandent autre chose qu'un remplacement de texte sont traitées ci-dessous.**
 
-Le format d'entrée reste celui d'aujourd'hui (`plugin` + `versions[]`), pour que
-le chantier C n'ait pas à le redéfinir. Les binaires restent hébergés par les
-auteurs, comme aujourd'hui ; le registre ne porte que des métadonnées et des
-empreintes.
+Les globales `window.__SHARKORD_*` sont l'interface binaire des plugins : les
+bundles publiés contiennent ces noms en dur. Les renommer casse tout plugin
+existant. C'est accepté et voulu — le registre Bullshark démarre vide, il n'y a
+aucun plugin à préserver, et le chantier B reconstruit la chaîne d'outils aux
+nouveaux noms.
 
-**Ce dépôt est créé à la main par l'utilisateur**, pas par le code : il faut un
-compte Codeberg. La spec fournit le contenu exact des deux fichiers.
+### S4 — Migration des données du serveur
 
-### A5 — Les liens visibles
+`apps/server/src/helpers/paths.ts` calcule le répertoire de données. En
+production c'est `getAppDataPath()/sharkord` ; il devient
+`getAppDataPath()/bullshark`.
+
+Au démarrage, avant toute lecture : si le nouveau répertoire n'existe pas et que
+l'ancien existe, renommer l'ancien en nouveau, et le journaliser. Un seul essai,
+jamais de fusion — si les deux existent, le nouveau fait autorité et l'ancien est
+laissé intact, à charge de l'administrateur de trancher.
+
+`SHARKORD_DATA_PATH` devient `BULLSHARK_DATA_PATH`. L'ancienne variable est
+encore lue **pendant cette version seulement**, avec un avertissement au
+journal ; sans cela, tout déploiement qui la définit se réveillerait sur une base
+vide.
+
+### S5 — Le piège Docker, à ne pas manquer
+
+`Dockerfile:24` crée `/home/bun/.config/sharkord` et `docker-entrypoint.sh:4`
+pose `DATA_DIR="/home/bun/.config/sharkord"`. Les deux deviennent `bullshark`.
+
+**Danger :** si un déploiement monte un volume **sur ce chemin précis**, la
+migration automatique de S4 déplacerait les données de l'intérieur du volume
+vers un répertoire du conteneur, qui disparaît au redémarrage suivant. Les
+données seraient perdues sans erreur visible.
+
+Le chantier ne peut pas deviner la forme du `docker-compose.yml` de chaque
+déploiement. Il fournit donc :
+
+- la migration automatique, qui couvre le cas d'un volume monté sur le parent
+  (`/home/bun/.config`) — le cas sain ;
+- une note de version explicite : **vérifier son `docker-compose.yml` avant de
+  monter en version**, et si le volume vise `/home/bun/.config/sharkord`,
+  changer la cible en `/home/bun/.config/bullshark` **avant** de démarrer le
+  nouveau conteneur ;
+- un refus de démarrer avec un message clair si le nouveau répertoire est vide
+  alors qu'un ancien répertoire non vide existe **et** n'est pas inscriptible —
+  c'est la signature exacte d'un volume mal ciblé.
+
+### S6 — Migration du stockage navigateur
+
+36 clés `sharkord-*` deviennent `bullshark-*`. Sans migration, chaque
+utilisateur perd ses préférences et sa session au premier chargement.
+
+Au démarrage du client, une fois et avant toute lecture : pour chaque clé de
+`LocalStorageKey`, si la clé `bullshark-*` est absente et que la `sharkord-*`
+existe, recopier la valeur puis supprimer l'ancienne. `VITE_UI_THEME` n'est pas
+concernée, elle n'a jamais porté le préfixe.
+
+La migration est idempotente et se fait en une passe. Elle est écrite dans un
+module à part avec ses propres tests, pas dispersée dans les appelants.
+
+### S7 — Liens et documentation
 
 | Fichier | Aujourd'hui | Devient |
 | --- | --- | --- |
-| `apps/client/src/screens/connect/index.tsx` | `github.com/Sharkord/sharkord` | `codeberg.org/The_Neckript/bullshark` |
-| `apps/client/src/components/error-boundary/global-error-boundary.tsx` | `github.com/Sharkord/sharkord/issues` | `codeberg.org/The_Neckript/bullshark/issues` |
-| `apps/client/src/components/dialogs/plugin-install-confirm/index.tsx` | `sharkord.com/docs/plugins/security` | `codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/security.md` |
-| `packages/plugin-sdk/README.md` | `sharkord.com/docs/plugins/overview` | `codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/overview.md` |
-| `.github/ISSUE_TEMPLATE/question.yml` | `sharkord.com/docs/common-questions` | `codeberg.org/The_Neckript/bullshark` (le dépôt ; Bullshark n'a pas de FAQ, et en inventer une n'est pas le sujet de ce chantier) |
+| `screens/connect/index.tsx` | `github.com/Sharkord/sharkord` | `codeberg.org/The_Neckript/bullshark` |
+| `error-boundary/global-error-boundary.tsx` | `…/sharkord/issues` | `codeberg.org/The_Neckript/bullshark/issues` |
+| `dialogs/plugin-install-confirm/index.tsx` | `sharkord.com/docs/plugins/security` | `codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/security.md` |
+| `packages/plugin-sdk/README.md` | `sharkord.com/docs/plugins/overview` | `…/docs/plugins/overview.md` |
+| `.github/ISSUE_TEMPLATE/question.yml` | `sharkord.com/docs/common-questions` | `codeberg.org/The_Neckript/bullshark` |
+| `README.md`, `CONTRIBUTING.md`, workflows CI | `github.com/Sharkord/sharkord` | dépôt Bullshark |
 
-Bullshark n'a pas de site de documentation. Les deux liens de documentation de
-plugins pointeront vers des fichiers Markdown du dépôt, `docs/plugins/security.md`
-et `docs/plugins/overview.md`, **à écrire dans ce chantier** — courts, mais
-réels : un lien qui promet une page de sécurité et n'en montre aucune est pire
-que pas de lien du tout.
+Bullshark n'a pas de site de documentation. `docs/plugins/security.md` et
+`docs/plugins/overview.md` sont **écrits dans ce chantier** — courts mais réels.
+Un lien qui promet une page de sécurité et n'en montre aucune est pire que pas de
+lien.
 
-Les mentions de `github.com/Sharkord/sharkord` dans `README.md`,
-`CONTRIBUTING.md` et les workflows CI sont de la documentation de projet, pas
-des liens montrés à l'utilisateur : elles sont corrigées aussi, mais elles ne
-portent aucun risque.
+---
 
-### A6 — Le correctif d'énumération
+## Ordre d'exécution
 
-Reprise adaptée de `c786521`. Le fichier de Bullshark a divergé (il porte un
-contrôle « identité réservée » que l'amont n'a pas), donc c'est une reprise
-manuelle, pas un `cherry-pick`.
-
-Trois changements dans `apps/server/src/http/login.ts` :
-
-1. Un message unique `Invalid credentials`, porté par le champ `identity`, pour
-   les deux cas « identité inconnue » et « mot de passe faux ». Aujourd'hui les
-   deux diffèrent par le message **et** par le champ visé.
-2. Sur le chemin « identité inconnue », exécuter une vérification argon2 contre
-   un condensat factice calculé une seule fois et mémorisé, afin que les deux
-   chemins prennent le même temps. Sans cela, le message unique ne sert à rien :
-   le chronomètre répond à sa place.
-3. Déplacer le contrôle `existingUser.banned` **après** la vérification du mot
-   de passe. Aujourd'hui il est avant (ligne 217) : un attaquant qui soumet un
-   mot de passe quelconque distingue « compte banni » de « compte inexistant »,
-   ce qui rétablit l'énumération que les deux premiers points viennent de
-   fermer.
-
-Le message « identité réservée » (ligne 129) reste tel quel : il concerne des
-noms réservés connus de tous, il ne révèle l'existence d'aucun compte.
-
-La tentative sur identité inconnue est journalisée avec l'IP, comme l'amont.
+1. **S1**, le correctif de sécurité, seul et commité seul — pendant que le
+   rapatriement amont est encore possible.
+2. **S2**, le registre. Il touche des fichiers que S3 va renommer ; le faire
+   avant évite de réécrire du code déjà renommé.
+3. **S6** et **S4**, les deux migrations, écrites et testées **avant** le
+   renommage qui les rend nécessaires. Une migration livrée après la rupture
+   qu'elle répare n'a jamais servi à personne.
+4. **S3**, le renommage, catégorie par catégorie, une catégorie par commit.
+5. **S5** et **S7**, Docker et les liens.
+6. La note de version, qui reprend l'avertissement Docker mot pour mot.
 
 ---
 
 ## Tests
 
-Le dépôt teste avec `bun test`. Chaque point ci-dessous est un test qui échoue
-avant le changement.
-
-**Registre (serveur)**
-- une URL vide rend `[]` sans faire aucune requête
-- une réponse HTTP non-OK lève une erreur explicite
-- un corps qui n'est pas un tableau lève une erreur explicite
-- une entrée invalide est écartée, les entrées valides sont rendues
-- deux appels rapprochés ne déclenchent qu'une seule requête HTTP (cache)
-- `fetchMarketplaceVersion` trouve toujours la bonne version via le cache
-
-**Configuration**
-- `BULLSHARK_MARKETPLACE_REGISTRY_URL` prend le pas sur `config.ini`
-- la valeur par défaut est l'URL Codeberg
+Le dépôt teste avec `bun test`. Chaque point est un test qui échoue avant le
+changement.
 
 **Connexion** — en miroir des tests amont, adaptés à notre fichier
-- identité inconnue et mot de passe faux rendent le **même** message sur le
-  **même** champ
+- identité inconnue et mot de passe faux rendent le même message sur le même champ
 - un compte banni ne se distingue pas d'un compte inexistant tant que le mot de
   passe est faux
-- un compte banni avec le **bon** mot de passe rend bien le message de
-  bannissement
+- un compte banni avec le **bon** mot de passe rend bien le message de bannissement
 - les tests existants de `login.test.ts` passent toujours
 
-**Client**
-- le crochet du marketplace passe par tRPC et ne fait plus de `fetch` direct
+**Registre**
+- URL vide → `[]`, aucune requête émise
+- réponse non-OK → erreur explicite
+- corps qui n'est pas un tableau → erreur explicite
+- entrée invalide écartée, entrées valides rendues
+- deux appels rapprochés → une seule requête HTTP
+- `refresh: true` → nouvelle requête
+- `BULLSHARK_MARKETPLACE_REGISTRY_URL` prend le pas sur `config.ini`
+
+**Migration du stockage navigateur**
+- une clé ancienne seule est recopiée puis supprimée
+- une clé nouvelle déjà présente n'est pas écrasée par l'ancienne
+- deux exécutions successives donnent le même état (idempotence)
+- une clé absente des deux côtés ne crée rien
+
+**Migration des données serveur**
+- ancien répertoire seul → renommé, journalisé
+- les deux présents → le nouveau est gardé, l'ancien intact, aucun écrasement
+- aucun des deux → création normale
+- `SHARKORD_DATA_PATH` encore honorée, avec avertissement
+
+**Renommage**
+- `grep -ri sharkord` sur le dépôt ne rend plus que la ligne du `LICENSE`
+- les portes existantes passent : typecheck, lint, tests, build
 
 ---
 
 ## Risques
 
-**Le serveur devient un relais de téléchargement de métadonnées.** C'est voulu,
-mais cela veut dire qu'un serveur Bullshark sans accès sortant n'a plus de
-marketplace du tout, là où auparavant le navigateur de l'utilisateur pouvait y
-arriver seul. C'est le bon compromis : la fuite d'IP de tous les utilisateurs
-vers un tiers est un coût permanent, l'absence de marketplace sur un serveur
-isolé est un cas rare et déjà à moitié cassé (le serveur ne pourrait pas
-télécharger les plugins non plus).
+**La marketplace sera vide.** C'est le choix assumé. Tant que le chantier B n'a
+pas livré la chaîne d'outils, personne ne peut y ajouter quoi que ce soit. Si
+cette période doit durer, mieux vaudra masquer l'onglet que montrer une vitrine
+vide — décision à prendre au chantier B, pas ici.
 
-**Le cache de 5 minutes retarde l'apparition d'un plugin fraîchement publié.**
-Le bouton « rafraîchir » existant vide le cache, ce qui donne une porte de
-sortie immédiate.
+**Aucun plugin existant ne fonctionnera plus.** Conséquence directe du
+renommage de l'ABI. Aucun plugin n'est installé sur le serveur de référence ;
+à vérifier avant de monter en version sur tout autre déploiement.
 
-**La marketplace sera vide après ce chantier.** C'est le choix assumé
-(registre propre, pas de reprise des plugins Sharkord). Tant que le chantier C
-n'a pas livré la chaîne d'outils, personne ne peut y ajouter quoi que ce soit.
-Si cette période doit durer, il vaudra mieux masquer l'onglet plutôt que de
-montrer une vitrine vide — mais c'est une décision d'interface à prendre au
-chantier C, pas ici.
+**Rapatrier de l'amont devient impraticable.** Après ce chantier, un
+`cherry-pick` depuis Sharkord touchera des chemins et des identifiants qui
+n'existent plus. C'est le prix de l'indépendance, accepté. C'est pour cela que
+le correctif de sécurité passe en premier.
 
-**Le correctif de connexion change des messages d'erreur visibles.** Un
-utilisateur qui se trompe de mot de passe verra désormais « Invalid credentials »
-sur le champ identité, plus « Invalid password » sur le champ mot de passe.
-C'est moins précis, et c'est exactement le but.
+**Le serveur devient un relais pour les métadonnées de plugins.** Un serveur
+sans accès sortant n'a plus de marketplace, là où le navigateur pouvait
+auparavant y arriver seul. Le compromis est bon : ce serveur ne pourrait pas
+télécharger les plugins non plus.
 
-Il n'y a **rien à traduire** : ces messages sont des chaînes anglaises produites
-par le serveur (`HttpValidationError`) que le client affiche telles quelles
-(`screens/connect/index.tsx:82` range `data.errors` dans son état, sans passer
-par `t()`). Les sept locales du client ne les couvrent pas aujourd'hui et ne les
-couvriront pas davantage après. C'est une limite existante de l'écran de
-connexion, notée ici pour qu'on ne la redécouvre pas ; la corriger est un autre
+**Les messages d'erreur de connexion changent, et rien ne les traduit.** Ce sont
+des chaînes anglaises produites par le serveur (`HttpValidationError`) que le
+client affiche telles quelles — `screens/connect/index.tsx:82` range
+`data.errors` dans son état sans passer par `t()`. Les sept locales ne les
+couvrent pas aujourd'hui et ne les couvriront pas davantage après. Limite
+existante, notée ici pour qu'on ne la redécouvre pas ; la corriger est un autre
 chantier.
