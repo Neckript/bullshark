@@ -1,4 +1,4 @@
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import { z } from 'zod';
 import { getCategoryPermissions } from '../../db/queries/categories';
 import { protectedProcedure } from '../../utils/trpc';

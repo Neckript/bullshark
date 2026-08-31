@@ -1,4 +1,4 @@
-import { Button, Card, CardContent } from '@sharkord/ui';
+import { Button, Card, CardContent } from '@bullshark/ui';
 import { Upload } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

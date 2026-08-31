@@ -1,5 +1,5 @@
 import { closeThreadSidebar } from '@/features/app/actions';
-import { IconButton } from '@sharkord/ui';
+import { IconButton } from '@bullshark/ui';
 import { MessageSquareText, X } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

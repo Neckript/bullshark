@@ -1,5 +1,5 @@
 import { computePosition } from '@floating-ui/dom';
-import type { TCommandInfo } from '@sharkord/shared';
+import type { TCommandInfo } from '@bullshark/shared';
 import type { Editor } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
 import { CommandList, type CommandListRef } from './command-list';

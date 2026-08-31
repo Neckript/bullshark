@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils';
 import {
   DELETED_USER_IDENTITY_AND_NAME,
   type TJoinedMessage
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { format } from 'date-fns';
 import { memo } from 'react';
 import { areGroupsEqual } from './helpers';

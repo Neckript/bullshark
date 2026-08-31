@@ -1,4 +1,4 @@
-import type { TFile } from '@sharkord/shared';
+import type { TFile } from '@bullshark/shared';
 import { asc, eq, sql, sum } from 'drizzle-orm';
 import { db } from '..';
 import { attachFileToken } from '../../helpers/files-crypto';

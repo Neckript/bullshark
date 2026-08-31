@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in Sharkord. Please provide as much detail as possible to help us identify and fix the issue.
+description: Report a bug in Bullshark. Please provide as much detail as possible to help us identify and fix the issue.
 title: "[Bug]: "
 labels: ["bug"]
 assignees: []
@@ -14,7 +14,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Sharkord Version
+      label: Bullshark Version
       placeholder: e.g. v1.2.3
     validations:
       required: true

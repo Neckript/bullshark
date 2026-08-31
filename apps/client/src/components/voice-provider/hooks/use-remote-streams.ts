@@ -1,5 +1,5 @@
 import type { TRemoteStreams, TRemoteUserStreamKinds } from '@/types';
-import { StreamKind } from '@sharkord/shared';
+import { StreamKind } from '@bullshark/shared';
 import { useCallback, useState } from 'react';
 
 export type TExternalStreamState = {

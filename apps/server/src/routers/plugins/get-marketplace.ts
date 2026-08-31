@@ -1,4 +1,4 @@
-import { Permission, type TMarketplaceEntry } from '@sharkord/shared';
+import { Permission, type TMarketplaceEntry } from '@bullshark/shared';
 import z from 'zod';
 import { fetchMarketplaceRegistry } from '../../helpers/marketplace';
 import { protectedProcedure } from '../../utils/trpc';

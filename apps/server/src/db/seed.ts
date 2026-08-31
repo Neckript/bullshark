@@ -20,7 +20,7 @@ import {
   type TIRole,
   type TISettings,
   type TIUser
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { randomUUIDv7 } from 'bun';
 import chalk from 'chalk';
 import { generateOwnerToken, hashOwnerToken } from '../helpers/owner-token';

@@ -72,7 +72,7 @@ const HotkeysController = memo(() => {
 
     // Global voice hotkeys (Ctrl+Shift+M / Ctrl+Shift+D).
     // The bridge is only set while the user is in a voice channel; if it is
-    // null the shortcuts are silently ignored (issue #3 / Sharkord#678).
+    // null the shortcuts are silently ignored (issue #3 / Bullshark#678).
     if (e.ctrlKey && e.shiftKey) {
       const key = e.key.toLowerCase();
 

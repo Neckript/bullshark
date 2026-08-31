@@ -1,4 +1,4 @@
-import { StreamKind } from '@sharkord/shared';
+import { StreamKind } from '@bullshark/shared';
 import { afterEach, describe, expect, test } from 'bun:test';
 import type { Producer } from 'mediasoup/types';
 import { VoiceRuntime } from '../voice';

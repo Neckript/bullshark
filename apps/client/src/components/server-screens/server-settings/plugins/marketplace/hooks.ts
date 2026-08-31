@@ -1,5 +1,5 @@
 import { getTRPCClient } from '@/lib/trpc';
-import type { TMarketplaceEntry } from '@sharkord/shared';
+import type { TMarketplaceEntry } from '@bullshark/shared';
 import type { TFunction } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 

@@ -1,4 +1,4 @@
-import { MAX_SOUND_NAME_LENGTH, type TJoinedSound } from '@sharkord/shared';
+import { MAX_SOUND_NAME_LENGTH, type TJoinedSound } from '@bullshark/shared';
 import { count, eq } from 'drizzle-orm';
 import { db } from '..';
 import { attachFileToken } from '../../helpers/files-crypto';

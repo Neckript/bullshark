@@ -8,7 +8,7 @@ await loadEmbeds();
 // ----------------------------------------
 import { IS_PRODUCTION, SERVER_VERSION } from './utils/env';
 // ----------------------------------------
-import { ActivityLogType } from '@sharkord/shared';
+import { ActivityLogType } from '@bullshark/shared';
 import chalk from 'chalk';
 import { config, SERVER_PRIVATE_IP } from './config';
 import { loadCrons } from './crons';

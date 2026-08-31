@@ -1,4 +1,4 @@
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import { getUsers } from '../../db/queries/users';
 import { clearFields } from '../../helpers/clear-fields';
 import { protectedProcedure } from '../../utils/trpc';

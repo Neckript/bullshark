@@ -6,7 +6,7 @@ import {
   microphoneDecibelsToPercent
 } from '@/helpers/audio-gate';
 import { cn } from '@/lib/utils';
-import { Slider } from '@sharkord/ui';
+import { Slider } from '@bullshark/ui';
 import { memo, useEffect, useRef, useState } from 'react';
 
 type TMicrophoneTestLevelBarProps = {

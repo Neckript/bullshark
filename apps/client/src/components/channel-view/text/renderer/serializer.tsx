@@ -1,4 +1,4 @@
-import { parseDomCommand } from '@sharkord/shared';
+import { parseDomCommand } from '@bullshark/shared';
 import { Element, type DOMNode } from 'html-react-parser';
 import { CommandOverride } from '../overrides/command';
 import { MentionOverride } from '../overrides/mention';

@@ -1,4 +1,4 @@
-import type { TCommandInfo } from '@sharkord/shared';
+import type { TCommandInfo } from '@bullshark/shared';
 import {
   forwardRef,
   useCallback,

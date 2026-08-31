@@ -1,7 +1,7 @@
 import { getFileUrl } from '@/helpers/get-file-url';
 import { cn } from '@/lib/utils';
-import type { TFile } from '@sharkord/shared';
-import { Button, buttonVariants } from '@sharkord/ui';
+import type { TFile } from '@bullshark/shared';
+import { Button, buttonVariants } from '@bullshark/ui';
 import { Upload } from 'lucide-react';
 import { memo } from 'react';
 

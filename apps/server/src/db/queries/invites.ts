@@ -1,4 +1,4 @@
-import type { TInvite, TJoinedInvite } from '@sharkord/shared';
+import type { TInvite, TJoinedInvite } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { db } from '..';

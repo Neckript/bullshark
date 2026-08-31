@@ -1,4 +1,4 @@
-import { DELETED_USER_IDENTITY_AND_NAME, Permission } from '@sharkord/shared';
+import { DELETED_USER_IDENTITY_AND_NAME, Permission } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

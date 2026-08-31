@@ -3,7 +3,7 @@ import {
   DELETED_USER_IDENTITY_AND_NAME,
   sha256,
   type TJoinedUser
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { randomUUIDv7 } from 'bun';
 import chalk from 'chalk';
 import { eq, isNull, max, sql } from 'drizzle-orm';

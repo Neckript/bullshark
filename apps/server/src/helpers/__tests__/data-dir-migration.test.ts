@@ -12,8 +12,8 @@ const makeDirPair = () => {
   createdDirs.push(root);
 
   return {
-    legacyDir: path.join(root, 'sharkord'),
-    currentDir: path.join(root, 'bullshark')
+    legacyDir: path.join(root, 'legacy-dir'),
+    currentDir: path.join(root, 'current-dir')
   };
 };
 

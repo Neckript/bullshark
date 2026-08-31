@@ -2,7 +2,7 @@ import {
   type TJoinedMessage,
   type TJoinedPublicUser,
   type TVoiceUserState
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 
 export enum SoundType {
   MESSAGE_RECEIVED = 'message_received',

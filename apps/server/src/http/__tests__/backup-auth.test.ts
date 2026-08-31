@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID } from '@sharkord/shared';
+import { OWNER_ROLE_ID } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import http from 'http';
 import { login } from '../../__tests__/helpers';

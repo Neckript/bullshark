@@ -1,7 +1,7 @@
 import { getTRPCClient } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import type { TPluginSettingDefinition } from '@sharkord/shared';
-import { getTrpcError } from '@sharkord/shared';
+import type { TPluginSettingDefinition } from '@bullshark/shared';
+import { getTrpcError } from '@bullshark/shared';
 import {
   Button,
   Dialog,
@@ -13,7 +13,7 @@ import {
   Spinner,
   Switch,
   Textarea
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Save, Settings } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

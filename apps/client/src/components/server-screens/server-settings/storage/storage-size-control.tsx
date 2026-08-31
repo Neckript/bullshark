@@ -1,4 +1,4 @@
-import { Button, Input, Slider } from '@sharkord/ui';
+import { Button, Input, Slider } from '@bullshark/ui';
 import { memo, useCallback, type ReactNode } from 'react';
 import { FILE_SIZE_STEP, MEGABYTE } from './presets';
 

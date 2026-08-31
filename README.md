@@ -5,7 +5,7 @@
 **Own your voice. Own your data. Own your server.**  
 **Ta voix. Tes données. Ton serveur.**
 
-[![Fork of Sharkord](https://img.shields.io/badge/fork%20of-Sharkord-gray?style=flat-square)](https://github.com/Sharkord/sharkord)
+[![Fork of Bullshark](https://img.shields.io/badge/fork%20of-Bullshark-gray?style=flat-square)](https://github.com/Bullshark/bullshark)
 [![License MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
 [![Built with Bun](https://img.shields.io/badge/built%20with-Bun-black?style=flat-square)](https://bun.sh)
 [![Self-hosted](https://img.shields.io/badge/self--hosted-first-purple?style=flat-square)](#)
@@ -20,10 +20,10 @@
 
 **FR** — Bullshark c'est une plateforme de communication auto-hébergée et open source pour les gamers qui pensent que leurs conversations leur appartiennent — pas à une entreprise, pas à un cloud américain, pas à quiconque d'autre. Tu l'installes. Tu le fais tourner. Tu en es le seul maître. Chaque message, chaque paquet vocal, chaque fichier reste sur ta machine et nulle part ailleurs.
 
-> Bullshark is a gaming-focused fork of [Sharkord](https://github.com/Sharkord/sharkord), built and maintained by the community, for the community.  
-> Bullshark est un fork orienté gaming de [Sharkord](https://github.com/Sharkord/sharkord), construit et maintenu par la communauté, pour la communauté.
+> Bullshark is a gaming-focused fork of [Bullshark](https://github.com/Bullshark/bullshark), built and maintained by the community, for the community.  
+> Bullshark est un fork orienté gaming de [Bullshark](https://github.com/Bullshark/bullshark), construit et maintenu par la communauté, pour la communauté.
 >
-> 💙 Support the original creator of Sharkord: [ko-fi.com/diogomartino](https://ko-fi.com/B0B71U3476)
+> 💙 Support the original creator of Bullshark: [ko-fi.com/diogomartino](https://ko-fi.com/B0B71U3476)
 
 ---
 
@@ -91,7 +91,7 @@ docker run \
   -p 4991:4991/tcp \
   -p 40000:40000/tcp \
   -p 40000:40000/udp \
-  -v ./data:/home/bun/.config/sharkord \
+  -v ./data:/home/bun/.config/bullshark \
   --name bullshark \
   ghcr.io/neckript/bullshark:latest
 ```
@@ -118,9 +118,9 @@ démarrer le serveur) :
 # Native binary / Binaire natif
 ./bullshark --new-owner-token
 
-# Docker (replace "sharkord" with your container name — see `docker ps`)
-# Docker (remplace "sharkord" par le nom de ton conteneur — voir `docker ps`)
-docker exec -u bun -e HOME=/home/bun sharkord /sharkord --new-owner-token
+# Docker (replace "bullshark" with your container name — see `docker ps`)
+# Docker (remplace "bullshark" par le nom de ton conteneur — voir `docker ps`)
+docker exec -u bun -e HOME=/home/bun bullshark /bullshark --new-owner-token
 ```
 
 > ⚠️ For a Dockerized server, always run it **inside the container** as above — do
@@ -137,12 +137,12 @@ de vie complet du token owner, le modèle de sécurité et les notes de mise à 
 
 ---
 
-## Differences from Sharkord / Différences avec Sharkord
+## Differences from Bullshark / Différences avec Bullshark
 
 Bullshark is a gaming-focused fork. We diverge from upstream intentionally:
 
 - **Faster bug fixes** on anything that impacts voice stability
-- **Gaming features** outside Sharkord's scope: PTT, global hotkeys, soundboard, noise suppression, in-game overlay
+- **Gaming features** outside Bullshark's scope: PTT, global hotkeys, soundboard, noise suppression, in-game overlay
 - **Bilingual documentation** — French and English, because sovereignty is a European concern too
 - **No artificial scope restrictions** — we build what gamers need
 
@@ -192,7 +192,7 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 
 ## Built on / Construit sur
 
-[Sharkord](https://github.com/Sharkord/sharkord) · [Bun](https://bun.sh) · [Mediasoup](https://mediasoup.org) · [tRPC](https://trpc.io) · [React](https://react.dev) · [Drizzle ORM](https://orm.drizzle.team) · [ShadCN UI](https://ui.shadcn.com)
+[Bullshark](https://github.com/Bullshark/bullshark) · [Bun](https://bun.sh) · [Mediasoup](https://mediasoup.org) · [tRPC](https://trpc.io) · [React](https://react.dev) · [Drizzle ORM](https://orm.drizzle.team) · [ShadCN UI](https://ui.shadcn.com)
 
 ---
 
@@ -200,7 +200,7 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 
 MIT — see [LICENSE](./LICENSE)
 
-Original work © Sharkord contributors — [Support the creator](https://ko-fi.com/B0B71U3476)  
+Original work © Bullshark contributors — [Support the creator](https://ko-fi.com/B0B71U3476)  
 Fork © 2025 Neckript/Bullshark contributors
 
 ---

@@ -1,6 +1,6 @@
 import { useCan, useIsOwnUserOwner } from '@/features/server/hooks';
-import { Permission } from '@sharkord/shared';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sharkord/ui';
+import { Permission } from '@bullshark/shared';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bullshark/ui';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TServerScreenBaseProps } from '../screens';

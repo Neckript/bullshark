@@ -14,7 +14,7 @@ import { getLocalStorageItemBool, LocalStorageKey } from '@/helpers/storage';
 import { useSwipeGestures } from '@/hooks/use-swipe-gestures';
 import { useTitleBarColors } from '@/hooks/use-title-bar-colors';
 import { cn } from '@/lib/utils';
-import { Permission, TestId } from '@sharkord/shared';
+import { Permission, TestId } from '@bullshark/shared';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ContentWrapper } from './content-wrapper';
 import { PreventBrowser } from './prevent-browser';

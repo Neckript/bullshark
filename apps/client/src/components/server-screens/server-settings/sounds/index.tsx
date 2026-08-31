@@ -7,8 +7,8 @@ import {
   MAX_SOUND_DURATION_SECONDS,
   MAX_SOUND_FILE_SIZE,
   MAX_SOUND_NAME_LENGTH
-} from '@sharkord/shared';
-import { LoadingCard } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { LoadingCard } from '@bullshark/ui';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

@@ -1,5 +1,5 @@
 import { getTRPCClient } from '@/lib/trpc';
-import { getTrpcError } from '@sharkord/shared';
+import { getTrpcError } from '@bullshark/shared';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import type { TSearchResults, TUnifiedSearchResult } from './types';

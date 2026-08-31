@@ -6,7 +6,7 @@ import {
   setLocalStorageItemBool
 } from '@/helpers/storage';
 import type { TMessageJumpToTarget } from '@/types';
-import type { TServerInfo } from '@sharkord/shared';
+import type { TServerInfo } from '@bullshark/shared';
 import { toast } from 'sonner';
 import { markChannelAsRead, setInfo } from '../server/actions';
 import {

@@ -1,13 +1,13 @@
 import { usePluginCommands } from '@/features/server/plugins/hooks';
 import { getTRPCClient } from '@/lib/trpc';
-import { getTrpcError } from '@sharkord/shared';
+import { getTrpcError } from '@bullshark/shared';
 import {
   Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Play } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

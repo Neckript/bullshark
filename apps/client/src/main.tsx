@@ -1,5 +1,5 @@
 import { i18nReady } from '@/i18n';
-import { Toaster } from '@sharkord/ui';
+import { Toaster } from '@bullshark/ui';
 import 'prosemirror-view/style/prosemirror.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

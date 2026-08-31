@@ -1,4 +1,4 @@
-const MICROPHONE_AUDIO_METER_WORKLET_NAME = 'sharkord-audio-meter';
+const MICROPHONE_AUDIO_METER_WORKLET_NAME = 'bullshark-audio-meter';
 
 class AudioMeterProcessor extends AudioWorkletProcessor {
   constructor() {

@@ -2,7 +2,7 @@ import type {
   CommandDefinition,
   RegisteredCommand,
   TCommandsMapByPlugin
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { COMMAND_EXECUTION_TIMEOUT_MS } from './execution-timeout';
 import { PluginExecutableRegistry } from './plugin-executable-registry';
 import type { PluginLogger } from './plugin-logger';

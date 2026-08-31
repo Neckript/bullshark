@@ -2,7 +2,7 @@ import {
   type TMarketplaceEntry,
   type TMarketplacePluginVersion,
   zMarketplaceEntry
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { config } from '../config';
 import { logger } from '../logger';
 import { invariant } from '../utils/invariant';

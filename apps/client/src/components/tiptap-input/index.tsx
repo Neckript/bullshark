@@ -2,7 +2,7 @@ import { useCustomEmojis } from '@/features/server/emojis/hooks';
 import { useCan } from '@/features/server/hooks';
 import { useRoles } from '@/features/server/roles/hooks';
 import { useFilteredUsers } from '@/features/server/users/hooks';
-import { Permission, TestId, type TCommandInfo } from '@sharkord/shared';
+import { Permission, TestId, type TCommandInfo } from '@bullshark/shared';
 import Emoji, { gitHubEmojis } from '@tiptap/extension-emoji';
 import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';

@@ -15,8 +15,8 @@ import { cn } from '@/lib/utils';
 import {
   DELETED_USER_IDENTITY_AND_NAME,
   type TDirectMessageConversation
-} from '@sharkord/shared';
-import { Spinner } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Spinner } from '@bullshark/ui';
 import { MessageSquare } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

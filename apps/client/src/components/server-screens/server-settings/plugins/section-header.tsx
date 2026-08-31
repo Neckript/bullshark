@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Button, CardDescription, CardHeader, CardTitle } from '@sharkord/ui';
+import { Button, CardDescription, CardHeader, CardTitle } from '@bullshark/ui';
 import { RefreshCw } from 'lucide-react';
 import { memo } from 'react';
 

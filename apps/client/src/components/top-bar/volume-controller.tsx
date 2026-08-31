@@ -13,7 +13,7 @@ import {
   PopoverTrigger,
   Slider,
   Tooltip
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Headphones, Monitor, Volume2, VolumeX } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

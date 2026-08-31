@@ -1,47 +1,47 @@
 export enum LocalStorageKey {
-  SERVER_PASSWORD = 'sharkord-server-password',
+  SERVER_PASSWORD = 'bullshark-server-password',
   VITE_UI_THEME = 'vite-ui-theme',
-  DEVICES_SETTINGS = 'sharkord-devices-settings',
-  FLOATING_CARD_POSITION = 'sharkord-floating-card-position',
-  RIGHT_SIDEBAR_STATE = 'sharkord-right-sidebar-state',
-  VOICE_CHAT_SIDEBAR_STATE = 'sharkord-voice-chat-sidebar-state',
-  VOICE_CHAT_SIDEBAR_CHANNEL_ID = 'sharkord-voice-chat-sidebar-channel-id',
-  VOICE_CHAT_SIDEBAR_WIDTH = 'sharkord-voice-chat-sidebar-width',
-  VOICE_CHAT_SHOW_USER_BANNERS = 'sharkord-voice-chat-show-user-banners',
-  VOLUME_SETTINGS = 'sharkord-volume-settings',
-  STREAM_QUALITY_SETTINGS = 'sharkord-stream-quality-settings',
-  RECENT_EMOJIS = 'sharkord-recent-emojis',
-  DEBUG = 'sharkord-debug',
-  DRAFT_MESSAGES = 'sharkord-draft-messages',
-  HIDE_NON_VIDEO_PARTICIPANTS = 'sharkord-hide-non-video-participants',
-  THREAD_SIDEBAR_WIDTH = 'sharkord-thread-sidebar-width',
-  LEFT_SIDEBAR_WIDTH = 'sharkord-left-sidebar-width',
-  RIGHT_SIDEBAR_WIDTH = 'sharkord-right-sidebar-width',
-  CATEGORIES_EXPANDED = 'sharkord-categories-expanded',
-  AUTO_LOGIN = 'sharkord-auto-login',
-  AUTO_LOGIN_TOKEN = 'sharkord-auto-login-token',
-  LAST_SELECTED_CHANNEL = 'sharkord-last-selected-channel',
-  AUTO_JOIN_LAST_CHANNEL = 'sharkord-auto-join-last-channel',
-  BROWSER_NOTIFICATIONS = 'sharkord-browser-notifications',
-  BROWSER_NOTIFICATIONS_FOR_MENTIONS = 'sharkord-browser-notifications-for-mentions',
-  BROWSER_NOTIFICATIONS_FOR_DMS = 'sharkord-browser-notifications-for-dms',
-  CHAT_INPUT_HEIGHT_VH = 'sharkord-chat-input-height-vh',
-  THREAD_INPUT_HEIGHT_VH = 'sharkord-thread-input-height-vh',
-  BROWSER_NOTIFICATIONS_FOR_REPLIES = 'sharkord-browser-notifications-for-replies',
-  LANGUAGE = 'sharkord-language',
-  PLUGIN_SLOT_DEBUG = 'sharkord-plugin-slot-debug',
-  HIDE_OWN_SCREEN_SHARE = 'sharkord-hide-own-screen-share',
-  RECENT_TARGETS = 'sharkord-recent-targets'
+  DEVICES_SETTINGS = 'bullshark-devices-settings',
+  FLOATING_CARD_POSITION = 'bullshark-floating-card-position',
+  RIGHT_SIDEBAR_STATE = 'bullshark-right-sidebar-state',
+  VOICE_CHAT_SIDEBAR_STATE = 'bullshark-voice-chat-sidebar-state',
+  VOICE_CHAT_SIDEBAR_CHANNEL_ID = 'bullshark-voice-chat-sidebar-channel-id',
+  VOICE_CHAT_SIDEBAR_WIDTH = 'bullshark-voice-chat-sidebar-width',
+  VOICE_CHAT_SHOW_USER_BANNERS = 'bullshark-voice-chat-show-user-banners',
+  VOLUME_SETTINGS = 'bullshark-volume-settings',
+  STREAM_QUALITY_SETTINGS = 'bullshark-stream-quality-settings',
+  RECENT_EMOJIS = 'bullshark-recent-emojis',
+  DEBUG = 'bullshark-debug',
+  DRAFT_MESSAGES = 'bullshark-draft-messages',
+  HIDE_NON_VIDEO_PARTICIPANTS = 'bullshark-hide-non-video-participants',
+  THREAD_SIDEBAR_WIDTH = 'bullshark-thread-sidebar-width',
+  LEFT_SIDEBAR_WIDTH = 'bullshark-left-sidebar-width',
+  RIGHT_SIDEBAR_WIDTH = 'bullshark-right-sidebar-width',
+  CATEGORIES_EXPANDED = 'bullshark-categories-expanded',
+  AUTO_LOGIN = 'bullshark-auto-login',
+  AUTO_LOGIN_TOKEN = 'bullshark-auto-login-token',
+  LAST_SELECTED_CHANNEL = 'bullshark-last-selected-channel',
+  AUTO_JOIN_LAST_CHANNEL = 'bullshark-auto-join-last-channel',
+  BROWSER_NOTIFICATIONS = 'bullshark-browser-notifications',
+  BROWSER_NOTIFICATIONS_FOR_MENTIONS = 'bullshark-browser-notifications-for-mentions',
+  BROWSER_NOTIFICATIONS_FOR_DMS = 'bullshark-browser-notifications-for-dms',
+  CHAT_INPUT_HEIGHT_VH = 'bullshark-chat-input-height-vh',
+  THREAD_INPUT_HEIGHT_VH = 'bullshark-thread-input-height-vh',
+  BROWSER_NOTIFICATIONS_FOR_REPLIES = 'bullshark-browser-notifications-for-replies',
+  LANGUAGE = 'bullshark-language',
+  PLUGIN_SLOT_DEBUG = 'bullshark-plugin-slot-debug',
+  HIDE_OWN_SCREEN_SHARE = 'bullshark-hide-own-screen-share',
+  RECENT_TARGETS = 'bullshark-recent-targets'
 }
 
 export enum SessionStorageKey {
-  TOKEN = 'sharkord-token'
+  TOKEN = 'bullshark-token'
 }
 
 // localStorage / sessionStorage can throw SecurityError in privacy-hardened
 // browsers (Librewolf, Firefox private mode) when storage access is blocked
-// (issue #2 / upstream Sharkord#728). All access is wrapped in try/catch so
-// that callers receive safe fallback values instead of a thrown exception.
+// (issue #2). All access is wrapped in try/catch so that callers receive
+// safe fallback values instead of a thrown exception.
 
 const getLocalStorageItem = (key: LocalStorageKey): string | null => {
   try {

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 
 test.describe('Connect Screen', () => {
   test('should display the connect screen with all essential elements', async ({

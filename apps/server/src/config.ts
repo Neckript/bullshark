@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import fs from 'fs/promises';
 import { parse, stringify } from 'ini';
 import z from 'zod';
@@ -191,12 +191,12 @@ if (!configExists) {
 }
 
 config = applyEnvOverrides(config, {
-  'server.port': 'SHARKORD_PORT',
-  'server.debug': 'SHARKORD_DEBUG',
-  'server.autoupdate': 'SHARKORD_AUTOUPDATE',
-  'webRtc.port': 'SHARKORD_WEBRTC_PORT',
-  'webRtc.announcedAddress': 'SHARKORD_WEBRTC_ANNOUNCED_ADDRESS',
-  'webRtc.maxBitrate': 'SHARKORD_WEBRTC_MAX_BITRATE',
+  'server.port': 'BULLSHARK_PORT',
+  'server.debug': 'BULLSHARK_DEBUG',
+  'server.autoupdate': 'BULLSHARK_AUTOUPDATE',
+  'webRtc.port': 'BULLSHARK_WEBRTC_PORT',
+  'webRtc.announcedAddress': 'BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS',
+  'webRtc.maxBitrate': 'BULLSHARK_WEBRTC_MAX_BITRATE',
   'plugins.marketplaceRegistryUrl': 'BULLSHARK_MARKETPLACE_REGISTRY_URL'
 });
 

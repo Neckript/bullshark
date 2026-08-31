@@ -1,7 +1,7 @@
 import { setDmsOpen } from '@/features/server/actions';
 import { useDirectMessagesUnreadCount } from '@/features/server/channels/hooks';
 import { useDmsOpen } from '@/features/server/hooks';
-import { cn, Tooltip } from '@sharkord/ui';
+import { cn, Tooltip } from '@bullshark/ui';
 import { MessageCircleMore, X } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

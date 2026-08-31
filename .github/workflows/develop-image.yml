@@ -20,16 +20,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build project artifacts
-        uses: ./.github/actions/build-sharkord
+        uses: ./.github/actions/build-bullshark
 
       - name: Build and publish Docker image
         uses: ./.github/actions/docker-build-publish
         with:
           docker_username: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
-          tags: ${{ secrets.DOCKER_USERNAME }}/sharkord:dev
+          tags: ${{ secrets.DOCKER_USERNAME }}/bullshark:dev
           labels: |
-            org.opencontainers.image.title=Sharkord
-            org.opencontainers.image.description=Sharkord Server (dev)
-            org.opencontainers.image.source=https://github.com/Sharkord/sharkord
+            org.opencontainers.image.title=Bullshark
+            org.opencontainers.image.description=Bullshark Server (dev)
+            org.opencontainers.image.source=https://github.com/Bullshark/bullshark
             org.opencontainers.image.revision=${{ github.sha }}

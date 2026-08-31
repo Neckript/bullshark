@@ -1,6 +1,6 @@
 import type { TMessageComposeHandle } from '@/components/message-compose';
 import { useOwnUserId } from '@/features/server/users/hooks';
-import type { TJoinedMessage } from '@sharkord/shared';
+import type { TJoinedMessage } from '@bullshark/shared';
 import { useCallback, useRef, useState } from 'react';
 
 export const useArrowUpEdit = (messages: TJoinedMessage[]) => {

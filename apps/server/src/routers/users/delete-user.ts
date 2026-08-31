@@ -4,7 +4,7 @@ import {
   DisconnectCode,
   Permission,
   ServerEvents
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import z from 'zod';
 import { db } from '../../db';

@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID } from '@sharkord/shared';
+import { OWNER_ROLE_ID } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import fs from 'fs/promises';
 import os from 'os';

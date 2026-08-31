@@ -1,4 +1,4 @@
-import { FileSaveType, type TInvokerContext } from '@sharkord/shared';
+import { FileSaveType, type TInvokerContext } from '@bullshark/shared';
 import { beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';

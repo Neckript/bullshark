@@ -13,13 +13,13 @@ import {
   Permission,
   UserStatus,
   getTrpcError
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import {
   IconButton,
   Popover,
   PopoverContent,
   PopoverTrigger
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { format } from 'date-fns';
 import { MessageSquare, ShieldCheck, Trash, UserCog } from 'lucide-react';
 import { memo, useCallback } from 'react';

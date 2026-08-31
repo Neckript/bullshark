@@ -1,4 +1,4 @@
-import { FileSaveType } from '@sharkord/shared';
+import { FileSaveType } from '@bullshark/shared';
 import z from 'zod';
 import { removeFile } from '../../db/mutations/files';
 import { updateSettings } from '../../db/mutations/server';

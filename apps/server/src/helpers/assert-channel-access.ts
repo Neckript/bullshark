@@ -1,4 +1,4 @@
-import { ChannelPermission } from '@sharkord/shared';
+import { ChannelPermission } from '@bullshark/shared';
 import { assertDmChannel } from '../db/queries/dms';
 import type { Context } from '../utils/trpc';
 

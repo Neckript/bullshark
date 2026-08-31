@@ -203,7 +203,7 @@ const Connect = memo(() => {
 
         <a
           className="text-xs"
-          href="https://github.com/Sharkord/sharkord"
+          href="https://github.com/Bullshark/bullshark"
           target="_blank"
           rel="noopener noreferrer"
         >

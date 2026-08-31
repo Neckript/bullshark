@@ -17,8 +17,8 @@ import {
   OWNER_ROLE_ID,
   getTrpcError,
   type TJoinedRole
-} from '@sharkord/shared';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@bullshark/ui';
 import { Plus } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

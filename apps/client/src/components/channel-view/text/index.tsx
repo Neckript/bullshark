@@ -21,8 +21,8 @@ import {
   getTrpcError,
   prepareMessageHtml,
   type TJoinedMessage
-} from '@sharkord/shared';
-import { Spinner } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Spinner } from '@bullshark/ui';
 import { throttle } from 'lodash-es';
 import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

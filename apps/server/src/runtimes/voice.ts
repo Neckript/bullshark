@@ -8,7 +8,7 @@ import {
   type TTransportParams,
   type TVoiceMap,
   type TVoiceUserState
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import type {
   AppData,
   Consumer,
@@ -88,7 +88,7 @@ const defaultRouterOptions: RouterOptions<AppData> = {
         // DTX (usedtx: 1) stops sending packets during silence. Combined with
         // the noise gate, this starves remote consumers of RTP for ~10 s until
         // the browser marks the track as stalled — the root cause of the audio
-        // freeze reported in issue #1 / upstream Sharkord#695.
+        // freeze reported in issue #1 / upstream Bullshark#695.
         usedtx: 0,
         stereo: 1,
         'sprop-stereo': 1,

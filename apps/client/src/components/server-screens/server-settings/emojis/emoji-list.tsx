@@ -1,5 +1,5 @@
 import { getFileUrl } from '@/helpers/get-file-url';
-import type { TJoinedEmoji } from '@sharkord/shared';
+import type { TJoinedEmoji } from '@bullshark/shared';
 import {
   Button,
   Card,
@@ -8,7 +8,7 @@ import {
   CardTitle,
   Input,
   Spinner
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Plus, Search } from 'lucide-react';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

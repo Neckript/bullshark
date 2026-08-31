@@ -7,7 +7,7 @@ import {
   type TGenericObject,
   type TMessageMediaMetadata,
   type TMessageOpenGraphMetadata
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 
 // if it ends in a known media extension, we just assume it's a direct media link and skip the DNS resolution and metadata fetching
 // there might be cases where this is not true, but it's a good heuristic to avoid unnecessary work

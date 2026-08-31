@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@sharkord/shared": ["packages/shared/src/index.ts"]
+      "@bullshark/shared": ["packages/shared/src/index.ts"]
     },
     "moduleResolution": "NodeNext",
     "module": "NodeNext",

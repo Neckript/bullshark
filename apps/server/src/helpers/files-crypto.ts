@@ -1,4 +1,4 @@
-import type { TFile } from '@sharkord/shared';
+import type { TFile } from '@bullshark/shared';
 import crypto from 'crypto';
 import { getServerTokenSync } from '../db/queries/server';
 

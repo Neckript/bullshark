@@ -1,6 +1,6 @@
 import type { IRootState } from '@/features/store';
 import { createSelector } from '@reduxjs/toolkit';
-import { DELETED_USER_IDENTITY_AND_NAME, UserStatus } from '@sharkord/shared';
+import { DELETED_USER_IDENTITY_AND_NAME, UserStatus } from '@bullshark/shared';
 import { createCachedSelector } from 're-reselect';
 
 const STATUS_ORDER: Record<string, number> = {

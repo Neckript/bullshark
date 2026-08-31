@@ -4,8 +4,8 @@ import {
 } from '@/features/server/channels/hooks';
 import { usePublicServerSettings } from '@/features/server/hooks';
 import { cn } from '@/lib/utils';
-import { PluginSlot } from '@sharkord/shared';
-import { Button, Tooltip } from '@sharkord/ui';
+import { PluginSlot } from '@bullshark/shared';
+import { Button, Tooltip } from '@bullshark/ui';
 import { PanelRight, PanelRightClose } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

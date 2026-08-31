@@ -1,4 +1,4 @@
-import type { TInvokerContext } from '@sharkord/shared';
+import type { TInvokerContext } from '@bullshark/shared';
 import type { Context } from '../utils/trpc';
 
 const getInvokerCtxFromTrpcCtx = (ctx: Context): TInvokerContext => {

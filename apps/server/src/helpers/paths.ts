@@ -3,7 +3,7 @@ import {
   IS_DEVELOPMENT,
   IS_TEST,
   SERVER_VERSION,
-  SHARKORD_MEDIASOUP_BIN_NAME
+  BULLSHARK_MEDIASOUP_BIN_NAME
 } from '../utils/env';
 import { getAppDataPath } from './fs';
 
@@ -96,7 +96,7 @@ const getMediasoupBinaryPath = (): string | undefined => {
   return path.join(
     DATA_PATH,
     'mediasoup',
-    SHARKORD_MEDIASOUP_BIN_NAME || 'mediasoup-worker'
+    BULLSHARK_MEDIASOUP_BIN_NAME || 'mediasoup-worker'
   );
 };
 

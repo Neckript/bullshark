@@ -17,7 +17,7 @@ import {
   STORAGE_MIN_QUOTA_PER_USER,
   STORAGE_MIN_SIGNED_URLS_TTL_SECONDS,
   StorageOverflowAction
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import {
   Button,
   Card,
@@ -36,7 +36,7 @@ import {
   Separator,
   Slider,
   Switch
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DiskMetrics } from './metrics';

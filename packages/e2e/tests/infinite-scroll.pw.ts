@@ -5,7 +5,7 @@ import {
   type Locator,
   type Page
 } from '@playwright/test';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 import { loginAs } from './fixtures';
 import { sleep } from './helpers';
 

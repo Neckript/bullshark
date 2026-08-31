@@ -1,4 +1,4 @@
-import { sha256 } from '@sharkord/shared';
+import { sha256 } from '@bullshark/shared';
 import { randomBytes } from 'crypto';
 
 // CSPRNG owner-claim token. 32 bytes -> 43 base64url chars (no padding). Never a constant.

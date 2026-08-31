@@ -8,7 +8,7 @@ import {
   Permission,
   TestId,
   type TJoinedMessage
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { MessageSquareText, MoreVertical } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

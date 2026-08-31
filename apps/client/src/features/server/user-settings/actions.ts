@@ -3,7 +3,7 @@ import { store } from '@/features/store';
 import { getLocalStorageItemBool, LocalStorageKey } from '@/helpers/storage';
 import { applyServerTheme } from '@/helpers/theme-sync';
 import { getTRPCClient } from '@/lib/trpc';
-import { MUTED_ROLE_MENTION_PREFIX } from '@sharkord/shared';
+import { MUTED_ROLE_MENTION_PREFIX } from '@bullshark/shared';
 
 // Apply a server settings payload into the app slice.
 const applyServerSettings = (settings: Record<string, unknown>) => {

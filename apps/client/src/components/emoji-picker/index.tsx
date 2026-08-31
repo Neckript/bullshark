@@ -9,7 +9,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CustomEmojiTab } from './custom-emoji-tab';
@@ -85,7 +85,7 @@ const EmojiPicker = memo(
     // sequence in Firefox/Librewolf: Radix's DismissableLayer sees the
     // resulting focusout on the trigger as "focus moved outside" and closes
     // the popover immediately before any emoji can be selected (issue #2 /
-    // upstream Sharkord#728).
+    // upstream Bullshark#728).
     useEffect(() => {
       if (!open) return;
       const id = requestAnimationFrame(() => {

@@ -1,4 +1,4 @@
-import { ChannelPermission, ChannelType } from '@sharkord/shared';
+import { ChannelPermission, ChannelType } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest } from '../../__tests__/helpers';
 import { getChannelsReadStatesForUser } from '../../db/queries/channels';

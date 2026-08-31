@@ -1,4 +1,4 @@
-import { Permission, StreamKind } from '@sharkord/shared';
+import { Permission, StreamKind } from '@bullshark/shared';
 import { z } from 'zod';
 import { getSettings } from '../../db/queries/server';
 import { VoiceRuntime } from '../../runtimes/voice';

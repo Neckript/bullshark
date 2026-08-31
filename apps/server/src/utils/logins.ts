@@ -1,4 +1,4 @@
-import type { TIpInfo } from '@sharkord/shared';
+import type { TIpInfo } from '@bullshark/shared';
 import { ipCache } from './ip-cache';
 
 const getIpInfo = async (ip: string) => {

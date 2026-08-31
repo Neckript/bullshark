@@ -7,7 +7,7 @@ import { useFilePicker } from '@/hooks/use-file-picker';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
 import { AvatarImage } from '@radix-ui/react-avatar';
-import { getTrpcError } from '@sharkord/shared';
+import { getTrpcError } from '@bullshark/shared';
 import {
   Avatar,
   AvatarFallback,
@@ -21,7 +21,7 @@ import {
   IconButton,
   Input,
   Textarea
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Upload, X } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';

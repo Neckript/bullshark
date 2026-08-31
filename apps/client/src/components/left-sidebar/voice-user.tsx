@@ -7,7 +7,7 @@ import { useIsOwnUser } from '@/features/server/users/hooks';
 import { useSpeakingState } from '@/features/server/voice/hooks';
 import { getNicknameFontFamily } from '@/helpers/nickname-fonts';
 import { resolveNameColor } from '@/helpers/resolve-name-color';
-import { cn } from '@sharkord/ui';
+import { cn } from '@bullshark/ui';
 import { HeadphoneOff, MicOff, Monitor, Video, VolumeX } from 'lucide-react';
 import { memo } from 'react';
 import { UserPopover } from '../user-popover';

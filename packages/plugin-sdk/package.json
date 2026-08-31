@@ -1,5 +1,5 @@
 {
-  "name": "@sharkord/plugin-sdk",
+  "name": "@bullshark/plugin-sdk",
   "version": "0.0.30",
   "type": "module",
   "main": "src/index.ts",
@@ -17,7 +17,7 @@
     "mediasoup": "^3.19.11",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
-    "@sharkord/shared": "workspace:*",
+    "@bullshark/shared": "workspace:*",
     "typescript": "^5",
     "@typescript-eslint/eslint-plugin": "^8.46.1",
     "eslint": "^8.56.0",

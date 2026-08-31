@@ -8,7 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Slider
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Volume2, VolumeX } from 'lucide-react';
 import { memo, useCallback } from 'react';
 

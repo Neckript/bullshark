@@ -12,8 +12,8 @@ import type {
   TPluginStore,
   TPluginStoreState,
   TStreamQualityLayer
-} from '@sharkord/shared';
-import { FileSaveType, PLUGIN_SDK_VERSION, PluginSlot } from '@sharkord/shared';
+} from '@bullshark/shared';
+import { FileSaveType, PLUGIN_SDK_VERSION, PluginSlot } from '@bullshark/shared';
 import type { AppData, Producer, Router } from 'mediasoup/types';
 
 export type TCreateStreamOptions = {
@@ -212,7 +212,7 @@ export interface UnloadPluginContext extends Pick<
   'path' | 'logger' | 'log' | 'debug' | 'error' | 'voice' | 'messages' | 'ui'
 > {}
 
-type TSharkordState = ReturnType<TPluginStore['getState']>;
+type TBullsharkState = ReturnType<TPluginStore['getState']>;
 
 // re-export mediasoup types for plugin usage
 export type {
@@ -241,7 +241,7 @@ export type {
   TPluginComponentsMapBySlotId,
   TPluginStore,
   TPluginStoreState,
-  TSharkordState
+  TBullsharkState
 };
 
 export * from './actions';

@@ -11,7 +11,7 @@ import {
   Input,
   Switch,
   Textarea
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 

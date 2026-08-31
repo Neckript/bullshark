@@ -1,5 +1,5 @@
 import type { TUploadRefusal } from '@/hooks/use-upload-permission';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 import { filesize } from 'filesize';
 import { CircleSlash, Upload } from 'lucide-react';
 import { memo, useMemo } from 'react';

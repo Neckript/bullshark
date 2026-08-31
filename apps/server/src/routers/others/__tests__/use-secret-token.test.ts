@@ -1,4 +1,4 @@
-import { sha256 } from '@sharkord/shared';
+import { sha256 } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import { ownerTokenMatches } from '../use-secret-token';
 

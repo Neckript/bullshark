@@ -15,7 +15,7 @@ import {
 } from '@/helpers/get-display-media-support';
 import { useForm } from '@/hooks/use-form';
 import { InputMode, NoiseSuppression, Resolution, VideoCodec } from '@/types';
-import { DEFAULT_BITRATE } from '@sharkord/shared';
+import { DEFAULT_BITRATE } from '@bullshark/shared';
 import {
   Alert,
   AlertDescription,
@@ -37,7 +37,7 @@ import {
   Separator,
   Slider,
   Switch
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { filesize } from 'filesize';
 import { Info } from 'lucide-react';
 import {

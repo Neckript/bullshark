@@ -1,4 +1,4 @@
-import type { TDirectMessageConversation } from '@sharkord/shared';
+import type { TDirectMessageConversation } from '@bullshark/shared';
 import { TRPCError } from '@trpc/server';
 import { and, eq, inArray, max, or } from 'drizzle-orm';
 import { db } from '..';

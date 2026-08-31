@@ -1,4 +1,4 @@
-import { getErrorMessage, type TInvokerContext } from '@sharkord/shared';
+import { getErrorMessage, type TInvokerContext } from '@bullshark/shared';
 import { withTimeout } from './execution-timeout';
 import type { PluginLogger } from './plugin-logger';
 import type { PluginStateStore } from './plugin-state-store';

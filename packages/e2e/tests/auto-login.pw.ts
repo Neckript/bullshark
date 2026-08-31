@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 
 test.describe('Auto Login', () => {
   test('should display the auto-login switch on the connect screen', async ({
@@ -42,7 +42,7 @@ test.describe('Auto Login', () => {
     await page.goto('/');
 
     await page.evaluate(() => {
-      localStorage.setItem('sharkord-auto-login', 'true');
+      localStorage.setItem('bullshark-auto-login', 'true');
     });
 
     await page.reload();
@@ -59,8 +59,8 @@ test.describe('Auto Login', () => {
     await page.goto('/');
 
     await page.evaluate(() => {
-      localStorage.setItem('sharkord-auto-login', 'true');
-      localStorage.removeItem('sharkord-auto-login-token');
+      localStorage.setItem('bullshark-auto-login', 'true');
+      localStorage.removeItem('bullshark-auto-login-token');
     });
 
     await page.reload();
@@ -75,8 +75,8 @@ test.describe('Auto Login', () => {
     await page.goto('/');
 
     await page.evaluate(() => {
-      localStorage.setItem('sharkord-auto-login', 'false');
-      localStorage.setItem('sharkord-auto-login-token', 'some-token');
+      localStorage.setItem('bullshark-auto-login', 'false');
+      localStorage.setItem('bullshark-auto-login-token', 'some-token');
     });
 
     await page.reload();
@@ -91,8 +91,8 @@ test.describe('Auto Login', () => {
     await page.goto('/');
 
     await page.evaluate(() => {
-      localStorage.setItem('sharkord-auto-login', 'true');
-      localStorage.setItem('sharkord-auto-login-token', 'invalid-token');
+      localStorage.setItem('bullshark-auto-login', 'true');
+      localStorage.setItem('bullshark-auto-login-token', 'invalid-token');
     });
 
     await page.reload();
@@ -103,12 +103,12 @@ test.describe('Auto Login', () => {
 
     // auto-login state should be cleared after failure
     const autoLoginEnabled = await page.evaluate(() =>
-      localStorage.getItem('sharkord-auto-login')
+      localStorage.getItem('bullshark-auto-login')
     );
     expect(autoLoginEnabled).toBe('false');
 
     const savedToken = await page.evaluate(() =>
-      localStorage.getItem('sharkord-auto-login-token')
+      localStorage.getItem('bullshark-auto-login-token')
     );
     expect(savedToken).toBeNull();
   });

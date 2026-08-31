@@ -3,8 +3,8 @@ import { useRecentEmojis } from '@/components/emoji-picker/use-recent-emojis';
 import { Protect } from '@/components/protect';
 import { shouldUseFallbackImage } from '@/components/tiptap-input/helpers';
 import { useIsShiftHeld } from '@/features/app/hooks';
-import { Permission } from '@sharkord/shared';
-import { IconButton } from '@sharkord/ui';
+import { Permission } from '@bullshark/shared';
+import { IconButton } from '@bullshark/ui';
 import {
   MessageSquareText,
   Pencil,

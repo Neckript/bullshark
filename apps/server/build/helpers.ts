@@ -2,7 +2,7 @@ import {
   validateReleaseMetadata,
   type TArtifact,
   type TVersionInfo
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -156,10 +156,10 @@ const compile = async ({ out, target }: TTarget) => {
       target
     },
     define: {
-      'process.env.SHARKORD_ENV': '"production"',
-      'process.env.SHARKORD_BUILD_VERSION': `"${version}"`,
-      'process.env.SHARKORD_BUILD_DATE': `"${new Date().toISOString()}"`,
-      'process.env.SHARKORD_MEDIASOUP_BIN_NAME': `"${mediasoupBinary}"`,
+      'process.env.BULLSHARK_ENV': '"production"',
+      'process.env.BULLSHARK_BUILD_VERSION': `"${version}"`,
+      'process.env.BULLSHARK_BUILD_DATE': `"${new Date().toISOString()}"`,
+      'process.env.BULLSHARK_MEDIASOUP_BIN_NAME': `"${mediasoupBinary}"`,
       'process.env.CURRENT_VERSION': `"${version}"`
     }
   });

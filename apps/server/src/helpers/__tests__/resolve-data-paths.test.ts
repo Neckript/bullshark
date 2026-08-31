@@ -10,7 +10,7 @@ const baseContext = {
 };
 
 describe('resolveDataPaths', () => {
-  test('BULLSHARK_DATA_PATH takes precedence over everything, including SHARKORD_DATA_PATH', () => {
+  test('BULLSHARK_DATA_PATH takes precedence over SHARKORD_DATA_PATH', () => {
     const warn = mock(() => {});
 
     const result = resolveDataPaths(

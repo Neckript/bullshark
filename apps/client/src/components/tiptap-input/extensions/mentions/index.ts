@@ -1,5 +1,5 @@
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
-import type { TJoinedPublicUser, TJoinedRole } from '@sharkord/shared';
+import type { TJoinedPublicUser, TJoinedRole } from '@bullshark/shared';
 import { Extension } from '@tiptap/core';
 import { PluginKey } from '@tiptap/pm/state';
 import Suggestion from '@tiptap/suggestion';

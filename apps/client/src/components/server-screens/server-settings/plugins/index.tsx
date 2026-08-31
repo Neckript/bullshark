@@ -1,6 +1,6 @@
 import { useAdminPlugins } from '@/features/server/admin/hooks';
 import { usePluginsEnabled } from '@/features/server/hooks';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sharkord/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bullshark/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InstalledPlugins } from './installed';

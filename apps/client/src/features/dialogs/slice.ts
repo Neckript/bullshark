@@ -1,6 +1,6 @@
 import type { Dialog } from '@/components/dialogs/dialogs';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import type { TGenericObject } from '@sharkord/shared';
+import type { TGenericObject } from '@bullshark/shared';
 
 export type TDialogState = {
   openDialog: Dialog | undefined;
