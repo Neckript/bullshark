@@ -75,6 +75,11 @@ const zConfig = z.object({
       maxRequests: z.coerce.number().int().positive(),
       windowMs: z.coerce.number().int().positive()
     })
+  }),
+  plugins: z.object({
+    // '' disables the marketplace: the server renders it as an empty list
+    // without making a request.
+    marketplaceRegistryUrl: z.string()
   })
 });
 
@@ -144,6 +149,10 @@ const defaultConfig: TConfig = {
       maxRequests: 10,
       windowMs: 60_000
     }
+  },
+  plugins: {
+    marketplaceRegistryUrl:
+      'https://codeberg.org/The_Neckript/bullshark-plugins/raw/branch/main/plugins.json'
   }
 };
 
@@ -187,7 +196,8 @@ config = applyEnvOverrides(config, {
   'server.autoupdate': 'SHARKORD_AUTOUPDATE',
   'webRtc.port': 'SHARKORD_WEBRTC_PORT',
   'webRtc.announcedAddress': 'SHARKORD_WEBRTC_ANNOUNCED_ADDRESS',
-  'webRtc.maxBitrate': 'SHARKORD_WEBRTC_MAX_BITRATE'
+  'webRtc.maxBitrate': 'SHARKORD_WEBRTC_MAX_BITRATE',
+  'plugins.marketplaceRegistryUrl': 'BULLSHARK_MARKETPLACE_REGISTRY_URL'
 });
 
 config = Object.freeze(config);

@@ -9,6 +9,7 @@ import { executeActionRoute } from './execute-action';
 import { executeCommandRoute } from './execute-command';
 import { getCommandsRoute } from './get-commands';
 import { getPluginLogsRoute } from './get-logs';
+import { getMarketplaceRoute } from './get-marketplace';
 import { getPluginsRoute } from './get-plugins';
 import { getSettingsRoute } from './get-settings';
 import { installRoute } from './install-plugin';
@@ -30,6 +31,7 @@ export const pluginsRouter = t.router({
   onMetadataChange: onMetadataChangeRoute,
   getSettings: getSettingsRoute,
   updateSetting: updateSettingRoute,
+  getMarketplace: getMarketplaceRoute,
   install: installRoute,
   update: updateRoute,
   remove: removeRoute

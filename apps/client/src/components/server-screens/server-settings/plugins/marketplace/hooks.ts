@@ -1,7 +1,5 @@
-import {
-  MARKETPLACE_REGISTRY_URL,
-  type TMarketplaceEntry
-} from '@sharkord/shared';
+import { getTRPCClient } from '@/lib/trpc';
+import type { TMarketplaceEntry } from '@sharkord/shared';
 import type { TFunction } from 'i18next';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -16,37 +14,36 @@ const useMarketplaceData = (t: TFunction<'settings'>) => {
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchMarketplace = useCallback(async () => {
-    setError(null);
+  const fetchMarketplace = useCallback(
+    async (refresh?: boolean) => {
+      setError(null);
 
-    try {
-      const response = await fetch(MARKETPLACE_REGISTRY_URL);
+      try {
+        const trpc = getTRPCClient();
+        const data = await trpc.plugins.getMarketplace.query({ refresh });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+        const sortedEntries = data
+          .map((entry) => ({
+            ...entry,
+            versions: [...entry.versions].sort(
+              (left, right) => right.timestamp - left.timestamp
+            )
+          }))
+          .sort(
+            (left, right) =>
+              getLatestTimestamp(right) - getLatestTimestamp(left)
+          );
+
+        setEntries(sortedEntries);
+      } catch {
+        setError(t('marketplaceFetchError'));
+      } finally {
+        setLoading(false);
+        setIsRefreshing(false);
       }
-
-      const data = (await response.json()) as TMarketplaceEntry[];
-
-      const sortedEntries = data
-        .map((entry) => ({
-          ...entry,
-          versions: [...entry.versions].sort(
-            (left, right) => right.timestamp - left.timestamp
-          )
-        }))
-        .sort(
-          (left, right) => getLatestTimestamp(right) - getLatestTimestamp(left)
-        );
-
-      setEntries(sortedEntries);
-    } catch {
-      setError(t('marketplaceFetchError'));
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [t]);
+    },
+    [t]
+  );
 
   useEffect(() => {
     fetchMarketplace();
@@ -54,7 +51,7 @@ const useMarketplaceData = (t: TFunction<'settings'>) => {
 
   const refresh = useCallback(async () => {
     setIsRefreshing(true);
-    await fetchMarketplace();
+    await fetchMarketplace(true);
   }, [fetchMarketplace]);
 
   const filtered = useMemo(() => {
