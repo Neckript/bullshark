@@ -6,5 +6,9 @@
   "author": "Mocked",
   "homepage": "https://mocked.com",
   "description": "Mock plugin for message edit/delete actions.",
-  "logo": "https://some-page.com/logo.png"
+  "logo": "https://some-page.com/logo.png",
+  "capabilities": [
+    "commands",
+    "messages"
+  ]
 }

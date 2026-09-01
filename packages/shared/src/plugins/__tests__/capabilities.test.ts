@@ -34,19 +34,25 @@ describe('plugin capabilities', () => {
     ]);
   });
 
-  test('an unknown capability is rejected', () => {
-    const result = zPluginManifest.safeParse({
+  // The manifest deliberately accepts any non-empty string. The interesting
+  // failure is a plugin built against a NEWER SDK, declaring a capability an
+  // OLDER server has never heard of: parsing that with z.enum yields an
+  // unreadable schema error about the manifest as a whole, when what the author
+  // needs is the name of the unsupported capability. Strictness lives where it
+  // can act -- the builder at build time, the server at load time.
+  test('an unknown capability parses, to be judged later by name', () => {
+    const result = zPluginManifest.parse({
       ...baseManifest,
-      capabilities: ['filesystem']
+      capabilities: ['quantum.teleport']
     });
 
-    expect(result.success).toBe(false);
+    expect(result.capabilities).toEqual(['quantum.teleport']);
   });
 
-  test('one unknown capability rejects the whole manifest', () => {
+  test('an empty capability string is still rejected', () => {
     const result = zPluginManifest.safeParse({
       ...baseManifest,
-      capabilities: [PluginCapability.MESSAGES, 'filesystem']
+      capabilities: ['']
     });
 
     expect(result.success).toBe(false);

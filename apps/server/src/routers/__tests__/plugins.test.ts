@@ -31,10 +31,10 @@ describe('plugins router', () => {
     const { plugins } = await caller.plugins.get();
 
     expect(plugins).toBeDefined();
-    // 13, not 11: entry points became optional, so the server-only fixture
-    // plugin-missing-client-entry is now valid, and plugin-client-only was
-    // added to cover the client-only case.
-    expect(plugins.length).toBe(13);
+    // Grew with the fixtures: 11 originally, +2 when entry points became
+    // optional (plugin-missing-client-entry became valid, plugin-client-only
+    // was added), +4 for the capability cases.
+    expect(plugins.length).toBe(17);
   });
 
   test('should include plugin metadata', async () => {

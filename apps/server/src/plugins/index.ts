@@ -8,6 +8,7 @@ import {
   CLIENT_ENTRY_FILE,
   getErrorMessage,
   PLUGIN_SDK_VERSION,
+  PluginCapability,
   SERVER_ENTRY_FILE,
   ServerEvents,
   StreamKind,
@@ -40,6 +41,44 @@ import { HooksManager } from './hooks-manager';
 import { PluginLogger } from './plugin-logger';
 import { PluginSettingsManager } from './plugin-settings-manager';
 import { PluginStateStore } from './plugin-state-store';
+
+// Which PluginContext namespace each capability unlocks.
+//
+// This is the whole enforcement: a plugin is handed only the namespaces it
+// declared, so one that never asked for `voice` has no ctx.voice to call. It is
+// least privilege over the SDK surface -- NOT a sandbox. Plugin server code runs
+// in this process and keeps filesystem and network access whatever it declared;
+// docs/plugins/security.md says so next to the capability list, and must keep
+// saying so.
+//
+// CLIENT_SLOTS maps to nothing here: it governs the client bundle's React
+// components, which the server never builds a context for.
+const CAPABILITY_NAMESPACE: Record<PluginCapability, keyof PluginContext | null> =
+  {
+    [PluginCapability.EVENTS]: 'events',
+    [PluginCapability.ACTIONS]: 'actions',
+    [PluginCapability.COMMANDS]: 'commands',
+    [PluginCapability.MESSAGES]: 'messages',
+    [PluginCapability.SETTINGS]: 'settings',
+    [PluginCapability.DATA]: 'data',
+    [PluginCapability.UI]: 'ui',
+    [PluginCapability.VOICE]: 'voice',
+    [PluginCapability.HOOKS_BEFORE_FILE_SAVE]: 'hooks',
+    [PluginCapability.CLIENT_SLOTS]: null
+  };
+
+// Always handed over: they grant access to nothing, and requiring them would add
+// noise to every manifest.
+const ALWAYS_PROVIDED = [
+  'pluginId',
+  'path',
+  'logger',
+  'log',
+  'debug',
+  'error'
+] as const satisfies readonly (keyof PluginContext)[];
+
+const SUPPORTED_CAPABILITIES = new Set<string>(Object.values(PluginCapability));
 
 // onLoad is optional at the type level because a client-only plugin has no
 // server module at all -- it is registered as an empty one. A plugin that DOES
@@ -190,6 +229,58 @@ class PluginManager {
     this.validatePluginId(pluginId);
 
     return path.join(PLUGINS_PATH, pluginId);
+  };
+
+  // Declared capabilities this server cannot provide. The manifest schema keeps
+  // capabilities as plain strings precisely so this check can report the
+  // offending one by name -- a plugin built against a newer SDK is the expected
+  // case, and "capability 'x' is not supported" beats a zod schema error.
+  private verifyCapabilities = (
+    capabilities: string[]
+  ): { isValid: boolean; error?: string } => {
+    const unsupported = capabilities.filter(
+      (capability) => !SUPPORTED_CAPABILITIES.has(capability)
+    );
+
+    if (unsupported.length > 0) {
+      return {
+        isValid: false,
+        error: `Plugin declares capabilities this server does not support: ${unsupported.join(', ')}.`
+      };
+    }
+
+    return { isValid: true };
+  };
+
+  // Hand back only what was declared. Everything else simply is not on the
+  // object, so a plugin that did not ask for `voice` cannot call ctx.voice --
+  // the SDK types promise the full context, and a plugin that lies in its
+  // manifest fails at the call site rather than being quietly tolerated.
+  private restrictContext = (
+    full: PluginContext,
+    capabilities: string[]
+  ): PluginContext => {
+    const allowed = new Set<string>(ALWAYS_PROVIDED);
+
+    for (const capability of capabilities) {
+      const namespace = CAPABILITY_NAMESPACE[capability as PluginCapability];
+
+      if (namespace) {
+        allowed.add(namespace);
+      }
+    }
+
+    const restricted: Record<string, unknown> = {};
+
+    for (const [key, value] of Object.entries(full)) {
+      if (allowed.has(key)) {
+        restricted[key] = value;
+      }
+    }
+
+    // The cast is the honest expression of what this does: a restricted context
+    // deliberately lacks properties PluginContext declares. See the note above.
+    return restricted as unknown as PluginContext;
   };
 
   private verifySdkVersion = (
@@ -371,9 +462,11 @@ class PluginManager {
     const info = await this.getPluginInfo(pluginId);
 
     const { isValid, error } = this.verifySdkVersion(info.sdkVersion);
+    const capabilityCheck = this.verifyCapabilities(info.capabilities);
 
-    if (!isValid) {
-      const errorMessage = error || 'Unknown SDK version error';
+    if (!isValid || !capabilityCheck.isValid) {
+      const errorMessage =
+        error || capabilityCheck.error || 'Unknown SDK version error';
 
       this.loadErrors.set(pluginId, errorMessage);
 
@@ -410,7 +503,7 @@ class PluginManager {
         return;
       }
 
-      const ctx = this.createContext(pluginId);
+      const ctx = this.createContext(pluginId, info.capabilities);
       const moduleSpecifier = await this.getPluginModuleSpecifier(
         info.path,
         info.version
@@ -465,8 +558,14 @@ class PluginManager {
 
     if (typeof pluginModule.onUnload === 'function') {
       try {
-        const unloadCtx: UnloadPluginContext =
-          this.createUnloadContext(pluginId);
+        // Same capabilities on the way out as on the way in: a plugin must not
+        // gain access during unload that it never declared.
+        const { capabilities } = await this.getPluginInfo(pluginId);
+
+        const unloadCtx: UnloadPluginContext = this.createUnloadContext(
+          pluginId,
+          capabilities
+        );
 
         await pluginModule.onUnload(unloadCtx);
       } catch (error) {
@@ -510,10 +609,13 @@ class PluginManager {
     }
   };
 
-  private createContext = (pluginId: string): PluginContext => {
+  private createContext = (
+    pluginId: string,
+    capabilities: string[]
+  ): PluginContext => {
     const scopedLogger = this.pluginLogger.createScopedLogger(pluginId);
 
-    return {
+    const full: PluginContext = {
       pluginId,
       path: this.getPluginPath(pluginId),
       logger: scopedLogger,
@@ -698,10 +800,15 @@ class PluginManager {
         }
       }
     };
+
+    return this.restrictContext(full, capabilities);
   };
 
-  private createUnloadContext = (pluginId: string): UnloadPluginContext => {
-    const baseContext = this.createContext(pluginId);
+  private createUnloadContext = (
+    pluginId: string,
+    capabilities: string[]
+  ): UnloadPluginContext => {
+    const baseContext = this.createContext(pluginId, capabilities);
 
     return {
       path: baseContext.path,
