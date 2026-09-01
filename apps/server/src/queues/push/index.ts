@@ -1,5 +1,5 @@
-import type { TJoinedMessage } from '@sharkord/shared';
-import { ChannelPermission } from '@sharkord/shared';
+import type { TJoinedMessage } from '@bullshark/shared';
+import { ChannelPermission } from '@bullshark/shared';
 import Queue from 'queue';
 import webpush from 'web-push';
 import {

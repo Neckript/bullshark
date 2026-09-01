@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID, sha256 } from '@sharkord/shared';
+import { OWNER_ROLE_ID, sha256 } from '@bullshark/shared';
 import crypto from 'crypto';
 import { z } from 'zod';
 import { db } from '../../db';

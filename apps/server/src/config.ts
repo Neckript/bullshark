@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import fs from 'fs/promises';
 import { parse, stringify } from 'ini';
 import z from 'zod';
@@ -75,6 +75,11 @@ const zConfig = z.object({
       maxRequests: z.coerce.number().int().positive(),
       windowMs: z.coerce.number().int().positive()
     })
+  }),
+  plugins: z.object({
+    // '' disables the marketplace: the server renders it as an empty list
+    // without making a request.
+    marketplaceRegistryUrl: z.string()
   })
 });
 
@@ -144,6 +149,10 @@ const defaultConfig: TConfig = {
       maxRequests: 10,
       windowMs: 60_000
     }
+  },
+  plugins: {
+    marketplaceRegistryUrl:
+      'https://codeberg.org/The_Neckript/bullshark-plugins/raw/branch/main/plugins.json'
   }
 };
 
@@ -182,12 +191,13 @@ if (!configExists) {
 }
 
 config = applyEnvOverrides(config, {
-  'server.port': 'SHARKORD_PORT',
-  'server.debug': 'SHARKORD_DEBUG',
-  'server.autoupdate': 'SHARKORD_AUTOUPDATE',
-  'webRtc.port': 'SHARKORD_WEBRTC_PORT',
-  'webRtc.announcedAddress': 'SHARKORD_WEBRTC_ANNOUNCED_ADDRESS',
-  'webRtc.maxBitrate': 'SHARKORD_WEBRTC_MAX_BITRATE'
+  'server.port': 'BULLSHARK_PORT',
+  'server.debug': 'BULLSHARK_DEBUG',
+  'server.autoupdate': 'BULLSHARK_AUTOUPDATE',
+  'webRtc.port': 'BULLSHARK_WEBRTC_PORT',
+  'webRtc.announcedAddress': 'BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS',
+  'webRtc.maxBitrate': 'BULLSHARK_WEBRTC_MAX_BITRATE',
+  'plugins.marketplaceRegistryUrl': 'BULLSHARK_MARKETPLACE_REGISTRY_URL'
 });
 
 config = Object.freeze(config);

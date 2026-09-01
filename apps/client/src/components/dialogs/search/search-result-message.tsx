@@ -5,7 +5,7 @@ import { RelativeTime } from '@/components/relative-time';
 import { UserAvatar } from '@/components/user-avatar';
 import { usePluginMetadata } from '@/features/server/plugins/hooks';
 import type { TMessageJumpToTarget } from '@/types';
-import { IconButton, Tooltip } from '@sharkord/ui';
+import { IconButton, Tooltip } from '@bullshark/ui';
 import { ArrowRight, Hash } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

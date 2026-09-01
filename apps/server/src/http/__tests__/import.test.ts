@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID } from '@sharkord/shared';
+import { OWNER_ROLE_ID } from '@bullshark/shared';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { createWriteStream } from 'fs';
 import fs from 'fs/promises';

@@ -1,4 +1,4 @@
-import { getErrorMessage, type TFile } from '@sharkord/shared';
+import { getErrorMessage, type TFile } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import path from 'path';

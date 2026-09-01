@@ -1,5 +1,5 @@
-import type { TArtifact, TVersionInfo } from '@sharkord/shared';
-import { getErrorMessage } from '@sharkord/shared';
+import type { TArtifact, TVersionInfo } from '@bullshark/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import semver from 'semver';
 import { config } from '../config';
 import { logger } from '../logger';

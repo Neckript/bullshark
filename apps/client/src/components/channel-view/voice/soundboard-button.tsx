@@ -1,7 +1,7 @@
 import { useSounds } from '@/features/server/soundboard/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
 import { cn } from '@/lib/utils';
-import { Button, Popover, PopoverContent, PopoverTrigger } from '@sharkord/ui';
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@bullshark/ui';
 import { Music } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -4,7 +4,7 @@ import {
   MAX_SOUND_FILE_SIZE,
   StreamKind,
   type TTempFile
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest, uploadFile } from '../../__tests__/helpers';
 import { db } from '../../db';

@@ -91,7 +91,7 @@ docker run \
   -p 4991:4991/tcp \
   -p 40000:40000/tcp \
   -p 40000:40000/udp \
-  -v ./data:/home/bun/.config/sharkord \
+  -v ./data:/home/bun/.config/bullshark \
   --name bullshark \
   ghcr.io/neckript/bullshark:latest
 ```
@@ -118,9 +118,9 @@ démarrer le serveur) :
 # Native binary / Binaire natif
 ./bullshark --new-owner-token
 
-# Docker (replace "sharkord" with your container name — see `docker ps`)
-# Docker (remplace "sharkord" par le nom de ton conteneur — voir `docker ps`)
-docker exec -u bun -e HOME=/home/bun sharkord /sharkord --new-owner-token
+# Docker (replace "bullshark" with your container name — see `docker ps`)
+# Docker (remplace "bullshark" par le nom de ton conteneur — voir `docker ps`)
+docker exec -u bun -e HOME=/home/bun bullshark /bullshark --new-owner-token
 ```
 
 > ⚠️ For a Dockerized server, always run it **inside the container** as above — do
@@ -137,12 +137,12 @@ de vie complet du token owner, le modèle de sécurité et les notes de mise à 
 
 ---
 
-## Differences from Sharkord / Différences avec Sharkord
+## Differences from Bullshark / Différences avec Bullshark
 
 Bullshark is a gaming-focused fork. We diverge from upstream intentionally:
 
 - **Faster bug fixes** on anything that impacts voice stability
-- **Gaming features** outside Sharkord's scope: PTT, global hotkeys, soundboard, noise suppression, in-game overlay
+- **Gaming features** outside Bullshark's scope: PTT, global hotkeys, soundboard, noise suppression, in-game overlay
 - **Bilingual documentation** — French and English, because sovereignty is a European concern too
 - **No artificial scope restrictions** — we build what gamers need
 
@@ -200,7 +200,7 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 
 MIT — see [LICENSE](./LICENSE)
 
-Original work © Sharkord contributors — [Support the creator](https://ko-fi.com/B0B71U3476)  
+Original work © Bullshark contributors — [Support the creator](https://ko-fi.com/B0B71U3476)  
 Fork © 2025 Neckript/Bullshark contributors
 
 ---

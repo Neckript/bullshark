@@ -1,4 +1,4 @@
-import { ChannelPermission, Permission } from '@sharkord/shared';
+import { ChannelPermission, Permission } from '@bullshark/shared';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { config } from '../../config';

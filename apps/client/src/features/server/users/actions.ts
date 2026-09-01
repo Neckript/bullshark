@@ -1,5 +1,5 @@
 import { store } from '@/features/store';
-import { UserStatus, type TJoinedPublicUser } from '@sharkord/shared';
+import { UserStatus, type TJoinedPublicUser } from '@bullshark/shared';
 import { serverSliceActions } from '../slice';
 import { userByIdSelector } from './selectors';
 

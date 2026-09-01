@@ -1,7 +1,7 @@
 import { RelativeTime } from '@/components/relative-time';
 import { getFileUrl } from '@/helpers/get-file-url';
 import type { TMessageJumpToTarget } from '@/types';
-import { Button } from '@sharkord/ui';
+import { Button } from '@bullshark/ui';
 import { FileText, Hash } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import type { TSearchResultFile } from './types';

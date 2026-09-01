@@ -1,4 +1,4 @@
-import { ActivityLogType, OWNER_ROLE_ID, Permission } from '@sharkord/shared';
+import { ActivityLogType, OWNER_ROLE_ID, Permission } from '@bullshark/shared';
 import { and, eq, ne, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { publishRole } from '../../db/publishers';

@@ -15,7 +15,7 @@ import {
   type AppRouter,
   DisconnectCode,
   type TConnectionParams
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { createTRPCProxyClient, createWSClient, wsLink } from '@trpc/client';
 
 let wsClient: ReturnType<typeof createWSClient> | null = null;

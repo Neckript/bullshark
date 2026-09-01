@@ -1,5 +1,5 @@
-import type { TVersionInfo } from '@sharkord/shared';
-import { validateReleaseMetadata } from '@sharkord/shared';
+import type { TVersionInfo } from '@bullshark/shared';
+import { validateReleaseMetadata } from '@bullshark/shared';
 
 const CODEBERG_API_BASE = 'https://codeberg.org/api/v1';
 const REPO_OWNER = 'The_Neckript';

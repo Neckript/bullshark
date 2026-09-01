@@ -1,4 +1,4 @@
-import { sha256 } from '@sharkord/shared';
+import { sha256 } from '@bullshark/shared';
 import crypto from 'crypto';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; // Crockford-ish base32, no ambiguous chars

@@ -1,4 +1,4 @@
-import { ServerEvents } from '@sharkord/shared';
+import { ServerEvents } from '@bullshark/shared';
 import { protectedProcedure } from '../../utils/trpc';
 
 const onMessageDeleteRoute = protectedProcedure.subscription(

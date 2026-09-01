@@ -1,4 +1,4 @@
-import { ActivityLogType, Permission } from '@sharkord/shared';
+import { ActivityLogType, Permission } from '@bullshark/shared';
 import { sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

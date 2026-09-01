@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { ChannelPermission, OWNER_ROLE_ID } from '@sharkord/shared';
+import { ChannelPermission, OWNER_ROLE_ID } from '@bullshark/shared';
 import { createCachedSelector } from 're-reselect';
 import { mutedRoleMentionIdsSelector } from '../app/selectors';
 import type { IRootState } from '../store';

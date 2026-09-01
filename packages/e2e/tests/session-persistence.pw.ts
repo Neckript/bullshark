@@ -1,8 +1,8 @@
 import type { Page, WebSocketRoute } from '@playwright/test';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 import { expect, test } from './fixtures';
 
-const AUTO_LOGIN_TOKEN_KEY = 'sharkord-auto-login-token';
+const AUTO_LOGIN_TOKEN_KEY = 'bullshark-auto-login-token';
 
 // Intercepts the tRPC socket so a test can drop it the way a server restart or
 // a network hiccup would, without the user asking for anything, and can read

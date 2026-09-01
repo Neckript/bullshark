@@ -1,6 +1,6 @@
 import { logDebug } from '@/helpers/browser-logger';
 import { getTRPCClient } from '@/lib/trpc';
-import type { TJoinedSound } from '@sharkord/shared';
+import type { TJoinedSound } from '@bullshark/shared';
 import { addSound, removeSound, updateSound } from './actions';
 
 const subscribeToSounds = () => {

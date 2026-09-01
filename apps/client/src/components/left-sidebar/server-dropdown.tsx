@@ -1,7 +1,7 @@
 import { openDialog, requestConfirmation } from '@/features/dialogs/actions';
 import { openServerScreen } from '@/features/server-screens/actions';
 import { disconnectFromServer } from '@/features/server/actions';
-import { Permission, TestId } from '@sharkord/shared';
+import { Permission, TestId } from '@bullshark/shared';
 import {
   Button,
   DropdownMenu,
@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Menu } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

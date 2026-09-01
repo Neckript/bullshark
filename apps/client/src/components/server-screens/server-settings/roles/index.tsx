@@ -1,5 +1,5 @@
 import { useAdminRoles } from '@/features/server/admin/hooks';
-import { Card, CardContent, LoadingCard } from '@sharkord/ui';
+import { Card, CardContent, LoadingCard } from '@bullshark/ui';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RolesList } from './roles-list';

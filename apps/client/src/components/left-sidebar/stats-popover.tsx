@@ -1,6 +1,6 @@
 import { useVoice } from '@/features/server/voice/hooks';
 import { formatBigNumber } from '@/helpers/format-big-number';
-import { Popover, PopoverContent, PopoverTrigger } from '@sharkord/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@bullshark/ui';
 import { filesize } from 'filesize';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

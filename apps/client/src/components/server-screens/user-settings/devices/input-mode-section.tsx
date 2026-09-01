@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { DEFAULT_PTT_KEY, InputMode } from '@/types';
-import { Button, Group, Label } from '@sharkord/ui';
+import { Button, Group, Label } from '@bullshark/ui';
 import { Keyboard } from 'lucide-react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

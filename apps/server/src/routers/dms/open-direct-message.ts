@@ -1,4 +1,4 @@
-import { ChannelType, ServerEvents } from '@sharkord/shared';
+import { ChannelType, ServerEvents } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { config } from '../../config';

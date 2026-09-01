@@ -1,6 +1,6 @@
 import { logDebug } from '@/helpers/browser-logger';
 import { getTRPCClient } from '@/lib/trpc';
-import type { TJoinedRole } from '@sharkord/shared';
+import type { TJoinedRole } from '@bullshark/shared';
 import { addRole, removeRole, updateRole } from './actions';
 
 const subscribeToRoles = () => {

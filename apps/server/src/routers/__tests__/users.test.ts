@@ -3,7 +3,7 @@ import {
   OWNER_ROLE_ID,
   Permission,
   type TTempFile
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import { and, eq } from 'drizzle-orm';
 import { initTest, uploadFile } from '../../__tests__/helpers';

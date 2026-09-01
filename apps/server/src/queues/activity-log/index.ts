@@ -1,4 +1,4 @@
-import type { ActivityLogType, TActivityLogDetailsMap } from '@sharkord/shared';
+import type { ActivityLogType, TActivityLogDetailsMap } from '@bullshark/shared';
 import chalk from 'chalk';
 import Queue from 'queue';
 import { db } from '../../db';

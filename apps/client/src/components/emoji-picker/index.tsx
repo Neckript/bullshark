@@ -9,7 +9,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CustomEmojiTab } from './custom-emoji-tab';

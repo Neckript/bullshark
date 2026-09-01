@@ -1,4 +1,4 @@
-import { Button } from '@sharkord/ui';
+import { Button } from '@bullshark/ui';
 import { ArrowLeft } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -2,7 +2,7 @@ import type {
   TGifSearchPage,
   TGifSearchParams,
   TGifSearchResult
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 
 export type { TGifSearchPage, TGifSearchParams, TGifSearchResult };
 

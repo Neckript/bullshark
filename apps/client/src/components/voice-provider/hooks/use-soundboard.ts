@@ -5,7 +5,7 @@ import {
   SOUND_TRIGGER_COOLDOWN_MS,
   StreamKind,
   type TJoinedSound
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import type { AppData, Producer, Transport } from 'mediasoup-client/types';
 import { useCallback, useRef, useState } from 'react';
 

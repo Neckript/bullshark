@@ -9,7 +9,7 @@ import {
 } from '@/features/server/hooks';
 import { LocalStorageKey } from '@/helpers/storage';
 import { cn } from '@/lib/utils';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../dialogs/dialogs';

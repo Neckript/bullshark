@@ -1,4 +1,4 @@
-# 🔒 Audit de sécurité — Bullshark (fork Sharkord)
+# 🔒 Audit de sécurité — Bullshark (fork Bullshark)
 
 **Date :** 2026-06-14
 **Périmètre :** `apps/server`, `apps/client`, `packages/*` · branche `development`
@@ -30,14 +30,14 @@ des **dépendances serveur vulnérables**, et un **contournement de quota/taille
 
 ```ts
 // env.ts
-const env = typeof SHARKORD_ENV !== 'undefined' ? SHARKORD_ENV : 'development'; // défaut = development
+const env = typeof BULLSHARK_ENV !== 'undefined' ? BULLSHARK_ENV : 'development'; // défaut = development
 const IS_DEVELOPMENT = !IS_PRODUCTION;
 // seed.ts
 const originalToken = IS_DEVELOPMENT ? 'dev' : randomUUIDv7();
 secretToken: await sha256(originalToken),   // secret JWT = sha256('dev') en dev
 ```
 
-**Faille :** quand `SHARKORD_ENV` n'est pas explicitement `production` (le défaut), le secret JWT
+**Faille :** quand `BULLSHARK_ENV` n'est pas explicitement `production` (le défaut), le secret JWT
 devient `sha256('dev')` — une constante publique — et le token owner devient `'dev'`.
 
 **Scénario d'exploitation :**
@@ -46,13 +46,13 @@ devient `sha256('dev')` — une constante publique — et le token owner devient
 
 → **Prise de contrôle totale du serveur.**
 
-**Atténuation existante :** le build officiel injecte `SHARKORD_ENV='production'`
+**Atténuation existante :** le build officiel injecte `BULLSHARK_ENV='production'`
 (`apps/server/build/helpers.ts:159`), donc l'image Docker officielle est sûre. Le danger concerne
 **tout déploiement compilé depuis les sources / image non officielle / `bun start`** sans la variable
 — cas réaliste pour des self-hosters avant v0.1.0.
 
 **Correctif proposé :**
-- Refuser de démarrer si on n'est pas en prod ET que `SHARKORD_ENV` est absent (exiger une valeur explicite, sinon `throw`).
+- Refuser de démarrer si on n'est pas en prod ET que `BULLSHARK_ENV` est absent (exiger une valeur explicite, sinon `throw`).
 - Ne jamais dériver un secret d'une constante — générer un secret CSPRNG même en dev :
   ```ts
   import { randomBytes } from 'crypto';

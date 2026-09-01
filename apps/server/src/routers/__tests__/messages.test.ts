@@ -1,4 +1,4 @@
-import { ChannelPermission, Permission } from '@sharkord/shared';
+import { ChannelPermission, Permission } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import { and, eq } from 'drizzle-orm';
 import { initTest, uploadFile } from '../../__tests__/helpers';

@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build project artifacts
-        uses: ./.github/actions/build-sharkord
+        uses: ./.github/actions/build-bullshark
         with:
           bump: ${{ inputs.bump }}
 
@@ -63,13 +63,13 @@ jobs:
           docker_username: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/sharkord:latest
-            ${{ secrets.DOCKER_USERNAME }}/sharkord:v${{ steps.get_version.outputs.version }}
+            ${{ secrets.DOCKER_USERNAME }}/bullshark:latest
+            ${{ secrets.DOCKER_USERNAME }}/bullshark:v${{ steps.get_version.outputs.version }}
           labels: |
-            org.opencontainers.image.title=Sharkord
-            org.opencontainers.image.description=Sharkord Server
+            org.opencontainers.image.title=Bullshark
+            org.opencontainers.image.description=Bullshark Server
             org.opencontainers.image.version=${{ steps.get_version.outputs.version }}
-            org.opencontainers.image.source=https://github.com/Sharkord/sharkord
+            org.opencontainers.image.source=https://codeberg.org/The_Neckript/bullshark
 
       - name: Commit version bump
         if: ${{ inputs.bump != 'none' }}

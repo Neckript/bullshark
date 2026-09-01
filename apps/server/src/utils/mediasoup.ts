@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import mediasoup from 'mediasoup';
 import { config, SERVER_PUBLIC_IP } from '../config.js';
 import { MEDIASOUP_BINARY_PATH } from '../helpers/paths.js';

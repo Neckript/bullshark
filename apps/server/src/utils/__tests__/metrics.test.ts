@@ -23,7 +23,7 @@ describe('getDiskMetrics', () => {
     expect(result.totalSpace).toBe(500);
     expect(result.usedSpace).toBe(120);
     expect(result.freeSpace).toBe(380);
-    expect(result.sharkordUsedSpace).toBe(42);
+    expect(result.bullsharkUsedSpace).toBe(42);
   });
 
   test('should fallback to the first filesystem when no mount matches DATA_PATH', async () => {

@@ -9,7 +9,7 @@ import {
   type TPluginComponentsMap,
   type TPluginComponentsMapBySlotId,
   type TPluginMetadata
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { serverSliceActions } from '../slice';
 
 export const setPluginsMetadata = (pluginsMetadata: TPluginMetadata[]) =>

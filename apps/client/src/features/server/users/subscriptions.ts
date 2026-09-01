@@ -1,6 +1,6 @@
 import { logDebug } from '@/helpers/browser-logger';
 import { getTRPCClient } from '@/lib/trpc';
-import { UserStatus, type TJoinedPublicUser } from '@sharkord/shared';
+import { UserStatus, type TJoinedPublicUser } from '@bullshark/shared';
 import {
   addUser,
   handleUserJoin,

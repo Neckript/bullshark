@@ -1,5 +1,5 @@
 import { getFileUrl } from '@/helpers/get-file-url';
-import type { TJoinedSound } from '@sharkord/shared';
+import type { TJoinedSound } from '@bullshark/shared';
 import {
   Button,
   Card,
@@ -8,7 +8,7 @@ import {
   CardTitle,
   Input,
   Spinner
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Plus, Search } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

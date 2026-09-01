@@ -1,5 +1,5 @@
 import { getTRPCClient } from '@/lib/trpc';
-import type { TGifSearchResult } from '@sharkord/shared';
+import type { TGifSearchResult } from '@bullshark/shared';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   Input
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

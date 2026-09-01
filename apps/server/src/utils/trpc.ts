@@ -3,7 +3,7 @@ import {
   UserStatus,
   type Permission,
   type TUser
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { initTRPC, TRPCError } from '@trpc/server';
 import chalk from 'chalk';
 import type WebSocket from 'ws';

@@ -1,4 +1,4 @@
-import type { TDiskMetrics } from '@sharkord/shared';
+import type { TDiskMetrics } from '@bullshark/shared';
 import path from 'path';
 import si from 'systeminformation';
 import { getUsedFileQuota } from '../db/queries/files';
@@ -69,7 +69,7 @@ const getDiskMetrics = async (
     totalSpace: totalDisk,
     usedSpace: usedDisk,
     freeSpace: freeDisk,
-    sharkordUsedSpace: filesUsedSpace
+    bullsharkUsedSpace: filesUsedSpace
   };
 
   return metrics;

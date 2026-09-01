@@ -1,5 +1,5 @@
 {
-  "name": "@sharkord/e2e",
+  "name": "@bullshark/e2e",
   "version": "0.0.30",
   "type": "module",
   "private": true,
@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@sharkord/shared": "workspace:*",
+    "@bullshark/shared": "workspace:*",
     "@types/bun": "latest",
     "@types/react": "^19"
   },

@@ -2,7 +2,7 @@ import {
   ActivityLogType,
   ChannelPermission,
   Permission
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

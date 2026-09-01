@@ -1,6 +1,6 @@
 import { PluginSlotRenderer } from '@/components/plugin-slot-renderer';
 import type { TUseForm } from '@/hooks/use-form';
-import { PluginSlot, TestId } from '@sharkord/shared';
+import { PluginSlot, TestId } from '@bullshark/shared';
 import {
   Alert,
   AlertDescription,
@@ -14,7 +14,7 @@ import {
   Label,
   Spinner,
   Switch
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, type Dispatch, type SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 

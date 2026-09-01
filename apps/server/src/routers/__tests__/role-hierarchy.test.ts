@@ -2,7 +2,7 @@ import {
   OWNER_ROLE_ID,
   OWNER_ROLE_POSITION,
   Permission
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import { initTest } from '../../__tests__/helpers';
 import { getRolePosition, getUserTopPosition } from '../../db/queries/roles';

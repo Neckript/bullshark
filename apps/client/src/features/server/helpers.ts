@@ -2,7 +2,7 @@ import {
   ChannelPermission,
   hasMention,
   type TJoinedMessage
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import type { channelPermissionsSelector } from './channels/selectors';
 
 const canViewChannel = (

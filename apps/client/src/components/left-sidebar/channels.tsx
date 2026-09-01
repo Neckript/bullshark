@@ -37,7 +37,7 @@ import {
   type TChannel,
   TestId,
   getTrpcError
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { Hash, Volume2 } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

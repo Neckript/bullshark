@@ -1,6 +1,6 @@
 import { logDebug } from '@/helpers/browser-logger';
 import { getTRPCClient } from '@/lib/trpc';
-import type { TJoinedEmoji } from '@sharkord/shared';
+import type { TJoinedEmoji } from '@bullshark/shared';
 import { addEmoji, removeEmoji, updateEmoji } from './actions';
 
 const subscribeToEmojis = () => {

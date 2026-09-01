@@ -1,4 +1,4 @@
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import { protectedProcedure } from '../../utils/trpc';
 import { updater } from '../../utils/updater';
 

@@ -21,8 +21,8 @@ import {
   ChannelType,
   Permission,
   PluginSlot
-} from '@sharkord/shared';
-import { Button } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Button } from '@bullshark/ui';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -8,7 +8,7 @@ import {
   CardTitle,
   Group,
   Input
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { QRCodeSVG } from 'qrcode.react';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

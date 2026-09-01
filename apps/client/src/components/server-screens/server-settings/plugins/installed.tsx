@@ -2,8 +2,8 @@ import { Dialog } from '@/components/dialogs/dialogs';
 import { openDialog, requestConfirmation } from '@/features/dialogs/actions';
 import { usePluginsEnabled } from '@/features/server/hooks';
 import { getTRPCClient } from '@/lib/trpc';
-import type { TPluginInfo } from '@sharkord/shared';
-import { getTrpcError } from '@sharkord/shared';
+import type { TPluginInfo } from '@bullshark/shared';
+import { getTrpcError } from '@bullshark/shared';
 import {
   Alert,
   AlertDescription,
@@ -14,7 +14,7 @@ import {
   LoadingCard,
   Switch,
   Tooltip
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import {
   AlertCircle,
   FileText,

@@ -1,4 +1,4 @@
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

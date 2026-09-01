@@ -1,4 +1,4 @@
-import { ChannelType, Permission, ServerEvents } from '@sharkord/shared';
+import { ChannelType, Permission, ServerEvents } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { channels } from '../../db/schema';

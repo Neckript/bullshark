@@ -12,8 +12,8 @@ import {
   DELETED_USER_IDENTITY_AND_NAME,
   getTrpcError,
   UserStatus
-} from '@sharkord/shared';
-import { Button } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Button } from '@bullshark/ui';
 import { Gavel, Plus, Trash, UserMinus } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

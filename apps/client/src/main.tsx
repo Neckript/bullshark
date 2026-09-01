@@ -1,5 +1,5 @@
 import { i18nReady } from '@/i18n';
-import { Toaster } from '@sharkord/ui';
+import { Toaster } from '@bullshark/ui';
 import 'prosemirror-view/style/prosemirror.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -20,12 +20,14 @@ import { ThemeProvider } from './components/theme-provider/index.tsx';
 import { exposePluginStore } from './features/server/plugins/plugin-store.ts';
 import { store } from './features/store.ts';
 import { exposeLibs, exposeReact } from './helpers/exposes.ts';
+import { migrateLegacyStorageKeys } from './helpers/storage-migration.ts';
 import { LocalStorageKey, purgeLegacyCredentials } from './helpers/storage.ts';
 import './index.css';
 
 exposeReact();
 exposeLibs();
 exposePluginStore();
+migrateLegacyStorageKeys();
 purgeLegacyCredentials();
 
 await i18nReady;

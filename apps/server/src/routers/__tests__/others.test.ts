@@ -1,4 +1,4 @@
-import type { TTempFile } from '@sharkord/shared';
+import type { TTempFile } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
 import {
   getCaller,

@@ -1,4 +1,4 @@
-import type { TFile } from '@sharkord/shared';
+import type { TFile } from '@bullshark/shared';
 import { getFileUrl } from './get-file-url';
 
 const downloadFile = async (file: TFile) => {

@@ -1,4 +1,4 @@
-import { ChannelType, type TIMessage } from '@sharkord/shared';
+import { ChannelType, type TIMessage } from '@bullshark/shared';
 import type { BunSQLiteDatabase } from 'drizzle-orm/bun-sqlite';
 import { channels, messages } from '../../db/schema';
 

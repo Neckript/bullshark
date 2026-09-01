@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID } from '@sharkord/shared';
+import { OWNER_ROLE_ID } from '@bullshark/shared';
 import { getUserRoleIds } from '../../db/queries/roles';
 import { invariant } from '../../utils/invariant';
 

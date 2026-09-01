@@ -1,8 +1,8 @@
 import { EmojiPicker } from '@/components/emoji-picker';
 import { Protect } from '@/components/protect';
 import type { TEmojiItem } from '@/components/tiptap-input/helpers';
-import { Permission } from '@sharkord/shared';
-import { Sheet, SheetContent } from '@sharkord/ui';
+import { Permission } from '@bullshark/shared';
+import { Sheet, SheetContent } from '@bullshark/ui';
 import {
   Copy,
   MessageSquareText,

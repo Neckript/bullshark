@@ -34,7 +34,7 @@ import {
   type TStorageData,
   type TStorageSettings,
   type TTrpcErrors
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { filesize } from 'filesize';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';

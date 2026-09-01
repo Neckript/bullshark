@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID, Permission } from '@sharkord/shared';
+import { OWNER_ROLE_ID, Permission } from '@bullshark/shared';
 import { z } from 'zod';
 import { assertOutranksRole } from '../../helpers/assert-rank';
 import { protectedProcedure } from '../../utils/trpc';

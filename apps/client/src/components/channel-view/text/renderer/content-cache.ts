@@ -1,4 +1,4 @@
-import { isEmojiOnlyMessage, type TJoinedMessage } from '@sharkord/shared';
+import { isEmojiOnlyMessage, type TJoinedMessage } from '@bullshark/shared';
 import parse, { type DOMNode } from 'html-react-parser';
 import type { ReactNode } from 'react';
 import { serializer } from './serializer';

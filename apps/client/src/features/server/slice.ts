@@ -22,7 +22,7 @@ import type {
   TServerInfo,
   TVoiceMap,
   TVoiceUserState
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { mergeMessagesChronologically } from './helpers';
 import type {
   TDisconnectInfo,

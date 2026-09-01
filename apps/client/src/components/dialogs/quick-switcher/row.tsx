@@ -6,7 +6,7 @@ import {
 } from '@/features/server/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { cn } from '@/lib/utils';
-import { TestId, UserStatus } from '@sharkord/shared';
+import { TestId, UserStatus } from '@bullshark/shared';
 import { Hash, Volume2 } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

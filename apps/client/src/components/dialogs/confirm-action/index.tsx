@@ -1,4 +1,4 @@
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AutoFocus
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TDialogBaseProps } from '../types';

@@ -1,5 +1,5 @@
 import { PaginatedTable } from '@/components/paginated-table';
-import type { TJoinedInvite } from '@sharkord/shared';
+import type { TJoinedInvite } from '@bullshark/shared';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TableInvite } from './table-invite';

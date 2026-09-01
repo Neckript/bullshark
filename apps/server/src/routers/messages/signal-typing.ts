@@ -1,4 +1,4 @@
-import { ChannelPermission, Permission, ServerEvents } from '@sharkord/shared';
+import { ChannelPermission, Permission, ServerEvents } from '@bullshark/shared';
 import { z } from 'zod';
 import { config } from '../../config';
 import { getAffectedOnlineUserIdsForChannel } from '../../db/queries/channels';

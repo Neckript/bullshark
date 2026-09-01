@@ -1,38 +1,40 @@
-// const MARKETPLACE_REGISTRY_URL =
-//   'https://cdn.jsdelivr.net/gh/Sharkord/plugins@latest/plugins.json';
+import z from 'zod';
 
-const MARKETPLACE_REGISTRY_URL =
-  'https://raw.githubusercontent.com/Sharkord/plugins/refs/heads/main/plugins.json?raw=true';
+const zMarketplacePlugin = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  author: z.string(),
+  logo: z.string(),
+  homepage: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  categories: z.array(z.string()).optional(),
+  verified: z.boolean(),
+  screenshots: z.array(z.string()).optional()
+});
 
-type TMarketplacePlugin = {
-  id: string;
-  name: string;
-  description: string;
-  author: string;
-  logo: string;
-  homepage?: string;
-  tags?: string[];
-  categories?: string[];
-  verified: boolean;
-  screenshots?: string[];
-};
+const zMarketplacePluginVersion = z.object({
+  version: z.string(),
+  downloadUrl: z.string(),
+  checksum: z.string(),
+  sdkVersion: z.union([z.number(), z.string()]),
+  size: z.number(),
+  timestamp: z.number()
+});
 
-type TMarketplacePluginVersion = {
-  version: string;
-  downloadUrl: string;
-  checksum: string;
-  sdkVersion: number | string;
-  size: number;
-  timestamp: number;
-};
+const zMarketplaceEntry = z.object({
+  plugin: zMarketplacePlugin,
+  versions: z.array(zMarketplacePluginVersion)
+});
 
-type TMarketplaceEntry = {
-  plugin: TMarketplacePlugin;
-  versions: TMarketplacePluginVersion[];
-};
+type TMarketplacePlugin = z.infer<typeof zMarketplacePlugin>;
+type TMarketplacePluginVersion = z.infer<typeof zMarketplacePluginVersion>;
+type TMarketplaceEntry = z.infer<typeof zMarketplaceEntry>;
 
 export {
-  MARKETPLACE_REGISTRY_URL,
+  zMarketplaceEntry,
+  zMarketplacePlugin,
+  zMarketplacePluginVersion,
   type TMarketplaceEntry,
   type TMarketplacePlugin,
   type TMarketplacePluginVersion

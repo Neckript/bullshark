@@ -1,7 +1,7 @@
 import { getStreamQualityMetadataLabel } from '@/components/channel-view/voice/quality-options';
 import { useIsOwnUser } from '@/features/server/users/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
-import type { StreamKind } from '@sharkord/shared';
+import type { StreamKind } from '@bullshark/shared';
 import { useMemo } from 'react';
 
 const useStreamQualityData = (streamId: number, kind: StreamKind) => {

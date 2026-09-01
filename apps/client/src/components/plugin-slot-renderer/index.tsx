@@ -1,7 +1,7 @@
 import { usePluginSlotDebug } from '@/features/app/hooks';
 import { useCan } from '@/features/server/hooks';
 import { usePluginComponentsBySlot } from '@/features/server/plugins/hooks';
-import { Permission, type PluginSlot } from '@sharkord/shared';
+import { Permission, type PluginSlot } from '@bullshark/shared';
 import { memo } from 'react';
 import { ErrorBoundary } from './error-boundary';
 import { PlugSlotDebugWrapper } from './plugin-slot-debug-wrapper';

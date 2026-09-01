@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { pluginData } from '../db/schema';

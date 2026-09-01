@@ -1,7 +1,7 @@
 import { useDevices } from '@/components/devices-provider/hooks/use-devices';
 import { useVoice } from '@/features/server/voice/hooks';
 import { applyAudioOutputDevice } from '@/helpers/audio-output';
-import { StreamKind } from '@sharkord/shared';
+import { StreamKind } from '@bullshark/shared';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import { useVolumeControl } from './volume-control-context';
 

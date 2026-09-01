@@ -1,6 +1,6 @@
 import { useChannelById } from '@/features/server/channels/hooks';
 import { useCan, usePublicServerSettings } from '@/features/server/hooks';
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import { useMemo } from 'react';
 
 type TUploadRefusal =

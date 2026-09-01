@@ -4,7 +4,7 @@ import {
   Permission,
   ServerEvents,
   StreamKind
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { z } from 'zod';
 import { VoiceRuntime } from '../../runtimes/voice';
 import { invariant } from '../../utils/invariant';

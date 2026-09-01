@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import chalk from 'chalk';
 import http from 'http';
 import z from 'zod';

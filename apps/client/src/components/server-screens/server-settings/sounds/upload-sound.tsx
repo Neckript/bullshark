@@ -1,8 +1,8 @@
 import {
   MAX_SOUND_DURATION_SECONDS,
   MAX_SOUND_FILE_SIZE
-} from '@sharkord/shared';
-import { Button, Card, CardContent } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Button, Card, CardContent } from '@bullshark/ui';
 import { filesize } from 'filesize';
 import { Upload } from 'lucide-react';
 import { memo } from 'react';

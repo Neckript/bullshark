@@ -1,7 +1,7 @@
 import { useCustomThemeAccent, useCustomThemeBg } from '@/features/app/hooks';
 import { saveSelectedTheme } from '@/features/server/user-settings/actions';
 import { cn } from '@/lib/utils';
-import { Button } from '@sharkord/ui';
+import { Button } from '@bullshark/ui';
 import { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme, type Theme } from '../theme-provider';

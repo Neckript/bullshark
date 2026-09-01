@@ -3,7 +3,7 @@ import type {
   TCreateStreamOptions,
   TExternalStreamHandle,
   UnloadPluginContext
-} from '@sharkord/plugin-sdk';
+} from '@bullshark/plugin-sdk';
 import {
   CLIENT_ENTRY_FILE,
   getErrorMessage,
@@ -17,7 +17,7 @@ import {
   type TPluginInfo,
   type TPluginManifest,
   type TPluginMetadata
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import path from 'path';

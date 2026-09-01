@@ -14,14 +14,14 @@ import { useFlatPluginCommands } from '@/features/server/plugins/hooks';
 import { useUploadFiles } from '@/hooks/use-upload-files';
 import { getTRPCClient } from '@/lib/trpc';
 import type { TReplyTarget } from '@/types';
-import type { TJoinedPublicUser, TTempFile } from '@sharkord/shared';
+import type { TJoinedPublicUser, TTempFile } from '@bullshark/shared';
 import {
   ChannelPermission,
   isEmptyMessage,
   Permission,
   PluginSlot
-} from '@sharkord/shared';
-import { Button, Spinner } from '@sharkord/ui';
+} from '@bullshark/shared';
+import { Button, Spinner } from '@bullshark/ui';
 import { filesize } from 'filesize';
 import { Paperclip, Reply, Send, Smile, X } from 'lucide-react';
 import {

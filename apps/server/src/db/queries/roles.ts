@@ -5,7 +5,7 @@ import {
   type TFile,
   type TJoinedRole,
   type TRole
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { db } from '..';

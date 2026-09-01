@@ -11,7 +11,7 @@ import {
   setLocalStorageItemBool,
   setSessionStorageItem
 } from '@/helpers/storage';
-import { DisconnectCode } from '@sharkord/shared';
+import { DisconnectCode } from '@bullshark/shared';
 import { memo, useEffect, useRef } from 'react';
 import { decideAfterConnectFailure } from './auto-login-policy';
 

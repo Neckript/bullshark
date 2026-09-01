@@ -4,7 +4,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Bug } from 'lucide-react';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';

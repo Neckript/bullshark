@@ -1,4 +1,4 @@
-import { Permission, type TPluginInfo } from '@sharkord/shared';
+import { Permission, type TPluginInfo } from '@bullshark/shared';
 import { pluginManager } from '../../plugins';
 import { protectedProcedure } from '../../utils/trpc';
 

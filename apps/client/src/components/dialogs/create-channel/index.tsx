@@ -4,7 +4,7 @@ import {
   ChannelType,
   parseTrpcErrors,
   type TTrpcErrors
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import {
   AutoFocus,
   Button,
@@ -15,7 +15,7 @@ import {
   DialogTitle,
   Group,
   Input
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Hash, Mic } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,4 +1,4 @@
-import type { Permission, TFile, TJoinedRole } from '@sharkord/shared';
+import type { Permission, TFile, TJoinedRole } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { db } from '../../db';
