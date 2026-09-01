@@ -4,6 +4,7 @@
 import type { ComponentType } from 'react';
 import z from 'zod';
 import type { PluginSlot } from './constants';
+import { zCapability } from './capability-schema';
 
 export const zPluginId = z
   .string()
@@ -12,19 +13,6 @@ export const zPluginId = z
     /^[a-z0-9-]+$/,
     'Plugin ID must contain only lowercase letters, numbers, and dashes'
   );
-
-// Deliberately a string, not z.enum(PluginCapability).
-//
-// The interesting failure is a plugin built against a NEWER SDK, declaring a
-// capability an OLDER server has never heard of. Parsing that with z.enum turns
-// it into an unreadable schema error about the manifest as a whole; the author
-// learns their manifest is invalid, not which capability is unsupported.
-//
-// Strictness belongs at the two moments that can act on it: the builder, which
-// checks the author's manifest against the SDK enum and fails the build, and the
-// server, which checks at load time and names the offending capability. See
-// verifyCapabilities in apps/server/src/plugins/index.ts.
-export const zCapability = z.string().min(1);
 
 export const zPluginManifest = z.object({
   id: zPluginId,
@@ -204,6 +192,7 @@ export type TPluginMetadata = {
 
 // Re-exported so the barrel API is unchanged; they live in a zod-free module
 // so the SDK can import them without pulling zod. See constants.ts.
+export * from './capability-schema';
 export * from './constants';
 export * from './store-types';
 export * from './client-sdk';

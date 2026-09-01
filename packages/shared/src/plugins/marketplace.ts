@@ -1,5 +1,5 @@
 import z from 'zod';
-import { zCapability } from '.';
+import { zCapability } from './capability-schema';
 
 const zMarketplacePlugin = z.object({
   id: z.string(),
