@@ -30,7 +30,7 @@
 | 4b — Optional entry points | done (added during 1) |
 | 5 — Marketplace UI | done |
 | 6 — Documentation | done |
-| 7 — Publish the SDK | not started |
+| 7 — Publish the SDK | written, unverifiable until a real release runs |
 | 8 — Fork the builder | not started, repo not created |
 | 9 — Fork the example | not started, repo not created |
 | 10 — End-to-end | not started |
