@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
+    "build": "rm -rf dist && bun build src/index.ts src/voice.ts --outdir dist --format esm --target node --external mediasoup --external react --external react-dom && dts-bundle-generator --project tsconfig.build.json --no-check -o dist/index.d.ts src/index.ts && dts-bundle-generator --project tsconfig.build.json --no-check -o dist/voice.d.ts src/voice.ts",
     "format": "prettier --write \"**/*.ts*\" --config ./.prettierrc.json",
     "format:check": "prettier --check \"**/*.ts*\" --config ./.prettierrc.json",
     "lint": "eslint ./src/**/*.ts --ext ts --report-unused-disable-directives",
@@ -35,5 +36,9 @@
     "mediasoup": {
       "optional": true
     }
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./voice": "./src/voice.ts"
   }
 }

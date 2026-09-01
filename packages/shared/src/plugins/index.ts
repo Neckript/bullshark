@@ -1,3 +1,7 @@
+// Explicit import rather than the global React UMD namespace: the SDK's
+// declaration bundle is built without ambient @types, so `React.ComponentType`
+// resolves to nothing there.
+import type { ComponentType } from 'react';
 import z from 'zod';
 import { PluginCapability, type PluginSlot } from './constants';
 
@@ -165,7 +169,7 @@ export type TPluginComponentsMapBySlotIdMapListByPlugin = {
   [pluginId: string]: PluginSlot[];
 };
 
-export type TPluginReactComponent = React.ComponentType;
+export type TPluginReactComponent = ComponentType;
 
 export type TPluginComponentsMapBySlotId = {
   [slot in PluginSlot]?: TPluginReactComponent[];
@@ -190,6 +194,7 @@ export type TPluginMetadata = {
 // Re-exported so the barrel API is unchanged; they live in a zod-free module
 // so the SDK can import them without pulling zod. See constants.ts.
 export * from './constants';
+export * from './store-types';
 export * from './client-sdk';
 export * from './hooks';
 export * from './marketplace';
