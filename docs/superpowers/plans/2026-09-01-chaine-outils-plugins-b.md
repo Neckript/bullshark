@@ -18,6 +18,33 @@
 
 ---
 
+## Status (2026-09-01)
+
+| Task | State |
+| --- | --- |
+| 1 — Capability vocabulary | done |
+| 2 — Split mediasoup out | done |
+| 3 — Build the SDK | done |
+| 3b — Project the store types | done (added during 3) |
+| 4 — Enforce capabilities | done |
+| 4b — Optional entry points | done (added during 1) |
+| 5 — Marketplace UI | done |
+| 6 — Documentation | done |
+| 7 — Publish the SDK | not started |
+| 8 — Fork the builder | not started, repo not created |
+| 9 — Fork the example | not started, repo not created |
+| 10 — End-to-end | not started |
+| 11 — First registry entry | not started |
+
+Gates at this point: server 991, shared 153, client 33, all green; typecheck
+clean on all 7 packages; lint 0 errors.
+
+Everything from here needs Codeberg repos that do not exist yet
+(`bullshark-plugin-builder`, `bullshark-plugin-example`), and Task 7 cannot be
+verified without an actual release run.
+
+---
+
 ## File Structure
 
 **`packages/shared` (modify):**
