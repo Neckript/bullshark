@@ -468,6 +468,8 @@
   "marketplaceSdkBadge": "{{status}}",
   "marketplaceSdkCompatible": "兼容",
   "marketplaceSdkIncompatible": "不兼容",
+  "marketplaceMissingCapabilitiesBadge": "需要 {{capabilities}}",
+  "marketplaceMissingCapabilities": "此插件需要本服务器不提供的能力：{{capabilities}}。",
   "marketplaceVerifiedTooltip": "此插件已通过 Bullshark 验证。",
   "marketplaceInstallSuccess": "\"{{name}}\" 已成功安装。您需要手动启用它才能开始使用。",
 

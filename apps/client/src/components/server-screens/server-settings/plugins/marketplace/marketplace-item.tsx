@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import {
   getTrpcError,
   PLUGIN_SDK_VERSION,
+  PluginCapability,
   type TMarketplaceEntry
 } from '@bullshark/shared';
 import { Badge, Button, Tooltip } from '@bullshark/ui';
@@ -48,9 +49,21 @@ const MarketplaceItem = memo(
       return semver.gt(nextVersion, currentVersion);
     }, []);
 
+    // The client and server ship together, so the enum is the supported set.
+    const unsupportedCapabilities = useCallback((capabilities?: string[]) => {
+      const supported = new Set<string>(Object.values(PluginCapability));
+
+      return (capabilities ?? []).filter(
+        (capability) => !supported.has(capability)
+      );
+    }, []);
+
     const latestCompatibleVersion = useMemo(() => {
       const compatible = versions.filter((version) => {
-        return version.sdkVersion === PLUGIN_SDK_VERSION;
+        return (
+          version.sdkVersion === PLUGIN_SDK_VERSION &&
+          unsupportedCapabilities(version.capabilities).length === 0
+        );
       });
 
       if (compatible.length === 0) return null;
@@ -58,12 +71,21 @@ const MarketplaceItem = memo(
       return compatible.reduce((best, next) =>
         isNewerVersion(next.version, best.version) ? next : best
       );
-    }, [versions, isNewerVersion]);
+    }, [versions, isNewerVersion, unsupportedCapabilities]);
 
-    const sdkVersion =
-      latestCompatibleVersion?.sdkVersion ?? latestVersion?.sdkVersion;
+    const shownVersion = latestCompatibleVersion ?? latestVersion;
 
-    const sdkCompatible = sdkVersion === PLUGIN_SDK_VERSION;
+    const sdkVersion = shownVersion?.sdkVersion;
+
+    // Which capabilities this build cannot provide. Named rather than counted:
+    // "requires voice" tells an admin what to do, "incompatible" does not.
+    const missingCapabilities = useMemo(
+      () => unsupportedCapabilities(shownVersion?.capabilities),
+      [shownVersion, unsupportedCapabilities]
+    );
+
+    const sdkCompatible =
+      sdkVersion === PLUGIN_SDK_VERSION && missingCapabilities.length === 0;
 
     const updateAvailable = useMemo(() => {
       if (!installedVersion || !latestCompatibleVersion) return false;
@@ -178,14 +200,28 @@ const MarketplaceItem = memo(
                     </Badge>
                   </Tooltip>
                 )}
-                <Badge
-                  variant={sdkCompatible ? 'secondary' : 'destructive'}
-                  className="text-xs shrink-0"
+                <Tooltip
+                  content={
+                    missingCapabilities.length > 0
+                      ? t('marketplaceMissingCapabilities', {
+                          capabilities: missingCapabilities.join(', ')
+                        })
+                      : undefined
+                  }
                 >
-                  {sdkCompatible
-                    ? t('marketplaceSdkCompatible')
-                    : t('marketplaceSdkIncompatible')}
-                </Badge>
+                  <Badge
+                    variant={sdkCompatible ? 'secondary' : 'destructive'}
+                    className="text-xs shrink-0"
+                  >
+                    {sdkCompatible
+                      ? t('marketplaceSdkCompatible')
+                      : missingCapabilities.length > 0
+                        ? t('marketplaceMissingCapabilitiesBadge', {
+                            capabilities: missingCapabilities.join(', ')
+                          })
+                        : t('marketplaceSdkIncompatible')}
+                  </Badge>
+                </Tooltip>
               </div>
               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                 {plugin.description}
