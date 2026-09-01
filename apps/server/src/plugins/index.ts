@@ -280,6 +280,7 @@ class PluginManager {
       description: manifest.description,
       version: manifest.version,
       sdkVersion: manifest.sdkVersion,
+      capabilities: manifest.capabilities,
       logo: manifest.logo,
       author: manifest.author,
       homepage: manifest.homepage,
