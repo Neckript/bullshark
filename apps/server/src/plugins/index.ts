@@ -41,8 +41,12 @@ import { PluginLogger } from './plugin-logger';
 import { PluginSettingsManager } from './plugin-settings-manager';
 import { PluginStateStore } from './plugin-state-store';
 
+// onLoad is optional at the type level because a client-only plugin has no
+// server module at all -- it is registered as an empty one. A plugin that DOES
+// ship a server entry is still required to export onLoad, checked explicitly at
+// load time so the failure names the plugin.
 type PluginModule = {
-  onLoad: (ctx: PluginContext) => void | Promise<void>;
+  onLoad?: (ctx: PluginContext) => void | Promise<void>;
   onUnload?: (ctx: UnloadPluginContext) => void | Promise<void>;
 };
 
@@ -262,12 +266,16 @@ class PluginManager {
     const serverEntryPath = path.join(pluginPath, SERVER_ENTRY_FILE);
     const clientEntryPath = path.join(pluginPath, CLIENT_ENTRY_FILE);
 
-    if (!(await fs.exists(serverEntryPath))) {
-      throw new Error('Plugin server entry file not found');
-    }
+    const [hasServerEntry, hasClientEntry] = await Promise.all([
+      fs.exists(serverEntryPath),
+      fs.exists(clientEntryPath)
+    ]);
 
-    if (!(await fs.exists(clientEntryPath))) {
-      throw new Error('Plugin client entry file not found');
+    // Both entries are optional, but a plugin made of neither is not a plugin.
+    if (!hasServerEntry && !hasClientEntry) {
+      throw new Error(
+        `Plugin '${pluginId}' has no entry file: expected '${SERVER_ENTRY_FILE}', '${CLIENT_ENTRY_FILE}', or both`
+      );
     }
 
     const loadError = this.loadErrors.get(pluginId);
@@ -281,6 +289,8 @@ class PluginManager {
       version: manifest.version,
       sdkVersion: manifest.sdkVersion,
       capabilities: manifest.capabilities,
+      hasServerEntry,
+      hasClientEntry,
       logo: manifest.logo,
       author: manifest.author,
       homepage: manifest.homepage,
@@ -377,6 +387,29 @@ class PluginManager {
     }
 
     try {
+      // A client-only plugin has no server module to import and no onLoad to
+      // call. It still counts as loaded: its client bundle is served, and it
+      // appears in the active plugin list like any other.
+      if (!info.hasServerEntry) {
+        this.loadedPlugins.set(pluginId, {});
+
+        // Nothing of this plugin runs on the server, so nothing of it could
+        // ever call ctx.ui.enable(). Without this default it would load and
+        // stay invisible forever, since getPluginIdsWithComponents filters on
+        // uiState. Plugins that do have a server entry keep the opt-in.
+        this.uiState.set(pluginId, true);
+
+        this.loadErrors.delete(pluginId);
+
+        this.pluginLogger.log(
+          pluginId,
+          'debug',
+          `Plugin ${pluginId} has no server entry; loaded as client-only.`
+        );
+
+        return;
+      }
+
       const ctx = this.createContext(pluginId);
       const moduleSpecifier = await this.getPluginModuleSpecifier(
         info.path,

@@ -96,16 +96,55 @@ describe('plugin-manager', () => {
       ).rejects.toThrow();
     });
 
-    test('should handle plugin with missing entry file', async () => {
+    test('should reject a plugin with no entry file at all', async () => {
       await expect(
         pluginManager.getPluginInfo('plugin-missing-entry')
-      ).rejects.toThrow('Plugin server entry file not found');
+      ).rejects.toThrow("Plugin 'plugin-missing-entry' has no entry file");
     });
 
-    test('should handle plugin with missing client entry file', async () => {
-      await expect(
-        pluginManager.getPluginInfo('plugin-missing-client-entry')
-      ).rejects.toThrow('Plugin client entry file not found');
+    test('should accept a server-only plugin', async () => {
+      const info = await pluginManager.getPluginInfo(
+        'plugin-missing-client-entry'
+      );
+
+      expect(info.hasServerEntry).toBe(true);
+      expect(info.hasClientEntry).toBe(false);
+    });
+
+    test('should accept a client-only plugin', async () => {
+      const info = await pluginManager.getPluginInfo('plugin-client-only');
+
+      expect(info.hasServerEntry).toBe(false);
+      expect(info.hasClientEntry).toBe(true);
+    });
+
+    test('should load a client-only plugin without importing a server module', async () => {
+      await pluginManager.togglePlugin('plugin-client-only', true);
+      await pluginManager.load('plugin-client-only');
+
+      const info = await pluginManager.getPluginInfo('plugin-client-only');
+
+      expect(info.loadError).toBeUndefined();
+      expect(info.enabled).toBe(true);
+    });
+
+    test('a client-only plugin shows its components without calling ui.enable', async () => {
+      // It has no server code, so nothing of it could ever call ctx.ui.enable().
+      // Without the load-time default it would load and stay invisible.
+      await pluginManager.togglePlugin('plugin-client-only', true);
+      await pluginManager.load('plugin-client-only');
+
+      expect(pluginManager.getPluginIdsWithComponents()).toContain(
+        'plugin-client-only'
+      );
+    });
+
+    test('a plugin with both entries keeps the UI opt-in', async () => {
+      await pluginManager.load('plugin-a');
+
+      expect(pluginManager.getPluginIdsWithComponents()).not.toContain(
+        'plugin-a'
+      );
     });
 
     test('should load plugin without onUnload', async () => {

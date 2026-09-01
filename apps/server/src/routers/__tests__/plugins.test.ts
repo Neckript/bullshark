@@ -31,7 +31,10 @@ describe('plugins router', () => {
     const { plugins } = await caller.plugins.get();
 
     expect(plugins).toBeDefined();
-    expect(plugins.length).toBe(11);
+    // 13, not 11: entry points became optional, so the server-only fixture
+    // plugin-missing-client-entry is now valid, and plugin-client-only was
+    // added to cover the client-only case.
+    expect(plugins.length).toBe(13);
   });
 
   test('should include plugin metadata', async () => {

@@ -65,6 +65,13 @@ export type TPluginInfo = {
   name: TPluginManifest['name'];
   homepage: TPluginManifest['homepage'];
   path: string;
+  // Which entry points the plugin directory actually contains. Both are
+  // optional -- a moderation plugin needs no client, a pure-UI plugin needs no
+  // server -- but at least one must exist. Reported as observed file presence,
+  // never inferred from the declared CLIENT_SLOTS capability: a declaration is
+  // an intention and the two can disagree.
+  hasServerEntry: boolean;
+  hasClientEntry: boolean;
 };
 
 export type TLogEntry = {
