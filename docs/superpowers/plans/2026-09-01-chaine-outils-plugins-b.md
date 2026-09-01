@@ -260,6 +260,79 @@ bun --bun run check-types
 
 ---
 
+## Task 4b: Make plugin entry points genuinely optional
+
+Added 2026-09-01, after Task 1 revealed that the code contradicts the docs.
+
+`docs/plugins/overview.md` documents `server/index.js` and `client/index.js` as
+optional. They are not: `apps/server/src/plugins/index.ts:265-271` throws when
+either is missing, and `hasPluginStructure` in `apps/server/src/helpers/downloads.ts`
+requires both. Task 8 makes the builder accept single-entry plugins; without this
+task the builder would emit plugins the server refuses, which is worse than the
+current state.
+
+A server-only plugin (moderation, logging) and a client-only plugin (pure UI) are
+both legitimate — the separate `SERVER_ENTRY_FILE` / `CLIENT_ENTRY_FILE`
+constants and the existence of a `client.slots` capability only make sense if
+they are.
+
+**The wrinkle, found while scoping this:** `uiState` is only ever written by
+`ctx.ui.enable()` / `disable()`, which is server-side code, and
+`getPluginIdsWithComponents` filters on it. A client-only plugin has no server
+module and therefore no way to ever enable its own UI — it would load and stay
+invisible forever. Making the entries optional without fixing this ships a
+feature that silently does nothing.
+
+**Files:**
+- Modify: `packages/shared/src/plugins/index.ts` (`TPluginInfo`)
+- Modify: `apps/server/src/plugins/index.ts`, `apps/server/src/helpers/downloads.ts`
+- Create: `apps/server/src/plugins/__tests__/optional-entries.test.ts`
+
+- [ ] **Step 1: RED — write the failing tests**
+
+- a plugin with only `server/index.js` loads, and `onLoad` runs
+- a plugin with only `client/index.js` loads, no module import is attempted, and it appears in `getPluginIdsWithComponents()`
+- a plugin with neither entry is refused, with an error naming the plugin
+- a plugin with both keeps today's behaviour exactly, including UI opt-in via `ctx.ui.enable()`
+- `hasPluginStructure` accepts manifest + either entry, rejects manifest alone
+
+- [ ] **Step 2: Report entry presence on `TPluginInfo`**
+
+Add `hasServerEntry: boolean` and `hasClientEntry: boolean`. File presence is a
+fact and must be reported as one — do not infer it from the declared
+`client.slots` capability, which is an intention and can disagree.
+
+- [ ] **Step 3: Relax `getPluginInfo`**
+
+Throw only when neither entry exists.
+
+- [ ] **Step 4: Skip the server module when absent**
+
+In `load`, when `!hasServerEntry`, do not build a module specifier, do not
+import, do not require `onLoad`. Register the plugin as loaded so it counts as
+active. `unload` already guards `onUnload` with a `typeof` check and tolerates a
+missing module — verify, do not rewrite.
+
+- [ ] **Step 5: Default the UI state for client-only plugins**
+
+When a plugin has a client entry and **no** server entry, initialise
+`uiState` to `true` at load: it has no code that could ever call
+`ctx.ui.enable()`. Plugins that do have a server entry keep today's opt-in
+behaviour unchanged.
+
+- [ ] **Step 6: Relax `hasPluginStructure`**
+
+`manifest.json` plus **at least one** entry.
+
+- [ ] **Step 7: GREEN**
+
+```bash
+cd apps/server && bun test
+bun --bun run check-types    # from repo root
+```
+
+---
+
 ## Task 5: Surface capabilities in the marketplace UI
 
 **Files:**
