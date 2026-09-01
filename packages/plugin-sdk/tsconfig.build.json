@@ -1,0 +1,33 @@
+// Declaration-emit config for the distributed build.
+//
+// The base tsconfig sets noEmit and pulls in the server's declarations.d.ts for
+// in-monorepo type-checking; neither belongs in what ships to plugin authors.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": false,
+    // Pinned explicitly: dts-bundle-generator builds its own program and does
+    // not keep the base config's `module: Preserve`, which silently changes the
+    // default module resolution and breaks extensionless relative imports.
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    // Resolve the workspace package through its real path rather than the
+    // node_modules symlink: the bundler's own program failed to resolve
+    // shared's internal relative imports when reached through the link.
+    "baseUrl": ".",
+    "paths": {
+      "@bullshark/shared/*": ["../shared/*"],
+      "@bullshark/shared": ["../shared/src/index.ts"]
+    },
+    "outDir": "dist"
+  },
+  // The server's declarations.d.ts must stay: the type graph reaches server
+  // files through the @bullshark/shared barrel (trpc.ts re-exports AppRouter,
+  // tables.ts the Drizzle schema), and those files need its WebSocket
+  // augmentation to compile. The declaration bundler flattens all of it away --
+  // it is needed to produce dist/index.d.ts, not shipped in it.
+  "include": ["src", "../../apps/server/src/declarations.d.ts"]
+}

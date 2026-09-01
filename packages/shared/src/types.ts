@@ -1,4 +1,9 @@
-import { ChannelPermission, type TFile, type TSettings, type TUser } from '.';
+// Imported from the defining modules, not the barrel. Importing from '.' here
+// makes every submodule of this package circle back through the barrel, which
+// re-exports ./trpc -- i.e. the server's entire router tree. That cycle is what
+// dragged the whole server type graph into the plugin SDK's build.
+import { ChannelPermission } from './statics/permissions';
+import type { TFile, TSettings, TUser } from './tables';
 
 export enum ChannelType {
   TEXT = 'TEXT',

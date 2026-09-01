@@ -9,7 +9,7 @@
 // A plugin that does not declare the `voice` capability is not handed `ctx.voice`
 // at runtime, so it has no reason to reach for anything in this file.
 import type { Producer } from 'mediasoup/types';
-import type { TStreamQualityLayer } from '@bullshark/shared';
+import type { TStreamQualityLayer } from '@bullshark/shared/src/types';
 
 export type TCreateStreamOptions = {
   channelId: number;

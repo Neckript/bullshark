@@ -2,7 +2,7 @@ import type {
   TActionContract,
   TInvokerContext,
   TPluginActions
-} from '@bullshark/shared';
+} from '@bullshark/shared/src/plugins';
 import type { PluginContext } from '.';
 
 type TypedRegisterAction<TActions extends TActionContract> = <
