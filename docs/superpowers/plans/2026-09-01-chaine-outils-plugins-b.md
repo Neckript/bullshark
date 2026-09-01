@@ -30,18 +30,25 @@
 | 4b — Optional entry points | done (added during 1) |
 | 5 — Marketplace UI | done |
 | 6 — Documentation | done |
-| 7 — Publish the SDK | written, unverifiable until a real release runs |
-| 8 — Fork the builder | not started, repo not created |
-| 9 — Fork the example | not started, repo not created |
-| 10 — End-to-end | not started |
-| 11 — First registry entry | not started |
+| 7 — Publish the SDK | done; workflow written, and v0.0.30 published by hand to unblock 8-9 |
+| 8 — Fork the builder | done, pushed |
+| 9 — Fork the example | done, pushed |
+| 10 — End-to-end | build + bundle verified; install on a real server outstanding |
+| 11 — First registry entry | blocked: needs a CODEBERG_TOKEN to publish the example release |
 
 Gates at this point: server 991, shared 153, client 33, all green; typecheck
 clean on all 7 packages; lint 0 errors.
 
-Everything from here needs Codeberg repos that do not exist yet
-(`bullshark-plugin-builder`, `bullshark-plugin-example`), and Task 7 cannot be
-verified without an actual release run.
+Verified end to end on 2026-09-01, from a scratch directory with no monorepo:
+the SDK installs from its git tag and runs; the example installs the SDK and the
+builder from their repos and builds; the resulting client bundle references
+`__BULLSHARK_*`, contains no `__SHARKORD_*` and does not bundle React (3217
+bytes); the builder refuses an unknown capability and names the valid ones.
+
+What is left needs things only the maintainer can provide: a running server to
+install the built plugin on, and a `CODEBERG_TOKEN` to publish the example's
+release, which produces the `downloadUrl` and `checksum` the registry entry
+needs.
 
 ---
 
