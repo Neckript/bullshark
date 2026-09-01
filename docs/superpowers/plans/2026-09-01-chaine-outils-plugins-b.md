@@ -179,11 +179,29 @@ ls packages/plugin-sdk/dist 2>/dev/null
 ```
 Expected: nothing.
 
-- [ ] **Step 2: Add the build script**
+- [x] **Step 2: Add the build script**
 
-```json
-"build": "rm -rf dist && bun build src/index.ts src/voice.ts --outdir dist --format esm --target node --external mediasoup --external react --external react-dom && tsc --emitDeclarationOnly --declaration --outDir dist"
-```
+**Revised during implementation.** `tsc --emitDeclarationOnly` was not enough: it
+emits declarations that still import `@bullshark/shared`, a package no external
+author has. The build uses `dts-bundle-generator` to flatten them, and needed
+four fixes found by measurement, each recorded in `tsconfig.build.json`:
+
+- `types: []` -- the bundler crashed on `@types/node` 25.x (`ReadableEventMap`).
+  A probe reduced to two plain types failed identically, proving the crash had
+  nothing to do with the SDK's own type surface.
+- explicit `paths` -- reached through the node_modules symlink, the bundler's
+  program could not resolve shared's internal relative imports.
+- pinned `module` / `moduleResolution` -- the tool builds its own program and
+  drops the base config's `module: Preserve`, silently breaking extensionless
+  relative imports.
+- `--no-check` on the generated bundle -- mediasoup's own declarations need node
+  globals, which `types: []` removes. Correctness is covered by the repo-wide
+  `check-types`; this flag only skips the tool's redundant re-check.
+
+Two prerequisites turned out to sit outside this task and were done first: the
+barrel cycles (`shared/src/types.ts` and `apps/server/src/db/schema.ts` both
+importing the barrel, which re-exports the server's router tree) and the
+Drizzle-derived store types (Task 3b below).
 
 `@bullshark/shared` must **not** be external — it is a `workspace:*` dependency that will never resolve for an external author, so its enums must be inlined into the bundle.
 
@@ -257,6 +275,32 @@ Split the current `PluginContext` construction into a base (always provided: `pa
 bun test apps/server
 bun --bun run check-types
 ```
+
+---
+
+## Task 3b: Project the plugin store types
+
+Added 2026-09-01, during Task 3.
+
+`TPluginStoreState` was defined over Drizzle row types, so the distributed
+declarations came to 2151 lines and required `drizzle-orm`. Worse, it tied a
+public contract to a private schema: `users` carries `password`, `identity` and
+`totpSecret`, excluded only by a `Pick` that protects against today's columns and
+nothing else.
+
+- [x] Write the seven public shapes out in full in `packages/shared/src/plugins/store-types.ts`
+- [x] Guard drift in `store-types.assert.ts`: Drizzle rows must stay assignable to
+      the projections, in that direction, so the schema may carry more than the
+      projection exposes
+- [x] Point `TPluginStoreState` at the projections
+- [x] Replace the global `React.ComponentType` with an explicit import
+
+Result: `index.d.ts` 2151 -> 415 lines, no drizzle, no `@bullshark/shared`;
+`index.js` 2262 bytes, no zod.
+
+**Known limit:** the main entry still imports `mediasoup/types` through
+`PluginContext.voice`. Authors get away with it via `skipLibCheck`, on by default
+and in this repo, but mediasoup is not fully optional. Revisit if it bites.
 
 ---
 
