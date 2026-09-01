@@ -10,39 +10,22 @@ import type {
   TPluginComponentsMapBySlotId,
   TPluginSettingDefinition,
   TPluginStore,
-  TPluginStoreState,
-  TStreamQualityLayer
+  TPluginStoreState
 } from '@bullshark/shared';
-import { FileSaveType, PLUGIN_SDK_VERSION, PluginSlot } from '@bullshark/shared';
-import type { AppData, Producer, Router } from 'mediasoup/types';
-
-export type TCreateStreamOptions = {
-  channelId: number;
-  title: string;
-  key: string;
-  avatarUrl?: string;
-  bannerUrl?: string;
-  producers: {
-    audio?: Producer;
-    video?: Producer;
-  };
-  videoLayers?: TStreamQualityLayer[];
-};
-
-export type TExternalStreamHandle = {
-  streamId: number;
-  remove: () => void;
-  update: (options: {
-    title?: string;
-    avatarUrl?: string;
-    bannerUrl?: string;
-    producers?: {
-      audio?: Producer;
-      video?: Producer;
-    };
-    videoLayers?: TStreamQualityLayer[];
-  }) => void;
-};
+import {
+  FileSaveType,
+  PLUGIN_SDK_VERSION,
+  PluginCapability,
+  PluginSlot
+} from '@bullshark/shared';
+// The mediasoup-derived types live in './voice' so that this entry point pulls
+// no compiled C++ worker on an author who never touches voice. See voice.ts.
+import type {
+  AppData,
+  Router,
+  TCreateStreamOptions,
+  TExternalStreamHandle
+} from './voice';
 
 export type ServerEvent =
   | 'user:joined'
@@ -214,20 +197,11 @@ export interface UnloadPluginContext extends Pick<
 
 type TBullsharkState = ReturnType<TPluginStore['getState']>;
 
-// re-export mediasoup types for plugin usage
-export type {
-  AppData,
-  MediaKind,
-  PlainTransport,
-  PlainTransportOptions,
-  Producer,
-  ProducerOptions,
-  Router,
-  RtpCodecCapability,
-  RtpEncodingParameters,
-  RtpParameters,
-  Transport
-} from 'mediasoup/types';
+// Kept re-exported from the main entry for source compatibility: these two are
+// the shapes a voice plugin passes around, and moving them would break every
+// existing import for no gain. The mediasoup types themselves are not
+// re-exported here -- import them from '@bullshark/plugin-sdk/voice'.
+export type { TCreateStreamOptions, TExternalStreamHandle } from './voice';
 
 export type {
   ActionDefinition,
@@ -246,4 +220,4 @@ export type {
 
 export * from './actions';
 export * from './commands';
-export { FileSaveType, PLUGIN_SDK_VERSION, PluginSlot };
+export { FileSaveType, PLUGIN_SDK_VERSION, PluginCapability, PluginSlot };
