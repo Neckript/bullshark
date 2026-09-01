@@ -85,7 +85,7 @@ const EmojiPicker = memo(
     // sequence in Firefox/Librewolf: Radix's DismissableLayer sees the
     // resulting focusout on the trigger as "focus moved outside" and closes
     // the popover immediately before any emoji can be selected (issue #2 /
-    // upstream Bullshark#728).
+    // upstream Sharkord#728).
     useEffect(() => {
       if (!open) return;
       const id = requestAnimationFrame(() => {
