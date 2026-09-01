@@ -22,12 +22,11 @@
       "@bullshark/shared/*": ["../shared/*"],
       "@bullshark/shared": ["../shared/src/index.ts"]
     },
+    // No ambient @types in the declaration program: the SDK's public surface
+    // needs neither bun nor node globals, and pulling @types/node 25.x in is what
+    // broke the declaration bundler.
+    "types": [],
     "outDir": "dist"
   },
-  // The server's declarations.d.ts must stay: the type graph reaches server
-  // files through the @bullshark/shared barrel (trpc.ts re-exports AppRouter,
-  // tables.ts the Drizzle schema), and those files need its WebSocket
-  // augmentation to compile. The declaration bundler flattens all of it away --
-  // it is needed to produce dist/index.d.ts, not shipped in it.
-  "include": ["src", "../../apps/server/src/declarations.d.ts"]
+  "include": ["src"]
 }
