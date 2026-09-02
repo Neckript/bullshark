@@ -194,7 +194,7 @@ const Connect = memo(() => {
       <div className="relative flex justify-center items-center gap-2 text-xs text-muted-foreground select-none">
         <span>v{VITE_APP_VERSION}</span>
         <a
-          href="https://codeberg.org/The_Neckript/bullshark"
+          href="https://github.com/Neckript/bullshark"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -203,7 +203,7 @@ const Connect = memo(() => {
 
         <a
           className="text-xs"
-          href="https://codeberg.org/The_Neckript/bullshark"
+          href="https://github.com/Sharkord/sharkord"
           target="_blank"
           rel="noopener noreferrer"
         >
