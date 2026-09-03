@@ -5,7 +5,7 @@ import { uploadImage } from '@/helpers/upload-file';
 import { useFilePicker } from '@/hooks/use-file-picker';
 import { getTRPCClient } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
-import type { TJoinedPublicUser } from '@bullshark/shared';
+import type { TGifSearchResult, TJoinedPublicUser } from '@bullshark/shared';
 import { Button, buttonVariants, Group } from '@bullshark/ui';
 import { Upload } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
@@ -52,10 +52,13 @@ const BannerManager = memo(({ user }: TBannerManagerProps) => {
     }
   }, [openFilePicker]);
 
-  const onSelectGif = useCallback(async (gifId: string) => {
+  const onSelectGif = useCallback(async (gif: TGifSearchResult) => {
     const trpc = getTRPCClient();
     try {
-      await trpc.gifs.importToProfile.mutate({ gifId, target: 'banner' });
+      await trpc.gifs.importToProfile.mutate({
+        gifId: gif.id,
+        target: 'banner'
+      });
       toast.success('Banner updated successfully!');
     } catch {
       toast.error('Could not update banner. Please try again.');

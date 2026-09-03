@@ -162,4 +162,38 @@ describe('gifs router', () => {
       caller.gifs.importToProfile({ gifId: 'abc', target: 'avatar' })
     ).rejects.toThrow('untrusted');
   });
+
+  test('importToMessage: returns a temp file ready to attach when gifId is valid and trusted', async () => {
+    globalThis.fetch = makeFetchMock();
+
+    await tdb.update(settings).set({ klipyApiKey: 'TEST_KEY' }).execute();
+
+    const { caller } = await initTest(1);
+
+    const tempFile = await caller.gifs.importToMessage({ gifId: 'abc' });
+
+    expect(tempFile.id).toBeTruthy();
+    expect(tempFile.originalName).toBe('gif-abc.gif');
+    expect(tempFile.size).toBeGreaterThan(0);
+  });
+
+  test('importToMessage: rejects when resolved URL is from untrusted host', async () => {
+    globalThis.fetch = makeFetchMock(RESOLVE_UNTRUSTED_RESPONSE);
+
+    await tdb.update(settings).set({ klipyApiKey: 'TEST_KEY' }).execute();
+
+    const { caller } = await initTest(1);
+
+    await expect(caller.gifs.importToMessage({ gifId: 'abc' })).rejects.toThrow(
+      'untrusted'
+    );
+  });
+
+  test('importToMessage: rejects when GIF provider not configured', async () => {
+    const { caller } = await initTest(1);
+
+    await expect(caller.gifs.importToMessage({ gifId: 'abc' })).rejects.toThrow(
+      'not configured'
+    );
+  });
 });

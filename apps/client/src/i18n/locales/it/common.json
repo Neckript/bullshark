@@ -10,7 +10,6 @@
   "moderationView": "Vista moderazione",
   "couldNotOpenDM": "Impossibile aprire il messaggio diretto",
   "unknownUser": "Utente sconosciuto",
-
   "selectDmPrompt": "Seleziona un messaggio diretto o avviane uno nuovo.",
   "welcomeToServer": "Benvenuto su {{name}}.",
   "homeEmptyDescription": "Scegli un canale a sinistra per iniziare a parlare.",
@@ -20,7 +19,6 @@
   "swipeLeftForUsers": "Scorri a sinistra per aprire l'elenco utenti",
   "channelEmptyTitle": "Questo è l'inizio di #{{name}}",
   "channelEmptyDescription": "Nessuno ha ancora scritto qui. Inizia tu.",
-
   "deleteMessageTitle": "Elimina messaggio",
   "deleteMessageConfirm": "Sei sicuro di voler eliminare questo messaggio? Questa azione e irreversibile.",
   "deleteLabel": "Elimina",
@@ -40,13 +38,11 @@
   "unpinMessage": "Rimuovi pin messaggio",
   "pinMessage": "Fissa messaggio",
   "addReaction": "Aggiungi reazione",
-
   "messageCannotBeEmpty": "Il messaggio non puo essere vuoto",
   "messageEdited": "Messaggio modificato",
   "failedEditMessage": "Impossibile modificare il messaggio",
   "pressEnterToSave": "Premi Invio per salvare, Esc per annullare",
   "failedSendMessage": "Impossibile inviare il messaggio",
-
   "pinnedBy": "Fissato da {{name}}",
   "unknownTime": "Ora sconosciuta",
   "scrollToMessage": "Vai al messaggio",
@@ -69,7 +65,6 @@
   "copyDetails": "Copia dettagli",
   "copied": "Copiato",
   "errorDetailsCopied": "I dettagli dell'errore sono stati copiati negli appunti",
-
   "deleteFileTitle": "Elimina file",
   "deleteFileMsg": "Sei sicuro di voler eliminare questo file?",
   "fileDeleted": "File eliminato",
@@ -105,5 +100,7 @@
   "wasReactedBy": "ha ricevuto una reazione da {{reacters}}.",
   "andMore": "e altri {{count}}",
   "soundboard": "Soundboard",
-  "noSoundsAvailable": "No sounds available"
+  "noSoundsAvailable": "No sounds available",
+  "sendGif": "Send a GIF",
+  "gifImportFailed": "Failed to send GIF. Please try again."
 }

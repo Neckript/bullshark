@@ -78,6 +78,28 @@ const useUploadFiles = (
     [settings?.storageMaxFilesPerMessage, t]
   );
 
+  const addExternalFile = useCallback(
+    (file: TTempFile, previewUrl?: string) => {
+      const maxFilesPerMessage =
+        settings?.storageMaxFilesPerMessage ?? Number.MAX_SAFE_INTEGER;
+
+      if (filesRef.current.length >= maxFilesPerMessage) {
+        toast.warning(
+          t('uploadMaxFilesReached', { count: maxFilesPerMessage })
+        );
+        return;
+      }
+
+      if (previewUrl) {
+        setPreviewUrls((prev) => ({ ...prev, [file.id]: previewUrl }));
+      }
+
+      setFiles((prev) => [...prev, file]);
+      setDisplayOrder((prev) => [...prev, file.id]);
+    },
+    [settings?.storageMaxFilesPerMessage, t]
+  );
+
   const removeFile = useCallback((id: string) => {
     setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
     setDisplayOrder((prev) => prev.filter((orderId) => orderId !== id));
@@ -387,6 +409,7 @@ const useUploadFiles = (
       files,
       displayItems,
       removeFile,
+      addExternalFile,
       clearFiles,
       uploading,
       uploadingSize,
@@ -400,6 +423,7 @@ const useUploadFiles = (
       files,
       displayItems,
       removeFile,
+      addExternalFile,
       clearFiles,
       uploading,
       uploadingSize,

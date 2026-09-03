@@ -10,7 +10,6 @@
   "moderationView": "管理视图",
   "couldNotOpenDM": "无法打开私信",
   "unknownUser": "未知用户",
-
   "selectDmPrompt": "选择一条私信，或开始新的对话。",
   "welcomeToServer": "欢迎来到 {{name}}。",
   "homeEmptyDescription": "从左侧选择一个频道开始聊天。",
@@ -20,7 +19,6 @@
   "swipeLeftForUsers": "向左滑动以打开用户列表",
   "channelEmptyTitle": "这是 #{{name}} 的起点",
   "channelEmptyDescription": "这里还没有人发言，来说第一句吧。",
-
   "deleteMessageTitle": "删除消息",
   "deleteMessageConfirm": "您确定要删除此消息吗？此操作不可撤销。",
   "deleteLabel": "删除",
@@ -40,13 +38,11 @@
   "unpinMessage": "取消置顶",
   "pinMessage": "置顶消息",
   "addReaction": "添加反应",
-
   "messageCannotBeEmpty": "消息不能为空",
   "messageEdited": "消息已编辑",
   "failedEditMessage": "编辑消息失败",
   "pressEnterToSave": "按 Enter 保存，按 Esc 取消",
   "failedSendMessage": "发送消息失败",
-
   "pinnedBy": "置顶者：{{name}}",
   "unknownTime": "未知时间",
   "scrollToMessage": "跳转到消息",
@@ -69,7 +65,6 @@
   "copyDetails": "复制详情",
   "copied": "已复制",
   "errorDetailsCopied": "错误详情已复制到剪贴板",
-
   "deleteFileTitle": "删除文件",
   "deleteFileMsg": "您确定要删除此文件吗？",
   "fileDeleted": "文件已删除",
@@ -105,5 +100,7 @@
   "wasReactedBy": "{{reacters}} 做出了反应。",
   "andMore": "以及其他 {{count}} 人",
   "soundboard": "Soundboard",
-  "noSoundsAvailable": "No sounds available"
+  "noSoundsAvailable": "No sounds available",
+  "sendGif": "Send a GIF",
+  "gifImportFailed": "Failed to send GIF. Please try again."
 }

@@ -1,4 +1,5 @@
 import { EmojiPicker } from '@/components/emoji-picker';
+import { GifPickerDialog } from '@/components/gif-picker/gif-picker-dialog';
 import { PluginSlotRenderer } from '@/components/plugin-slot-renderer';
 import type { TTiptapInputHandle } from '@/components/tiptap-input';
 import { TiptapInput } from '@/components/tiptap-input';
@@ -14,7 +15,11 @@ import { useFlatPluginCommands } from '@/features/server/plugins/hooks';
 import { useUploadFiles } from '@/hooks/use-upload-files';
 import { getTRPCClient } from '@/lib/trpc';
 import type { TReplyTarget } from '@/types';
-import type { TJoinedPublicUser, TTempFile } from '@bullshark/shared';
+import type {
+  TGifSearchResult,
+  TJoinedPublicUser,
+  TTempFile
+} from '@bullshark/shared';
 import {
   ChannelPermission,
   isEmptyMessage,
@@ -36,6 +41,7 @@ import {
   type RefObject
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { DEFAULT_MAX_HEIGHT_VH } from '../channel-view/text/helpers';
 import { useMessageAuthorName } from '../channel-view/text/hooks/use-message-author-name';
 import { PreviewFile } from '../channel-view/text/preview-file';
@@ -137,6 +143,7 @@ const MessageCompose = memo(
       files,
       displayItems,
       removeFile,
+      addExternalFile,
       clearFiles,
       uploading,
       uploadingSize,
@@ -146,6 +153,26 @@ const MessageCompose = memo(
       processFiles,
       checkUploadPermissions
     } = useUploadFiles(channelId, containerRef, !canSendMessages);
+
+    const [gifOpen, setGifOpen] = useState(false);
+
+    const onSelectGif = useCallback(
+      async (gif: TGifSearchResult) => {
+        if (!checkUploadPermissions()) return;
+
+        try {
+          const trpc = getTRPCClient();
+          const tempFile = await trpc.gifs.importToMessage.mutate({
+            gifId: gif.id
+          });
+
+          addExternalFile(tempFile, gif.previewUrl);
+        } catch {
+          toast.error(t('gifImportFailed'));
+        }
+      },
+      [addExternalFile, checkUploadPermissions, t]
+    );
 
     useFileAwareHeight({
       containerRef,
@@ -347,6 +374,19 @@ const MessageCompose = memo(
             >
               <Paperclip className="h-4 w-4" />
             </Button>
+            {publicSettings?.klipyEnabled && (
+              <Button
+                size="icon"
+                variant="ghost"
+                title={t('sendGif')}
+                disabled={uploading || !canUploadFiles}
+                onClick={() => setGifOpen(true)}
+              >
+                <span className="text-[10px] font-bold tracking-tight">
+                  GIF
+                </span>
+              </Button>
+            )}
             <Button
               size="icon"
               variant="ghost"
@@ -357,6 +397,11 @@ const MessageCompose = memo(
             </Button>
           </div>
         </div>
+        <GifPickerDialog
+          open={gifOpen}
+          onOpenChange={setGifOpen}
+          onSelect={onSelectGif}
+        />
       </div>
     );
   }
