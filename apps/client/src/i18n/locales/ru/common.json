@@ -10,7 +10,6 @@
   "moderationView": "Режим модерации",
   "couldNotOpenDM": "Не удалось открыть личные сообщения",
   "unknownUser": "Неизвестный пользователь",
-
   "selectDmPrompt": "Перейти в личные сообщения или начать чат.",
   "welcomeToServer": "Добро пожаловать, {{name}}.",
   "homeEmptyDescription": "Выберите канал слева, чтобы начать общение.",
@@ -20,7 +19,6 @@
   "swipeLeftForUsers": "Проведите влево для открытия списка пользователей",
   "channelEmptyTitle": "Это самое начало #{{name}}",
   "channelEmptyDescription": "Здесь ещё никто не писал. Начните первым.",
-
   "deleteMessageTitle": "Удалить сообщение",
   "deleteMessageConfirm": "Вы уверены, что хотите удалить это сообщение? Это действие необратимо.",
   "deleteLabel": "Удалить",
@@ -40,13 +38,11 @@
   "unpinMessage": "Открепить сообщение",
   "pinMessage": "Прикрепить сообщение",
   "addReaction": "Добавить реакцию",
-
   "messageCannotBeEmpty": "Сообщение не может быть пустым",
   "messageEdited": "Сообщение отредактировано",
   "failedEditMessage": "Не удалось отредактировать сообщение",
   "pressEnterToSave": "Нажмите Enter чтобы сохранить, Esc чтобы отменить",
   "failedSendMessage": "Не удалось отправить сообщение",
-
   "pinnedBy": "Закреплено: {{name}}",
   "unknownTime": "Время неизвестно",
   "scrollToMessage": "Прокрутить до сообщения",
@@ -69,7 +65,6 @@
   "copyDetails": "Копировать сведения",
   "copied": "Скопировано",
   "errorDetailsCopied": "Сведения об ошибке скопированы в буфер обмена",
-
   "deleteFileTitle": "Удалить файл",
   "deleteFileMsg": "Вы уверены, что хотите удалить этот файл?",
   "fileDeleted": "Файл удален",
@@ -106,5 +101,7 @@
   "wasReactedBy": "на это отреагировали {{reacters}}.",
   "andMore": "и еще {{count}}",
   "soundboard": "Soundboard",
-  "noSoundsAvailable": "No sounds available"
+  "noSoundsAvailable": "No sounds available",
+  "sendGif": "Send a GIF",
+  "gifImportFailed": "Failed to send GIF. Please try again."
 }

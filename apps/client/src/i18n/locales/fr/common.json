@@ -108,5 +108,7 @@
   "wasReactedBy": "{{reacters}} a réagi.",
   "andMore": "et {{count}} autres",
   "soundboard": "Bandes-son",
-  "noSoundsAvailable": "Aucun son disponible"
+  "noSoundsAvailable": "Aucun son disponible",
+  "sendGif": "Envoyer un GIF",
+  "gifImportFailed": "Échec de l'envoi du GIF. Réessayez."
 }

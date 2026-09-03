@@ -10,7 +10,6 @@
   "moderationView": "Moderační možnosti",
   "couldNotOpenDM": "Přímou zprávu se otevřít nepodařilo",
   "unknownUser": "Neznámý uživatel",
-
   "selectDmPrompt": "Vyberte přímou zprávu nebo napište novou.",
   "welcomeToServer": "Vítejte v {{name}}.",
   "homeEmptyDescription": "Vyber kanál vlevo a začni si povídat.",
@@ -20,7 +19,6 @@
   "swipeLeftForUsers": "Přejetím doleva otevřete seznam uživatelů",
   "channelEmptyTitle": "Tohle je úplný začátek #{{name}}",
   "channelEmptyDescription": "Zatím tu nikdo nic nenapsal. Začni.",
-
   "deleteMessageTitle": "Odstranit zprávu",
   "deleteMessageConfirm": "Opravdu chcete tuto zprávu odstranit? Tato akce je nevratná.",
   "deleteLabel": "Odstranit",
@@ -40,13 +38,11 @@
   "unpinMessage": "Odepnout zprávu",
   "pinMessage": "Připnout zprávu",
   "addReaction": "Přidat reakci",
-
   "messageCannotBeEmpty": "Zpráva nemůže být prázdná",
   "messageEdited": "Zpráva byla aktualizována",
   "failedEditMessage": "Zprávu se upravit nepodařilo",
   "pressEnterToSave": "Stiskněte Enter pro uložení, Esc pro zrušení",
   "failedSendMessage": "Zprávu se poslat nepodařilo",
-
   "pinnedBy": "Připnuto uživatelem {{name}}",
   "unknownTime": "Neznámý čas",
   "scrollToMessage": "Přejít ke zprávě",
@@ -69,7 +65,6 @@
   "copyDetails": "Kopírovat podrobnosti",
   "copied": "Zkopírováno",
   "errorDetailsCopied": "Podrobnosti chyby byly zkopírovány do schránky",
-
   "deleteFileTitle": "Odstranit soubor",
   "deleteFileMsg": "Opravdu chcete tento soubor odstranit?",
   "fileDeleted": "Soubor byl odstraněn",
@@ -106,5 +101,7 @@
   "wasReactedBy": "reagovali {{reacters}}.",
   "andMore": "a dalších {{count}}",
   "soundboard": "Soundboard",
-  "noSoundsAvailable": "No sounds available"
+  "noSoundsAvailable": "No sounds available",
+  "sendGif": "Send a GIF",
+  "gifImportFailed": "Failed to send GIF. Please try again."
 }

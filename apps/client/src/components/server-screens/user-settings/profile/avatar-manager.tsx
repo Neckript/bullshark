@@ -4,7 +4,11 @@ import { usePublicServerSettings } from '@/features/server/hooks';
 import { uploadImage } from '@/helpers/upload-file';
 import { useFilePicker } from '@/hooks/use-file-picker';
 import { getTRPCClient } from '@/lib/trpc';
-import { getTrpcError, type TJoinedPublicUser } from '@bullshark/shared';
+import {
+  getTrpcError,
+  type TGifSearchResult,
+  type TJoinedPublicUser
+} from '@bullshark/shared';
 import { Button, Group } from '@bullshark/ui';
 import { Upload } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
@@ -51,10 +55,13 @@ const AvatarManager = memo(({ user }: TAvatarManagerProps) => {
     }
   }, [openFilePicker]);
 
-  const onSelectGif = useCallback(async (gifId: string) => {
+  const onSelectGif = useCallback(async (gif: TGifSearchResult) => {
     const trpc = getTRPCClient();
     try {
-      await trpc.gifs.importToProfile.mutate({ gifId, target: 'avatar' });
+      await trpc.gifs.importToProfile.mutate({
+        gifId: gif.id,
+        target: 'avatar'
+      });
       toast.success('Avatar updated successfully!');
     } catch (error) {
       toast.error(getTrpcError(error, 'Failed to update avatar'));

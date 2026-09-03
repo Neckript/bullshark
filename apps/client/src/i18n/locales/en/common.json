@@ -113,6 +113,8 @@
   "gifPickerTitle": "Choose a GIF",
   "gifSearchPlaceholder": "Search GIFs...",
   "gifSearchFailed": "GIF search failed. Please try again.",
+  "sendGif": "Send a GIF",
+  "gifImportFailed": "Failed to send GIF. Please try again.",
   "loading": "Loading...",
   "soundboard": "Soundboard",
   "noSoundsAvailable": "No sounds available"

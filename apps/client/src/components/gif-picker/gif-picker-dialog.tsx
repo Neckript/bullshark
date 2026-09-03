@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 type TGifPickerDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSelect: (gifId: string) => void;
+  onSelect: (gif: TGifSearchResult) => void;
 };
 
 const GifPickerDialog = memo(
@@ -74,7 +74,7 @@ const GifPickerDialog = memo(
                 type="button"
                 className="overflow-hidden rounded-md hover:opacity-80 focus:ring-2 focus:ring-ring"
                 onClick={() => {
-                  onSelect(gif.id);
+                  onSelect(gif);
                   onOpenChange(false);
                 }}
               >
