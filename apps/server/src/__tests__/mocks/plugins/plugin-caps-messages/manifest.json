@@ -1,0 +1,9 @@
+{
+  "id": "plugin-caps-messages",
+  "name": "plugin-caps-messages",
+  "version": "1.0.0",
+  "sdkVersion": 1,
+  "capabilities": ["messages"],
+  "author": "Test",
+  "description": "Declares messages only"
+}

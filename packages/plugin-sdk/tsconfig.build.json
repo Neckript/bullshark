@@ -1,0 +1,32 @@
+// Declaration-emit config for the distributed build.
+//
+// The base tsconfig sets noEmit and pulls in the server's declarations.d.ts for
+// in-monorepo type-checking; neither belongs in what ships to plugin authors.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": false,
+    // Pinned explicitly: dts-bundle-generator builds its own program and does
+    // not keep the base config's `module: Preserve`, which silently changes the
+    // default module resolution and breaks extensionless relative imports.
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    // Resolve the workspace package through its real path rather than the
+    // node_modules symlink: the bundler's own program failed to resolve
+    // shared's internal relative imports when reached through the link.
+    "baseUrl": ".",
+    "paths": {
+      "@bullshark/shared/*": ["../shared/*"],
+      "@bullshark/shared": ["../shared/src/index.ts"]
+    },
+    // No ambient @types in the declaration program: the SDK's public surface
+    // needs neither bun nor node globals, and pulling @types/node 25.x in is what
+    // broke the declaration bundler.
+    "types": [],
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}

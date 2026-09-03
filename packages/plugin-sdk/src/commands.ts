@@ -2,7 +2,7 @@ import type {
   TCommandArg,
   TCommandContract,
   TInvokerContext
-} from '@bullshark/shared';
+} from '@bullshark/shared/src/plugins';
 import type { PluginContext } from '.';
 
 type TypedRegisterCommand<TCommands extends TCommandContract> = <

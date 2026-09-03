@@ -6,5 +6,8 @@
   "author": "Mocked",
   "homepage": "https://mocked.com",
   "description": "Mock plugin that modifies files before save.",
-  "logo": "https://some-page.com/logo.png"
+  "logo": "https://some-page.com/logo.png",
+  "capabilities": [
+    "hooks.onBeforeFileSave"
+  ]
 }

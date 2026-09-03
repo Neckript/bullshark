@@ -1,4 +1,5 @@
 import z from 'zod';
+import { zCapability } from './capability-schema';
 
 const zMarketplacePlugin = z.object({
   id: z.string(),
@@ -18,6 +19,9 @@ const zMarketplacePluginVersion = z.object({
   downloadUrl: z.string(),
   checksum: z.string(),
   sdkVersion: z.union([z.number(), z.string()]),
+  // Absent means "declares none", so entries published before capabilities
+  // existed stay valid and simply offer nothing.
+  capabilities: z.array(zCapability).optional(),
   size: z.number(),
   timestamp: z.number()
 });

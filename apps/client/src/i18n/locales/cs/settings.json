@@ -256,6 +256,8 @@
   "marketplaceSdkBadge": "{{status}}",
   "marketplaceSdkCompatible": "Kompatibilní",
   "marketplaceSdkIncompatible": "Nekompatibilní",
+  "marketplaceMissingCapabilitiesBadge": "Vyžaduje {{capabilities}}",
+  "marketplaceMissingCapabilities": "Tento plugin vyžaduje schopnosti, které tento server neposkytuje: {{capabilities}}.",
   "marketplaceReleasedOn": "Vydáno {{date}}",
   "marketplaceVerifiedTooltip": "Toto rozšíření bylo ověřeno týmem Bullshark.",
   "marketplaceInstallSuccess": "Rozšíření „{{name}}“ bylo úspěšně nainstalováno. Chcete-li jej začít používat, musíte jej ručně povolit.",

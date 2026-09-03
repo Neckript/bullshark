@@ -1,0 +1,8 @@
+{
+  "id": "plugin-caps-none",
+  "name": "plugin-caps-none",
+  "version": "1.0.0",
+  "sdkVersion": 1,
+  "author": "Test",
+  "description": "Declares no capabilities"
+}

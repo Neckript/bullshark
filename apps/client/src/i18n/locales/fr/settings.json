@@ -262,6 +262,8 @@
   "marketplaceSdkBadge": "{{status}}",
   "marketplaceSdkCompatible": "Compatible",
   "marketplaceSdkIncompatible": "Incompatible",
+  "marketplaceMissingCapabilitiesBadge": "Requiert {{capabilities}}",
+  "marketplaceMissingCapabilities": "Ce plugin requiert des capacités que ce serveur ne fournit pas : {{capabilities}}.",
   "marketplaceReleasedOn": "Publie le {{date}}",
   "marketplaceVerifiedTooltip": "Ce plugin a ete verifie par Bullshark.",
   "marketplaceInstallSuccess": "\"{{name}}\" a ete installe avec succes. Vous devez l'activer manuellement pour commencer a l'utiliser.",

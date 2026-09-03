@@ -14,17 +14,68 @@ my-plugin/
 └── client/index.js   # optional / optionnel
 ```
 
+**EN** — Both entry points are optional, but at least one must exist: a
+moderation plugin needs no client, a pure-UI plugin needs no server. A plugin
+with neither is refused at load.
+
+**FR** — Les deux points d'entrée sont optionnels, mais au moins un doit
+exister : un plugin de modération n'a pas besoin de client, un plugin d'UI pure
+n'a pas besoin de serveur. Un plugin qui n'a ni l'un ni l'autre est refusé au
+chargement.
+
 ## manifest.json
 
 **EN** — Required fields: `id` (lowercase letters, digits, dashes), `name`,
 `author`, `description`, `version` (`x.y.z`), `sdkVersion` (currently `1`, see
 `PLUGIN_SDK_VERSION` in `@bullshark/shared`). `homepage` and `logo` are
-optional URLs.
+optional URLs. `capabilities` is optional and defaults to none — see below.
 
 **FR** — Champs requis : `id` (lettres minuscules, chiffres, tirets), `name`,
 `author`, `description`, `version` (`x.y.z`), `sdkVersion` (`1` actuellement,
 voir `PLUGIN_SDK_VERSION` dans `@bullshark/shared`). `homepage` et `logo` sont
 des URLs optionnelles.
+
+## capabilities
+
+**EN** — A plugin declares what it needs. The server builds its `PluginContext`
+from that list and nothing else: a plugin that does not declare `voice` has no
+`ctx.voice`. Declare exactly what you use — over-declaring costs you nothing
+technically, and costs you the trust of whoever reviews your plugin.
+
+`sdkVersion` is a separate axis: it versions the **format** (manifest filename,
+entry layout, the `window.__BULLSHARK_*` global names), not the API surface.
+
+**FR** — Un plugin déclare ce dont il a besoin. Le serveur construit son
+`PluginContext` à partir de cette liste et de rien d'autre : un plugin qui ne
+déclare pas `voice` n'a pas de `ctx.voice`. Déclare exactement ce que tu
+utilises — sur-déclarer ne coûte rien techniquement, et coûte la confiance de
+qui relira ton plugin.
+
+`sdkVersion` est un axe distinct : il versionne le **format** (nom du manifest,
+arborescence des entrées, noms des globales `window.__BULLSHARK_*`), pas la
+surface d'API.
+
+| Capability | Unlocks / Donne accès à |
+| --- | --- |
+| `events` | `ctx.events` — server events |
+| `actions` | `ctx.actions` |
+| `commands` | `ctx.commands` — slash-commands |
+| `messages` | `ctx.messages` — send, edit, delete |
+| `settings` | `ctx.settings` |
+| `data` | `ctx.data` — users, channels |
+| `ui` | `ctx.ui` — enable/disable client UI |
+| `voice` | `ctx.voice` — mediasoup router, external streams |
+| `hooks.onBeforeFileSave` | `ctx.hooks.onBeforeFileSave` |
+| `client.slots` | rendering React components into `PluginSlot`s |
+
+`path`, `pluginId`, `logger`, `log`, `debug` and `error` are always provided and
+are not capabilities. / `path`, `pluginId`, `logger`, `log`, `debug` et `error`
+sont toujours fournis et ne sont pas des capacités.
+
+**EN** — Capabilities restrict the **SDK surface**, not system privileges. Read
+[security.md](./security.md) before assuming otherwise. /
+**FR** — Les capacités restreignent la **surface du SDK**, pas les privilèges
+système. Lis [security.md](./security.md) avant de supposer le contraire.
 
 ## What a plugin can do / Ce qu'un plugin peut faire
 

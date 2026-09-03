@@ -4,5 +4,9 @@
   "version": "0.0.1",
   "sdkVersion": 1,
   "author": "Test Author",
-  "description": "Plugin with a command that hangs forever, used to test execution timeout."
+  "description": "Plugin with a command that hangs forever, used to test execution timeout.",
+  "capabilities": [
+    "actions",
+    "commands"
+  ]
 }

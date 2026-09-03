@@ -4,5 +4,9 @@
   "version": "0.0.1",
   "sdkVersion": 1,
   "author": "Test Author",
-  "description": "A mock plugin with settings for testing."
+  "description": "A mock plugin with settings for testing.",
+  "capabilities": [
+    "commands",
+    "settings"
+  ]
 }

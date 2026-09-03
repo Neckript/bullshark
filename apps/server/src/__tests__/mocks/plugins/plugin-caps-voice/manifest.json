@@ -1,0 +1,9 @@
+{
+  "id": "plugin-caps-voice",
+  "name": "plugin-caps-voice",
+  "version": "1.0.0",
+  "sdkVersion": 1,
+  "capabilities": ["voice", "hooks.onBeforeFileSave"],
+  "author": "Test",
+  "description": "Declares voice and a hook"
+}
