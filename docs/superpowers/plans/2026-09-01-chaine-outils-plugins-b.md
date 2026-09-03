@@ -18,7 +18,7 @@
 
 ---
 
-## Status (2026-09-01)
+## Status (2026-09-03)
 
 | Task | State |
 | --- | --- |
@@ -32,9 +32,9 @@
 | 6 — Documentation | done |
 | 7 — Publish the SDK | done; workflow written, and v0.0.30 published by hand to unblock 8-9 |
 | 8 — Fork the builder | done, pushed |
-| 9 — Fork the example | done, pushed |
-| 10 — End-to-end | build + bundle verified; install on a real server outstanding |
-| 11 — First registry entry | blocked: needs a CODEBERG_TOKEN to publish the example release |
+| 9 — Fork the example | done, pushed (fix in v0.0.2, see below) |
+| 10 — End-to-end | done |
+| 11 — First registry entry | done |
 
 Gates at this point: server 991, shared 153, client 33, all green; typecheck
 clean on all 7 packages; lint 0 errors.
@@ -45,10 +45,38 @@ builder from their repos and builds; the resulting client bundle references
 `__BULLSHARK_*`, contains no `__SHARKORD_*` and does not bundle React (3217
 bytes); the builder refuses an unknown capability and names the valid ones.
 
-What is left needs things only the maintainer can provide: a running server to
-install the built plugin on, and a `CODEBERG_TOKEN` to publish the example's
-release, which produces the `downloadUrl` and `checksum` the registry entry
-needs.
+**Closed out 2026-09-03.** Two blockers on the maintainer's side, both
+resolved:
+- Codeberg disables the Releases unit per repo by default — enabled by hand
+  in `bullshark-plugin-example` → Settings → Repository → Features →
+  Publications.
+- The account's Assets storage quota was over its 1.5 GiB cap (1.6 GiB used),
+  entirely from old `bullshark-desktop` Electron installers (v0.1.7/v0.1.8,
+  unrelated to this project). Deleted those release assets, dropping usage to
+  ~533 MiB.
+
+**Real bug found during Task 10's install-on-a-real-server step**: the
+example's `manifest.json` declared `capabilities: [events, settings, ui,
+client.slots]` but its `src/server/index.ts` calls both
+`createRegisterCommand` and `createRegisterAction`, which need `commands` and
+`actions`. Server-side least-privilege enforcement (Task 4) caught this
+correctly — the plugin crashed on load with `undefined is not an object
+(evaluating 'j.commands.register')` instead of the server crashing or the
+plugin silently getting more access than declared. Fixed by declaring the two
+missing capabilities and republishing as v0.0.2 (commits `5116ca8`, `f0d8f71`
+on `bullshark-plugin-example`). Confirmed the fix by re-removing `commands`
+from the installed copy's manifest and reproducing the same error, then
+restoring it.
+
+End-to-end confirmed on a real dev server (fresh DB, owner-claim flow):
+plugin loads, its Home Screen slot renders, the `sum` action and `/hello`
+command both execute correctly. Then confirmed the full Task 11 loop from the
+marketplace side: `bullshark-plugins/plugins.json` now lists the example
+(v0.0.2, real `downloadUrl`/`checksum` from the Codeberg release, real
+capability list); the server's Marketplace tab shows it as Verified +
+Compatible; Install downloads the tarball, checks the checksum, and extracts
+it — no manual file placement. Registry `README.md` documents the entry
+format and the (manual PR review, no automation yet) submission process.
 
 ---
 
