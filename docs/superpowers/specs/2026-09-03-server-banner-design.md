@@ -1,7 +1,7 @@
 # Bannière de serveur — design
 
 - Date : 2026-09-03
-- Statut : direction discutée en chat avec l.user, pas encore de plan d'implémentation
+- Statut : validé en chat avec l.user, prêt pour le plan d'implémentation
 - Petit chantier, pas de dépendance
 
 ## Problème
@@ -65,9 +65,10 @@ bannière est définie — pas de repli, elle disparaît simplement si
    périmètre initial, pas d'une itération suivante. Utilise le réglage
    générique "Max animated image size" (`storage/index.tsx`), pas le
    nouveau `storageMaxServerBannerSize` qui borne les images statiques.
-3. **Couleur de repli.** `users.bannerColor` sert de fond uni quand il n'y a
-   pas d'image. Un serveur en a-t-il besoin, ou reste-t-il simplement
-   invisible sans bannière définie ?
+3. ~~**Couleur de repli.**~~ Tranché par l.user le 2026-09-03 : invisible.
+   Pas de `bannerColor` pour les serveurs — contrairement à `users`, la
+   bannière n'occupe simplement aucun espace tant que `settings.bannerId`
+   est `null`, comme le logo aujourd'hui.
 
 **Droits** (pas une question, un défaut à confirmer en implémentant) :
 upload/suppression réservés à `Permission.MANAGE_SETTINGS` (même garde que
