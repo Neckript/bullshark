@@ -56,28 +56,40 @@ const migrateLegacyDataDirectory = async (
 
 // Guards against the one Docker deployment shape the migration above can't
 // handle safely: a volume mounted directly on the legacy directory instead
-// of on its parent. In that layout the migration either can't rename the
-// mount point at all, or - worse - renames the directory entry while the
-// volume's actual storage stays behind, so newly "migrated" data lands on
-// the container's own writable layer and is gone on the next recreate.
+// of on its parent. In that layout the kernel refuses to rename the mount
+// point at all (EBUSY/EXDEV) regardless of write permissions on its
+// contents - a bind mount backed by data the operator can freely write to
+// still can't be renamed away, so a writable legacy directory is not proof
+// the migration succeeded. Confirmed in production: a writable bind mount
+// left `migrateLegacyDataDirectory` swallowing a failed rename every
+// restart, each one silently starting the server on a fresh, unmounted
+// "current" directory while the real data sat untouched under the legacy
+// path - years of history reset to zero on every deploy, with nothing
+// logged.
 //
-// current empty + legacy non-empty + legacy not writable is that shape's
-// exact signature: refuse to start rather than run on a directory that
-// looks fresh but silently discards everything written to it.
+// current empty + legacy non-empty, after a migration attempt, is that
+// shape's exact signature regardless of writability: refuse to start
+// rather than run on a directory that looks fresh but silently discards
+// everything written to it.
 const assertDataDirNotShadowedByVolume = async (
   legacyDir: string,
   currentDir: string,
   // Overridable for tests: Windows has no reliable way to make a real
-  // directory non-writable via fs.chmod, unlike POSIX.
+  // directory non-writable via fs.chmod, unlike POSIX. Only affects the
+  // wording of the error now, never whether it's thrown.
   checkWritable: (dir: string) => Promise<boolean> = isWritable
 ): Promise<void> => {
   if (!(await isEmptyDir(currentDir))) return;
   if (await isEmptyDir(legacyDir)) return;
-  if (await checkWritable(legacyDir)) return;
+
+  const writable = await checkWritable(legacyDir);
+  const writabilityNote = writable
+    ? ' (it is writable, so this is a mount point the kernel refused to rename, not a permissions issue)'
+    : " and can't be written to";
 
   throw new Error(
     `[Paths] Refusing to start: "${currentDir}" is empty but "${legacyDir}" ` +
-      `still holds data and can't be written to. This is the signature of ` +
+      `still holds data${writabilityNote}. This is the signature of ` +
       `a Docker volume mounted directly on the old data directory. Check ` +
       `your docker-compose.yml: if it mounts a volume on "${legacyDir}", ` +
       `point it at "${currentDir}" instead, then restart.`
