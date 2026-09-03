@@ -52,12 +52,13 @@ bannière est définie — pas de repli, elle disparaît simplement si
 
 ## Questions ouvertes, à trancher avant le plan d'implémentation
 
-1. **Ratio et recadrage.** Une bannière de serveur Discord est très large et
-   basse (le panneau serveur peut faire 340px de large). La sidebar ici fait
-   200–400px de large (`MIN_WIDTH`/`MAX_WIDTH` dans `left-sidebar/index.tsx`)
-   et est redimensionnable — la bannière doit donc être un simple
-   `background-size: cover` sur toute la largeur courante, hauteur fixe
-   (ex. 120px), pas un ratio imposé à l'upload.
+1. ~~**Ratio et recadrage.**~~ Tranché par l.user le 2026-09-03 : même taille
+   que Discord. Discord recommande **960×540 (16:9)** à l'upload pour sa
+   bannière de serveur. Affichage ici en `background-size: cover` sur toute
+   la largeur courante de la sidebar (200–400px, redimensionnable — voir
+   `MIN_WIDTH`/`MAX_WIDTH` dans `left-sidebar/index.tsx`), hauteur dérivée du
+   16:9 plutôt que fixée en dur, pas de recadrage interactif à l'upload
+   (l'image fournie doit déjà être proche de ce ratio).
 2. **GIF animé.** Support Klipy dès la première version, ou statique
    d'abord ? (Cf. `storage/index.tsx` : "Max animated image size" existe déjà
    comme réglage générique, séparé de `storageMaxBannerSize`.)
