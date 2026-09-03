@@ -2,7 +2,7 @@ import {
   FileSaveType,
   Permission,
   PROFILE_MEDIA_EXTENSIONS
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { removeFile } from '../../db/mutations/files';

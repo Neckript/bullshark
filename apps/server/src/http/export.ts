@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import type { Database } from 'bun:sqlite';
 import fs from 'fs/promises';
 import http from 'http';

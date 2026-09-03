@@ -1,5 +1,5 @@
 {
-  "name": "@sharkord/ui",
+  "name": "@bullshark/ui",
   "version": "0.0.30",
   "type": "module",
   "private": true,
@@ -28,7 +28,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@sharkord/shared": "workspace:*",
+    "@bullshark/shared": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

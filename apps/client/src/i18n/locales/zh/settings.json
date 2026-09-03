@@ -347,7 +347,7 @@
   "diskTotalSpace": "总磁盘空间",
   "diskAvailableSpace": "可用空间",
   "diskSystemUsed": "系统占用",
-  "diskSharkordUsed": "Bullshark 占用",
+  "diskBullsharkUsed": "Bullshark 占用",
   "diskUsage": "磁盘使用情况",
   "diskUsedPercent": "已使用 {{percent}}%",
 
@@ -468,7 +468,9 @@
   "marketplaceSdkBadge": "{{status}}",
   "marketplaceSdkCompatible": "兼容",
   "marketplaceSdkIncompatible": "不兼容",
-  "marketplaceVerifiedTooltip": "此插件已通过 Sharkord 验证。",
+  "marketplaceMissingCapabilitiesBadge": "需要 {{capabilities}}",
+  "marketplaceMissingCapabilities": "此插件需要本服务器不提供的能力：{{capabilities}}。",
+  "marketplaceVerifiedTooltip": "此插件已通过 Bullshark 验证。",
   "marketplaceInstallSuccess": "\"{{name}}\" 已成功安装。您需要手动启用它才能开始使用。",
 
   "standard": "标准",

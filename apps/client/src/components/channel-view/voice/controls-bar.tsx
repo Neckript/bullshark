@@ -2,8 +2,8 @@ import { useChannelCan } from '@/features/server/hooks';
 import { leaveVoice } from '@/features/server/voice/actions';
 import { useOwnVoiceState, useVoice } from '@/features/server/voice/hooks';
 import { cn } from '@/lib/utils';
-import { ChannelPermission } from '@sharkord/shared';
-import { Button, Tooltip } from '@sharkord/ui';
+import { ChannelPermission } from '@bullshark/shared';
+import { Button, Tooltip } from '@bullshark/ui';
 import {
   Mic,
   MicOff,

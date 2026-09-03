@@ -1,4 +1,4 @@
-const MICROPHONE_NOISE_GATE_WORKLET_NAME = 'sharkord-noise-gate';
+const MICROPHONE_NOISE_GATE_WORKLET_NAME = 'bullshark-noise-gate';
 
 class NoiseGateProcessor extends AudioWorkletProcessor {
   constructor() {

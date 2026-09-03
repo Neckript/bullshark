@@ -1,4 +1,4 @@
-import type { TFile } from '@sharkord/shared';
+import type { TFile } from '@bullshark/shared';
 
 const getHostFromServer = () => {
   if (import.meta.env.MODE === 'development') {

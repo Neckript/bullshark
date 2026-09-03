@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@sharkord/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bullshark/ui';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TServerScreenBaseProps } from '../screens';

@@ -1,7 +1,7 @@
 import { useCategories } from '@/features/server/categories/hooks';
 import { useVisibleChannels } from '@/features/server/hooks';
 import { useFilteredUsers } from '@/features/server/users/hooks';
-import { ChannelType } from '@sharkord/shared';
+import { ChannelType } from '@bullshark/shared';
 import { useMemo } from 'react';
 import { compareMatches, matchName } from './matching';
 import { readRecentTargets } from './recents';

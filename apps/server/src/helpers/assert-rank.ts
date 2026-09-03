@@ -1,4 +1,4 @@
-import { OWNER_ROLE_POSITION } from '@sharkord/shared';
+import { OWNER_ROLE_POSITION } from '@bullshark/shared';
 import { getRolePosition, getUserTopPosition } from '../db/queries/roles';
 import { invariant } from '../utils/invariant';
 

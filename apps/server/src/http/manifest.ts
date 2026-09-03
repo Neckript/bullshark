@@ -1,4 +1,4 @@
-import type { TJoinedSettings, TWebAppManifest } from '@sharkord/shared';
+import type { TJoinedSettings, TWebAppManifest } from '@bullshark/shared';
 import http from 'http';
 import { imageSizeFromFile } from 'image-size/fromFile';
 import path from 'path';

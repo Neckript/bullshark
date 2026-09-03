@@ -1,4 +1,4 @@
-import { OWNER_ROLE_ID } from '@sharkord/shared';
+import { OWNER_ROLE_ID } from '@bullshark/shared';
 import { and, eq } from 'drizzle-orm';
 import { db } from '..';
 import { userRoles } from '../schema';

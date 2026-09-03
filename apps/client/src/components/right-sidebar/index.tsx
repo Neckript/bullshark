@@ -10,7 +10,7 @@ import {
   DELETED_USER_IDENTITY_AND_NAME,
   type TJoinedPublicUser,
   type TJoinedRole
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserPopover } from '../user-popover';

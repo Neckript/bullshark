@@ -7,3 +7,6 @@
 .direnv/
 docs/superpowers/plans/2026-06-16-server-backup-export-import.md
 docs/superpowers/plans/2026-06-18-owner-claim-and-token-rotation.md
+
+# server data dirs when tests/dev run from the repo root
+/data*

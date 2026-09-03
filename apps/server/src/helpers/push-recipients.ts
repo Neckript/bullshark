@@ -1,4 +1,4 @@
-import { hasMention, MUTED_ROLE_MENTION_PREFIX } from '@sharkord/shared';
+import { hasMention, MUTED_ROLE_MENTION_PREFIX } from '@bullshark/shared';
 
 type TPushDecisionInput = {
   userId: number;

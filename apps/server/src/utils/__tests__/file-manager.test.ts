@@ -2,7 +2,7 @@ import {
   FileSaveType,
   StorageOverflowAction,
   type TTempFile
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';

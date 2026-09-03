@@ -1,4 +1,4 @@
-import { ActivityLogType, Permission, zPluginId } from '@sharkord/shared';
+import { ActivityLogType, Permission, zPluginId } from '@bullshark/shared';
 import z from 'zod';
 import { getInvokerCtxFromTrpcCtx } from '../../helpers/get-invoker-ctx-from-trpc-ctx';
 import { pluginManager } from '../../plugins';

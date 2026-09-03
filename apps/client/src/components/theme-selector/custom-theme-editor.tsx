@@ -5,7 +5,7 @@ import {
   saveSelectedTheme
 } from '@/features/server/user-settings/actions';
 import { applyCustomThemeVars } from '@/helpers/custom-theme';
-import { Button } from '@sharkord/ui';
+import { Button } from '@bullshark/ui';
 import { memo, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme-provider';

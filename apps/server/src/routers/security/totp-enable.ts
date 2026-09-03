@@ -1,4 +1,4 @@
-import { ActivityLogType } from '@sharkord/shared';
+import { ActivityLogType } from '@bullshark/shared';
 import { z } from 'zod';
 import { enableTotp, replaceRecoveryCodes } from '../../db/mutations/totp';
 import { getUserTotp } from '../../db/queries/totp';

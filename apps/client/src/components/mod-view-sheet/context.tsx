@@ -4,7 +4,7 @@ import type {
   TLogin,
   TMessage,
   TStorageData
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { createContext, useContext } from 'react';
 
 enum ModViewScreen {

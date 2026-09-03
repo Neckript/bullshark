@@ -13,7 +13,7 @@ import {
   AlertDialogTitle,
   AutoFocus,
   Input
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '../dialogs';

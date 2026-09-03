@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Github, RefreshCw } from 'lucide-react';
 import { memo, type ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ type TGlobalErrorFallbackProps = {
   reset: () => void;
 };
 
-const GITHUB_ISSUES_URL = 'https://github.com/Sharkord/sharkord/issues';
+const ISSUES_URL = 'https://codeberg.org/The_Neckript/bullshark/issues';
 
 const copyErrorDetails = (
   error: Error,
@@ -80,7 +80,7 @@ const GlobalErrorFallback = memo(
 
               <Button asChild variant="outline" className="sm:w-auto">
                 <a
-                  href={GITHUB_ISSUES_URL}
+                  href={ISSUES_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -130,11 +130,11 @@ const GlobalErrorFallback = memo(
             <div className="flex justify-center text-xs text-muted-foreground sm:justify-between">
               <span>v{VITE_APP_VERSION}</span>
               <a
-                href={GITHUB_ISSUES_URL}
+                href={ISSUES_URL}
                 target="_blank"
                 className="hidden hover:text-foreground sm:inline"
               >
-                {GITHUB_ISSUES_URL}
+                {ISSUES_URL}
               </a>
             </div>
           </CardContent>

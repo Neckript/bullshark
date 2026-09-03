@@ -1,4 +1,4 @@
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import { getEmojis } from '../../db/queries/emojis';
 import { protectedProcedure } from '../../utils/trpc';
 

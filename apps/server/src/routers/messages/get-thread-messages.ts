@@ -1,4 +1,4 @@
-import { DEFAULT_MESSAGES_LIMIT, type TMessage } from '@sharkord/shared';
+import { DEFAULT_MESSAGES_LIMIT, type TMessage } from '@bullshark/shared';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

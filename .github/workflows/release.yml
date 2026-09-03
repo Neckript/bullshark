@@ -43,7 +43,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build project artifacts
-        uses: ./.github/actions/build-sharkord
+        uses: ./.github/actions/build-bullshark
         with:
           bump: ${{ inputs.bump }}
 
@@ -63,13 +63,13 @@ jobs:
           docker_username: ${{ secrets.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/sharkord:latest
-            ${{ secrets.DOCKER_USERNAME }}/sharkord:v${{ steps.get_version.outputs.version }}
+            ${{ secrets.DOCKER_USERNAME }}/bullshark:latest
+            ${{ secrets.DOCKER_USERNAME }}/bullshark:v${{ steps.get_version.outputs.version }}
           labels: |
-            org.opencontainers.image.title=Sharkord
-            org.opencontainers.image.description=Sharkord Server
+            org.opencontainers.image.title=Bullshark
+            org.opencontainers.image.description=Bullshark Server
             org.opencontainers.image.version=${{ steps.get_version.outputs.version }}
-            org.opencontainers.image.source=https://github.com/Sharkord/sharkord
+            org.opencontainers.image.source=https://codeberg.org/The_Neckript/bullshark
 
       - name: Commit version bump
         if: ${{ inputs.bump != 'none' }}
@@ -92,6 +92,50 @@ jobs:
           # its own lightweight tag via target_commitish. Pushing an annotated tag
           # and then calling the API causes an internal 500 on Forgejo (Codeberg).
           echo "COMMIT_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Publish plugin SDK to its distribution repo
+        env:
+          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+          VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          # The distributed package is a build, not a checkout of this one. It
+          # carries no workspace:* dependency, no devDependencies and no build
+          # script: an external author installs it from a git tag and gets
+          # exactly what is committed, with nothing to resolve or run.
+          bun install --frozen-lockfile
+          cd packages/plugin-sdk
+          bun run build
+          cd "$GITHUB_WORKSPACE"
+
+          WORK="$(mktemp -d)"
+          SDK_URL="https://The_Neckript:${CODEBERG_TOKEN}@codeberg.org/The_Neckript/bullshark-plugin-sdk.git"
+          git clone --depth 1 "$SDK_URL" "$WORK"
+
+          rm -rf "$WORK/dist"
+          cp -r packages/plugin-sdk/dist "$WORK/dist"
+          cp LICENSE "$WORK/LICENSE"
+
+          jq -n --arg version "$VERSION" '{ name: "@bullshark/plugin-sdk", version: $version, description: "SDK for building Bullshark plugins", license: "MIT", type: "module", main: "dist/index.js", types: "dist/index.d.ts", exports: { ".": { types: "./dist/index.d.ts", import: "./dist/index.js" }, "./voice": { types: "./dist/voice.d.ts", import: "./dist/voice.js" } }, repository: { type: "git", url: "https://codeberg.org/The_Neckript/bullshark-plugin-sdk.git" }, peerDependencies: { mediasoup: "^3.19.11", react: "^19.1.1", "react-dom": "^19.1.1" }, peerDependenciesMeta: { mediasoup: { optional: true } } }' > "$WORK/package.json"
+
+          cd "$WORK"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "SDK unchanged at v${VERSION}; nothing to publish."
+            exit 0
+          fi
+
+          # One commit carrying dist/ and package.json together, and the tag only
+          # once it has landed: a half-finished publish would leave this repo at
+          # a version matching no state of the monorepo.
+          git commit -m "release: v${VERSION}"
+          git push origin HEAD
+          git tag "v${VERSION}"
+          git push origin "v${VERSION}"
 
       - name: Create GitHub release and upload assets
         env:

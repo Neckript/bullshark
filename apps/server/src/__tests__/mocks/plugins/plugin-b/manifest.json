@@ -6,5 +6,10 @@
   "author": "Test Author",
   "homepage": "https://example.com",
   "description": "Plugin B with commands",
-  "logo": "https://example.com/logo.png"
+  "logo": "https://example.com/logo.png",
+  "capabilities": [
+    "actions",
+    "commands",
+    "ui"
+  ]
 }

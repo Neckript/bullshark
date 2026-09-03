@@ -2,7 +2,7 @@ import { RelativeTime } from '@/components/relative-time';
 import { useSelectedChannelId } from '@/features/server/channels/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { getTRPCClient } from '@/lib/trpc';
-import { getTrpcError, type TJoinedMessage } from '@sharkord/shared';
+import { getTrpcError, type TJoinedMessage } from '@bullshark/shared';
 import {
   IconButton,
   Popover,
@@ -10,7 +10,7 @@ import {
   PopoverTrigger,
   Spinner,
   Tooltip
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { format } from 'date-fns';
 import { ArrowRight, Pin } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';

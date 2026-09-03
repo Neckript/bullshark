@@ -13,15 +13,15 @@ COPY apps/server/build/out/bullshark-linux-* /tmp/
 
 RUN set -eux; \
     case "$TARGETARCH" in \
-      amd64)  cp /tmp/bullshark-linux-x64 /sharkord ;; \
-      arm64)  cp /tmp/bullshark-linux-arm64 /sharkord ;; \
+      amd64)  cp /tmp/bullshark-linux-x64 /bullshark ;; \
+      arm64)  cp /tmp/bullshark-linux-arm64 /bullshark ;; \
       *) echo "Unsupported arch: $TARGETARCH" >&2; exit 1 ;; \
     esac; \
-    chmod +x /sharkord; \
-    chown bun:bun /sharkord; \
+    chmod +x /bullshark; \
+    chown bun:bun /bullshark; \
     rm -rf /tmp/bullshark-linux-*
 
-RUN mkdir -p /home/bun/.config/sharkord && \
+RUN mkdir -p /home/bun/.config/bullshark && \
     chown -R bun:bun /home/bun/.config
 
 COPY docker-entrypoint.sh /entrypoint.sh

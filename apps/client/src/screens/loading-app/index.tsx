@@ -1,6 +1,6 @@
 import { loadApp } from '@/features/app/actions';
 import { useStrictEffect } from '@/hooks/use-strict-effect';
-import { Spinner } from '@sharkord/ui';
+import { Spinner } from '@bullshark/ui';
 import { memo } from 'react';
 
 type TLoadingApp = {

@@ -28,7 +28,7 @@ import {
   CardTitle,
   Group,
   Switch
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

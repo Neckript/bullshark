@@ -15,7 +15,7 @@ import {
   PopoverTrigger,
   Switch,
   Tooltip
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Settings } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';

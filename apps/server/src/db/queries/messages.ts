@@ -5,7 +5,7 @@ import type {
   TMessage,
   TMessageReaction,
   TMessageReplyPreview
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { and, count, desc, eq, inArray, notExists } from 'drizzle-orm';
 import { db } from '..';
 import { attachFileToken, signFile } from '../../helpers/files-crypto';

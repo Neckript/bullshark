@@ -1,7 +1,7 @@
 import { usePluginMetadata } from '@/features/server/plugins/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
-import type { TMessage } from '@sharkord/shared';
+import type { TMessage } from '@bullshark/shared';
 
 const useMessageAuthorName = (
   message: Pick<TMessage, 'pluginId' | 'userId'>

@@ -5,7 +5,7 @@ import {
   MAX_SOUND_NAME_LENGTH,
   MAX_SOUNDS_PER_SERVER,
   Permission
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { z } from 'zod';
 import { config } from '../../config';
 import { db } from '../../db';

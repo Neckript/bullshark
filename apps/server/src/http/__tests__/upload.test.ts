@@ -1,4 +1,4 @@
-import { UploadHeaders, type TTempFile } from '@sharkord/shared';
+import { UploadHeaders, type TTempFile } from '@bullshark/shared';
 import { afterAll, beforeEach, describe, expect, test } from 'bun:test';
 import fs from 'fs/promises';
 import path from 'path';

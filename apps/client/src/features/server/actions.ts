@@ -3,7 +3,7 @@ import { logDebug } from '@/helpers/browser-logger';
 import { getHostFromServer } from '@/helpers/get-file-url';
 import { cleanup, connectToTRPC, getTRPCClient } from '@/lib/trpc';
 import type { TMessageJumpToTarget } from '@/types';
-import { type TPublicServerSettings, type TServerInfo } from '@sharkord/shared';
+import { type TPublicServerSettings, type TServerInfo } from '@bullshark/shared';
 import { toast } from 'sonner';
 import { appSliceActions } from '../app/slice';
 import { openDialog } from '../dialogs/actions';

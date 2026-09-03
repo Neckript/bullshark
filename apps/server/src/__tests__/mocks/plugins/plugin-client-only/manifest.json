@@ -1,0 +1,9 @@
+{
+  "id": "plugin-client-only",
+  "name": "plugin-client-only",
+  "version": "1.0.0",
+  "sdkVersion": 1,
+  "capabilities": ["client.slots"],
+  "author": "Test Author",
+  "description": "Plugin with a client entry and no server entry"
+}

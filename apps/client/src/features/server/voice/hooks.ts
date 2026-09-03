@@ -1,7 +1,7 @@
 import { useAudioLevel } from '@/components/channel-view/voice/hooks/use-audio-level';
 import { VoiceProviderContext } from '@/components/voice-provider';
 import type { IRootState } from '@/features/store';
-import { StreamKind } from '@sharkord/shared';
+import { StreamKind } from '@bullshark/shared';
 import { useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useIsOwnUser } from '../users/hooks';

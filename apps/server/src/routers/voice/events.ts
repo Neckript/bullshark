@@ -1,4 +1,4 @@
-import { ServerEvents, type StreamKind } from '@sharkord/shared';
+import { ServerEvents, type StreamKind } from '@bullshark/shared';
 import { observable } from '@trpc/server/observable';
 import { protectedProcedure } from '../../utils/trpc';
 

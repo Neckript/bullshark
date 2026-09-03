@@ -2,7 +2,7 @@ import {
   Permission,
   getPlainTextFromHtml,
   isEmptyMessage
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { config } from '../../config';

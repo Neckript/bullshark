@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 
 const loginAs = async (page: Page, identity: string, password: string) => {
   await page.goto('/');

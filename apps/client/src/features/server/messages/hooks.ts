@@ -1,6 +1,6 @@
 import type { IRootState } from '@/features/store';
 import { getTRPCClient } from '@/lib/trpc';
-import { DEFAULT_MESSAGES_LIMIT, type TJoinedMessage } from '@sharkord/shared';
+import { DEFAULT_MESSAGES_LIMIT, type TJoinedMessage } from '@bullshark/shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { addMessages, addThreadMessages, clearThreadMessages } from './actions';

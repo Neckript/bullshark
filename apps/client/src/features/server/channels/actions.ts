@@ -6,7 +6,7 @@ import {
   ChannelType,
   type TChannel,
   type TChannelUserPermissionsMap
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { markChannelAsRead } from '../actions';
 import { serverSliceActions } from '../slice';
 import {

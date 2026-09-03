@@ -6,7 +6,7 @@ import type {
 } from '@/components/server-screens/channel-settings/permissions/types';
 import { useAdminCategoryPermissions } from '@/features/server/admin/hooks';
 import { getTRPCClient } from '@/lib/trpc';
-import { ChannelPermission } from '@sharkord/shared';
+import { ChannelPermission } from '@bullshark/shared';
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
   LoadingCard
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

@@ -1,4 +1,4 @@
-import { ActivityLogType, DisconnectCode, Permission } from '@sharkord/shared';
+import { ActivityLogType, DisconnectCode, Permission } from '@bullshark/shared';
 import z from 'zod';
 import { assertOutranksUser } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';

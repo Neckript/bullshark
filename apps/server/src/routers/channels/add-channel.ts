@@ -1,4 +1,4 @@
-import { ActivityLogType, ChannelType, Permission } from '@sharkord/shared';
+import { ActivityLogType, ChannelType, Permission } from '@bullshark/shared';
 import { desc, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

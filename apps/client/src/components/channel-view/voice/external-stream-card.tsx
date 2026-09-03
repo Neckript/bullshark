@@ -4,8 +4,8 @@ import {
   useVoice
 } from '@/features/server/voice/hooks';
 import { cn } from '@/lib/utils';
-import { StreamKind, type TExternalStream } from '@sharkord/shared';
-import { Avatar, AvatarFallback, AvatarImage, IconButton } from '@sharkord/ui';
+import { StreamKind, type TExternalStream } from '@bullshark/shared';
+import { Avatar, AvatarFallback, AvatarImage, IconButton } from '@bullshark/ui';
 import { Headphones, Router, Video, ZoomIn, ZoomOut } from 'lucide-react';
 import { memo, useCallback, type RefObject } from 'react';
 import { CardControls } from './card-controls';

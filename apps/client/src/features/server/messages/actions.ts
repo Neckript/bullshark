@@ -13,7 +13,7 @@ import {
   hasMention,
   TYPING_MS,
   type TJoinedMessage
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { markChannelAsRead } from '../actions';
 import {
   channelByIdSelector,

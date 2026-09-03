@@ -1,4 +1,4 @@
-import { Permission, zPluginId } from '@sharkord/shared';
+import { Permission, zPluginId } from '@bullshark/shared';
 import z from 'zod';
 import { downloadPlugin } from '../../helpers/downloads';
 import { fetchMarketplaceVersion } from '../../helpers/marketplace';

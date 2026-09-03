@@ -13,7 +13,7 @@ import {
   VideoCodec,
   type TDeviceSettings
 } from '@/types';
-import { DEFAULT_BITRATE } from '@sharkord/shared';
+import { DEFAULT_BITRATE } from '@bullshark/shared';
 import {
   createContext,
   memo,

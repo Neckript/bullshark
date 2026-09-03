@@ -2,7 +2,7 @@ import {
   CLIENT_ENTRY_FILE,
   SERVER_ENTRY_FILE,
   zPluginManifest
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { randomUUIDv7 } from 'bun';
 import fs from 'fs/promises';
 import path from 'path';
@@ -24,7 +24,8 @@ const hasPluginStructure = async (pluginPath: string): Promise<boolean> => {
     fs.exists(clientEntryPath)
   ]);
 
-  return hasManifest && hasServerEntry && hasClientEntry;
+  // Both entries are optional; a plugin made of neither is not a plugin.
+  return hasManifest && (hasServerEntry || hasClientEntry);
 };
 
 const resolveExtractedPluginPath = async (

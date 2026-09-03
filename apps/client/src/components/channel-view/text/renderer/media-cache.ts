@@ -5,7 +5,7 @@ import {
   videoExtensions,
   type TJoinedMessage,
   type TMessageMetadata
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { normalizeComparableUrl } from './helpers';
 import type { TFoundMedia } from './types';
 

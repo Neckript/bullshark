@@ -1,4 +1,4 @@
-import type { TDiskMetrics } from '@sharkord/shared';
+import type { TDiskMetrics } from '@bullshark/shared';
 import { filesize } from 'filesize';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,10 +38,10 @@ const DiskMetrics = memo(({ diskMetrics }: DiskMetricsProps) => {
       </div>
       <div>
         <div className="text-sm font-medium text-muted-foreground">
-          {t('diskSharkordUsed')}
+          {t('diskBullsharkUsed')}
         </div>
         <div className="text-lg font-semibold">
-          {filesize(diskMetrics.sharkordUsedSpace, { standard: 'jedec' })}
+          {filesize(diskMetrics.bullsharkUsedSpace, { standard: 'jedec' })}
         </div>
       </div>
       <div className="col-span-2 mt-2">

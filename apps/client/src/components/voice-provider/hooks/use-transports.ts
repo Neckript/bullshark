@@ -7,7 +7,7 @@ import {
   StreamKind,
   type TStreamQuality,
   type TStreamQualityLayer
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { TRPCClientError } from '@trpc/client';
 import {
   type AppData,

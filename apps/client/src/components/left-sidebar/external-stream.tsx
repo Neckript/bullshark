@@ -1,6 +1,6 @@
 import { useStreamVolumeControl } from '@/components/voice-provider/hooks/use-stream-volume-control';
-import type { TExternalStreamTracks } from '@sharkord/shared';
-import { Tooltip } from '@sharkord/ui';
+import type { TExternalStreamTracks } from '@bullshark/shared';
+import { Tooltip } from '@bullshark/ui';
 import { Headphones, Router, Video, VolumeX } from 'lucide-react';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';

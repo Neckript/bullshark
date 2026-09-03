@@ -1,4 +1,4 @@
-import { Skeleton } from '@sharkord/ui';
+import { Skeleton } from '@bullshark/ui';
 import { memo } from 'react';
 
 const MarketplaceSkeleton = memo(() => (

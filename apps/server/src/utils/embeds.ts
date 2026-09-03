@@ -1,4 +1,4 @@
-import { getErrorMessage } from '@sharkord/shared';
+import { getErrorMessage } from '@bullshark/shared';
 import { embeddedFiles } from 'bun';
 import fs from 'fs/promises';
 import path from 'path';

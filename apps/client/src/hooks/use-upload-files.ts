@@ -1,7 +1,7 @@
 import { usePublicServerSettings } from '@/features/server/hooks';
 import { uploadFile, type TUploadProgress } from '@/helpers/upload-file';
 import { useUploadPermission } from '@/hooks/use-upload-permission';
-import { isPreviewable, type TTempFile } from '@sharkord/shared';
+import { isPreviewable, type TTempFile } from '@bullshark/shared';
 import {
   useCallback,
   useEffect,

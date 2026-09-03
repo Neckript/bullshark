@@ -1,4 +1,4 @@
-import { type TMessage } from '@sharkord/shared';
+import { type TMessage } from '@bullshark/shared';
 import { and, desc, eq, isNull } from 'drizzle-orm';
 import { z } from 'zod';
 import { config } from '../../config';

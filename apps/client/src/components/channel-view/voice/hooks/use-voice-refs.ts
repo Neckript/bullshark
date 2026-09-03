@@ -3,7 +3,7 @@ import { useVolumeControl } from '@/components/voice-provider/volume-control-con
 import { useIsOwnUser } from '@/features/server/users/hooks';
 import { useVoice } from '@/features/server/voice/hooks';
 import { applyAudioOutputDevice } from '@/helpers/audio-output';
-import { StreamKind } from '@sharkord/shared';
+import { StreamKind } from '@bullshark/shared';
 import { useEffect, useMemo } from 'react';
 import { useAudioLevel } from './use-audio-level';
 

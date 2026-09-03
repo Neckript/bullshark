@@ -1,5 +1,5 @@
 import { FullScreenImage } from '@/components/fullscreen-image/content';
-import { Button } from '@sharkord/ui';
+import { Button } from '@bullshark/ui';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { memo, useCallback, useEffect, useState } from 'react';

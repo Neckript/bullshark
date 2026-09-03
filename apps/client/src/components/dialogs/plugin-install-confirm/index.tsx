@@ -7,7 +7,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TDialogBaseProps } from '../types';
@@ -89,12 +89,12 @@ const PluginInstallConfirmDialog = memo(
             <p className="text-sm">
               {t('pluginInstallDocsNote')}{' '}
               <a
-                href="https://sharkord.com/docs/plugins/security"
+                href="https://codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/security.md"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline hover:text-primary transition-colors"
               >
-                https://sharkord.com/docs/plugins/security
+                https://codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/security.md
               </a>
             </p>
           </div>

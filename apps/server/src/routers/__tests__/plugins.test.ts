@@ -1,11 +1,12 @@
-import { type TPluginInfo } from '@sharkord/shared';
-import { beforeEach, describe, expect, mock, test } from 'bun:test';
+import { type TPluginInfo } from '@bullshark/shared';
+import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import path from 'path';
 import { initTest } from '../../__tests__/helpers';
 import { loadMockedPlugins, resetPluginMocks } from '../../__tests__/mocks';
 import { tdb } from '../../__tests__/setup';
+import { config } from '../../config';
 import { pluginData } from '../../db/schema';
 import { PLUGINS_PATH } from '../../helpers/paths';
 import { pluginManager } from '../../plugins';
@@ -30,7 +31,10 @@ describe('plugins router', () => {
     const { plugins } = await caller.plugins.get();
 
     expect(plugins).toBeDefined();
-    expect(plugins.length).toBe(11);
+    // Grew with the fixtures: 11 originally, +2 when entry points became
+    // optional (plugin-missing-client-entry became valid, plugin-client-only
+    // was added), +4 for the capability cases.
+    expect(plugins.length).toBe(17);
   });
 
   test('should include plugin metadata', async () => {
@@ -682,6 +686,75 @@ describe('plugins router', () => {
           value: 'test'
         })
       ).rejects.toThrow();
+    });
+  });
+
+  describe('getMarketplace', () => {
+    const originalUrl = config.plugins.marketplaceRegistryUrl;
+    const originalFetch = globalThis.fetch;
+
+    afterEach(() => {
+      config.plugins.marketplaceRegistryUrl = originalUrl;
+      globalThis.fetch = originalFetch;
+    });
+
+    test('should throw when user lacks permissions', async () => {
+      const { caller } = await initTest(2);
+
+      await expect(caller.plugins.getMarketplace({})).rejects.toThrow(
+        'Insufficient permissions'
+      );
+    });
+
+    test('should return the registry entries', async () => {
+      const { caller } = await initTest();
+
+      globalThis.fetch = mock(() =>
+        Promise.resolve(
+          new Response(
+            JSON.stringify([
+              {
+                plugin: {
+                  id: 'plugin-a',
+                  name: 'Plugin A',
+                  description: 'A test plugin',
+                  author: 'Someone',
+                  logo: 'https://example.com/logo.png',
+                  verified: true
+                },
+                versions: [
+                  {
+                    version: '1.0.0',
+                    downloadUrl: 'https://example.com/plugin-a.tar.gz',
+                    checksum: 'deadbeef',
+                    sdkVersion: 1,
+                    size: 1000,
+                    timestamp: 1
+                  }
+                ]
+              }
+            ])
+          )
+        )
+      ) as unknown as typeof fetch;
+
+      const entries = await caller.plugins.getMarketplace({ refresh: true });
+
+      expect(entries).toHaveLength(1);
+      expect(entries[0]!.plugin.id).toBe('plugin-a');
+    });
+
+    test('should return an empty list without a request when disabled', async () => {
+      config.plugins.marketplaceRegistryUrl = '';
+
+      const fetchMock = mock(() => Promise.resolve(new Response('[]')));
+      globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+      const { caller } = await initTest();
+      const entries = await caller.plugins.getMarketplace({ refresh: true });
+
+      expect(entries).toEqual([]);
+      expect(fetchMock).not.toHaveBeenCalled();
     });
   });
 

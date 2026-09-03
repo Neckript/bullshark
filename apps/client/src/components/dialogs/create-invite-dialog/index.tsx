@@ -2,7 +2,7 @@ import { DatePicker } from '@/components/date-picker';
 import { useRoles } from '@/features/server/roles/hooks';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
-import { getRandomString } from '@sharkord/shared';
+import { getRandomString } from '@bullshark/shared';
 import {
   Button,
   Dialog,
@@ -18,7 +18,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

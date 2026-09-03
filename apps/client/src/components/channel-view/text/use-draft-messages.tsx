@@ -5,7 +5,7 @@ import {
   LocalStorageKey,
   setLocalStorageItemAsJSON
 } from '@/helpers/storage';
-import { isEmptyMessage } from '@sharkord/shared';
+import { isEmptyMessage } from '@bullshark/shared';
 
 // defines the key for a draft message, channel/chat id
 type TDraftMessageKey = string;

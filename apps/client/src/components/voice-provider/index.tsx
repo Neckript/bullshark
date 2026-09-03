@@ -39,7 +39,7 @@ import {
   type TJoinedSound,
   type TStreamQualityLayer,
   type TVoiceUserState
-} from '@sharkord/shared';
+} from '@bullshark/shared';
 import { Device } from 'mediasoup-client';
 import type {
   ProducerOptions,

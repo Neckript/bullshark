@@ -1,5 +1,5 @@
 import { store } from '@/features/store';
-import type { TJoinedSound } from '@sharkord/shared';
+import type { TJoinedSound } from '@bullshark/shared';
 import { serverSliceActions } from '../slice';
 
 export const setSounds = (sounds: TJoinedSound[]) => {

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@sharkord/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@bullshark/ui';
 import { filesize } from 'filesize';
 import { Database } from 'lucide-react';
 import { memo } from 'react';

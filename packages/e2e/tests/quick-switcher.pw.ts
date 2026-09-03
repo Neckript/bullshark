@@ -1,4 +1,4 @@
-import { TestId } from '@sharkord/shared';
+import { TestId } from '@bullshark/shared';
 import { expect, loginAs, test } from './fixtures';
 
 test.describe('Sélecteur rapide', () => {

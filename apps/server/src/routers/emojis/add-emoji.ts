@@ -1,4 +1,4 @@
-import { ActivityLogType, FileSaveType, Permission } from '@sharkord/shared';
+import { ActivityLogType, FileSaveType, Permission } from '@bullshark/shared';
 import { z } from 'zod';
 import { config } from '../../config';
 import { db } from '../../db';

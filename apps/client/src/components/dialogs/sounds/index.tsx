@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   Separator
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 

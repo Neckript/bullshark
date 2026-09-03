@@ -3,7 +3,8 @@ import {
   DELETED_USER_IDENTITY_AND_NAME,
   sha256,
   type TJoinedUser
-} from '@sharkord/shared';
+} from '@bullshark/shared';
+import { randomUUIDv7 } from 'bun';
 import chalk from 'chalk';
 import { eq, isNull, max, sql } from 'drizzle-orm';
 import http from 'http';
@@ -54,6 +55,21 @@ const loginRateLimiter = createRateLimiter({
   maxRequests: config.rateLimiters.joinServer.maxRequests,
   windowMs: config.rateLimiters.joinServer.windowMs
 });
+
+// A password hash that no login attempt can ever satisfy. Verifying against
+// it burns the same time as a real argon2 check, so rejecting a login for an
+// identity that doesn't exist (or can't self-register) takes the same time
+// as rejecting a wrong password on an identity that does - closing the
+// timing side channel between the two.
+let dummyPasswordHashPromise: Promise<string> | null = null;
+
+const getDummyPasswordHash = (): Promise<string> => {
+  if (!dummyPasswordHashPromise) {
+    dummyPasswordHashPromise = Bun.password.hash(randomUUIDv7());
+  }
+
+  return dummyPasswordHashPromise;
+};
 
 const registerUser = async (
   identity: string,
@@ -165,7 +181,17 @@ const loginRouteHandler = async (
     const result = await isInviteValid(data.invite);
 
     if (!settings.allowNewUsers && result.error) {
-      throw new HttpValidationError('identity', result.error);
+      // The identity doesn't exist and can't self-register. Spend the same
+      // time a real password check would take, and answer with the exact
+      // same message and field as a wrong password on an existing identity,
+      // so this response can't be used to enumerate which identities exist.
+      await Bun.password.verify(data.password, await getDummyPasswordHash());
+
+      logger.info(
+        `${chalk.dim('[Auth]')} Failed login attempt for unknown identity "${data.identity}". (IP: ${connectionInfo?.ip || 'unknown'})`
+      );
+
+      throw new HttpValidationError('identity', 'Invalid credentials');
     }
 
     if (result.invite) {
@@ -214,13 +240,6 @@ const loginRouteHandler = async (
     }
   }
 
-  if (existingUser.banned) {
-    throw new HttpValidationError(
-      'identity',
-      `Identity banned: ${existingUser.banReason || 'No reason provided'}`
-    );
-  }
-
   // temporary logic to migrate old SHA256 password hashes to argon2 on login
   const isPasswordArgon = existingUser.password.startsWith('$argon2');
 
@@ -257,7 +276,14 @@ const loginRouteHandler = async (
       `${chalk.dim('[Auth]')} Failed login attempt for user "${existingUser.identity}" due to invalid password. (IP: ${connectionInfo?.ip || 'unknown'})`
     );
 
-    throw new HttpValidationError('password', 'Invalid password');
+    throw new HttpValidationError('identity', 'Invalid credentials');
+  }
+
+  if (existingUser.banned) {
+    throw new HttpValidationError(
+      'identity',
+      `Identity banned: ${existingUser.banReason || 'No reason provided'}`
+    );
   }
 
   if (existingUser.totpEnabledAt != null) {

@@ -11,7 +11,7 @@ import {
 } from '@/features/server/voice/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { cn } from '@/lib/utils';
-import { StreamKind } from '@sharkord/shared';
+import { StreamKind } from '@bullshark/shared';
 import { HeadphoneOff, MicOff, Monitor, Video } from 'lucide-react';
 import { memo, useCallback } from 'react';
 import { CardControls } from './card-controls';

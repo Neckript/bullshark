@@ -1,4 +1,10 @@
+// Explicit import rather than the global React UMD namespace: the SDK's
+// declaration bundle is built without ambient @types, so `React.ComponentType`
+// resolves to nothing there.
+import type { ComponentType } from 'react';
 import z from 'zod';
+import type { PluginSlot } from './constants';
+import { zCapability } from './capability-schema';
 
 export const zPluginId = z
   .string()
@@ -16,6 +22,7 @@ export const zPluginManifest = z.object({
   homepage: z.url().optional(),
   logo: z.url().optional(),
   sdkVersion: z.number().int().nonnegative(),
+  capabilities: z.array(zCapability).default([]),
   version: z
     .string()
     .regex(/^\d+\.\d+\.\d+(-[a-zA-Z0-9-.]+)?$/, 'Invalid version format')
@@ -23,15 +30,12 @@ export const zPluginManifest = z.object({
 
 export type TPluginManifest = z.infer<typeof zPluginManifest>;
 
-export const zPluginPackageJson = zPluginManifest;
-
-export type TPluginPackageJson = TPluginManifest;
-
 export type TPluginInfo = {
   id: string;
   enabled: boolean;
   loadError?: string;
   sdkVersion: TPluginManifest['sdkVersion'];
+  capabilities: TPluginManifest['capabilities'];
   author: TPluginManifest['author'];
   description: TPluginManifest['description'];
   version: TPluginManifest['version'];
@@ -39,6 +43,13 @@ export type TPluginInfo = {
   name: TPluginManifest['name'];
   homepage: TPluginManifest['homepage'];
   path: string;
+  // Which entry points the plugin directory actually contains. Both are
+  // optional -- a moderation plugin needs no client, a pure-UI plugin needs no
+  // server -- but at least one must exist. Reported as observed file presence,
+  // never inferred from the declared CLIENT_SLOTS capability: a declaration is
+  // an intention and the two can disagree.
+  hasServerEntry: boolean;
+  hasClientEntry: boolean;
 };
 
 export type TLogEntry = {
@@ -153,19 +164,11 @@ export type TPluginSettingsResponse = {
   values: Record<string, unknown>;
 };
 
-export enum PluginSlot {
-  CONNECT_SCREEN = 'connect_screen',
-  HOME_SCREEN = 'home_screen',
-  CHAT_ACTIONS = 'chat_actions',
-  TOPBAR_RIGHT = 'topbar_right',
-  FULL_SCREEN = 'full_screen'
-}
-
 export type TPluginComponentsMapBySlotIdMapListByPlugin = {
   [pluginId: string]: PluginSlot[];
 };
 
-export type TPluginReactComponent = React.ComponentType;
+export type TPluginReactComponent = ComponentType;
 
 export type TPluginComponentsMapBySlotId = {
   [slot in PluginSlot]?: TPluginReactComponent[];
@@ -187,11 +190,11 @@ export type TPluginMetadata = {
   avatarUrl?: string;
 };
 
-export const PLUGIN_SDK_VERSION = 1;
-
-export const SERVER_ENTRY_FILE = 'server/index.js';
-export const CLIENT_ENTRY_FILE = 'client/index.js';
-
+// Re-exported so the barrel API is unchanged; they live in a zod-free module
+// so the SDK can import them without pulling zod. See constants.ts.
+export * from './capability-schema';
+export * from './constants';
+export * from './store-types';
 export * from './client-sdk';
 export * from './hooks';
 export * from './marketplace';

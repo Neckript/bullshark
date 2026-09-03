@@ -1,4 +1,4 @@
-import { isAllowedUserSettingKey } from '@sharkord/shared';
+import { isAllowedUserSettingKey } from '@bullshark/shared';
 import { z } from 'zod';
 import { upsertUserSetting } from '../../db/queries/user-settings';
 import { invariant } from '../../utils/invariant';

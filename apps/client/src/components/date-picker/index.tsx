@@ -7,7 +7,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { CalendarIcon } from 'lucide-react';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 

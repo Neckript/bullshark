@@ -1,7 +1,9 @@
-import {
-  type TActivityLogDetailsMap,
-  type TMessageMetadata
-} from '@sharkord/shared';
+// Imported from the defining modules, not the barrel: the barrel re-exports
+// ./trpc, which re-exports this server's own router tree. Importing it here
+// closed a cycle (shared -> tables -> this file -> shared -> trpc -> routers)
+// that pulled the entire server into any consumer of a shared submodule.
+import type { TActivityLogDetailsMap } from '@bullshark/shared/src/logs';
+import type { TMessageMetadata } from '@bullshark/shared/src/types';
 import {
   index,
   integer,

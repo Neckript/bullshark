@@ -1,6 +1,6 @@
 import { Protect } from '@/components/protect';
 import { useDateLocale } from '@/hooks/use-date-locale';
-import { Permission } from '@sharkord/shared/src/statics/permissions';
+import { Permission } from '@bullshark/shared/src/statics/permissions';
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardTitle,
   IconButton,
   Tooltip
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { format, formatDistanceToNow } from 'date-fns';
 import {
   Calendar,

@@ -2,7 +2,7 @@ import { PermissionsList } from '@/components/permissions-list';
 import { useRoles } from '@/features/server/roles/hooks';
 import { useOwnUserId } from '@/features/server/users/hooks';
 import { getTRPCClient } from '@/lib/trpc';
-import { getTrpcError, type TJoinedUser } from '@sharkord/shared';
+import { getTrpcError, type TJoinedUser } from '@bullshark/shared';
 import {
   Alert,
   AlertDescription,
@@ -20,7 +20,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { Info } from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

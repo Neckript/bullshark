@@ -1,5 +1,5 @@
-import type { EventPayloads, ServerEvent } from '@sharkord/plugin-sdk';
-import { getErrorMessage } from '@sharkord/shared';
+import type { EventPayloads, ServerEvent } from '@bullshark/plugin-sdk';
+import { getErrorMessage } from '@bullshark/shared';
 import { logger } from '../logger';
 import { EVENT_HANDLER_TIMEOUT_MS, withTimeout } from './execution-timeout';
 

@@ -1,4 +1,4 @@
-import { ActivityLogType, getRandomString, Permission } from '@sharkord/shared';
+import { ActivityLogType, getRandomString, Permission } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';

@@ -8,7 +8,7 @@ import {
 } from '@/helpers/nickname-fonts';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
-import { Permission } from '@sharkord/shared';
+import { Permission } from '@bullshark/shared';
 import {
   Button,
   Card,
@@ -28,7 +28,7 @@ import {
   SelectValue,
   Switch,
   Textarea
-} from '@sharkord/ui';
+} from '@bullshark/ui';
 import { memo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

@@ -5,7 +5,7 @@ import { useChannelById } from '@/features/server/channels/hooks';
 import { usePluginMetadata } from '@/features/server/plugins/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
-import { type TJoinedMessage } from '@sharkord/shared';
+import { type TJoinedMessage } from '@bullshark/shared';
 import { CornerUpLeft } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

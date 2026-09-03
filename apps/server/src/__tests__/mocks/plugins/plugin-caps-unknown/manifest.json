@@ -1,0 +1,9 @@
+{
+  "id": "plugin-caps-unknown",
+  "name": "plugin-caps-unknown",
+  "version": "1.0.0",
+  "sdkVersion": 1,
+  "capabilities": ["messages", "quantum.teleport"],
+  "author": "Test",
+  "description": "Declares a capability from the future"
+}

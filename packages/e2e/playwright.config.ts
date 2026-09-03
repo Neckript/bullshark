@@ -38,7 +38,7 @@ export default defineConfig({
       stdout: 'ignore',
       stderr: 'ignore',
       env: {
-        SHARKORD_DATA_PATH: e2eDataPath,
+        BULLSHARK_DATA_PATH: e2eDataPath,
         IS_E2E: 'true'
       }
     },

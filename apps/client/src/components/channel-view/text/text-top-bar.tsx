@@ -1,6 +1,6 @@
 import { useChannelById } from '@/features/server/channels/hooks';
-import { ChannelType } from '@sharkord/shared';
-import { IconButton } from '@sharkord/ui';
+import { ChannelType } from '@bullshark/shared';
+import { IconButton } from '@bullshark/ui';
 import { Hash, MessageCircleMore, Volume2, X } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { PinnedMessagesPopover } from './pinned-messages-popover';
