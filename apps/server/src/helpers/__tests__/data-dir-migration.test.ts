@@ -101,7 +101,7 @@ describe('assertDataDirNotShadowedByVolume', () => {
     ).resolves.toBeUndefined();
   });
 
-  test('does not throw when the legacy directory is writable', async () => {
+  test('throws even when the legacy directory is writable: a writable bind mount still cannot be renamed', async () => {
     const { legacyDir, currentDir } = makeDirPair();
 
     await fs.mkdir(legacyDir, { recursive: true });
@@ -109,7 +109,7 @@ describe('assertDataDirNotShadowedByVolume', () => {
 
     await expect(
       assertDataDirNotShadowedByVolume(legacyDir, currentDir, async () => true)
-    ).resolves.toBeUndefined();
+    ).rejects.toThrow(/volume/i);
   });
 
   test('throws a clear error for an empty current dir shadowing a non-writable legacy one', async () => {
