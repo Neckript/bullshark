@@ -17,6 +17,7 @@ import {
   type Transport
 } from 'mediasoup-client/types';
 import { useCallback, useRef } from 'react';
+import { isAdaptiveConsumerType } from '../helpers';
 
 type TUseTransportParams = {
   addRemoteUserStream: (
@@ -343,7 +344,7 @@ const useTransports = ({
         }
 
         if (
-          consumerType === 'simulcast' &&
+          isAdaptiveConsumerType(consumerType) &&
           (kind === StreamKind.VIDEO ||
             kind === StreamKind.SCREEN ||
             kind === StreamKind.EXTERNAL_VIDEO)

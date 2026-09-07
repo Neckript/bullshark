@@ -9,6 +9,7 @@ import {
   type ConsumerType,
   type TStreamQualityLayer
 } from '@bullshark/shared';
+import { parseScalabilityMode } from 'mediasoup-client';
 import type {
   RtpCapabilities,
   RtpCodecCapability
@@ -158,6 +159,40 @@ const getSimulcastCodec = (
     (c) => c.mimeType.toLowerCase() === VideoCodec.VP8.toLowerCase()
   );
 
+// VP9 SVC (single encoder, multiple layers) is only sendable on Chromium
+// engines - kept separate from getSimulcastCodec so the webcam's VP8
+// simulcast path (which calls getSimulcastCodec directly) is untouched.
+const getVp9Codec = (
+  rtpCapabilities: RtpCapabilities | null
+): RtpCodecCapability | undefined =>
+  rtpCapabilities?.codecs?.find(
+    (c) => c.mimeType.toLowerCase() === VideoCodec.VP9.toLowerCase()
+  );
+
+const getSvcQualityLayers = (
+  track: MediaStreamTrack,
+  scalabilityMode: string
+): TStreamQualityLayer[] => {
+  const settings = track.getSettings();
+  const sourceHeight = settings.height;
+
+  if (!sourceHeight) {
+    throw new Error('Unable to determine video height for SVC labels');
+  }
+
+  const { spatialLayers } = parseScalabilityMode(scalabilityMode);
+
+  return Array.from({ length: spatialLayers }, (_, index) => {
+    const scale = 2 ** (spatialLayers - 1 - index);
+    const height = Math.max(1, Math.round(sourceHeight / scale));
+
+    return { spatialLayer: index, label: `${height}p` };
+  });
+};
+
+const isAdaptiveConsumerType = (type: ConsumerType | undefined): boolean =>
+  type === 'simulcast' || type === 'svc';
+
 export {
   getRemoteConsumerTypeKey,
   getSimulcastCodec,
@@ -165,6 +200,9 @@ export {
   getSimulcastQualityLayers,
   getStreamQualityDropdownValue,
   getStreamQualityStorageKey,
+  getSvcQualityLayers,
+  getVp9Codec,
+  isAdaptiveConsumerType,
   loadStreamQualitiesFromStorage,
   normalizeStreamQuality,
   parseStreamQualityDropdownValue,

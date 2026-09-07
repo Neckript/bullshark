@@ -68,6 +68,9 @@ import {
   getSimulcastEncodings,
   getSimulcastQualityLayers,
   getStreamQualityStorageKey,
+  getSvcQualityLayers,
+  getVp9Codec,
+  isAdaptiveConsumerType,
   loadStreamQualitiesFromStorage,
   normalizeStreamQuality,
   saveStreamQualitiesToStorage,
@@ -89,7 +92,10 @@ import { useVad } from './hooks/use-vad';
 import { useVoiceControls } from './hooks/use-voice-controls';
 import { useVoiceEvents } from './hooks/use-voice-events';
 import { SoundboardPlayers } from './soundboard-players';
-import { SIMULCAST_WEBCAM_MAX_BITRATE } from './statics';
+import {
+  SCREEN_SVC_SCALABILITY_MODE,
+  SIMULCAST_WEBCAM_MAX_BITRATE
+} from './statics';
 import { VolumeControlProvider } from './volume-control-context';
 
 type AudioVideoRefs = {
@@ -225,6 +231,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
   const [isVadSpeaking, setIsVadSpeaking] = useState(false);
   const routerRtpCapabilities = useRef<RtpCapabilities | null>(null);
   const deviceRtpCapabilities = useRef<RtpCapabilities | null>(null);
+  const deviceRef = useRef<Device | null>(null);
   const audioVideoRefsMap = useRef<Map<number, AudioVideoRefs>>(new Map());
   const previousVoiceChannelIdRef = useRef<number | undefined>(undefined);
   const [streamQualities, setStreamQualities] =
@@ -291,7 +298,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       const key = getRemoteConsumerTypeKey(remoteId, kind);
 
       return (
-        remoteConsumerTypes[key] === 'simulcast' &&
+        isAdaptiveConsumerType(remoteConsumerTypes[key]) &&
         (remoteQualityLayers[key]?.length ?? 0) > 0
       );
     },
@@ -951,18 +958,40 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         }
 
         const maxBitrateKbps = devices.screenBitrate ?? DEFAULT_BITRATE;
-        const simulcastCodec = simulcastEnabled
-          ? getSimulcastCodec(routerRtpCapabilities.current)
-          : undefined;
-        const screenCodec = simulcastCodec ?? preferredCodec;
 
-        if (simulcastCodec) {
+        // Legacy VP8 simulcast runs 3 separate software encoders in
+        // parallel, which is CPU-bound at desktop-capture resolutions and
+        // collapses framerate regardless of the configured settings. VP9 SVC
+        // (one encoder producing all layers) avoids that, but only Chromium
+        // engines can send it. Firefox/Safari senders skip simulcast for
+        // screen share entirely rather than hit the same CPU wall.
+        const isChromiumSender =
+          !!deviceRef.current?.handlerName?.startsWith('Chrome');
+        const svcCodec =
+          simulcastEnabled && isChromiumSender
+            ? getVp9Codec(routerRtpCapabilities.current)
+            : undefined;
+        const simulcastCodec =
+          simulcastEnabled && !svcCodec && isChromiumSender
+            ? getSimulcastCodec(routerRtpCapabilities.current)
+            : undefined;
+        const screenCodec = svcCodec ?? simulcastCodec ?? preferredCodec;
+
+        if (svcCodec) {
+          logVoice('Using VP9 SVC for screen share (Chromium sender)', {
+            codec: svcCodec.mimeType
+          });
+        } else if (simulcastCodec) {
           logVoice('Using VP8 for simulcast screen share', {
             codec: simulcastCodec.mimeType
           });
+        } else if (simulcastEnabled && !isChromiumSender) {
+          logVoice(
+            'Non-Chromium sender cannot use SVC for screen share; using a single stream instead of legacy VP8 simulcast to preserve framerate'
+          );
         } else if (simulcastEnabled) {
           logVoice(
-            'VP8 is unavailable, creating screen share without simulcast'
+            'VP9/VP8 unavailable, creating screen share without simulcast'
           );
         }
         const screenShareProducerOptions: ProducerOptions<TVideoProducerAppData> =
@@ -982,16 +1011,32 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
           ...screenShareProducerOptions,
           codec: preferredCodec
         };
-        let simulcastScreenShareProducerOptions = screenShareProducerOptions;
+        let adaptiveScreenShareProducerOptions = screenShareProducerOptions;
 
-        if (simulcastCodec) {
+        if (svcCodec) {
+          const qualityLayers = getSvcQualityLayers(
+            videoTrack,
+            SCREEN_SVC_SCALABILITY_MODE
+          );
+
+          adaptiveScreenShareProducerOptions = {
+            ...screenShareProducerOptions,
+            appData: { kind: StreamKind.SCREEN, qualityLayers },
+            encodings: [
+              {
+                scalabilityMode: SCREEN_SVC_SCALABILITY_MODE,
+                maxBitrate: maxBitrateKbps * 1000
+              }
+            ]
+          };
+        } else if (simulcastCodec) {
           const encodings = getSimulcastEncodings(maxBitrateKbps * 1000);
           const qualityLayers = getSimulcastQualityLayers(
             videoTrack,
             encodings
           );
 
-          simulcastScreenShareProducerOptions = {
+          adaptiveScreenShareProducerOptions = {
             ...screenShareProducerOptions,
             appData: { kind: StreamKind.SCREEN, qualityLayers },
             encodings
@@ -1001,13 +1046,13 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         try {
           localScreenShareProducer.current =
             await producerTransport.current?.produce(
-              simulcastScreenShareProducerOptions
+              adaptiveScreenShareProducerOptions
             );
         } catch (error) {
-          if (!simulcastCodec) throw error;
+          if (!svcCodec && !simulcastCodec) throw error;
 
           logVoice(
-            'Failed to create simulcast screen share producer, retrying without simulcast',
+            'Failed to create adaptive screen share producer, retrying without simulcast/SVC',
             { error }
           );
 
@@ -1103,6 +1148,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
     clearExternalStreams();
     cleanupTransports();
     deviceRtpCapabilities.current = null;
+    deviceRef.current = null;
 
     setConnectionStatus(ConnectionStatus.DISCONNECTED);
   }, [
@@ -1135,6 +1181,8 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         routerRtpCapabilities.current = incomingRouterRtpCapabilities;
 
         const device = new Device();
+
+        deviceRef.current = device;
 
         await device.load({
           routerRtpCapabilities: incomingRouterRtpCapabilities
