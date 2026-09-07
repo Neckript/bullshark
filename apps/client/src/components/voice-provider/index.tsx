@@ -939,7 +939,27 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
 
         let preferredCodec: RtpCodecCapability | undefined;
 
-        if (
+        // Performance mode trades away adaptive per-viewer quality for a
+        // single H264 stream: hardware video encoders are essentially
+        // universal for H264, but neither Chrome's VP9 SVC nor its VP8
+        // simulcast encoder can run on the GPU (Chromium's video encode
+        // accelerator does not support multi-layer/SVC encoding, so those
+        // paths always fall back to software regardless of the machine's
+        // hardware capabilities). This is the only screen share mode this
+        // app can reliably push onto the GPU.
+        const performanceMode = !!devices.screenSharePerformanceMode;
+
+        if (performanceMode && routerRtpCapabilities.current?.codecs) {
+          preferredCodec = routerRtpCapabilities.current.codecs.find(
+            (c) => c.mimeType.toLowerCase() === VideoCodec.H264.toLowerCase()
+          );
+
+          if (preferredCodec) {
+            logVoice('Screen share performance mode: forcing H264', {
+              codec: preferredCodec.mimeType
+            });
+          }
+        } else if (
           !simulcastEnabled &&
           devices.screenCodec &&
           devices.screenCodec !== VideoCodec.AUTO &&
@@ -968,11 +988,11 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         const isChromiumSender =
           !!deviceRef.current?.handlerName?.startsWith('Chrome');
         const svcCodec =
-          simulcastEnabled && isChromiumSender
+          simulcastEnabled && !performanceMode && isChromiumSender
             ? getVp9Codec(routerRtpCapabilities.current)
             : undefined;
         const simulcastCodec =
-          simulcastEnabled && !svcCodec && isChromiumSender
+          simulcastEnabled && !performanceMode && !svcCodec && isChromiumSender
             ? getSimulcastCodec(routerRtpCapabilities.current)
             : undefined;
         const screenCodec = svcCodec ?? simulcastCodec ?? preferredCodec;
@@ -985,6 +1005,12 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
           logVoice('Using VP8 for simulcast screen share', {
             codec: simulcastCodec.mimeType
           });
+        } else if (performanceMode) {
+          if (!preferredCodec) {
+            logVoice(
+              'Screen share performance mode requested but H264 is unavailable; falling back to default negotiation'
+            );
+          }
         } else if (simulcastEnabled && !isChromiumSender) {
           logVoice(
             'Non-Chromium sender cannot use SVC for screen share; using a single stream instead of legacy VP8 simulcast to preserve framerate'
@@ -1133,6 +1159,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
     devices.screenBitrate,
     devices.restrictOwnAudio,
     devices.suppressLocalAudioPlayback,
+    devices.screenSharePerformanceMode,
     simulcastEnabled
   ]);
 

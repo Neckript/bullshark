@@ -137,6 +137,8 @@
   "simulcastUserDesc": "Envoyez des couches séparées en basse, moyenne et haute qualité pour votre webcam et votre partage d'écran. Cela utilise plus de bande passante et de CPU, mais aide les spectateurs avec une connexion plus lente à recevoir un flux plus fluide. Forces the use of VP8 when enabled.",
   "simulcastDisabledByServerDesc": "Le simulcast est désactivé sur ce serveur.",
   "screenSharingLabel": "Partage d'écran",
+  "screenSharePerformanceModeLabel": "Mode performance (encodage matériel)",
+  "screenSharePerformanceModeDesc": "Force un flux unique en H264, encodé par la carte graphique quand elle le supporte, au lieu d'un flux adaptatif logiciel. Réduit fortement l'usage du processeur mais désactive le choix de qualité pour les spectateurs et le codec ci-dessus.",
   "restrictOwnAudioLabel": "Restreindre mon propre audio",
   "restrictOwnAudioDesc": "Exclure l'audio de Bullshark de l'audio capturé pendant le partage d'écran.",
   "restrictOwnAudioUnsupported": "Votre navigateur ne prend pas en charge la restriction de votre propre audio pendant le partage d'écran. L'audio de Bullshark peut être capturé dans le flux partagé, ce qui peut provoquer de l'écho ou du larsen.",
