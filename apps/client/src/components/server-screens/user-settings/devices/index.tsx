@@ -593,6 +593,7 @@ const Devices = memo(() => {
               <div>
                 <Select
                   value={values.screenCodec ?? VideoCodec.AUTO}
+                  disabled={!!values.screenSharePerformanceMode}
                   onValueChange={(value) =>
                     onChange('screenCodec', value as VideoCodec)
                   }
@@ -612,6 +613,18 @@ const Devices = memo(() => {
                 </Select>
               </div>
             </div>
+
+            <Group
+              label={t('screenSharePerformanceModeLabel')}
+              description={t('screenSharePerformanceModeDesc')}
+            >
+              <Switch
+                checked={!!values.screenSharePerformanceMode}
+                onCheckedChange={(checked) =>
+                  onChange('screenSharePerformanceMode', checked)
+                }
+              />
+            </Group>
 
             <div className="flex flex-col gap-2">
               <Label>{t('maxBitrateLabel')}</Label>

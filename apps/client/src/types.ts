@@ -77,6 +77,7 @@ export type TDeviceSettings = {
   screenFramerate: number;
   screenCodec: VideoCodec;
   screenBitrate: number;
+  screenSharePerformanceMode: boolean;
   inputMode: InputMode;
   pttKey: string;
 };

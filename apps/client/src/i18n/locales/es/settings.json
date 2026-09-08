@@ -131,6 +131,8 @@
   "simulcastUserDesc": "Envía capas separadas de baja, media y alta calidad para tu cámara web y pantalla compartida. Usa más ancho de banda y CPU, pero ayuda a que quienes tienen conexiones más lentas reciban una transmisión más fluida. Forces the use of VP8 when enabled.",
   "simulcastDisabledByServerDesc": "Simulcast está desactivado en este servidor.",
   "screenSharingLabel": "Compartir pantalla",
+  "screenSharePerformanceModeLabel": "Modo rendimiento (codificación por hardware)",
+  "screenSharePerformanceModeDesc": "Fuerza un único flujo H264, codificado por tu GPU cuando es compatible, en lugar de un flujo adaptativo por software. Reduce mucho el uso de CPU pero desactiva el selector de calidad para los espectadores y el codec de arriba.",
   "restrictOwnAudioLabel": "Restringir audio propio",
   "restrictOwnAudioDesc": "Excluir el audio de Bullshark del audio capturado durante la pantalla compartida.",
   "restrictOwnAudioUnsupported": "Tu navegador no soporta restringir tu propio audio durante la pantalla compartida. El audio de Bullshark puede ser capturado en la transmisión compartida, lo que puede causar eco o retroalimentación.",

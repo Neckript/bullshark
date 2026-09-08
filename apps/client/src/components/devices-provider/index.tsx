@@ -44,6 +44,7 @@ const getDefaultDeviceSettings = (): TDeviceSettings => ({
   screenFramerate: 30,
   screenCodec: VideoCodec.AUTO,
   screenBitrate: DEFAULT_BITRATE,
+  screenSharePerformanceMode: false,
   inputMode: InputMode.NORMAL,
   pttKey: DEFAULT_PTT_KEY
 });
