@@ -940,13 +940,21 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         let preferredCodec: RtpCodecCapability | undefined;
 
         // Performance mode trades away adaptive per-viewer quality for a
-        // single H264 stream: hardware video encoders are essentially
-        // universal for H264, but neither Chrome's VP9 SVC nor its VP8
-        // simulcast encoder can run on the GPU (Chromium's video encode
-        // accelerator does not support multi-layer/SVC encoding, so those
-        // paths always fall back to software regardless of the machine's
-        // hardware capabilities). This is the only screen share mode this
-        // app can reliably push onto the GPU.
+        // single H264 stream, on the assumption that hardware encoders are
+        // essentially universal for H264. That holds on Android/ChromeOS
+        // and on macOS (VideoToolbox), but NOT on Windows desktop: Chrome
+        // there always encodes WebRTC H264 in software via OpenH264, even
+        // when the GPU exposes hardware H264 encode for other uses (e.g.
+        // NVENC shows up as hardware-accelerated in chrome://gpu but isn't
+        // used by RTCPeerConnection). Verified 2026-09-08 via
+        // chrome://webrtc-internals: encoderImplementation=OpenH264 with an
+        // RTX 3070 and hardware video encode enabled. On Windows this mode
+        // still helps (1 software H264 encoder instead of VP9 SVC's
+        // per-layer software work) but does not reach the GPU. Neither
+        // Chrome's VP9 SVC nor its VP8 simulcast encoder can run on the GPU
+        // either (Chromium's video encode accelerator does not support
+        // multi-layer/SVC encoding), so all screen-share paths in this app
+        // fall back to software on Windows regardless of this setting.
         const performanceMode = !!devices.screenSharePerformanceMode;
 
         if (performanceMode && routerRtpCapabilities.current?.codecs) {
