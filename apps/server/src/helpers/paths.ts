@@ -1,9 +1,9 @@
 import path from 'path';
 import {
+  BULLSHARK_MEDIASOUP_BIN_NAME,
   IS_DEVELOPMENT,
   IS_TEST,
-  SERVER_VERSION,
-  BULLSHARK_MEDIASOUP_BIN_NAME
+  SERVER_VERSION
 } from '../utils/env';
 import { getAppDataPath } from './fs';
 
@@ -79,14 +79,16 @@ const resolveDataPaths = (
   };
 };
 
-const { dataPath: DATA_PATH, legacyDataDirCandidate: LEGACY_DATA_DIR_CANDIDATE } =
-  resolveDataPaths(process.env, {
-    isTest: IS_TEST,
-    isDevelopment: IS_DEVELOPMENT,
-    cwd: process.cwd(),
-    appDataPath: getAppDataPath(),
-    warn: console.warn
-  });
+const {
+  dataPath: DATA_PATH,
+  legacyDataDirCandidate: LEGACY_DATA_DIR_CANDIDATE
+} = resolveDataPaths(process.env, {
+  isTest: IS_TEST,
+  isDevelopment: IS_DEVELOPMENT,
+  cwd: process.cwd(),
+  appDataPath: getAppDataPath(),
+  warn: console.warn
+});
 
 const getMediasoupBinaryPath = (): string | undefined => {
   if (IS_DEVELOPMENT) {
@@ -111,6 +113,8 @@ const DRIZZLE_PATH = path.resolve(DATA_PATH, 'drizzle');
 const MEDIASOUP_PATH = path.resolve(DATA_PATH, 'mediasoup');
 const CONFIG_INI_PATH = path.resolve(DATA_PATH, 'config.ini');
 const PLUGINS_PATH = path.join(DATA_PATH, 'plugins');
+const TLS_CERT_PATH = path.join(DATA_PATH, 'tls', 'cert.pem');
+const TLS_KEY_PATH = path.join(DATA_PATH, 'tls', 'key.pem');
 const SRC_MIGRATIONS_PATH = path.join(process.cwd(), 'src', 'db', 'migrations');
 
 export {
@@ -127,6 +131,8 @@ export {
   PUBLIC_PATH,
   resolveDataPaths,
   SRC_MIGRATIONS_PATH,
+  TLS_CERT_PATH,
+  TLS_KEY_PATH,
   TMP_PATH,
   UPLOADS_PATH
 };
