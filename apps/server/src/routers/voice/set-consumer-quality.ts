@@ -56,7 +56,7 @@ const setConsumerQualityRoute = protectedProcedure
       message: 'Consumer not found'
     });
 
-    if (consumer.type !== 'simulcast') return;
+    if (consumer.type !== 'simulcast' && consumer.type !== 'svc') return;
 
     const qualityLayers = runtime.getProducerQualityLayers(
       input.remoteId,

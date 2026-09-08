@@ -220,6 +220,18 @@ class VoiceRuntime {
     return `${remoteId}-${kind}`;
   };
 
+  // A screen share producer may use VP9 SVC instead of legacy simulcast: a
+  // single RTP encoding whose scalabilityMode (e.g. 'L3T3_KEY') packs
+  // multiple spatial layers, rather than one encoding per layer. This parses
+  // just the spatial layer count out of that string.
+  private parseScalabilityModeSpatialLayerCount = (
+    scalabilityMode: string | undefined
+  ): number => {
+    const match = /^L(\d+)T\d+/i.exec(scalabilityMode ?? '');
+
+    return match ? Number(match[1]) : 0;
+  };
+
   private validateProducerQualityLayers = (
     producer: Producer<AppData> | undefined,
     qualityLayers?: TStreamQualityLayer[]
@@ -232,17 +244,22 @@ class VoiceRuntime {
       return [];
     }
 
-    if (producer.type !== 'simulcast') {
+    if (producer.type !== 'simulcast' && producer.type !== 'svc') {
       if (qualityLayers !== undefined) {
         throw new Error(
-          'Quality layers can only be set for simulcast producers'
+          'Quality layers can only be set for simulcast or SVC producers'
         );
       }
 
       return [];
     }
 
-    const expectedLayerCount = producer.rtpParameters.encodings?.length ?? 0;
+    const expectedLayerCount =
+      producer.type === 'svc'
+        ? this.parseScalabilityModeSpatialLayerCount(
+            producer.rtpParameters.encodings?.[0]?.scalabilityMode
+          )
+        : (producer.rtpParameters.encodings?.length ?? 0);
 
     if (!qualityLayers?.length) {
       throw new Error('Simulcast video producers require quality layer labels');

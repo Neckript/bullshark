@@ -12,12 +12,20 @@ const TEST_USER_ID = 1;
  * to the observer's `close` event and calls `close()`, so a real producer -
  * which would need a connected WebRTC transport - is not required here.
  */
-const createFakeProducer = () => {
+const createFakeProducer = (
+  overrides: {
+    kind?: 'audio' | 'video';
+    type?: Producer['type'];
+    rtpParameters?: Producer['rtpParameters'];
+  } = {}
+) => {
   let closeHandler: (() => void) | undefined;
   let closed = false;
 
   const producer = {
-    kind: 'audio' as const,
+    kind: overrides.kind ?? ('audio' as const),
+    type: overrides.type,
+    rtpParameters: overrides.rtpParameters ?? { encodings: [] },
     get closed() {
       return closed;
     },
@@ -110,5 +118,54 @@ describe('VoiceRuntime soundboard producers', () => {
     expect(
       runtime.getProducer(StreamKind.SOUNDBOARD, TEST_USER_ID)
     ).toBeUndefined();
+  });
+});
+
+describe('VoiceRuntime SVC screen share quality layers', () => {
+  test('accepts quality layers for an svc producer matching its scalabilityMode spatial layer count', () => {
+    runtime = new VoiceRuntime(TEST_CHANNEL_ID);
+
+    const fake = createFakeProducer({
+      kind: 'video',
+      type: 'svc',
+      rtpParameters: {
+        codecs: [],
+        encodings: [{ scalabilityMode: 'L3T3_KEY' }]
+      }
+    });
+
+    runtime.addProducer(TEST_USER_ID, StreamKind.SCREEN, asProducer(fake), [
+      { spatialLayer: 0, label: '270p' },
+      { spatialLayer: 1, label: '540p' },
+      { spatialLayer: 2, label: '1080p' }
+    ]);
+
+    expect(
+      runtime.getProducerQualityLayers(TEST_USER_ID, StreamKind.SCREEN)
+    ).toEqual([
+      { spatialLayer: 0, label: '270p' },
+      { spatialLayer: 1, label: '540p' },
+      { spatialLayer: 2, label: '1080p' }
+    ]);
+  });
+
+  test('rejects a layer count that does not match the scalabilityMode spatial layer count', () => {
+    runtime = new VoiceRuntime(TEST_CHANNEL_ID);
+
+    const fake = createFakeProducer({
+      kind: 'video',
+      type: 'svc',
+      rtpParameters: {
+        codecs: [],
+        encodings: [{ scalabilityMode: 'L3T3_KEY' }]
+      }
+    });
+
+    expect(() =>
+      runtime!.addProducer(TEST_USER_ID, StreamKind.SCREEN, asProducer(fake), [
+        { spatialLayer: 0, label: '270p' },
+        { spatialLayer: 1, label: '1080p' }
+      ])
+    ).toThrow('Quality layer count must match simulcast encoding count');
   });
 });

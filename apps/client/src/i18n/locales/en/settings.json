@@ -137,6 +137,8 @@
   "simulcastUserDesc": "Send separate low, medium, and high-quality layers for your webcam and screen share. This uses more bandwidth and CPU, but helps viewers on slower connections receive a smoother stream. Forces the use of VP8 when enabled.",
   "simulcastDisabledByServerDesc": "Simulcast is disabled on this server.",
   "screenSharingLabel": "Screen Sharing",
+  "screenSharePerformanceModeLabel": "Performance mode (hardware encoding)",
+  "screenSharePerformanceModeDesc": "Forces a single H264 stream, hardware-encoded by your GPU when supported, instead of an adaptive software stream. Greatly reduces CPU usage but disables the quality picker for viewers and the codec setting above.",
   "restrictOwnAudioLabel": "Restrict Own Audio",
   "restrictOwnAudioDesc": "Exclude Bullshark audio from the audio captured during screen sharing.",
   "restrictOwnAudioUnsupported": "Your browser does not support restricting your own audio during screen sharing. Bullshark audio may be captured in the shared stream, which can cause echo or feedback.",
