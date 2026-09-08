@@ -107,8 +107,13 @@ affichera lui-même un avertissement sur l'écran de connexion — le vocal, la
 vidéo et le partage d'écran ne fonctionneront pas du tout, même si le chat
 texte continuera de marcher.
 
+You have two options — pick the one that matches your situation. / Tu as deux
+options — choisis celle qui correspond à ta situation.
+
+### Option A — you have a domain name (recommended for a public server) / Option A — tu as un nom de domaine (recommandé pour un serveur public)
+
 **EN** — Bullshark itself does **not** terminate TLS — put a reverse proxy in
-front of it. [Caddy](https://caddyphp.com) is the simplest option: it
+front of it. [Caddy](https://caddyserver.com) is the simplest option: it
 provisions and renews Let's Encrypt certificates automatically, zero config
 beyond your domain name.
 
@@ -129,17 +134,86 @@ domain's `A`/`AAAA` record at the server first. / C'est tout — Caddy gère
 l'ACME, les redirections et le renouvellement tout seul. Pointe d'abord
 l'enregistrement `A`/`AAAA` de ton domaine vers le serveur.
 
-**Important / Important** — only the **web port (4991)** goes through the
-HTTPS reverse proxy. The **WebRTC media port (40000, tcp+udp)** carries raw
-RTP traffic, not HTTP — it must stay directly exposed on the firewall/router,
-not proxied. If your server sits behind NAT (home router, some VPS
-providers), set `webRtc.announcedAddress` (or the
+The certificate is publicly trusted — no browser warning, ever. / Le
+certificat est reconnu publiquement — aucun avertissement navigateur, jamais.
+
+### Option B — no domain name (LAN, personal use, quick test) / Option B — pas de nom de domaine (LAN, usage perso, test rapide)
+
+**EN** — No domain, no Caddy, no Cloudflare needed. Bullshark can generate
+its own self-signed certificate and terminate TLS itself:
+
+**FR** — Pas de domaine, pas de Caddy, pas de Cloudflare nécessaires.
+Bullshark peut générer son propre certificat auto-signé et terminer le TLS
+lui-même :
+
+```bash
+# Native binary / Binaire natif
+BULLSHARK_TLS_MODE=selfSigned ./bullshark
+
+# Docker
+docker run -d \
+  -p 4991:4991/tcp \
+  -p 40000:40000/tcp \
+  -p 40000:40000/udp \
+  -v ./data:/home/bun/.config/bullshark \
+  -e BULLSHARK_TLS_MODE=selfSigned \
+  --name bullshark \
+  bullshark:local
+```
+
+Then open `https://<server-ip-or-domain>:4991` — note the explicit
+`https://`, the browser won't guess it. The **first visit on each device**
+triggers a "connection is not private" warning: click "Advanced" → "proceed
+anyway". This is expected — the certificate works, it's just not signed by a
+publicly trusted authority (that requires a real domain, see Option A). This
+is the same pattern used by many self-hosted tools (Synology, Portainer,
+etc.). / Ouvre ensuite `https://<ip-ou-domaine-du-serveur>:4991` — avec le
+`https://` explicite, le navigateur ne le devine pas. La **première visite
+sur chaque appareil** déclenche un avertissement "connexion non sécurisée" :
+clique "Avancé" → "continuer quand même". C'est attendu — le certificat
+fonctionne, il n'est juste pas signé par une autorité reconnue publiquement
+(ça demande un vrai domaine, voir Option A). C'est le même principe que de
+nombreux outils self-hosted (Synology, Portainer, etc.).
+
+The certificate is generated once on first launch and persisted in the data
+directory — it survives restarts, and the browser's "proceed anyway"
+exception stays valid across them too. To force a new certificate (e.g.
+after the server's IP changes): / Le certificat est généré une fois au
+premier lancement et persiste dans le répertoire de données — il survit aux
+redémarrages, tout comme l'exception "continuer quand même" mémorisée par le
+navigateur. Pour forcer un nouveau certificat (ex : après un changement d'IP
+du serveur) :
+
+```bash
+# Native binary / Binaire natif
+./bullshark --regenerate-tls-cert
+
+# Docker
+docker exec -u bun -e HOME=/home/bun bullshark /bullshark --regenerate-tls-cert
+```
+
+Switching back to Option A (or to plain HTTP behind your own setup) at any
+time is just setting `BULLSHARK_TLS_MODE` back to `none` (or removing it —
+that's the default) and restarting. It's a config-only toggle — no data is
+affected either way. / Repasser à l'Option A (ou en HTTP simple derrière ta
+propre config) à tout moment, c'est juste remettre `BULLSHARK_TLS_MODE` à
+`none` (ou l'enlever — c'est le défaut) et redémarrer. C'est un simple
+interrupteur de config — aucune donnée n'est affectée dans un sens ou dans
+l'autre.
+
+**Important / Important (both options) / (les deux options)** — only the
+**web port (4991)** speaks HTTPS (via the reverse proxy in Option A, or
+directly in Option B). The **WebRTC media port (40000, tcp+udp)** carries raw
+RTP traffic, not HTTP, in both cases — it must stay directly exposed on the
+firewall/router, never proxied. If your server sits behind NAT (home router,
+some VPS providers), set `webRtc.announcedAddress` (or the
 `BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS` env var) to your public IP or domain, or
 voice/video will fail to establish for remote users even with the port
-forwarded. / seul le **port web (4991)** passe par le reverse proxy HTTPS. Le
-**port média WebRTC (40000, tcp+udp)** transporte du RTP brut, pas du HTTP —
-il doit rester exposé directement sur le pare-feu/routeur, pas proxifié. Si
-ton serveur est derrière un NAT (routeur maison, certains hébergeurs VPS),
+forwarded. / seul le **port web (4991)** parle HTTPS (via le reverse proxy en
+Option A, ou directement en Option B). Le **port média WebRTC (40000,
+tcp+udp)** transporte du RTP brut, pas du HTTP, dans les deux cas — il doit
+rester exposé directement sur le pare-feu/routeur, jamais proxifié. Si ton
+serveur est derrière un NAT (routeur maison, certains hébergeurs VPS),
 configure `webRtc.announcedAddress` (ou la variable d'environnement
 `BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS`) avec ton IP publique ou ton domaine,
 sinon le vocal/vidéo échouera à s'établir pour les utilisateurs distants même
@@ -165,6 +239,7 @@ par des variables d'environnement — pratique avec Docker.
 | `BULLSHARK_WEBRTC_PORT` | `webRtc.port` | `40000` | WebRTC media port (tcp+udp) / port média WebRTC (tcp+udp) |
 | `BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS` | `webRtc.announcedAddress` | *(auto-detected public IP)* | Public IP/domain to announce to peers — **required behind NAT** / IP publique ou domaine à annoncer aux pairs — **obligatoire derrière un NAT** |
 | `BULLSHARK_WEBRTC_MAX_BITRATE` | `webRtc.maxBitrate` | `30000000` (30 Mbps) | Max bitrate per stream / débit max par flux |
+| `BULLSHARK_TLS_MODE` | `tls.mode` | `none` | `none` (expects a reverse proxy, Option A) or `selfSigned` (built-in self-signed HTTPS, Option B) — see [section 3](#3-https--mandatory--https--obligatoire) / `none` (attend un reverse proxy, Option A) ou `selfSigned` (HTTPS auto-signé intégré, Option B) — voir [section 3](#3-https--mandatory--https--obligatoire) |
 | `BULLSHARK_MARKETPLACE_REGISTRY_URL` | `plugins.marketplaceRegistryUrl` | official registry | Plugin marketplace source — set to `''` to disable it / source du registre de plugins — mets `''` pour le désactiver |
 
 ---
