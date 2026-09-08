@@ -36,6 +36,11 @@ if (process.argv.includes('--new-owner-token')) {
   await newOwnerTokenCli(); // prints the token and process.exit()s
 }
 
+if (process.argv.includes('--regenerate-tls-cert')) {
+  const { regenerateTlsCertCli } = await import('./cli/regenerate-tls-cert');
+  await regenerateTlsCertCli(); // prints a notice and process.exit()s
+}
+
 await pluginManager.loadPlugins();
 await createServers();
 await loadMediasoup();
@@ -43,16 +48,25 @@ await initVoiceRuntimes();
 await loadCrons();
 
 const host = IS_PRODUCTION ? SERVER_PRIVATE_IP : 'localhost';
-const url = `http://${host}:${config.server.port}/`;
+const isSelfSignedTls = config.tls.mode === 'selfSigned';
+const url = `${isSelfSignedTls ? 'https' : 'http'}://${host}:${config.server.port}/`;
 
-const message = [
+const messageLines = [
   chalk.green.bold('BULLSHARK') + ' ' + chalk.white.bold(`v${SERVER_VERSION}`),
   chalk.dim('────────────────────────────────────────────────────'),
   `${chalk.yellow('Port:')} ${chalk.bold(String(config.server.port))}`,
   `${chalk.yellow('Interface:')} ${chalk.underline.cyan(url)}`
-].join('\n');
+];
 
-console.log('%s', message);
+if (isSelfSignedTls) {
+  messageLines.push(
+    chalk.dim(
+      'TLS: self-signed certificate. Your browser will warn that the connection is not private — this is expected, proceed anyway (one-time per device).'
+    )
+  );
+}
+
+console.log('%s', messageLines.join('\n'));
 
 printDebug();
 

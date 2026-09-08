@@ -1,9 +1,11 @@
 import { getErrorMessage } from '@bullshark/shared';
 import chalk from 'chalk';
 import http from 'http';
+import https from 'https';
 import z from 'zod';
 import { config } from '../config';
 import { getWsInfo } from '../helpers/get-ws-info';
+import { ensureTlsCertificate } from '../helpers/tls';
 import { logger } from '../logger';
 import { exportRouteHandler } from './export';
 import { healthRouteHandler } from './healthz';
@@ -66,108 +68,116 @@ const routeHandlers: Partial<
 
 // this http server implementation is temporary and will be moved to bun server later when things are more stable
 
-const createHttpServer = async (port: number = config.server.port) => {
-  return new Promise<http.Server>((resolve) => {
-    const server = http.createServer(
-      async (req: http.IncomingMessage, res: http.ServerResponse) => {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', '*');
+const handleRequest = async (
+  req: http.IncomingMessage,
+  res: http.ServerResponse
+) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', '*');
 
-        // Baseline security headers, applied to every response. Set via
-        // setHeader so they persist through later writeHead calls that don't
-        // override them (interface, /public file serving, etc.).
-        // - nosniff: stop MIME-sniffing of user-uploaded files into HTML/JS.
-        // - SAMEORIGIN: clickjacking protection for the served web interface.
-        // - Referrer-Policy: avoid leaking signed-URL query tokens cross-origin.
-        // Deliberately NOT set: CORP/Permissions-Policy would break cross-origin
-        // media embedding (wildcard CORS is intentional) and voice/screen-share.
-        res.setHeader('X-Content-Type-Options', 'nosniff');
-        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
-        res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  // Baseline security headers, applied to every response. Set via
+  // setHeader so they persist through later writeHead calls that don't
+  // override them (interface, /public file serving, etc.).
+  // - nosniff: stop MIME-sniffing of user-uploaded files into HTML/JS.
+  // - SAMEORIGIN: clickjacking protection for the served web interface.
+  // - Referrer-Policy: avoid leaking signed-URL query tokens cross-origin.
+  // Deliberately NOT set: CORP/Permissions-Policy would break cross-origin
+  // media embedding (wildcard CORS is intentional) and voice/screen-share.
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-        const info = getWsInfo(undefined, req);
+  const info = getWsInfo(undefined, req);
 
-        logger.debug(
-          `${chalk.dim('[HTTP]')} ${req.method} ${req.url} - ${info?.ip}`
-        );
+  logger.debug(`${chalk.dim('[HTTP]')} ${req.method} ${req.url} - ${info?.ip}`);
 
-        if (req.method === 'OPTIONS') {
-          res.writeHead(204);
-          res.end();
-          return;
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  const pathname = getRequestPathname(req);
+
+  if (!pathname) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Bad request' }));
+    return;
+  }
+
+  try {
+    const method = req.method as SupportedMethod | undefined;
+
+    if (method) {
+      const methodHandlers = routeHandlers[method];
+
+      if (methodHandlers) {
+        const exactHandler = methodHandlers.exact[pathname];
+
+        if (exactHandler) {
+          return await exactHandler(req, res, { info });
         }
 
-        const pathname = getRequestPathname(req);
-
-        if (!pathname) {
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Bad request' }));
-          return;
+        for (const [prefix, prefixHandler] of Object.entries(
+          methodHandlers.prefix
+        )) {
+          if (hasPrefixPathSegment(pathname, prefix)) {
+            return await prefixHandler(req, res, { info });
+          }
         }
-
-        try {
-          const method = req.method as SupportedMethod | undefined;
-
-          if (method) {
-            const methodHandlers = routeHandlers[method];
-
-            if (methodHandlers) {
-              const exactHandler = methodHandlers.exact[pathname];
-
-              if (exactHandler) {
-                return await exactHandler(req, res, { info });
-              }
-
-              for (const [prefix, prefixHandler] of Object.entries(
-                methodHandlers.prefix
-              )) {
-                if (hasPrefixPathSegment(pathname, prefix)) {
-                  return await prefixHandler(req, res, { info });
-                }
-              }
-            }
-          }
-
-          // fallback to interface route handler for GET and HEAD requests
-          // (HEAD returns the same headers as GET with no body — health checks)
-          if (method === 'GET' || req.method === 'HEAD') {
-            return await interfaceRouteHandler(req, res);
-          }
-        } catch (error) {
-          const errorsMap: Record<string, string> = {};
-
-          if (error instanceof z.ZodError) {
-            for (const issue of error.issues) {
-              const field = issue.path[0];
-
-              if (typeof field === 'string') {
-                errorsMap[field] = issue.message;
-              }
-            }
-
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ errors: errorsMap }));
-            return;
-          } else if (error instanceof HttpValidationError) {
-            errorsMap[error.field] = error.message;
-
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ errors: errorsMap }));
-            return;
-          }
-
-          logger.error('HTTP route error: %s', getErrorMessage(error));
-
-          res.writeHead(500, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Internal server error' }));
-          return;
-        }
-
-        res.writeHead(404, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Not found' }));
       }
-    );
+    }
+
+    // fallback to interface route handler for GET and HEAD requests
+    // (HEAD returns the same headers as GET with no body — health checks)
+    if (method === 'GET' || req.method === 'HEAD') {
+      return await interfaceRouteHandler(req, res);
+    }
+  } catch (error) {
+    const errorsMap: Record<string, string> = {};
+
+    if (error instanceof z.ZodError) {
+      for (const issue of error.issues) {
+        const field = issue.path[0];
+
+        if (typeof field === 'string') {
+          errorsMap[field] = issue.message;
+        }
+      }
+
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ errors: errorsMap }));
+      return;
+    } else if (error instanceof HttpValidationError) {
+      errorsMap[error.field] = error.message;
+
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ errors: errorsMap }));
+      return;
+    }
+
+    logger.error('HTTP route error: %s', getErrorMessage(error));
+
+    res.writeHead(500, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Internal server error' }));
+    return;
+  }
+
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Not found' }));
+};
+
+const createHttpServer = async (port: number = config.server.port) => {
+  const tlsCertificate = await ensureTlsCertificate();
+
+  return new Promise<http.Server | https.Server>((resolve) => {
+    const server = tlsCertificate
+      ? https.createServer(
+          { cert: tlsCertificate.cert, key: tlsCertificate.key },
+          handleRequest
+        )
+      : http.createServer(handleRequest);
 
     server.on('listening', () => {
       logger.debug('HTTP server is listening on port %d', port);

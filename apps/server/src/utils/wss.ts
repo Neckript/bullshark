@@ -15,6 +15,7 @@ import {
 } from '@trpc/server/adapters/ws';
 import { eq } from 'drizzle-orm';
 import http from 'http';
+import https from 'https';
 import { WebSocket, WebSocketServer } from 'ws';
 import { db } from '../db';
 import { getAllChannelUserPermissions } from '../db/queries/channels';
@@ -245,7 +246,7 @@ const createContext = async ({
   };
 };
 
-const createWsServer = async (server: http.Server) => {
+const createWsServer = async (server: http.Server | https.Server) => {
   return new Promise<WebSocketServer>((resolve) => {
     wss = new WebSocketServer({ server });
 

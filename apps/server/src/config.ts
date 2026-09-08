@@ -22,6 +22,16 @@ const zConfig = z.object({
     announcedAddress: z.string(),
     maxBitrate: z.coerce.number().int().positive()
   }),
+  tls: z.object({
+    // 'none' (default): the server speaks plain HTTP, expects a reverse
+    // proxy (Caddy, etc.) with a real domain to terminate TLS - unchanged
+    // production behavior. 'selfSigned': the server terminates TLS itself
+    // with a self-signed certificate it generates on first launch, for
+    // operators with no domain name (LAN/personal use). Browsers still
+    // require one manual "proceed anyway" click per device since the
+    // certificate isn't from a trusted CA.
+    mode: z.enum(['none', 'selfSigned'])
+  }),
   rateLimiters: z.object({
     sendAndEditMessage: z.object({
       maxRequests: z.coerce.number().int().positive(),
@@ -95,6 +105,9 @@ const defaultConfig: TConfig = {
     port: 40000,
     announcedAddress: '',
     maxBitrate: 30_000_000 // 30 Mbps
+  },
+  tls: {
+    mode: 'none'
   },
   rateLimiters: {
     sendAndEditMessage: {
@@ -197,6 +210,7 @@ config = applyEnvOverrides(config, {
   'webRtc.port': 'BULLSHARK_WEBRTC_PORT',
   'webRtc.announcedAddress': 'BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS',
   'webRtc.maxBitrate': 'BULLSHARK_WEBRTC_MAX_BITRATE',
+  'tls.mode': 'BULLSHARK_TLS_MODE',
   'plugins.marketplaceRegistryUrl': 'BULLSHARK_MARKETPLACE_REGISTRY_URL'
 });
 
