@@ -116,11 +116,19 @@ const Security = memo(() => {
                     autoComplete="one-time-code"
                   />
                 </Group>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={regenerate}>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <Button
+                    variant="outline"
+                    onClick={regenerate}
+                    className="w-full sm:w-auto"
+                  >
                     {t('securityRegenerate')}
                   </Button>
-                  <Button variant="destructive" onClick={disable}>
+                  <Button
+                    variant="destructive"
+                    onClick={disable}
+                    className="w-full sm:w-auto"
+                  >
                     {t('securityDisable')}
                   </Button>
                 </div>
