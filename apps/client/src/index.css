@@ -18,6 +18,13 @@
   [role='button']:not(:disabled) {
     cursor: pointer;
   }
+
+  /* Le flash tactile gris par defaut du navigateur sur mobile n'etait
+     desactive nulle part - visible comme un aplat gris intermittent au
+     toucher, notamment sur les surfaces larges (panneaux, cartes). */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @custom-variant dark (&:is(.dark *));
