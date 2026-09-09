@@ -17,7 +17,7 @@ const UserSettingsDesktopNav = memo(
     const { t } = useTranslation('settings');
 
     return (
-      <nav className="flex w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border p-4">
+      <nav className="hidden w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border p-4 md:flex">
         {USER_SETTINGS_GROUPS.map((group) => (
           <div key={group.id} className="flex flex-col gap-0.5">
             <div className="px-2.5 pb-1 text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
