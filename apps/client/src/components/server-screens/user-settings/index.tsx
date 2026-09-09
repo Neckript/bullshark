@@ -83,7 +83,7 @@ const UserSettings = memo(({ close }: TUserSettingsProps) => {
             <button
               type="button"
               onClick={() => setMobileOpenSection(null)}
-              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground outline-none hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
