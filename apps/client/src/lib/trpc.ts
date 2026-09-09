@@ -4,6 +4,7 @@ import { resetServerScreens } from '@/features/server-screens/actions';
 import { resetServerState, setDisconnectInfo } from '@/features/server/actions';
 import { playSound } from '@/features/server/sounds/actions';
 import { SoundType } from '@/features/server/types';
+import { getUrlFromServer } from '@/helpers/get-file-url';
 import {
   getSessionStorageItem,
   LocalStorageKey,
@@ -29,7 +30,7 @@ type TCleanupOptions = {
 };
 
 const initializeTRPC = (host: string) => {
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  const protocol = getUrlFromServer().startsWith('https:') ? 'wss' : 'ws';
 
   wsClient = createWSClient({
     url: `${protocol}://${host}`,
