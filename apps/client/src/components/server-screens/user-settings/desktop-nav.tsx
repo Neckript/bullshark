@@ -29,7 +29,7 @@ const UserSettingsDesktopNav = memo(
                 type="button"
                 onClick={() => onSelect(section)}
                 className={cn(
-                  'rounded-md px-2.5 py-1.5 text-left text-sm text-muted-foreground transition-colors duration-fast ease-out hover:bg-accent hover:text-accent-foreground',
+                  'rounded-md px-2.5 py-1.5 text-left text-sm text-muted-foreground outline-none transition-colors duration-fast ease-out hover:bg-accent hover:text-accent-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
                   activeSection === section &&
                     'bg-accent text-accent-foreground'
                 )}

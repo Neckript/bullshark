@@ -25,7 +25,18 @@ const UserSettingsProfileCard = memo(
 
     return (
       <div className="border-b border-border pb-4">
-        <div className="h-24 w-full bg-muted">
+        <div
+          className={
+            ownPublicUser.banner || ownPublicUser.bannerColor
+              ? 'h-24 w-full'
+              : 'h-24 w-full bg-muted'
+          }
+          style={
+            !ownPublicUser.banner && ownPublicUser.bannerColor
+              ? { background: ownPublicUser.bannerColor }
+              : undefined
+          }
+        >
           {ownPublicUser.banner && (
             <img
               src={getFileUrl(ownPublicUser.banner)}

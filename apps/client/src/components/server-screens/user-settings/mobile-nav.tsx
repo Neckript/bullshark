@@ -26,7 +26,7 @@ const UserSettingsMobileNav = memo(
             key={section}
             type="button"
             onClick={() => onSelect(section)}
-            className="flex items-center justify-between px-4 py-3 text-left text-sm text-foreground"
+            className="flex items-center justify-between px-4 py-3 text-left text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             {t(USER_SETTINGS_SECTION_LABEL_KEYS[section])}
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
