@@ -10,7 +10,11 @@ const getHostFromServer = () => {
 
 const getUrlFromServer = () => {
   if (import.meta.env.MODE === 'development') {
-    return 'http://localhost:4991';
+    // set VITE_DEV_SERVER_PROTOCOL=https when running the server with
+    // BULLSHARK_TLS_MODE=selfSigned locally, defaults to plain http otherwise
+    const protocol = import.meta.env.VITE_DEV_SERVER_PROTOCOL || 'http';
+
+    return `${protocol}://localhost:4991`;
   }
 
   const host = window.location.host;
