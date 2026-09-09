@@ -206,11 +206,18 @@ const Profile = memo(() => {
 
         <BannerManager user={ownPublicUser} />
 
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={closeServerScreens}>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button
+            variant="outline"
+            onClick={closeServerScreens}
+            className="w-full sm:w-auto"
+          >
             {t('cancel')}
           </Button>
-          <Button onClick={() => void onUpdateUser()}>
+          <Button
+            onClick={() => void onUpdateUser()}
+            className="w-full sm:w-auto"
+          >
             {t('saveChanges')}
           </Button>
         </div>

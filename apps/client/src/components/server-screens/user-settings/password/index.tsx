@@ -53,11 +53,17 @@ const Password = memo(() => {
           <Input {...r('confirmNewPassword', 'password')} />
         </Group>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={closeServerScreens}>
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end">
+          <Button
+            variant="outline"
+            onClick={closeServerScreens}
+            className="w-full sm:w-auto"
+          >
             {t('cancel')}
           </Button>
-          <Button onClick={updatePassword}>{t('saveChanges')}</Button>
+          <Button onClick={updatePassword} className="w-full sm:w-auto">
+            {t('saveChanges')}
+          </Button>
         </div>
       </CardContent>
     </Card>
