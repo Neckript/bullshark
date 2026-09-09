@@ -32,7 +32,7 @@ const ServerScreenLayout = memo(
             isDesktopShell && 'app-no-drag'
           )}
         >
-          <div className="flex h-14 shrink-0 items-center gap-4 border-b border-border px-6">
+          <div className="flex h-14 shrink-0 items-center gap-4 rounded-t-lg border-b border-border px-6">
             <h1 className="flex-1 text-lg font-semibold">{title}</h1>
             <Button
               variant="ghost"

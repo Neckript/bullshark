@@ -78,8 +78,8 @@ const UserSettings = memo(({ close }: TUserSettingsProps) => {
       </Tabs>
 
       {mobileOpenSection && (
-        <div className="absolute inset-0 flex flex-col bg-background md:hidden">
-          <div className="flex h-14 shrink-0 items-center gap-4 border-b border-border px-4">
+        <div className="absolute inset-0 flex flex-col rounded-lg bg-background md:hidden">
+          <div className="flex h-14 shrink-0 items-center gap-4 rounded-t-lg border-b border-border px-4">
             <button
               type="button"
               onClick={() => setMobileOpenSection(null)}
