@@ -1,7 +1,7 @@
 # Modale des paramètres utilisateur — design
 
 - Date : 2026-09-09
-- Statut : brouillon, questions ouvertes à trancher avant le plan d'implémentation
+- Statut : validé en chat avec l.user, prêt pour le plan d'implémentation
 - Petit chantier, pas de dépendance runtime
 
 ## Problème
@@ -93,14 +93,16 @@ pas de liste d'onglets du tout).
 
 ## Questions ouvertes, à trancher avant le plan d'implémentation
 
-1. **Groupement exact des sections desktop.** Proposition ci-dessus
-   ("Compte" / "Préférences") — à valider ou modifier par l.user.
-2. **Bouton "Modifier le profil" en mobile.** Discord ouvre un écran
-   d'édition séparé par-dessus la carte. Ici : réutiliser le formulaire
-   `profile/index.tsx` existant tel quel en overlay, ou rendre les champs
-   directement éditables sous la carte sans écran séparé ?
-3. **Breakpoint.** Confirmer l'alignement sur `md` (768px, déjà utilisé
-   ailleurs dans l'app) plutôt qu'un seuil différent.
+1. ~~**Groupement exact des sections desktop.**~~ Tranché par l.user le
+   2026-09-09 : la proposition ci-dessus est retenue telle quelle — section
+   **"Compte"** (Profil, Mot de passe, Sécurité, Appareils) + section
+   **"Préférences"** (Notifications, Autres).
+2. ~~**Bouton "Modifier le profil" en mobile.**~~ Tranché par l.user le
+   2026-09-09 : réutilise le formulaire `profile/index.tsx` existant tel
+   quel, affiché en overlay par-dessus la carte — pas de nouveau composant
+   d'édition à construire.
+3. ~~**Breakpoint.**~~ Tranché par l.user le 2026-09-09 : aligné sur `md`
+   (768px), cohérent avec le reste de l'app (`server-view/index.tsx`).
 
 ## Hors périmètre
 
