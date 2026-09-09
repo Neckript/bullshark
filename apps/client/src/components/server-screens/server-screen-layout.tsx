@@ -26,7 +26,12 @@ const ServerScreenLayout = memo(
           isDesktopShell && 'app-drag'
         )}
       >
-        <div className="flex h-full max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-lg md:h-[85dvh]">
+        <div
+          className={cn(
+            'flex h-full max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-lg md:h-[85dvh]',
+            isDesktopShell && 'app-no-drag'
+          )}
+        >
           <div className="flex h-14 shrink-0 items-center gap-4 border-b border-border px-6">
             <h1 className="flex-1 text-lg font-semibold">{title}</h1>
             <Button
