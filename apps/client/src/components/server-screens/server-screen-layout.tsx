@@ -28,7 +28,7 @@ const ServerScreenLayout = memo(
       >
         <div
           className={cn(
-            'relative flex h-full max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background text-foreground md:h-[85dvh]',
+            'relative flex h-full max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-background text-foreground [clip-path:inset(0_round_0.75rem)] md:h-[85dvh]',
             isDesktopShell && 'app-no-drag'
           )}
         >
