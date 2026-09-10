@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Button } from '@bullshark/ui';
-import { ChevronLeft } from 'lucide-react';
+import { X } from 'lucide-react';
 import { memo } from 'react';
 
 type TServerScreenLayoutProps = {
@@ -15,34 +15,42 @@ const ServerScreenLayout = memo(
     // qui reste dans le DOM avec sa zone de glissement. Or une zone de
     // glissement est remise au système d'exploitation : ce qui est peint
     // au-dessus ne perce pas le trou, seul un `no-drag` explicite soustrait.
-    // Sans les deux classes ci-dessous, le bouton retour se retrouve sous la
-    // bande de 48 px et cesse de répondre, sans la moindre erreur.
+    // Sans les deux classes ci-dessous, le bouton de fermeture se retrouve
+    // sous la bande de 48 px et cesse de répondre, sans la moindre erreur.
     const isDesktopShell = Boolean(window.bullshark?.isDesktop);
 
     return (
-      <div className="flex h-screen flex-col bg-background text-foreground">
+      <div
+        className={cn(
+          'fixed inset-0 z-50 flex items-center justify-center bg-black/50 md:p-4',
+          isDesktopShell && 'app-drag'
+        )}
+      >
         <div
           className={cn(
-            'flex h-14 items-center gap-4 border-b border-border px-6',
-            // La bande reste déplaçable : cet écran occupe toute la fenêtre, et
-            // la marquer entièrement `no-drag` rendrait la fenêtre impossible à
-            // déplacer tant que les réglages sont ouverts.
-            isDesktopShell && 'app-drag'
+            // Plein ecran sur mobile : sans marge ni coin arrondi, il n'y a
+            // plus d'encoche par laquelle le contenu situe dessous (le nom de
+            // serveur du tiroir, en `text-foreground`, cale exactement sur le
+            // meme x=16) transparaissait a travers le voile.
+            'relative flex h-full max-h-dvh w-full max-w-5xl flex-col overflow-hidden bg-background text-foreground md:h-[85dvh] md:max-h-[calc(100dvh-2rem)] md:rounded-lg md:border md:border-border md:shadow-lg',
+            isDesktopShell && 'app-no-drag'
           )}
         >
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={close}
-            className={cn(isDesktopShell && 'app-no-drag')}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-semibold">{title}</h1>
-        </div>
+          <div className="flex h-14 shrink-0 items-center gap-4 border-b border-border px-6 md:rounded-t-lg">
+            <h1 className="flex-1 text-lg font-semibold">{title}</h1>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={close}
+              className={cn(isDesktopShell && 'app-no-drag')}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
 
-        <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden p-6">
-          {children}
+          <div className="min-w-0 flex-1 overflow-y-auto overflow-x-hidden">
+            {children}
+          </div>
         </div>
       </div>
     );

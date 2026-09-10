@@ -691,11 +691,17 @@ const Devices = memo(() => {
           </Group>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={closeServerScreens}>
+        <div className="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end">
+          <Button
+            variant="outline"
+            onClick={closeServerScreens}
+            className="w-full sm:w-auto"
+          >
             {t('cancel')}
           </Button>
-          <Button onClick={saveDeviceSettings}>{t('saveChanges')}</Button>
+          <Button onClick={saveDeviceSettings} className="w-full sm:w-auto">
+            {t('saveChanges')}
+          </Button>
         </div>
       </CardContent>
     </Card>
