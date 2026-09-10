@@ -22,17 +22,21 @@ const ServerScreenLayout = memo(
     return (
       <div
         className={cn(
-          'fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4',
+          'fixed inset-0 z-50 flex items-center justify-center bg-black/50 md:p-4',
           isDesktopShell && 'app-drag'
         )}
       >
         <div
           className={cn(
-            'relative flex h-full max-h-[calc(100dvh-2rem)] w-full max-w-5xl flex-col overflow-hidden rounded-lg border border-border bg-background text-foreground shadow-lg md:h-[85dvh]',
+            // Plein ecran sur mobile : sans marge ni coin arrondi, il n'y a
+            // plus d'encoche par laquelle le contenu situe dessous (le nom de
+            // serveur du tiroir, en `text-foreground`, cale exactement sur le
+            // meme x=16) transparaissait a travers le voile.
+            'relative flex h-full max-h-dvh w-full max-w-5xl flex-col overflow-hidden bg-background text-foreground md:h-[85dvh] md:max-h-[calc(100dvh-2rem)] md:rounded-lg md:border md:border-border md:shadow-lg',
             isDesktopShell && 'app-no-drag'
           )}
         >
-          <div className="flex h-14 shrink-0 items-center gap-4 rounded-t-lg border-b border-border px-6">
+          <div className="flex h-14 shrink-0 items-center gap-4 border-b border-border px-6 md:rounded-t-lg">
             <h1 className="flex-1 text-lg font-semibold">{title}</h1>
             <Button
               variant="ghost"
