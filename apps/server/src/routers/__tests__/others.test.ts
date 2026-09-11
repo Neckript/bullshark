@@ -7,6 +7,7 @@ import {
   uploadFile
 } from '../../__tests__/helpers';
 import { TEST_SECRET_TOKEN } from '../../__tests__/seed';
+import { getPublicSettings } from '../../db/queries/server';
 
 describe('others router', () => {
   test('should throw when user tries to join with no handshake', async () => {
@@ -278,6 +279,46 @@ describe('others router', () => {
     const settingsAfterRemoval = await caller.others.getSettings();
 
     expect(settingsAfterRemoval.logo).toBeNull();
+  });
+
+  test('should throw when user lacks permissions (change server banner)', async () => {
+    const { caller } = await initTest(2);
+
+    await expect(caller.others.changeServerBanner({})).rejects.toThrow(
+      'Insufficient permissions'
+    );
+  });
+
+  test('should change server banner', async () => {
+    const { caller } = await initTest(1);
+
+    const response = await login('testowner', 'password123');
+    const { token } = (await response.json()) as { token: string };
+
+    const bannerFile = new File(['banner content'], 'banner.png', {
+      type: 'image/png'
+    });
+
+    const uploadResponse = await uploadFile(bannerFile, token);
+    const tempFile = (await uploadResponse.json()) as TTempFile;
+
+    expect((await caller.others.getSettings()).banner).toBeNull();
+
+    await caller.others.changeServerBanner({ fileId: tempFile.id });
+
+    const settingsAfter = await caller.others.getSettings();
+
+    expect(settingsAfter.banner?.originalName).toBe(bannerFile.name);
+
+    // c'est par les reglages publics que les membres la recoivent
+    expect((await getPublicSettings()).banner?.originalName).toBe(
+      bannerFile.name
+    );
+
+    await caller.others.changeServerBanner({});
+
+    expect((await caller.others.getSettings()).banner).toBeNull();
+    expect((await getPublicSettings()).banner).toBeNull();
   });
 
   test('should rate limit excessive join attempts', async () => {
