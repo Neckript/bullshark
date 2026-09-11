@@ -47,8 +47,11 @@ const SearchDialog = memo(
 
     return (
       <Dialog open={isOpen}>
+        {/* min-width l'emporte sur max-width : un plancher fixe faisait deborder
+            la boite hors de l'ecran des que la fenetre etait plus etroite que
+            lui. Plafond composite -> large, sans jamais depasser le viewport. */}
         <DialogContent
-          className="h-[86vh] max-h-[94vh] lg:min-w-7xl gap-0 overflow-hidden p-0"
+          className="h-[86vh] max-h-[94vh] lg:max-w-[min(80rem,calc(100%-2rem))] gap-0 overflow-hidden p-0"
           onInteractOutside={close}
           close={close}
         >
