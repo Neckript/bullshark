@@ -84,6 +84,7 @@ export type TStorageSettings = Pick<
   | 'storageUploadMaxFileSize'
   | 'storageMaxAvatarSize'
   | 'storageMaxBannerSize'
+  | 'storageMaxServerBannerSize'
   | 'storageMaxAnimatedImageSize'
   | 'klipyApiKey'
   | 'storageMaxFilesPerMessage'
@@ -162,6 +163,7 @@ export type TJoinedPublicUser = TPublicUser & {
 
 export type TJoinedSettings = TSettings & {
   logo: TFile | null;
+  banner: TFile | null;
 };
 
 export type TJoinedInvite = TInvite & {

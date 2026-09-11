@@ -309,6 +309,7 @@ class FileManager {
       isAnimated &&
       (type === FileSaveType.AVATAR ||
         type === FileSaveType.BANNER ||
+        type === FileSaveType.SERVER_BANNER ||
         type === FileSaveType.ROLE_ICON)
     ) {
       if (tempFile.size > settings.storageMaxAnimatedImageSize) {
@@ -334,6 +335,15 @@ class FileManager {
     ) {
       throw new Error(
         `Banner file exceeds the configured maximum size of ${settings.storageMaxBannerSize / (1024 * 1024)} MB`
+      );
+    }
+
+    if (
+      type === FileSaveType.SERVER_BANNER &&
+      tempFile.size > settings.storageMaxServerBannerSize
+    ) {
+      throw new Error(
+        `Server banner file exceeds the configured maximum size of ${settings.storageMaxServerBannerSize / (1024 * 1024)} MB`
       );
     }
   };

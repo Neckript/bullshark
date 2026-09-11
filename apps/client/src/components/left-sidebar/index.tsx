@@ -7,6 +7,7 @@ import {
   useServerHasOwner,
   useServerName
 } from '@/features/server/hooks';
+import { getFileUrl } from '@/helpers/get-file-url';
 import { LocalStorageKey } from '@/helpers/storage';
 import { cn } from '@/lib/utils';
 import { TestId } from '@bullshark/shared';
@@ -58,6 +59,14 @@ const LeftSidebar = memo(({ className }: TLeftSidebarProps) => {
           <ServerDropdownMenu />
         </div>
       </div>
+      {publicSettings?.banner && (
+        <div
+          className="w-full aspect-[16/9] shrink-0 border-b border-border bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url("${getFileUrl(publicSettings.banner)}")`
+          }}
+        />
+      )}
       {!serverHasOwner && (
         <div className="flex items-center justify-between gap-2 border-b border-destructive/20 bg-destructive/10 px-4 py-2">
           <p className="text-xs text-destructive">

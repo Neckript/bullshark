@@ -26,6 +26,12 @@ const MAX_BANNER_SIZE_PRESETS = [
   { label: '10 MB', value: 10 * MEGABYTE }
 ];
 
+const MAX_SERVER_BANNER_SIZE_PRESETS = [
+  { label: '1 MB', value: 1 * MEGABYTE },
+  { label: '3 MB', value: 3 * MEGABYTE },
+  { label: '10 MB', value: 10 * MEGABYTE }
+];
+
 const MAX_ANIMATED_IMAGE_SIZE_PRESETS = [
   { label: '4 MB', value: 4 * MEGABYTE },
   { label: '8 MB', value: 8 * MEGABYTE },
@@ -60,6 +66,7 @@ export {
   MAX_BANNER_SIZE_PRESETS,
   MAX_FILES_PER_MESSAGE_PRESETS,
   MAX_FILE_SIZE_PRESETS,
+  MAX_SERVER_BANNER_SIZE_PRESETS,
   MEGABYTE,
   QUOTA_BY_USER_PRESETS,
   QUOTA_PRESETS,

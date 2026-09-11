@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import { eq } from 'drizzle-orm';
 import { db } from '../..';
-import { files, roles, sounds } from '../../schema';
+import { files, roles, settings, sounds } from '../../schema';
 import { getOrphanedFileIds, isFileOrphaned } from '../files';
 
 const insertFile = (name: string) =>
@@ -44,6 +44,16 @@ describe('orphaned files — references that keep a file alive', () => {
 
     expect(await getOrphanedFileIds()).not.toContain(file.id);
     expect(await isFileOrphaned(file.id)).toBe(false);
+  });
+
+  test('a file used as the server banner is NOT considered orphaned', async () => {
+    const file = await insertFile('server-banner.png');
+    await db.update(settings).set({ bannerId: file.id });
+
+    expect(await getOrphanedFileIds()).not.toContain(file.id);
+    expect(await isFileOrphaned(file.id)).toBe(false);
+
+    await db.update(settings).set({ bannerId: null });
   });
 
   test('a file referenced by nothing IS considered orphaned', async () => {

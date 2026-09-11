@@ -10,6 +10,7 @@ import {
   STORAGE_DEFAULT_MAX_AVATAR_SIZE,
   STORAGE_DEFAULT_MAX_BANNER_SIZE,
   STORAGE_DEFAULT_MAX_FILES_PER_MESSAGE,
+  STORAGE_DEFAULT_MAX_SERVER_BANNER_SIZE,
   STORAGE_DEFAULT_SIGNED_URLS_TTL_SECONDS,
   STORAGE_MAX_FILE_SIZE,
   STORAGE_MAX_QUOTA_PER_USER,
@@ -58,6 +59,7 @@ export const useAdminGeneral = () => {
     showWelcomeDialog: true
   });
   const [logo, setLogo] = useState<TFile | null>(null);
+  const [banner, setBanner] = useState<TFile | null>(null);
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);
@@ -80,6 +82,7 @@ export const useAdminGeneral = () => {
     });
     setLoading(false);
     setLogo(settings.logo);
+    setBanner(settings.banner);
   }, []);
 
   const submit = useCallback(async () => {
@@ -122,7 +125,8 @@ export const useAdminGeneral = () => {
     submit,
     errors,
     onChange,
-    logo
+    logo,
+    banner
   };
 };
 
@@ -473,6 +477,7 @@ export const useAdminStorage = () => {
       storageUploadMaxFileSize: STORAGE_MAX_FILE_SIZE,
       storageMaxAvatarSize: STORAGE_DEFAULT_MAX_AVATAR_SIZE,
       storageMaxBannerSize: STORAGE_DEFAULT_MAX_BANNER_SIZE,
+      storageMaxServerBannerSize: STORAGE_DEFAULT_MAX_SERVER_BANNER_SIZE,
       storageMaxAnimatedImageSize: STORAGE_DEFAULT_MAX_ANIMATED_IMAGE_SIZE,
       klipyApiKey: null,
       storageMaxFilesPerMessage: STORAGE_DEFAULT_MAX_FILES_PER_MESSAGE,
@@ -511,6 +516,7 @@ export const useAdminStorage = () => {
         storageUploadMaxFileSize: values.storageUploadMaxFileSize,
         storageMaxAvatarSize: values.storageMaxAvatarSize,
         storageMaxBannerSize: values.storageMaxBannerSize,
+        storageMaxServerBannerSize: values.storageMaxServerBannerSize,
         storageMaxAnimatedImageSize: values.storageMaxAnimatedImageSize,
         klipyApiKey: values.klipyApiKey,
         storageMaxFilesPerMessage: values.storageMaxFilesPerMessage,
@@ -557,6 +563,13 @@ export const useAdminStorage = () => {
         output: 'object',
         standard: 'jedec'
       }),
+      storageMaxServerBannerSize: filesize(
+        Number(values.storageMaxServerBannerSize ?? 0),
+        {
+          output: 'object',
+          standard: 'jedec'
+        }
+      ),
       storageMaxAnimatedImageSize: filesize(
         Number(values.storageMaxAnimatedImageSize ?? 0),
         {
