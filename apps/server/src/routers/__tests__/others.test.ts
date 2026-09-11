@@ -321,6 +321,44 @@ describe('others router', () => {
     expect((await getPublicSettings()).banner).toBeNull();
   });
 
+  test('should keep the current server banner when the new one is rejected', async () => {
+    const { caller } = await initTest(1);
+
+    const response = await login('testowner', 'password123');
+    const { token } = (await response.json()) as { token: string };
+
+    const firstUpload = await uploadFile(
+      new File(['small'], 'kept.png', { type: 'image/png' }),
+      token
+    );
+
+    await caller.others.changeServerBanner({
+      fileId: ((await firstUpload.json()) as TTempFile).id
+    });
+
+    await caller.others.updateSettings({ storageMaxServerBannerSize: 1 });
+
+    const secondUpload = await uploadFile(
+      new File(['far too large for a one byte quota'], 'rejected.png', {
+        type: 'image/png'
+      }),
+      token
+    );
+
+    await expect(
+      caller.others.changeServerBanner({
+        fileId: ((await secondUpload.json()) as TTempFile).id
+      })
+    ).rejects.toThrow();
+
+    // un televersement refuse ne doit pas emporter la banniere en place
+    expect((await caller.others.getSettings()).banner?.originalName).toBe(
+      'kept.png'
+    );
+
+    await caller.others.changeServerBanner({});
+  });
+
   test('should rate limit excessive join attempts', async () => {
     const { caller } = await getCaller(1);
 
