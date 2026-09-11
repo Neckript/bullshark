@@ -32,6 +32,7 @@
   "selectRolePlaceholder": "Выбрать роль",
   "roleDefault": "По умолчанию",
   "inviteCreated": "Приглашение создано",
+  "inviteCreateFailed": "Не удалось создать приглашение.",
   "createInviteBtn": "Создать приглашение",
   "deleteUserTitle": "Удалить {{name}}",
   "wipeAllDataLabel": "Удалить все данные",

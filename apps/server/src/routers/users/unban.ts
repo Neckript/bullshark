@@ -4,6 +4,7 @@ import z from 'zod';
 import { db } from '../../db';
 import { publishUser } from '../../db/publishers';
 import { users } from '../../db/schema';
+import { assertOutranksUser } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { protectedProcedure } from '../../utils/trpc';
 
@@ -15,6 +16,7 @@ const unbanRoute = protectedProcedure
   )
   .mutation(async ({ ctx, input }) => {
     await ctx.needsPermission(Permission.MANAGE_USERS);
+    await assertOutranksUser(ctx.userId, input.userId);
 
     await db
       .update(users)

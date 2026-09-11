@@ -247,6 +247,20 @@ describe('others router', () => {
     expect(updatedUser?.roleIds.filter((id) => id === 1)).toEqual([1]);
   });
 
+  test('le jeton de revendication ne sert qu une fois', async () => {
+    const { caller: claimer } = await initTest(2);
+
+    await claimer.others.useSecretToken({ token: TEST_SECRET_TOKEN });
+
+    // un second compte ne doit plus pouvoir s'en servir : le jeton reste
+    // lisible dans les journaux du conteneur longtemps apres la revendication
+    const { caller: other } = await initTest(3);
+
+    await expect(
+      other.others.useSecretToken({ token: TEST_SECRET_TOKEN })
+    ).rejects.toThrow('Invalid secret token');
+  });
+
   test('should change logo', async () => {
     const { caller } = await initTest(1);
 

@@ -5,6 +5,7 @@ import { db } from '../../db';
 import { publishRole } from '../../db/publishers';
 import { getDefaultRole, getRole } from '../../db/queries/roles';
 import { roles } from '../../db/schema';
+import { assertOutranksRole } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
@@ -33,6 +34,11 @@ const setDefaultRoleRoute = protectedProcedure
       code: 'NOT_FOUND',
       message: 'Role not found'
     });
+
+    // Le role par defaut est attribue a chaque inscription (login.ts), et
+    // recupere les membres d'un role supprime : le designer revient a le
+    // distribuer, donc la meme garde de rang que update et delete s'applique.
+    await assertOutranksRole(ctx.userId, input.roleId);
 
     await db.transaction(async (tx) => {
       await tx
