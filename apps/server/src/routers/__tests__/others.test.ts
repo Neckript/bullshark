@@ -203,6 +203,14 @@ describe('others router', () => {
     ).rejects.toThrow('Insufficient permissions');
   });
 
+  test('should throw when user lacks permissions (change logo)', async () => {
+    const { caller } = await initTest(2);
+
+    await expect(caller.others.changeLogo({})).rejects.toThrow(
+      'Insufficient permissions'
+    );
+  });
+
   test('should throw when using invalid secret token', async () => {
     const { caller } = await initTest(2);
 
