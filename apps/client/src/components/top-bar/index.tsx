@@ -50,45 +50,49 @@ const TopBar = memo(({ onToggleRightSidebar, isOpen }: TTopBarProps) => {
     >
       <div className="flex min-w-0 items-center gap-2" />
 
-      <div
-        className={cn(
-          'flex items-center justify-center',
-          isDesktopShell && 'app-no-drag'
+      {/* app-no-drag va sur le contenu, jamais sur la colonne : une colonne en
+          1fr est bien plus large que ses boutons, et tout le vide autour
+          cesserait d'etre une prise pour deplacer la fenetre. */}
+      <div className="flex items-center justify-center">
+        {settings?.enableSearch && (
+          <div className={cn(isDesktopShell && 'app-no-drag')}>
+            <ServerSearch />
+          </div>
         )}
-      >
-        {settings?.enableSearch && <ServerSearch />}
       </div>
 
-      <div
-        className={cn(
-          'flex min-w-0 items-center justify-end gap-2',
-          isDesktopShell && 'app-no-drag'
-        )}
-      >
-        <PluginSlotRenderer slotId={PluginSlot.TOPBAR_RIGHT} />
-        {isCurrentVoiceChannelSelected && currentVoiceChannelId && (
-          <VoiceButtons currentVoiceChannelId={currentVoiceChannelId} />
-        )}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onToggleRightSidebar}
-          className="h-7 px-2 transition-all duration-200 ease-in-out"
-        >
-          {isOpen ? (
-            <Tooltip content={t('closeMembersSidebar')}>
-              <div>
-                <PanelRightClose className="w-4 h-4 transition-transform duration-200 ease-in-out" />
-              </div>
-            </Tooltip>
-          ) : (
-            <Tooltip content={t('openMembersSidebar')}>
-              <div>
-                <PanelRight className="w-4 h-4 transition-transform duration-200 ease-in-out" />
-              </div>
-            </Tooltip>
+      <div className="flex min-w-0 items-center justify-end gap-2">
+        <div
+          className={cn(
+            'flex min-w-0 items-center gap-2',
+            isDesktopShell && 'app-no-drag'
           )}
-        </Button>
+        >
+          <PluginSlotRenderer slotId={PluginSlot.TOPBAR_RIGHT} />
+          {isCurrentVoiceChannelSelected && currentVoiceChannelId && (
+            <VoiceButtons currentVoiceChannelId={currentVoiceChannelId} />
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleRightSidebar}
+            className="h-7 px-2 transition-all duration-200 ease-in-out"
+          >
+            {isOpen ? (
+              <Tooltip content={t('closeMembersSidebar')}>
+                <div>
+                  <PanelRightClose className="w-4 h-4 transition-transform duration-200 ease-in-out" />
+                </div>
+              </Tooltip>
+            ) : (
+              <Tooltip content={t('openMembersSidebar')}>
+                <div>
+                  <PanelRight className="w-4 h-4 transition-transform duration-200 ease-in-out" />
+                </div>
+              </Tooltip>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
