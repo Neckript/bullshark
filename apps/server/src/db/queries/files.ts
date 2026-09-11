@@ -114,6 +114,9 @@ const getOrphanedFileIds = async (): Promise<number[]> => {
       SELECT 1 FROM settings s WHERE s.logo_id = f.id
     )
     AND NOT EXISTS (
+      SELECT 1 FROM settings s WHERE s.banner_id = f.id
+    )
+    AND NOT EXISTS (
       SELECT 1 FROM roles r WHERE r.icon_file_id = f.id
     )
     AND NOT EXISTS (
@@ -133,6 +136,7 @@ const isFileOrphaned = async (fileId: number): Promise<boolean> => {
         AND NOT EXISTS (SELECT 1 FROM emojis e WHERE e.file_id = ${fileId})
         AND NOT EXISTS (SELECT 1 FROM message_reactions mr WHERE mr.file_id = ${fileId})
         AND NOT EXISTS (SELECT 1 FROM settings s WHERE s.logo_id = ${fileId})
+        AND NOT EXISTS (SELECT 1 FROM settings s WHERE s.banner_id = ${fileId})
         AND NOT EXISTS (SELECT 1 FROM roles r WHERE r.icon_file_id = ${fileId})
         AND NOT EXISTS (SELECT 1 FROM sounds snd WHERE snd.file_id = ${fileId})
         THEN 1
