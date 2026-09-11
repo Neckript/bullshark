@@ -162,6 +162,7 @@ export type TJoinedPublicUser = TPublicUser & {
 
 export type TJoinedSettings = TSettings & {
   logo: TFile | null;
+  banner: TFile | null;
 };
 
 export type TJoinedInvite = TInvite & {

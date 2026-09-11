@@ -53,6 +53,9 @@ const settings = sqliteTable(
     logoId: integer('logo_id').references(() => files.id, {
       onDelete: 'set null'
     }),
+    bannerId: integer('banner_id').references(() => files.id, {
+      onDelete: 'set null'
+    }),
     allowNewUsers: integer('allow_new_users', { mode: 'boolean' }).notNull(),
     directMessagesEnabled: integer('direct_messages_enabled', {
       mode: 'boolean'
@@ -64,6 +67,9 @@ const settings = sqliteTable(
     storageUploadMaxFileSize: integer('storage_upload_max_file_size').notNull(),
     storageMaxAvatarSize: integer('storage_max_avatar_size').notNull(),
     storageMaxBannerSize: integer('storage_max_banner_size').notNull(),
+    storageMaxServerBannerSize: integer('storage_max_server_banner_size')
+      .notNull()
+      .default(4 * 1024 * 1024),
     storageMaxAnimatedImageSize: integer('storage_max_animated_image_size')
       .notNull()
       .default(8 * 1024 * 1024),
