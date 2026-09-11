@@ -1,8 +1,13 @@
-import { ActivityLogType, getRandomString, Permission } from '@bullshark/shared';
+import {
+  ActivityLogType,
+  getRandomString,
+  Permission
+} from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
 import { invites, roles } from '../../db/schema';
+import { assertOutranksRole } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
@@ -30,6 +35,10 @@ const addInviteRoute = protectedProcedure
         code: 'NOT_FOUND',
         message: 'Role not found'
       });
+
+      // Le role porte par l'invitation est attribue au compte cree (login.ts) :
+      // sans ce controle, MANAGE_INVITES suffit a fabriquer un proprietaire.
+      await assertOutranksRole(ctx.userId, input.roleId);
     }
 
     const newCode = input.code || getRandomString(24);

@@ -17,6 +17,7 @@ import {
   messages,
   users
 } from '../../db/schema';
+import { assertOutranksUser } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import { pubsub } from '../../utils/pubsub';
@@ -69,6 +70,11 @@ const deleteUserRoute = protectedProcedure
       code: 'BAD_REQUEST',
       message: 'You cannot delete yourself.'
     });
+
+    // Suppression definitive : au moins aussi sensible qu'un bannissement,
+    // qui porte deja cette garde. Sans elle, MANAGE_USERS supprime le
+    // proprietaire.
+    await assertOutranksUser(ctx.userId, input.userId);
 
     const targetUser = await db
       .select({
