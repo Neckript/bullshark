@@ -2,7 +2,7 @@ import { DatePicker } from '@/components/date-picker';
 import { useRoles } from '@/features/server/roles/hooks';
 import { useForm } from '@/hooks/use-form';
 import { getTRPCClient } from '@/lib/trpc';
-import { getRandomString } from '@bullshark/shared';
+import { getRandomString, getTrpcError } from '@bullshark/shared';
 import {
   Button,
   Dialog,
@@ -58,6 +58,10 @@ const CreateInviteDialog = memo(
         close();
       } catch (error) {
         setTrpcErrors(error);
+        // Un refus qui ne vise aucun champ (permission, rang de role) atterrit
+        // dans `_general`, que ce formulaire n'affiche pas : sans ce toast, la
+        // boite reste ouverte sans rien dire et le refus passe pour un bug.
+        toast.error(getTrpcError(error, t('inviteCreateFailed')));
       }
     }, [close, refetch, setTrpcErrors, values, t]);
 
