@@ -32,6 +32,7 @@
   "selectRolePlaceholder": "Sélectionnez un rôle",
   "roleDefault": "Défaut",
   "inviteCreated": "Invitation créée",
+  "inviteCreateFailed": "Impossible de créer l'invitation.",
   "createInviteBtn": "Créer une invitation",
   "deleteUserTitle": "Supprimer {{name}}",
   "wipeAllDataLabel": "Effacer toutes les données",

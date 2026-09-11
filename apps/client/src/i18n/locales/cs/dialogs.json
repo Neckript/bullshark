@@ -32,6 +32,7 @@
   "selectRolePlaceholder": "Vyberte roli",
   "roleDefault": "Výchozí",
   "inviteCreated": "Pozvánka byla vytvořena",
+  "inviteCreateFailed": "Pozvánku se nepodařilo vytvořit.",
   "createInviteBtn": "Vytvořit pozvánku",
   "deleteUserTitle": "Odstranit {{name}}",
   "wipeAllDataLabel": "Odstranit všechna data",

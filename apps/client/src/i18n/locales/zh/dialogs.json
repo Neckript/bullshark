@@ -32,6 +32,7 @@
   "selectRolePlaceholder": "选择角色",
   "roleDefault": "默认",
   "inviteCreated": "邀请已创建",
+  "inviteCreateFailed": "无法创建邀请。",
   "createInviteBtn": "创建邀请",
   "deleteUserTitle": "删除 {{name}}",
   "wipeAllDataLabel": "清除所有数据",
