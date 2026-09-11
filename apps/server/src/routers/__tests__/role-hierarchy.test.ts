@@ -146,3 +146,59 @@ describe('role hierarchy — assignment & moderation', () => {
     ).rejects.toThrow('equal to or above');
   });
 });
+
+// Quatre routes portaient la meme lacune : elles verifiaient la permission
+// mais jamais le rang. Chacune menait a un privilege qu'on ne possede pas.
+describe('role hierarchy — gardes ajoutees apres audit', () => {
+  // Donne a l'utilisateur 2 un role au bas de la hierarchie portant `permission`.
+  const makeMod = async (permission: Permission) => {
+    const { caller: owner } = await initTest();
+    const roleId = await owner.roles.add();
+
+    await owner.roles.update({
+      roleId,
+      name: 'Mod',
+      color: '#336699',
+      hoist: false,
+      isMentionable: false,
+      permissions: [permission],
+      storageQuotaOverrideEnabled: false,
+      storageSpaceQuota: 0
+    });
+    await owner.users.addRole({ userId: 2, roleId });
+
+    return (await initTest(2)).caller;
+  };
+
+  test('MANAGE_INVITES ne permet pas de fabriquer une invitation proprietaire', async () => {
+    const mod = await makeMod(Permission.MANAGE_INVITES);
+
+    await expect(mod.invites.add({ roleId: OWNER_ROLE_ID })).rejects.toThrow(
+      'equal to or above'
+    );
+  });
+
+  test('MANAGE_ROLES ne permet pas de designer le role proprietaire par defaut', async () => {
+    const mod = await makeMod(Permission.MANAGE_ROLES);
+
+    await expect(
+      mod.roles.setDefault({ roleId: OWNER_ROLE_ID })
+    ).rejects.toThrow('equal to or above');
+  });
+
+  test('MANAGE_USERS ne permet pas de supprimer le proprietaire', async () => {
+    const mod = await makeMod(Permission.MANAGE_USERS);
+
+    await expect(mod.users.delete({ userId: 1 })).rejects.toThrow(
+      'equal to or above'
+    );
+  });
+
+  test('MANAGE_USERS ne permet pas de debannir le proprietaire', async () => {
+    const mod = await makeMod(Permission.MANAGE_USERS);
+
+    await expect(mod.users.unban({ userId: 1 })).rejects.toThrow(
+      'equal to or above'
+    );
+  });
+});
