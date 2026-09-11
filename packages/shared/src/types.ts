@@ -56,6 +56,7 @@ export type TPublicServerSettings = Pick<
   | 'storageFileSharingInDirectMessages'
   | 'storageMaxAvatarSize'
   | 'storageMaxBannerSize'
+  | 'storageMaxServerBannerSize'
   | 'storageMaxFilesPerMessage'
   | 'storageSpaceQuotaByUser'
   | 'storageOverflowAction'
@@ -67,6 +68,7 @@ export type TPublicServerSettings = Pick<
 > & {
   webRtcMaxBitrate: number;
   klipyEnabled: boolean;
+  banner: TFile | null;
 };
 
 export type TGenericObject = {

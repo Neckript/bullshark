@@ -9,6 +9,7 @@ import {
   STORAGE_MAX_IMAGE_OPTIMIZATION_QUALITY,
   STORAGE_MAX_QUOTA,
   STORAGE_MAX_QUOTA_PER_USER,
+  STORAGE_MAX_SERVER_BANNER_SIZE,
   STORAGE_MAX_SIGNED_URLS_TTL_SECONDS,
   STORAGE_MIN_FILES_PER_MESSAGE,
   STORAGE_MIN_FILE_SIZE,
@@ -46,6 +47,7 @@ import {
   MAX_BANNER_SIZE_PRESETS,
   MAX_FILES_PER_MESSAGE_PRESETS,
   MAX_FILE_SIZE_PRESETS,
+  MAX_SERVER_BANNER_SIZE_PRESETS,
   QUOTA_BY_USER_PRESETS,
   QUOTA_PRESETS,
   SIGNED_URLS_TTL_PRESETS
@@ -172,6 +174,26 @@ const Storage = memo(() => {
               </>
             }
             presets={MAX_BANNER_SIZE_PRESETS}
+          />
+        </Group>
+
+        <Group
+          label={t('maxServerBannerSizeLabel')}
+          description={t('maxServerBannerSizeDesc')}
+        >
+          <StorageSizeControl
+            value={Number(values.storageMaxServerBannerSize)}
+            max={STORAGE_MAX_SERVER_BANNER_SIZE}
+            min={STORAGE_MIN_FILE_SIZE}
+            disabled={!values.storageUploadEnabled}
+            onChange={(value) => onChange('storageMaxServerBannerSize', value)}
+            preview={
+              <>
+                {labels.storageMaxServerBannerSize.value}{' '}
+                {labels.storageMaxServerBannerSize.unit}
+              </>
+            }
+            presets={MAX_SERVER_BANNER_SIZE_PRESETS}
           />
         </Group>
 

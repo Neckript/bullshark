@@ -2,6 +2,7 @@ import type { TJoinedSettings, TPublicServerSettings } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { db } from '..';
 import { config } from '../../config';
+import { signFile } from '../../helpers/files-crypto';
 import { files, settings } from '../schema';
 
 // since this is static, we can keep it in memory to avoid querying the DB every time
@@ -28,9 +29,18 @@ const getSettings = async (): Promise<TJoinedSettings> => {
         .get()
     : undefined;
 
+  const banner = serverSettings.bannerId
+    ? await db
+        .select()
+        .from(files)
+        .where(eq(files.id, serverSettings.bannerId))
+        .get()
+    : undefined;
+
   return {
     ...serverSettings,
-    logo: logo ?? null
+    logo: logo ?? null,
+    banner: banner ?? null
   };
 };
 
@@ -49,6 +59,7 @@ const getPublicSettings: () => Promise<TPublicServerSettings> = async () => {
       settings.storageFileSharingInDirectMessages,
     storageMaxAvatarSize: settings.storageMaxAvatarSize,
     storageMaxBannerSize: settings.storageMaxBannerSize,
+    storageMaxServerBannerSize: settings.storageMaxServerBannerSize,
     storageMaxFilesPerMessage: settings.storageMaxFilesPerMessage,
     storageSpaceQuotaByUser: settings.storageSpaceQuotaByUser,
     storageOverflowAction: settings.storageOverflowAction,
@@ -58,7 +69,12 @@ const getPublicSettings: () => Promise<TPublicServerSettings> = async () => {
     enableSearch: settings.enableSearch,
     showWelcomeDialog: settings.showWelcomeDialog,
     storageSignedUrlsEnabled: settings.storageSignedUrlsEnabled,
-    klipyEnabled: !!settings.klipyApiKey
+    klipyEnabled: !!settings.klipyApiKey,
+    banner: signFile(
+      settings.banner,
+      settings.storageSignedUrlsEnabled,
+      settings.storageSignedUrlsTtlSeconds
+    )
   };
 
   return publicSettings;

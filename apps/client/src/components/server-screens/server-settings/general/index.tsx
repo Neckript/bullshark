@@ -16,10 +16,11 @@ import {
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LogoManager } from './logo-manager';
+import { ServerBannerManager } from './server-banner-manager';
 
 const General = memo(() => {
   const { t } = useTranslation('settings');
-  const { settings, logo, loading, onChange, submit, errors, refetch } =
+  const { settings, logo, banner, loading, onChange, submit, errors, refetch } =
     useAdminGeneral();
 
   if (loading) {
@@ -73,6 +74,8 @@ const General = memo(() => {
         </Group>
 
         <LogoManager logo={logo} refetch={refetch} />
+
+        <ServerBannerManager banner={banner} refetch={refetch} />
 
         <Group
           label={t('allowNewUsersLabel')}
