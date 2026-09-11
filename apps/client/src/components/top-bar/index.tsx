@@ -32,7 +32,10 @@ const TopBar = memo(({ onToggleRightSidebar, isOpen }: TTopBarProps) => {
     <div
       className={cn(
         'hidden lg:grid h-12 w-full grid-cols-[1fr_minmax(320px,1.4fr)_1fr] items-center border-b border-border bg-card px-4 transition-all duration-300 ease-in-out gap-2 shadow-[inset_0_1px_0_var(--edge-hi)]',
-        isDesktopShell && 'app-drag'
+        // La superposition systeme fait 48 px et repeint la derniere ligne de
+        // pixels de la barre : a h-12 pile, la bordure disparaissait sous les
+        // boutons. Un pixel de plus la fait passer dessous, sur toute la largeur.
+        isDesktopShell && 'app-drag h-[49px]'
       )}
       // Les boutons systeme sont peints PAR-DESSUS la page : sans ce
       // remplissage ils recouvriraient la colonne de droite. Les variables
