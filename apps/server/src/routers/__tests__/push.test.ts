@@ -153,4 +153,49 @@ describe('push router', () => {
       })
     ).rejects.toThrow();
   });
+
+  test('subscribe rejects a non-https endpoint (SSRF guard)', async () => {
+    const { caller } = await initTest(1);
+
+    await expect(
+      caller.push.subscribe({
+        endpoint: 'http://push.example.com/endpoint',
+        p256dh: 'p256dh-key',
+        auth: 'auth-key'
+      })
+    ).rejects.toThrow();
+  });
+
+  test('subscribe rejects an internal IP endpoint (SSRF guard)', async () => {
+    const { caller } = await initTest(1);
+
+    // cloud metadata service - the classic SSRF target
+    await expect(
+      caller.push.subscribe({
+        endpoint: 'https://169.254.169.254/latest/meta-data/',
+        p256dh: 'p256dh-key',
+        auth: 'auth-key'
+      })
+    ).rejects.toThrow();
+
+    // loopback
+    await expect(
+      caller.push.subscribe({
+        endpoint: 'https://127.0.0.1:6379/',
+        p256dh: 'p256dh-key',
+        auth: 'auth-key'
+      })
+    ).rejects.toThrow();
+
+    // no row should have been stored for either attempt
+    const rows = await tdb
+      .select()
+      .from(pushSubscriptions)
+      .where(eq(pushSubscriptions.userId, 1));
+
+    for (const row of rows) {
+      expect(row.endpoint).not.toContain('169.254.169.254');
+      expect(row.endpoint).not.toContain('127.0.0.1');
+    }
+  });
 });
