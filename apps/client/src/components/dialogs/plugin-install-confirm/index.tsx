@@ -92,7 +92,7 @@ const PluginInstallConfirmDialog = memo(
                 href="https://codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/security.md"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline hover:text-primary transition-colors"
+                className="underline hover:text-primary transition-colors break-all"
               >
                 https://codeberg.org/The_Neckript/bullshark/src/branch/main/docs/plugins/security.md
               </a>
