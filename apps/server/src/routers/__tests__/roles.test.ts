@@ -1,6 +1,9 @@
 import { Permission } from '@bullshark/shared';
 import { describe, expect, test } from 'bun:test';
+import { eq } from 'drizzle-orm';
 import { initTest } from '../../__tests__/helpers';
+import { tdb } from '../../__tests__/setup';
+import { rolePermissions, roles, userRoles } from '../../db/schema';
 
 describe('roles router', () => {
   test('should throw when user lacks permissions (getAll)', async () => {
@@ -321,5 +324,138 @@ describe('roles router', () => {
     permissions.forEach((perm) => {
       expect(role!.permissions).toContain(perm);
     });
+  });
+});
+
+describe('roles router - permission escalation guard', () => {
+  // user 2 gets a role ranked above the target holding MANAGE_ROLES but NOT
+  // MANAGE_SETTINGS, so they can edit the target role yet must not be able to
+  // grant themselves permissions they do not hold.
+  const seedModerator = async (): Promise<{ targetRoleId: number }> => {
+    const now = Date.now();
+
+    const [modRole] = await tdb
+      .insert(roles)
+      .values({
+        name: 'Moderator',
+        color: '#123456',
+        position: 100,
+        isPersistent: false,
+        isDefault: false,
+        storageQuotaOverrideEnabled: false,
+        storageSpaceQuota: 0,
+        createdAt: now
+      })
+      .returning();
+
+    await tdb.insert(rolePermissions).values({
+      roleId: modRole!.id,
+      permission: Permission.MANAGE_ROLES,
+      createdAt: now
+    });
+
+    await tdb.insert(userRoles).values({
+      userId: 2,
+      roleId: modRole!.id,
+      createdAt: now
+    });
+
+    const [targetRole] = await tdb
+      .insert(roles)
+      .values({
+        name: 'Target',
+        color: '#654321',
+        position: 50,
+        isPersistent: false,
+        isDefault: false,
+        storageQuotaOverrideEnabled: false,
+        storageSpaceQuota: 0,
+        createdAt: now
+      })
+      .returning();
+
+    return { targetRoleId: targetRole!.id };
+  };
+
+  const readPermissions = async (roleId: number): Promise<Permission[]> =>
+    (
+      await tdb
+        .select()
+        .from(rolePermissions)
+        .where(eq(rolePermissions.roleId, roleId))
+    ).map((row) => row.permission as Permission);
+
+  const updateTarget = async (
+    caller: Awaited<ReturnType<typeof initTest>>['caller'],
+    targetRoleId: number,
+    permissions: Permission[]
+  ) =>
+    caller.roles.update({
+      roleId: targetRoleId,
+      name: 'Target',
+      color: '#654321',
+      hoist: false,
+      isMentionable: false,
+      permissions,
+      storageQuotaOverrideEnabled: false,
+      storageSpaceQuota: 0
+    });
+
+  test('cannot grant a permission the actor does not hold', async () => {
+    const { targetRoleId } = await seedModerator();
+    const { caller } = await initTest(2);
+
+    await updateTarget(caller, targetRoleId, [Permission.MANAGE_SETTINGS]);
+
+    const perms = await readPermissions(targetRoleId);
+
+    expect(perms).not.toContain(Permission.MANAGE_SETTINGS);
+  });
+
+  test('can still toggle permissions the actor does hold', async () => {
+    const { targetRoleId } = await seedModerator();
+    const { caller } = await initTest(2);
+
+    await updateTarget(caller, targetRoleId, [
+      Permission.MANAGE_ROLES,
+      Permission.MANAGE_SETTINGS
+    ]);
+
+    const perms = await readPermissions(targetRoleId);
+
+    expect(perms).toContain(Permission.MANAGE_ROLES); // actor holds it
+    expect(perms).not.toContain(Permission.MANAGE_SETTINGS); // actor lacks it
+  });
+
+  test('does not strip an unheld permission already on the role', async () => {
+    const { targetRoleId } = await seedModerator();
+
+    // a higher authority already granted MANAGE_SETTINGS to the target
+    await tdb.insert(rolePermissions).values({
+      roleId: targetRoleId,
+      permission: Permission.MANAGE_SETTINGS,
+      createdAt: Date.now()
+    });
+
+    const { caller } = await initTest(2);
+
+    // moderator submits a set without MANAGE_SETTINGS - it must be preserved
+    await updateTarget(caller, targetRoleId, [Permission.MANAGE_ROLES]);
+
+    const perms = await readPermissions(targetRoleId);
+
+    expect(perms).toContain(Permission.MANAGE_SETTINGS); // preserved
+    expect(perms).toContain(Permission.MANAGE_ROLES); // added (actor holds it)
+  });
+
+  test('owner can grant any permission', async () => {
+    const { targetRoleId } = await seedModerator();
+    const { caller } = await initTest(1); // owner
+
+    await updateTarget(caller, targetRoleId, [Permission.MANAGE_SETTINGS]);
+
+    const perms = await readPermissions(targetRoleId);
+
+    expect(perms).toContain(Permission.MANAGE_SETTINGS);
   });
 });
