@@ -15,7 +15,15 @@ const zConfig = z.object({
   server: z.object({
     port: z.coerce.number().int().positive(),
     debug: z.coerce.boolean(),
-    autoupdate: z.coerce.boolean()
+    autoupdate: z.coerce.boolean(),
+    // false (default): client-controlled headers like x-forwarded-for and
+    // cf-connecting-ip are ignored, the raw socket address is used instead.
+    // Safe for the no-proxy self-signed setup, but means rate limiting sees
+    // the reverse proxy's IP for every client if one sits in front. true:
+    // trust those headers - only enable this when a reverse proxy you
+    // control (Caddy, etc.) actually terminates the connection, otherwise
+    // any client can forge its own IP and dodge rate limits entirely.
+    trustProxy: z.coerce.boolean()
   }),
   webRtc: z.object({
     port: z.coerce.number().int().positive(),
@@ -99,7 +107,8 @@ const defaultConfig: TConfig = {
   server: {
     port: 4991,
     debug: IS_DEVELOPMENT,
-    autoupdate: false
+    autoupdate: false,
+    trustProxy: false
   },
   webRtc: {
     port: 40000,
@@ -207,6 +216,7 @@ config = applyEnvOverrides(config, {
   'server.port': 'BULLSHARK_PORT',
   'server.debug': 'BULLSHARK_DEBUG',
   'server.autoupdate': 'BULLSHARK_AUTOUPDATE',
+  'server.trustProxy': 'BULLSHARK_TRUST_PROXY',
   'webRtc.port': 'BULLSHARK_WEBRTC_PORT',
   'webRtc.announcedAddress': 'BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS',
   'webRtc.maxBitrate': 'BULLSHARK_WEBRTC_MAX_BITRATE',
