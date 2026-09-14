@@ -11,7 +11,6 @@ import {
 } from '@bullshark/shared';
 import { randomUUIDv7 } from 'bun';
 import { createHash } from 'crypto';
-import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import path from 'path';
 import { db } from '../db';
@@ -377,32 +376,6 @@ class FileManager {
     }
   };
 
-  private getUniqueName = async (originalName: string): Promise<string> => {
-    const baseName = path.basename(originalName, path.extname(originalName));
-    const extension = getNormalizedExtension(originalName);
-
-    let fileName = `${baseName}${extension}`;
-    let counter = 2;
-
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
-      const existingFile = await db
-        .select()
-        .from(files)
-        .where(eq(files.name, fileName))
-        .get();
-
-      if (!existingFile) {
-        break;
-      }
-
-      fileName = `${baseName}-${counter}${extension}`;
-      counter++;
-    }
-
-    return fileName;
-  };
-
   public async saveFile(
     tempFileId: string,
     userId: number,
@@ -448,7 +421,12 @@ class FileManager {
 
     await this.handleStorageLimits(tempFile, settings);
 
-    const fileName = await this.getUniqueName(tempFile.originalName);
+    // the stored/served name is a random capability, never the human name -
+    // /public serves files by this name with no auth when signed URLs are
+    // off, so a guessable name (facture.pdf) would expose private
+    // attachments to anyone. originalName still drives the download filename
+    // via Content-Disposition, so users see their real name either way.
+    const fileName = `${randomUUIDv7()}${tempFile.extension}`;
     const destinationPath = path.join(PUBLIC_PATH, fileName);
 
     await moveFile(tempFile.path, destinationPath);
