@@ -202,7 +202,7 @@ describe('file manager', () => {
 
     expect(savedFile).toBeDefined();
     expect(savedFile.id).toBeGreaterThan(0);
-    expect(savedFile.name).toBe(testFileName);
+    expect(savedFile.name).toEndWith('.txt');
     expect(savedFile.originalName).toBe(testFileName);
     expect(savedFile.extension).toBe('.txt');
     expect(savedFile.size).toBe(stats.size);
@@ -256,7 +256,7 @@ describe('file manager', () => {
 
     tempFilesToCleanup.push(path.join(PUBLIC_PATH, savedFile.name));
 
-    expect(savedFile.name).toBe('disabled.png');
+    expect(savedFile.name).toEndWith('.png');
     expect(savedFile.originalName).toBe('disabled.png');
     expect(savedFile.extension).toBe('.png');
     expect(savedFile.size).toBe(stats.size);
@@ -287,7 +287,7 @@ describe('file manager', () => {
 
     tempFilesToCleanup.push(path.join(PUBLIC_PATH, savedFile.name));
 
-    expect(savedFile.name).toBe('optimized.webp');
+    expect(savedFile.name).toEndWith('.webp');
     expect(savedFile.originalName).toBe('optimized.webp');
     expect(savedFile.extension).toBe('.webp');
     expect(savedFile.mimeType).toBe('image/webp');
@@ -317,7 +317,8 @@ describe('file manager', () => {
 
     tempFilesToCleanup.push(path.join(PUBLIC_PATH, savedFile.name));
 
-    expect(savedFile.name).toBe('not-image.txt');
+    expect(savedFile.name).toEndWith('.txt');
+    expect(savedFile.originalName).toBe('not-image.txt');
     expect(savedFile.extension).toBe('.txt');
     expect(savedFile.size).toBe(stats.size);
   });
@@ -721,7 +722,7 @@ describe('file manager', () => {
     expect(path1).not.toBe(path3);
   });
 
-  test('should append counter when same original name already exists', async () => {
+  test('gives distinct random stored names to files sharing an original name', async () => {
     const fileAPath = path.join(UPLOADS_PATH, `dup-${Date.now()}.txt`);
 
     await fs.writeFile(fileAPath, 'first');
@@ -756,8 +757,15 @@ describe('file manager', () => {
 
     tempFilesToCleanup.push(path.join(PUBLIC_PATH, savedB.name));
 
-    expect(savedA.name).toBe('my-file.txt');
-    expect(savedB.name).toBe('my-file-2.txt');
+    // stored name is a random capability, never the human name - so two
+    // files with the same original name still get distinct, unguessable
+    // stored names while keeping the shared original name for downloads
+    expect(savedA.name).not.toBe(savedB.name);
+    expect(savedA.name).not.toBe('my-file.txt');
+    expect(savedA.name).toEndWith('.txt');
+    expect(savedB.name).toEndWith('.txt');
+    expect(savedA.originalName).toBe('my-file.txt');
+    expect(savedB.originalName).toBe('my-file.txt');
 
     const dbA = await tdb
       .select()
@@ -772,9 +780,9 @@ describe('file manager', () => {
       .get();
 
     expect(dbA).toBeDefined();
-    expect(dbA?.name).toBe('my-file.txt');
+    expect(dbA?.name).toBe(savedA.name);
     expect(dbB).toBeDefined();
-    expect(dbB?.name).toBe('my-file-2.txt');
+    expect(dbB?.name).toBe(savedB.name);
   });
 
   test('temporaryFileExists returns correct boolean', async () => {
@@ -920,8 +928,10 @@ describe('file manager', () => {
 
     tempFilesToCleanup.push(path.join(PUBLIC_PATH, saved2.name));
 
-    expect(saved1.name).toBe('report.txt');
-    expect(saved2.name).toBe('report-2.txt');
+    expect(saved1.name).toEndWith('.txt');
+    expect(saved1.name).not.toContain('.TXT');
+    expect(saved2.name).toEndWith('.txt');
+    expect(saved1.name).not.toBe(saved2.name);
   });
 });
 

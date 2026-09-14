@@ -162,9 +162,10 @@ describe('/public', () => {
     );
     const disposition = response.headers.get('Content-Disposition');
 
-    expect(disposition).toInclude(`filename="${dbFile!.name}"`);
+    // download filename is the human originalName, not the random stored name
+    expect(disposition).toInclude(`filename="${dbFile!.originalName}"`);
     expect(disposition).toInclude(
-      `filename*=UTF-8''${encodeURIComponent(dbFile!.name)}`
+      `filename*=UTF-8''${encodeURIComponent(dbFile!.originalName)}`
     );
 
     const responseText = await response.text();
