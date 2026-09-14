@@ -1,4 +1,8 @@
-import { DEFAULT_MESSAGES_LIMIT, type TMessage } from '@bullshark/shared';
+import {
+  DEFAULT_MESSAGES_LIMIT,
+  MAX_MESSAGES_LIMIT,
+  type TMessage
+} from '@bullshark/shared';
 import { and, asc, eq, gt } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
@@ -13,7 +17,12 @@ const getThreadMessagesRoute = protectedProcedure
     z.object({
       parentMessageId: z.number(),
       cursor: z.number().nullish(),
-      limit: z.number().default(DEFAULT_MESSAGES_LIMIT)
+      limit: z
+        .number()
+        .int()
+        .min(1)
+        .max(MAX_MESSAGES_LIMIT)
+        .default(DEFAULT_MESSAGES_LIMIT)
     })
   )
   .meta({ infinite: true })

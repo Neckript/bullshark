@@ -145,6 +145,39 @@ describe('messages router', () => {
     expect(result.messages.length).toBe(3);
   });
 
+  test('rejects an over-large page limit (unbounded pagination guard)', async () => {
+    const { caller } = await initTest();
+
+    await expect(
+      caller.messages.get({
+        channelId: 1,
+        cursor: null,
+        limit: 10_000_000
+      })
+    ).rejects.toThrow();
+  });
+
+  test('rejects a non-positive page limit', async () => {
+    const { caller } = await initTest();
+
+    // SQLite treats LIMIT -1 as "no limit", so a negative value must be refused
+    await expect(
+      caller.messages.get({
+        channelId: 1,
+        cursor: null,
+        limit: -1
+      })
+    ).rejects.toThrow();
+
+    await expect(
+      caller.messages.get({
+        channelId: 1,
+        cursor: null,
+        limit: 0
+      })
+    ).rejects.toThrow();
+  });
+
   test('should search messages and message files', async () => {
     const { caller } = await initTest(1);
 

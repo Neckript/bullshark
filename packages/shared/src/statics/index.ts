@@ -6,6 +6,12 @@ export * from './user-settings';
 
 export const DEFAULT_MESSAGES_LIMIT = 100;
 
+// Hard ceiling on how many messages a single paginated request may ask for,
+// so a client cannot request an unbounded page and pull an entire channel at
+// once (resource exhaustion). A non-positive limit is also rejected - SQLite
+// treats LIMIT -1 as "no limit".
+export const MAX_MESSAGES_LIMIT = 100;
+
 export const OWNER_ROLE_ID = 1;
 
 // The owner role is pinned far above any user-created role so position-based
