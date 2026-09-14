@@ -13,6 +13,7 @@ import {
 import { getUserRoleIds } from '../../db/queries/roles';
 import { getUserSettings } from '../../db/queries/user-settings';
 import { getPublicUserById } from '../../db/queries/users';
+import { assertSafePushEndpoint } from '../../helpers/assert-safe-endpoint';
 import { decidePushForUser } from '../../helpers/push-recipients';
 import { getVapidKeys } from '../../helpers/vapid';
 import { logger } from '../../logger';
@@ -97,6 +98,16 @@ const enqueuePushForMessage = (
 
       await Promise.allSettled(
         subs.map(async (sub) => {
+          // re-check at send time so an endpoint that now points at the
+          // internal network (DNS rebinding, or a subscription stored before
+          // this guard existed) is dropped instead of being requested
+          try {
+            await assertSafePushEndpoint(sub.endpoint);
+          } catch {
+            await deletePushSubscriptionByEndpoint(sub.endpoint);
+            return;
+          }
+
           try {
             await webpush.sendNotification(
               {
