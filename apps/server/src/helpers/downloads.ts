@@ -7,6 +7,7 @@ import { randomUUIDv7 } from 'bun';
 import fs from 'fs/promises';
 import path from 'path';
 import { logger } from '../logger';
+import { assertPublicHttpsUrl } from './assert-safe-endpoint';
 import { ensureDir } from './fs';
 import { PLUGINS_PATH, TMP_PATH } from './paths';
 import { sha256File } from './sha-256-file';
@@ -66,6 +67,13 @@ const downloadPlugin = async (
   url: string,
   expectedChecksum: string
 ): Promise<void> => {
+  // the download URL comes from the marketplace registry (remote data): require
+  // https and refuse internal targets so the plugin bundle - which becomes
+  // executing server code - can't be MITM'd in plaintext or pulled from the
+  // server's own network. The checksum only guards transport integrity, not a
+  // compromised registry; real supply-chain trust would need signed plugins.
+  assertPublicHttpsUrl(url);
+
   await ensureDir(downloadsPath);
 
   const archivePath = path.join(downloadsPath, `${randomUUIDv7()}.archive`);
