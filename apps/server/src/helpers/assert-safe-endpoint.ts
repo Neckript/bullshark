@@ -27,17 +27,17 @@ const assertPublicHttpsUrl = (endpoint: string): void => {
   try {
     url = new URL(endpoint);
   } catch {
-    throw new Error('Invalid push endpoint.');
+    throw new Error('URL is not allowed.');
   }
 
   if (url.protocol !== 'https:' || url.username || url.password) {
-    throw new Error('Invalid push endpoint.');
+    throw new Error('URL is not allowed.');
   }
 
   const host = url.hostname.replace(/^\[|\]$/g, '');
 
   if (ipaddr.isValid(host) && isPrivateIP(canonical(host))) {
-    throw new Error('Invalid push endpoint.');
+    throw new Error('URL is not allowed.');
   }
 };
 
@@ -62,14 +62,14 @@ const assertSafePushEndpoint = async (endpoint: string): Promise<void> => {
   try {
     addresses = await dns.lookup(host, { all: true });
   } catch {
-    throw new Error('Invalid push endpoint.');
+    throw new Error('URL is not allowed.');
   }
 
   if (
     addresses.length === 0 ||
     addresses.some((entry) => isPrivateIP(canonical(entry.address)))
   ) {
-    throw new Error('Invalid push endpoint.');
+    throw new Error('URL is not allowed.');
   }
 };
 
