@@ -1,6 +1,7 @@
 import type http from 'http';
 import ipaddr from 'ipaddr.js';
 import { UAParser } from 'ua-parser-js';
+import { config } from '../config';
 import type { TConnectionInfo } from '../types';
 
 // have no fucking idea what's going on in this file
@@ -130,27 +131,32 @@ const getWsIp = (
 ): string | undefined => {
   const headers = req?.headers ?? {};
 
-  // 1. high-trust CDN / proxy headers (single-value, most trustworthy)
-  for (const header of DIRECT_HEADERS) {
-    const value = getHeaderValue(headers, header);
-    if (!value) continue;
+  // proxy headers are client-controlled unless a reverse proxy we trust is
+  // guaranteed to overwrite them - without trustProxy, skip straight to the
+  // raw socket address so a client can't forge its own rate-limit identity
+  if (config.server.trustProxy) {
+    // 1. high-trust CDN / proxy headers (single-value, most trustworthy)
+    for (const header of DIRECT_HEADERS) {
+      const value = getHeaderValue(headers, header);
+      if (!value) continue;
 
-    const ip = pickBestIp(splitCommaSeparated(value));
-    if (ip) return ip;
-  }
+      const ip = pickBestIp(splitCommaSeparated(value));
+      if (ip) return ip;
+    }
 
-  // 2. standard multi-hop proxy header
-  const xForwardedFor = getHeaderValue(headers, 'x-forwarded-for');
-  if (xForwardedFor) {
-    const ip = pickBestIp(splitCommaSeparated(xForwardedFor));
-    if (ip) return ip;
-  }
+    // 2. standard multi-hop proxy header
+    const xForwardedFor = getHeaderValue(headers, 'x-forwarded-for');
+    if (xForwardedFor) {
+      const ip = pickBestIp(splitCommaSeparated(xForwardedFor));
+      if (ip) return ip;
+    }
 
-  // 3. RFC 7239 Forwarded header
-  const forwarded = getHeaderValue(headers, 'forwarded');
-  if (forwarded) {
-    const ip = pickBestIp(extractForwardedCandidates(forwarded));
-    if (ip) return ip;
+    // 3. RFC 7239 Forwarded header
+    const forwarded = getHeaderValue(headers, 'forwarded');
+    if (forwarded) {
+      const ip = pickBestIp(extractForwardedCandidates(forwarded));
+      if (ip) return ip;
+    }
   }
 
   // 4. fallback to raw socket remote address
