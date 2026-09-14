@@ -122,6 +122,51 @@ describe('/upload', () => {
     );
   });
 
+  test('rejects a body larger than the limit even when x-content-length lies', async () => {
+    await tdb
+      .update(settings)
+      .set({ storageUploadMaxFileSize: 1024 }); // 1 KB
+
+    // declare 1 byte in the header but actually stream ~100 KB
+    const bigBody = 'A'.repeat(100 * 1024);
+    const blob = new Blob([bigBody], { type: 'text/plain' });
+    const file = new File([blob], 'liar.txt', { type: 'text/plain' });
+
+    const response = await fetch(`${testsBaseUrl}/upload`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        [UploadHeaders.TYPE]: file.type,
+        [UploadHeaders.CONTENT_LENGTH]: '1', // the lie
+        [UploadHeaders.ORIGINAL_NAME]: file.name,
+        [UploadHeaders.TOKEN]: token
+      },
+      body: file
+    });
+
+    expect(response.status).toBe(413);
+
+    const data: any = await response.json();
+
+    expect(data).toHaveProperty(
+      'error',
+      `File ${file.name} exceeds the maximum allowed size`
+    );
+
+    // no partial file exceeding the limit may be left behind on disk
+    const tmpFiles = await fs.readdir(TMP_PATH);
+
+    for (const name of tmpFiles) {
+      const size = (await fs.stat(path.join(TMP_PATH, name))).size;
+      expect(size).toBeLessThanOrEqual(1024);
+    }
+
+    // restore a generous limit for the remaining tests
+    await tdb
+      .update(settings)
+      .set({ storageUploadMaxFileSize: 50 * 1024 * 1024 });
+  });
+
   test('should handle files with special characters in name', async () => {
     const specialContent = 'File with special name';
     const blob = new Blob([specialContent], { type: 'text/plain' });
