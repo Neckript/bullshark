@@ -1,6 +1,7 @@
-import type {
-  ActivityLogType,
-  TActivityLogDetailsMap
+import {
+  getErrorMessage,
+  type ActivityLogType,
+  type TActivityLogDetailsMap
 } from '@bullshark/shared';
 import chalk from 'chalk';
 import Queue from 'queue';
@@ -35,19 +36,27 @@ const enqueueActivityLog = <T extends ActivityLogType>({
   activityLogQueue.push(async (callback) => {
     const start = performance.now();
 
-    await db.insert(activityLog).values({
-      userId,
-      type: type,
-      details,
-      ip: ip || getUserIp(userId) || null,
-      createdAt: date
-    });
+    // best-effort: a background log write must never surface as an unhandled
+    // rejection (e.g. a transient DB error, or the DB torn down in tests)
+    try {
+      await db.insert(activityLog).values({
+        userId,
+        type: type,
+        details,
+        ip: ip || getUserIp(userId) || null,
+        createdAt: date
+      });
 
-    logger.debug(
-      `${chalk.dim('[Activity Logger]')} Logged activity of type ${type} for user ${userId} in ${(performance.now() - start).toFixed(2)} ms`
-    );
-
-    callback?.();
+      logger.debug(
+        `${chalk.dim('[Activity Logger]')} Logged activity of type ${type} for user ${userId} in ${(performance.now() - start).toFixed(2)} ms`
+      );
+    } catch (error) {
+      logger.error(
+        `${chalk.dim('[Activity Logger]')} Failed to log activity of type ${type} for user ${userId}: ${getErrorMessage(error)}`
+      );
+    } finally {
+      callback?.();
+    }
   });
 };
 
