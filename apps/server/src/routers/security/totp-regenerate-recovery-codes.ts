@@ -7,10 +7,19 @@ import {
 } from '../../helpers/recovery-codes';
 import { verifyTotpCode } from '../../helpers/totp';
 import { decryptTotpSecret } from '../../helpers/totp-crypto';
+import { config } from '../../config';
 import type { Context } from '../../utils/trpc';
-import { protectedProcedure } from '../../utils/trpc';
+import { protectedProcedure, rateLimitedProcedure } from '../../utils/trpc';
 
-const totpRegenerateRecoveryCodesRoute = protectedProcedure
+// gated by a TOTP code that is brute-forceable, so cap verification attempts
+const totpRegenerateRecoveryCodesRoute = rateLimitedProcedure(
+  protectedProcedure,
+  {
+    maxRequests: config.rateLimiters.twoFactor.maxRequests,
+    windowMs: config.rateLimiters.twoFactor.windowMs,
+    logLabel: 'totp-regenerate-recovery-codes'
+  }
+)
   .input(z.object({ code: z.string().min(6).max(6) }))
   .mutation(async ({ ctx, input }) => {
     // typed alias: tRPC's generic ctx defeats TS's `never`-return
