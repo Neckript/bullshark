@@ -1,5 +1,17 @@
 import { getTRPCClient } from '@/lib/trpc';
 import {
+  OWNER_ROLE_ID,
+  getTrpcError,
+  type TJoinedRole
+} from '@bullshark/shared';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@bullshark/ui';
+import {
   DndContext,
   PointerSensor,
   closestCenter,
@@ -13,12 +25,6 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  OWNER_ROLE_ID,
-  getTrpcError,
-  type TJoinedRole
-} from '@bullshark/shared';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@bullshark/ui';
 import { Plus } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

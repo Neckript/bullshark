@@ -1,13 +1,13 @@
 import { ActivityLogType } from '@bullshark/shared';
 import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { config } from '../../config';
 import { db } from '../../db';
 import { disableTotp } from '../../db/mutations/totp';
 import { getUserTotp } from '../../db/queries/totp';
 import { users } from '../../db/schema';
 import { decryptTotpSecret } from '../../helpers/totp-crypto';
 import { verifySecondFactor } from '../../helpers/verify-second-factor';
-import { config } from '../../config';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import type { Context } from '../../utils/trpc';

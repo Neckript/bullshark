@@ -2,7 +2,13 @@ import { UserAvatar } from '@/components/user-avatar';
 import { useRoleById } from '@/features/server/roles/hooks';
 import { useUserById } from '@/features/server/users/hooks';
 import { ChannelPermission, getTrpcError } from '@bullshark/shared';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '@bullshark/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from '@bullshark/ui';
 import { Trash2 } from 'lucide-react';
 import { memo, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';

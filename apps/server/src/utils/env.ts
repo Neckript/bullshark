@@ -12,7 +12,8 @@ const SERVER_VERSION =
 const BUILD_DATE =
   typeof BULLSHARK_BUILD_DATE !== 'undefined' ? BULLSHARK_BUILD_DATE : 'dev';
 
-const env = typeof BULLSHARK_ENV !== 'undefined' ? BULLSHARK_ENV : 'development';
+const env =
+  typeof BULLSHARK_ENV !== 'undefined' ? BULLSHARK_ENV : 'development';
 const IS_PRODUCTION = env === 'production';
 const IS_DEVELOPMENT = !IS_PRODUCTION;
 const IS_TEST = process.env.NODE_ENV === 'test';
@@ -27,11 +28,11 @@ if (IS_PRODUCTION) {
 
 export {
   BUILD_DATE,
+  BULLSHARK_MEDIASOUP_BIN_NAME,
   IS_DEVELOPMENT,
   IS_DOCKER,
   IS_E2E,
   IS_PRODUCTION,
   IS_TEST,
-  SERVER_VERSION,
-  BULLSHARK_MEDIASOUP_BIN_NAME
+  SERVER_VERSION
 };

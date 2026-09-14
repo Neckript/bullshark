@@ -1,5 +1,5 @@
-import { expect, test } from '@playwright/test';
 import { TestId } from '@bullshark/shared';
+import { expect, test } from '@playwright/test';
 
 test.describe('Auto Login', () => {
   test('should display the auto-login switch on the connect screen', async ({

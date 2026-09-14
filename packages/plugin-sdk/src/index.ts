@@ -15,12 +15,12 @@ import type {
 // Values are imported from the zod-free modules, not the barrel: the barrel's
 // runtime graph pulls zod, which put 502 KB into this bundle. Type-only imports
 // above can stay on the barrel -- they erase at compile time.
-import { FileSaveType } from '@bullshark/shared/src/plugins/hooks';
 import {
   PLUGIN_SDK_VERSION,
   PluginCapability,
   PluginSlot
 } from '@bullshark/shared/src/plugins/constants';
+import { FileSaveType } from '@bullshark/shared/src/plugins/hooks';
 // The mediasoup-derived types live in './voice' so that this entry point pulls
 // no compiled C++ worker on an author who never touches voice. See voice.ts.
 import type {
@@ -211,14 +211,14 @@ export type {
   CommandDefinition,
   TActionContract,
   TBeforeFileSaveHook,
+  TBullsharkState,
   TCommandArg,
   TCommandContract,
   TInvokerContext,
   TPluginActions,
   TPluginComponentsMapBySlotId,
   TPluginStore,
-  TPluginStoreState,
-  TBullsharkState
+  TPluginStoreState
 };
 
 export * from './actions';

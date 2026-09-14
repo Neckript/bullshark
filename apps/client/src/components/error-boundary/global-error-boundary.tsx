@@ -79,11 +79,7 @@ const GlobalErrorFallback = memo(
               </Button>
 
               <Button asChild variant="outline" className="sm:w-auto">
-                <a
-                  href={ISSUES_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={ISSUES_URL} target="_blank" rel="noopener noreferrer">
                   <Github className="h-4 w-4" />
                   {t('reportIssueOnGithub')}
                 </a>

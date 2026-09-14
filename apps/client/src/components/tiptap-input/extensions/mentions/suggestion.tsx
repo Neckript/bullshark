@@ -2,8 +2,8 @@ import { UserAvatar } from '@/components/user-avatar';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { getRenderedUsername } from '@/helpers/get-rendered-username';
 import { isNoColor } from '@/helpers/resolve-name-color';
-import { computePosition } from '@floating-ui/dom';
 import type { TJoinedPublicUser, TJoinedRole } from '@bullshark/shared';
+import { computePosition } from '@floating-ui/dom';
 import type { Editor } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
 import {
