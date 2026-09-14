@@ -123,9 +123,7 @@ describe('/upload', () => {
   });
 
   test('rejects a body larger than the limit even when x-content-length lies', async () => {
-    await tdb
-      .update(settings)
-      .set({ storageUploadMaxFileSize: 1024 }); // 1 KB
+    await tdb.update(settings).set({ storageUploadMaxFileSize: 1024 }); // 1 KB
 
     // declare 1 byte in the header but actually stream ~100 KB
     const bigBody = 'A'.repeat(100 * 1024);

@@ -49,9 +49,9 @@ describe('fetchMarketplaceRegistry', () => {
       Promise.resolve(new Response('nope', { status: 500 }))
     ) as unknown as typeof fetch;
 
-    await expect(
-      fetchMarketplaceRegistry({ refresh: true })
-    ).rejects.toThrow('HTTP 500');
+    await expect(fetchMarketplaceRegistry({ refresh: true })).rejects.toThrow(
+      'HTTP 500'
+    );
   });
 
   test('a body that is not an array throws an explicit error', async () => {
@@ -59,9 +59,7 @@ describe('fetchMarketplaceRegistry', () => {
       Promise.resolve(new Response(JSON.stringify({ not: 'an array' })))
     ) as unknown as typeof fetch;
 
-    await expect(
-      fetchMarketplaceRegistry({ refresh: true })
-    ).rejects.toThrow();
+    await expect(fetchMarketplaceRegistry({ refresh: true })).rejects.toThrow();
   });
 
   test('invalid entries are discarded, valid entries are returned', async () => {

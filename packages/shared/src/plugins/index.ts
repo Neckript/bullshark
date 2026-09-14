@@ -3,8 +3,8 @@
 // resolves to nothing there.
 import type { ComponentType } from 'react';
 import z from 'zod';
-import type { PluginSlot } from './constants';
 import { zCapability } from './capability-schema';
+import type { PluginSlot } from './constants';
 
 export const zPluginId = z
   .string()
@@ -193,8 +193,8 @@ export type TPluginMetadata = {
 // Re-exported so the barrel API is unchanged; they live in a zod-free module
 // so the SDK can import them without pulling zod. See constants.ts.
 export * from './capability-schema';
-export * from './constants';
-export * from './store-types';
 export * from './client-sdk';
+export * from './constants';
 export * from './hooks';
 export * from './marketplace';
+export * from './store-types';

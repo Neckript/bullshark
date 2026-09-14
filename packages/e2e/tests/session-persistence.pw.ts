@@ -1,5 +1,5 @@
-import type { Page, WebSocketRoute } from '@playwright/test';
 import { TestId } from '@bullshark/shared';
+import type { Page, WebSocketRoute } from '@playwright/test';
 import { expect, test } from './fixtures';
 
 const AUTO_LOGIN_TOKEN_KEY = 'bullshark-auto-login-token';

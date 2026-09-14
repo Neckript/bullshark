@@ -9,6 +9,8 @@ import {
   useHasVisibleChannelsInCategory
 } from '@/features/server/hooks';
 import { getTRPCClient } from '@/lib/trpc';
+import { Permission, TestId, getTrpcError } from '@bullshark/shared';
+import { IconButton } from '@bullshark/ui';
 import {
   DndContext,
   type DragEndEvent,
@@ -23,8 +25,6 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Permission, TestId, getTrpcError } from '@bullshark/shared';
-import { IconButton } from '@bullshark/ui';
 import { ChevronDown, ChevronRight, Plus } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

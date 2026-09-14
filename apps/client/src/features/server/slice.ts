@@ -1,6 +1,5 @@
 import type { TPinnedCard } from '@/components/channel-view/voice/hooks/use-pin-card-controller';
 import { getLocalStorageItemBool, LocalStorageKey } from '@/helpers/storage';
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type {
   TCategory,
   TChannel,
@@ -23,6 +22,7 @@ import type {
   TVoiceMap,
   TVoiceUserState
 } from '@bullshark/shared';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { mergeMessagesChronologically } from './helpers';
 import type {
   TDisconnectInfo,

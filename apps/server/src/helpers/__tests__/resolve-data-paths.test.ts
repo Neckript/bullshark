@@ -60,9 +60,14 @@ describe('resolveDataPaths', () => {
   });
 
   test('production default lands under the app data root and exposes a migration candidate', () => {
-    const result = resolveDataPaths({}, { ...baseContext, warn: mock(() => {}) });
+    const result = resolveDataPaths(
+      {},
+      { ...baseContext, warn: mock(() => {}) }
+    );
 
     expect(result.dataPath).toBe(path.join('/app-data', 'bullshark'));
-    expect(result.legacyDataDirCandidate).toBe(path.join('/app-data', 'sharkord'));
+    expect(result.legacyDataDirCandidate).toBe(
+      path.join('/app-data', 'sharkord')
+    );
   });
 });

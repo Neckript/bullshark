@@ -18,6 +18,13 @@ import { useVoiceChannelExternalStreamsList } from '@/features/server/voice/hook
 import { getTRPCClient } from '@/lib/trpc';
 import { cn } from '@/lib/utils';
 import {
+  ChannelPermission,
+  Permission,
+  type TChannel,
+  TestId,
+  getTrpcError
+} from '@bullshark/shared';
+import {
   DndContext,
   type DragEndEvent,
   PointerSensor,
@@ -31,13 +38,6 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import {
-  ChannelPermission,
-  Permission,
-  type TChannel,
-  TestId,
-  getTrpcError
-} from '@bullshark/shared';
 import { Hash, Volume2 } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

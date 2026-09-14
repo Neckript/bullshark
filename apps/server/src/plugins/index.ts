@@ -53,19 +53,21 @@ import { PluginStateStore } from './plugin-state-store';
 //
 // CLIENT_SLOTS maps to nothing here: it governs the client bundle's React
 // components, which the server never builds a context for.
-const CAPABILITY_NAMESPACE: Record<PluginCapability, keyof PluginContext | null> =
-  {
-    [PluginCapability.EVENTS]: 'events',
-    [PluginCapability.ACTIONS]: 'actions',
-    [PluginCapability.COMMANDS]: 'commands',
-    [PluginCapability.MESSAGES]: 'messages',
-    [PluginCapability.SETTINGS]: 'settings',
-    [PluginCapability.DATA]: 'data',
-    [PluginCapability.UI]: 'ui',
-    [PluginCapability.VOICE]: 'voice',
-    [PluginCapability.HOOKS_BEFORE_FILE_SAVE]: 'hooks',
-    [PluginCapability.CLIENT_SLOTS]: null
-  };
+const CAPABILITY_NAMESPACE: Record<
+  PluginCapability,
+  keyof PluginContext | null
+> = {
+  [PluginCapability.EVENTS]: 'events',
+  [PluginCapability.ACTIONS]: 'actions',
+  [PluginCapability.COMMANDS]: 'commands',
+  [PluginCapability.MESSAGES]: 'messages',
+  [PluginCapability.SETTINGS]: 'settings',
+  [PluginCapability.DATA]: 'data',
+  [PluginCapability.UI]: 'ui',
+  [PluginCapability.VOICE]: 'voice',
+  [PluginCapability.HOOKS_BEFORE_FILE_SAVE]: 'hooks',
+  [PluginCapability.CLIENT_SLOTS]: null
+};
 
 // Always handed over: they grant access to nothing, and requiring them would add
 // noise to every manifest.

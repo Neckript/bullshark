@@ -36,7 +36,9 @@ describe('assertPublicHttpsUrl', () => {
   });
 
   test('rejects an ipv4-mapped ipv6 loopback literal', () => {
-    expect(() => assertPublicHttpsUrl('https://[::ffff:127.0.0.1]/x')).toThrow();
+    expect(() =>
+      assertPublicHttpsUrl('https://[::ffff:127.0.0.1]/x')
+    ).toThrow();
   });
 
   test('rejects a malformed url', () => {

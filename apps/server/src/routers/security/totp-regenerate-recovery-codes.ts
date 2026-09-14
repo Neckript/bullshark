@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { config } from '../../config';
 import { replaceRecoveryCodes } from '../../db/mutations/totp';
 import { getUserTotp } from '../../db/queries/totp';
 import {
@@ -7,7 +8,6 @@ import {
 } from '../../helpers/recovery-codes';
 import { verifyTotpCode } from '../../helpers/totp';
 import { decryptTotpSecret } from '../../helpers/totp-crypto';
-import { config } from '../../config';
 import type { Context } from '../../utils/trpc';
 import { protectedProcedure, rateLimitedProcedure } from '../../utils/trpc';
 

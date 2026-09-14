@@ -1,3 +1,4 @@
+import { TestId } from '@bullshark/shared';
 import {
   expect,
   test,
@@ -5,7 +6,6 @@ import {
   type Locator,
   type Page
 } from '@playwright/test';
-import { TestId } from '@bullshark/shared';
 import { loginAs } from './fixtures';
 import { sleep } from './helpers';
 
