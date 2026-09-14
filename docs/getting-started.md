@@ -137,6 +137,13 @@ l'enregistrement `A`/`AAAA` de ton domaine vers le serveur.
 The certificate is publicly trusted — no browser warning, ever. / Le
 certificat est reconnu publiquement — aucun avertissement navigateur, jamais.
 
+With a reverse proxy in front, also set `BULLSHARK_TRUST_PROXY=true` (see
+[section 4](#4-configuration--configuration)) so rate limiting and IP logging
+see the real client IP instead of Caddy's. / Avec un reverse proxy devant,
+mets aussi `BULLSHARK_TRUST_PROXY=true` (voir [section
+4](#4-configuration--configuration)) pour que la limite de débit et la
+journalisation d'IP voient la vraie IP du client au lieu de celle de Caddy.
+
 ### Option B — no domain name (LAN, personal use, quick test) / Option B — pas de nom de domaine (LAN, usage perso, test rapide)
 
 **EN** — No domain, no Caddy, no Cloudflare needed. Bullshark can generate
@@ -240,6 +247,7 @@ par des variables d'environnement — pratique avec Docker.
 | `BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS` | `webRtc.announcedAddress` | *(auto-detected public IP)* | Public IP/domain to announce to peers — **required behind NAT** / IP publique ou domaine à annoncer aux pairs — **obligatoire derrière un NAT** |
 | `BULLSHARK_WEBRTC_MAX_BITRATE` | `webRtc.maxBitrate` | `30000000` (30 Mbps) | Max bitrate per stream / débit max par flux |
 | `BULLSHARK_TLS_MODE` | `tls.mode` | `none` | `none` (expects a reverse proxy, Option A) or `selfSigned` (built-in self-signed HTTPS, Option B) — see [section 3](#3-https--mandatory--https--obligatoire) / `none` (attend un reverse proxy, Option A) ou `selfSigned` (HTTPS auto-signé intégré, Option B) — voir [section 3](#3-https--mandatory--https--obligatoire) |
+| `BULLSHARK_TRUST_PROXY` | `server.trustProxy` | `false` | Trust `x-forwarded-for`/`cf-connecting-ip`/etc. for the client's real IP (rate limiting, ban/IP logging) — **only enable with Option A** (a reverse proxy you control sits in front and overwrites these headers); leave disabled with Option B, where there is no proxy and a client could otherwise fake its own IP / faire confiance à `x-forwarded-for`/`cf-connecting-ip`/etc. pour l'IP réelle du client (limite de débit, bannissement, journalisation d'IP) — **à activer uniquement avec l'Option A** (un reverse proxy que tu contrôles est devant et réécrit ces headers) ; laisse désactivé avec l'Option B, où il n'y a pas de proxy et un client pourrait sinon falsifier sa propre IP |
 | `BULLSHARK_MARKETPLACE_REGISTRY_URL` | `plugins.marketplaceRegistryUrl` | official registry | Plugin marketplace source — set to `''` to disable it / source du registre de plugins — mets `''` pour le désactiver |
 
 ---

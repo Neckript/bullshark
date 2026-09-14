@@ -1,5 +1,6 @@
-import { describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import type http from 'http';
+import { config } from '../../config';
 import { getWsInfo } from '../get-ws-info';
 
 const createRequest = ({
@@ -18,6 +19,17 @@ const createRequest = ({
 
 const ipOf = (ws: any, req: http.IncomingMessage): string | undefined =>
   getWsInfo(ws, req)?.ip;
+
+// most tests below assert header-parsing behavior, which only applies when
+// a reverse proxy is trusted - trustProxy: false (the default) is covered
+// in its own describe block further down
+beforeEach(() => {
+  config.server.trustProxy = true;
+});
+
+afterEach(() => {
+  config.server.trustProxy = false;
+});
 
 describe('getWsInfo - ip resolution', () => {
   describe('header priority', () => {
@@ -340,6 +352,57 @@ describe('getWsInfo - ip resolution', () => {
       // should get first private IP instead
       expect(result).toBe('10.0.0.0');
     });
+  });
+});
+
+describe('getWsInfo - trustProxy disabled (default)', () => {
+  beforeEach(() => {
+    config.server.trustProxy = false;
+  });
+
+  test('ignores x-forwarded-for and falls back to the socket address', () => {
+    const req = createRequest({
+      headers: { 'x-forwarded-for': '203.0.113.14' },
+      remoteAddress: '198.51.100.1'
+    });
+
+    expect(ipOf(undefined, req)).toBe('198.51.100.1');
+  });
+
+  test('ignores cf-connecting-ip and every other direct header', () => {
+    const req = createRequest({
+      headers: {
+        'cf-connecting-ip': '203.0.113.14',
+        'true-client-ip': '203.0.113.15',
+        'x-real-ip': '203.0.113.16'
+      },
+      remoteAddress: '198.51.100.1'
+    });
+
+    expect(ipOf(undefined, req)).toBe('198.51.100.1');
+  });
+
+  test('ignores RFC 7239 Forwarded header', () => {
+    const req = createRequest({
+      headers: { forwarded: 'for=203.0.113.88' },
+      remoteAddress: '198.51.100.1'
+    });
+
+    expect(ipOf(undefined, req)).toBe('198.51.100.1');
+  });
+
+  test('a client cannot forge its rate-limit identity via headers alone', () => {
+    // same socket, attacker sends a different x-forwarded-for on every request
+    const first = createRequest({
+      headers: { 'x-forwarded-for': '1.1.1.1' },
+      remoteAddress: '198.51.100.1'
+    });
+    const second = createRequest({
+      headers: { 'x-forwarded-for': '2.2.2.2' },
+      remoteAddress: '198.51.100.1'
+    });
+
+    expect(ipOf(undefined, first)).toBe(ipOf(undefined, second));
   });
 });
 
