@@ -7,12 +7,19 @@ import { getUserTotp } from '../../db/queries/totp';
 import { users } from '../../db/schema';
 import { decryptTotpSecret } from '../../helpers/totp-crypto';
 import { verifySecondFactor } from '../../helpers/verify-second-factor';
+import { config } from '../../config';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import type { Context } from '../../utils/trpc';
-import { protectedProcedure } from '../../utils/trpc';
+import { protectedProcedure, rateLimitedProcedure } from '../../utils/trpc';
 
-const totpDisableRoute = protectedProcedure
+// disabling 2FA is a step-up action gated by a TOTP code or the password;
+// both are brute-forceable, so cap verification attempts
+const totpDisableRoute = rateLimitedProcedure(protectedProcedure, {
+  maxRequests: config.rateLimiters.twoFactor.maxRequests,
+  windowMs: config.rateLimiters.twoFactor.windowMs,
+  logLabel: 'totp-disable'
+})
   .input(
     z.object({
       code: z.string().min(6).max(11).optional(),

@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import * as OTPAuth from 'otpauth';
 import { initTest } from '../../__tests__/helpers';
+import { config } from '../../config';
 import { getUserTotp } from '../../db/queries/totp';
 
 describe('security router', () => {
@@ -144,5 +145,42 @@ describe('security.totp.regenerateRecoveryCodes', () => {
     expect((await caller.security.totp.status()).recoveryCodesRemaining).toBe(
       10
     );
+  });
+});
+
+describe('2FA verification rate limiting', () => {
+  test('totp.disable is rate limited after repeated attempts', async () => {
+    const { caller } = await initTest(2);
+
+    const attempts = config.rateLimiters.twoFactor.maxRequests;
+
+    // exhaust the window - each wrong attempt is refused by the validator but
+    // still counted by the limiter, which runs before the resolver
+    for (let i = 0; i < attempts; i++) {
+      await expect(
+        caller.security.totp.disable({ code: '000000' })
+      ).rejects.toThrow();
+    }
+
+    // the next attempt is stopped by the rate limiter, not the validator
+    await expect(
+      caller.security.totp.disable({ code: '000000' })
+    ).rejects.toThrow('Too many requests');
+  });
+
+  test('totp.regenerateRecoveryCodes is rate limited after repeated attempts', async () => {
+    const { caller } = await initTest(2);
+
+    const attempts = config.rateLimiters.twoFactor.maxRequests;
+
+    for (let i = 0; i < attempts; i++) {
+      await expect(
+        caller.security.totp.regenerateRecoveryCodes({ code: '000000' })
+      ).rejects.toThrow();
+    }
+
+    await expect(
+      caller.security.totp.regenerateRecoveryCodes({ code: '000000' })
+    ).rejects.toThrow('Too many requests');
   });
 });
