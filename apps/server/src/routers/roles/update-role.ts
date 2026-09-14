@@ -10,10 +10,11 @@ import { z } from 'zod';
 import { db } from '../../db';
 import { syncRolePermissions } from '../../db/mutations/roles';
 import { publishRole } from '../../db/publishers';
-import { roles } from '../../db/schema';
+import { rolePermissions, roles } from '../../db/schema';
 import { assertOutranksRole } from '../../helpers/assert-rank';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { protectedProcedure } from '../../utils/trpc';
+import { getUserRoles } from '../users/get-user-roles';
 
 const updateRoleRoute = protectedProcedure
   .input(
@@ -37,6 +38,38 @@ const updateRoleRoute = protectedProcedure
     await ctx.needsPermission(Permission.MANAGE_ROLES);
     await assertOutranksRole(ctx.userId, input.roleId);
 
+    // A MANAGE_ROLES member must not be able to grant permissions they do not
+    // themselves hold (privilege escalation): the rank guard above only checks
+    // position, not which permissions get written. So restrict the writable
+    // set to the permissions the actor actually has - the rest are preserved
+    // from the role's current state. The owner bypasses this entirely.
+    const actorRoles = await getUserRoles(ctx.userId);
+    const actorIsOwner = actorRoles.some((role) => role.id === OWNER_ROLE_ID);
+    const actorPermissions = new Set(
+      actorRoles.flatMap((role) => role.permissions)
+    );
+
+    let permissionsToApply = input.permissions;
+
+    if (!actorIsOwner) {
+      const currentPermissions = (
+        await db
+          .select({ permission: rolePermissions.permission })
+          .from(rolePermissions)
+          .where(eq(rolePermissions.roleId, input.roleId))
+      ).map((row) => row.permission as Permission);
+
+      const currentSet = new Set(currentPermissions);
+      const requestedSet = new Set(input.permissions);
+
+      permissionsToApply = (Object.values(Permission) as Permission[]).filter(
+        (permission) =>
+          actorPermissions.has(permission)
+            ? requestedSet.has(permission)
+            : currentSet.has(permission)
+      );
+    }
+
     const updatedRole = await db
       .update(roles)
       .set({
@@ -52,7 +85,7 @@ const updateRoleRoute = protectedProcedure
       .get();
 
     if (updatedRole.id !== OWNER_ROLE_ID) {
-      await syncRolePermissions(updatedRole.id, input.permissions);
+      await syncRolePermissions(updatedRole.id, permissionsToApply);
     }
 
     publishRole(updatedRole.id, 'update');
@@ -61,7 +94,7 @@ const updateRoleRoute = protectedProcedure
       userId: ctx.user.id,
       details: {
         roleId: updatedRole.id,
-        permissions: input.permissions,
+        permissions: permissionsToApply,
         values: input
       }
     });
