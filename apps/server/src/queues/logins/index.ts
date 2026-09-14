@@ -1,3 +1,4 @@
+import { getErrorMessage } from '@bullshark/shared';
 import Queue from 'queue';
 import { db } from '../../db';
 import { logins } from '../../db/schema';
@@ -20,22 +21,33 @@ const enqueueLogin = (userId: number, info: TConnectionInfo | undefined) => {
       callback?.();
       return;
     }
-    const { ip, ...rest } = info;
-    const ipInfo = ip ? await getIpInfo(ip) : undefined;
 
-    await db
-      .insert(logins)
-      .values({
+    // best-effort: recording login history must never surface as an unhandled
+    // rejection (transient DB error, or the DB torn down in tests)
+    try {
+      const { ip, ...rest } = info;
+      const ipInfo = ip ? await getIpInfo(ip) : undefined;
+
+      await db
+        .insert(logins)
+        .values({
+          userId,
+          ip,
+          ...rest,
+          ...ipInfo,
+          createdAt: Date.now()
+        })
+        .returning()
+        .get();
+    } catch (error) {
+      logger.error(
+        'Failed to record login for user %d: %s',
         userId,
-        ip,
-        ...rest,
-        ...ipInfo,
-        createdAt: Date.now()
-      })
-      .returning()
-      .get();
-
-    callback?.();
+        getErrorMessage(error)
+      );
+    } finally {
+      callback?.();
+    }
   });
 };
 

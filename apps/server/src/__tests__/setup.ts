@@ -80,16 +80,14 @@ beforeEach(async () => {
   await seedTestDb(tdb);
 });
 
-afterEach(() => {
-  if (sqlite) {
-    try {
-      sqlite.close();
-      sqlite = null;
-    } catch {
-      // ignore
-    }
-  }
-});
+// Intentionally does NOT close the database here. Best-effort background work
+// (queue jobs) can outlive the test that started it; if we closed the db in
+// afterEach, such a job running before the next beforeEach would hit a closed
+// database and surface as an "unhandled error between tests" (which fails the
+// run). The `db` proxy always resolves to the current tdb, so the previous
+// test's db is closed at the START of the next beforeEach instead - a purely
+// synchronous swap with no window for a stray async job to observe it closed.
+afterEach(() => {});
 
 afterAll(async () => {
   if (!CLEANUP_AFTER_FINISH) return;
