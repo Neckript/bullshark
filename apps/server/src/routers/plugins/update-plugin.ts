@@ -27,13 +27,19 @@ const updateRoute = protectedProcedure
       await pluginManager.togglePlugin(input.pluginId, false);
     }
 
-    await downloadPlugin(versionData.downloadUrl, versionData.checksum);
+    const signatureStatus = await downloadPlugin(
+      versionData.downloadUrl,
+      versionData.checksum,
+      versionData.signature
+    );
 
     if (wasEnabled) {
       await pluginManager.togglePlugin(input.pluginId, true);
     }
 
     publishPlugins();
+
+    return { signatureStatus };
   });
 
 export { updateRoute };

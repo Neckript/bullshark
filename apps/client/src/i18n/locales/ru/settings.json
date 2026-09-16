@@ -462,6 +462,9 @@
   "marketplaceMissingCapabilitiesBadge": "Требуется {{capabilities}}",
   "marketplaceMissingCapabilities": "Этому плагину нужны возможности, которых нет на этом сервере: {{capabilities}}.",
   "marketplaceVerifiedTooltip": "Этот плагин был проверен Bullshark.",
+  "marketplaceSigned": "Подписано",
+  "marketplaceSignedTooltip": "Этот плагин криптографически подписан.",
+  "marketplaceUnverifiedWarning": "Подпись {{name}} не удалось проверить доверенным ключом.",
   "marketplaceInstallSuccess": "\"{{name}}\" успешно установлен. Вам нужно включить его вручную, чтобы начать использовать.",
 
   "noiseSuppressionNone": "Нет",

@@ -11,7 +11,14 @@ import {
 } from '@bullshark/shared';
 import { Badge, Button, Tooltip } from '@bullshark/ui';
 import { format } from 'date-fns';
-import { BadgeCheck, Calendar, Download, Package, User } from 'lucide-react';
+import {
+  BadgeCheck,
+  Calendar,
+  Download,
+  Package,
+  ShieldCheck,
+  User
+} from 'lucide-react';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import semver from 'semver';
@@ -112,12 +119,18 @@ const MarketplaceItem = memo(
       try {
         setInstallingId(plugin.id);
 
-        await trpc.plugins.install.mutate({
+        const { signatureStatus } = await trpc.plugins.install.mutate({
           pluginId: plugin.id,
           version: latestVersion.version
         });
 
         toast.success(t('marketplaceInstallSuccess', { name: plugin.name }));
+
+        // 'unsigned' est normal pendant le rollout ; 'unverified' = signature
+        // presente mais qui ne valide contre aucune cle de confiance = suspect.
+        if (signatureStatus === 'unverified') {
+          toast.warning(t('marketplaceUnverifiedWarning', { name: plugin.name }));
+        }
 
         await refetchInstalled();
       } catch (error) {
@@ -197,6 +210,14 @@ const MarketplaceItem = memo(
                     <Badge variant="default" className="gap-1 text-xs shrink-0">
                       <BadgeCheck className="w-3 h-3" />
                       {t('marketplaceVerified')}
+                    </Badge>
+                  </Tooltip>
+                )}
+                {latestVersion?.signature && (
+                  <Tooltip content={t('marketplaceSignedTooltip')}>
+                    <Badge variant="secondary" className="gap-1 text-xs shrink-0">
+                      <ShieldCheck className="w-3 h-3" />
+                      {t('marketplaceSigned')}
                     </Badge>
                   </Tooltip>
                 )}

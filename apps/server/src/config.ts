@@ -97,7 +97,12 @@ const zConfig = z.object({
   plugins: z.object({
     // '' disables the marketplace: the server renders it as an empty list
     // without making a request.
-    marketplaceRegistryUrl: z.string()
+    marketplaceRegistryUrl: z.string(),
+    // false (default): plugins with a missing/invalid signature still install
+    // but log a warning (warn phase). true: only plugins verified against a
+    // trusted signing key install. The trusted keys themselves live in
+    // helpers/verify-plugin-signature.ts, not here.
+    requireSignedPlugins: z.coerce.boolean()
   })
 });
 
@@ -174,7 +179,8 @@ const defaultConfig: TConfig = {
   },
   plugins: {
     marketplaceRegistryUrl:
-      'https://codeberg.org/The_Neckript/bullshark-plugins/raw/branch/main/plugins.json'
+      'https://codeberg.org/The_Neckript/bullshark-plugins/raw/branch/main/plugins.json',
+    requireSignedPlugins: false
   }
 };
 
@@ -221,7 +227,8 @@ config = applyEnvOverrides(config, {
   'webRtc.announcedAddress': 'BULLSHARK_WEBRTC_ANNOUNCED_ADDRESS',
   'webRtc.maxBitrate': 'BULLSHARK_WEBRTC_MAX_BITRATE',
   'tls.mode': 'BULLSHARK_TLS_MODE',
-  'plugins.marketplaceRegistryUrl': 'BULLSHARK_MARKETPLACE_REGISTRY_URL'
+  'plugins.marketplaceRegistryUrl': 'BULLSHARK_MARKETPLACE_REGISTRY_URL',
+  'plugins.requireSignedPlugins': 'BULLSHARK_REQUIRE_SIGNED_PLUGINS'
 });
 
 config = Object.freeze(config);

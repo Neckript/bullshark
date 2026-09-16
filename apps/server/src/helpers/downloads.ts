@@ -6,11 +6,16 @@ import {
 import { randomUUIDv7 } from 'bun';
 import fs from 'fs/promises';
 import path from 'path';
+import { config } from '../config';
 import { logger } from '../logger';
 import { assertPublicHttpsUrl } from './assert-safe-endpoint';
 import { ensureDir } from './fs';
 import { PLUGINS_PATH, TMP_PATH } from './paths';
 import { sha256File } from './sha-256-file';
+import {
+  verifyPluginSignature,
+  type PluginSignatureStatus
+} from './verify-plugin-signature';
 
 const downloadsPath = path.join(TMP_PATH, 'downloads');
 
@@ -65,13 +70,15 @@ const resolveExtractedPluginPath = async (
 
 const downloadPlugin = async (
   url: string,
-  expectedChecksum: string
-): Promise<void> => {
+  expectedChecksum: string,
+  signature?: string
+): Promise<PluginSignatureStatus> => {
   // the download URL comes from the marketplace registry (remote data): require
   // https and refuse internal targets so the plugin bundle - which becomes
   // executing server code - can't be MITM'd in plaintext or pulled from the
-  // server's own network. The checksum only guards transport integrity, not a
-  // compromised registry; real supply-chain trust would need signed plugins.
+  // server's own network. The checksum only guards transport integrity against
+  // the registry itself; the Ed25519 signature (verified below against a pinned
+  // key) is what a compromised registry cannot forge.
   assertPublicHttpsUrl(url);
 
   await ensureDir(downloadsPath);
@@ -93,6 +100,24 @@ const downloadPlugin = async (
     }
 
     const archiveBytes = await Bun.file(archivePath).bytes();
+
+    // Verifier la signature AVANT d'extraire ou d'executer quoi que ce soit.
+    const signatureStatus = verifyPluginSignature(archiveBytes, signature);
+
+    if (config.plugins.requireSignedPlugins && signatureStatus !== 'verified') {
+      throw new Error(
+        signatureStatus === 'unsigned'
+          ? 'Plugin is not signed and this server requires signed plugins'
+          : 'Plugin signature could not be verified against a trusted key'
+      );
+    }
+
+    if (signatureStatus !== 'verified') {
+      logger.warn(
+        `Installing plugin from ${url} with an ${signatureStatus} signature`
+      );
+    }
+
     const archive = new Bun.Archive(archiveBytes);
     const entryCount = await archive.extract(extractPath);
 
@@ -110,6 +135,8 @@ const downloadPlugin = async (
     await fs.cp(pluginPath, targetPluginPath, { recursive: true });
 
     logger.info(`Installed plugin '${manifest.id}' from ${url}`);
+
+    return signatureStatus;
   } finally {
     await Promise.allSettled([
       fs.rm(archivePath, { force: true }),
