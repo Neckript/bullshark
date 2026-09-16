@@ -486,9 +486,6 @@
   "marketplaceMissingCapabilitiesBadge": "需要 {{capabilities}}",
   "marketplaceMissingCapabilities": "此插件需要本服务器不提供的能力：{{capabilities}}。",
   "marketplaceVerifiedTooltip": "此插件已通过 Bullshark 验证。",
-  "marketplaceSigned": "已签名",
-  "marketplaceSignedTooltip": "此插件已进行加密签名。",
-  "marketplaceUnverifiedWarning": "无法使用受信任的密钥验证 {{name}} 的签名。",
   "marketplaceInstallSuccess": "\"{{name}}\" 已成功安装。您需要手动启用它才能开始使用。",
 
   "standard": "标准",

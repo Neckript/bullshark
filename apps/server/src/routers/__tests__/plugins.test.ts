@@ -785,7 +785,6 @@ describe('plugins router', () => {
             version: '0.0.1',
             downloadUrl: 'https://example.com/plugin.tar.gz',
             checksum: 'deadbeef1234',
-            signature: 'sig-install',
             sdkVersion: 1,
             size: 1000
           })
@@ -799,8 +798,7 @@ describe('plugins router', () => {
 
       expect(mockDownload).toHaveBeenCalledWith(
         'https://example.com/plugin.tar.gz',
-        'deadbeef1234',
-        'sig-install'
+        'deadbeef1234'
       );
     });
 
@@ -843,7 +841,6 @@ describe('plugins router', () => {
             version: '2.0.0',
             downloadUrl: 'https://example.com/plugin-a-v2.tar.gz',
             checksum: 'cafebabe5678',
-            signature: 'sig-update',
             sdkVersion: 1,
             size: 2000
           })
@@ -857,8 +854,7 @@ describe('plugins router', () => {
 
       expect(mockDownload).toHaveBeenCalledWith(
         'https://example.com/plugin-a-v2.tar.gz',
-        'cafebabe5678',
-        'sig-update'
+        'cafebabe5678'
       );
     });
 

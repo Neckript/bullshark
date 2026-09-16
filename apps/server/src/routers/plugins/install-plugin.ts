@@ -26,17 +26,11 @@ const installRoute = protectedProcedure
       await pluginManager.unload(input.pluginId);
     }
 
-    const signatureStatus = await downloadPlugin(
-      versionData.downloadUrl,
-      versionData.checksum,
-      versionData.signature
-    );
+    await downloadPlugin(versionData.downloadUrl, versionData.checksum);
 
     if (wasEnabled) {
       await pluginManager.load(input.pluginId);
     }
-
-    return { signatureStatus };
   });
 
 export { installRoute };
