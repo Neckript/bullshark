@@ -11,6 +11,8 @@
   "othersTab": "其他",
   "accountSectionGroup": "账号",
   "preferencesSectionGroup": "偏好设置",
+  "serverManagementGroup": "管理",
+  "serverTechnicalGroup": "技术",
   "editProfileButton": "编辑个人资料",
   "serverSettingsTitle": "服务器设置",
   "generalTab": "常规",

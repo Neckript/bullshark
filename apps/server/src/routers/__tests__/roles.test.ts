@@ -3,7 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import { eq } from 'drizzle-orm';
 import { initTest } from '../../__tests__/helpers';
 import { tdb } from '../../__tests__/setup';
-import { rolePermissions, roles, userRoles } from '../../db/schema';
+import { files, rolePermissions, roles, userRoles } from '../../db/schema';
 
 describe('roles router', () => {
   test('should throw when user lacks permissions (getAll)', async () => {
@@ -457,5 +457,49 @@ describe('roles router - permission escalation guard', () => {
     const perms = await readPermissions(targetRoleId);
 
     expect(perms).toContain(Permission.MANAGE_SETTINGS);
+  });
+
+  // Regression: icon_file_id came from an ALTER TABLE (migration 0021) so it
+  // carries no ON DELETE set null; deleting the file row before nulling the
+  // reference raised FOREIGN KEY constraint failed.
+  test('removing a role icon does not raise a FK constraint error', async () => {
+    const { caller } = await initTest(1); // owner
+
+    const file = await tdb
+      .insert(files)
+      .values({
+        name: 'role-icon.png',
+        originalName: 'role-icon.png',
+        md5: 'deadbeef',
+        userId: 1,
+        size: 10,
+        mimeType: 'image/png',
+        extension: 'png',
+        createdAt: Date.now()
+      })
+      .returning()
+      .get();
+
+    await tdb
+      .update(roles)
+      .set({ iconFileId: file!.id })
+      .where(eq(roles.id, 1))
+      .run();
+
+    await expect(caller.roles.changeIcon({ roleId: 1 })).resolves.toBeUndefined();
+
+    const updatedRole = await tdb
+      .select()
+      .from(roles)
+      .where(eq(roles.id, 1))
+      .get();
+    expect(updatedRole!.iconFileId).toBeNull();
+
+    const remainingFile = await tdb
+      .select()
+      .from(files)
+      .where(eq(files.id, file!.id))
+      .get();
+    expect(remainingFile).toBeUndefined();
   });
 });
