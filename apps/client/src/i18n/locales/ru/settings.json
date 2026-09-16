@@ -10,6 +10,8 @@
   "othersTab": "Другие",
   "accountSectionGroup": "Аккаунт",
   "preferencesSectionGroup": "Предпочтения",
+  "serverManagementGroup": "Управление",
+  "serverTechnicalGroup": "Технические",
   "editProfileButton": "Редактировать профиль",
   "serverSettingsTitle": "Настройки сервера",
   "generalTab": "Общие",

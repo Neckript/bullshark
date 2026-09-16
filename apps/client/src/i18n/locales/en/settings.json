@@ -11,6 +11,8 @@
   "othersTab": "Others",
   "accountSectionGroup": "Account",
   "preferencesSectionGroup": "Preferences",
+  "serverManagementGroup": "Management",
+  "serverTechnicalGroup": "Technical",
   "editProfileButton": "Edit profile",
   "serverSettingsTitle": "Server Settings",
   "generalTab": "General",
