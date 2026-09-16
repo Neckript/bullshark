@@ -39,27 +39,22 @@ const applyRoleIcon = async (
     }
   }
 
+  // Enregistrer la nouvelle AVANT de detruire l'ancienne (saveFile leve sur
+  // depassement de quota), et vider la reference AVANT de supprimer la ligne
+  // fichier : icon_file_id vient d'un ALTER TABLE, donc sans ON DELETE set null
+  // (SQLite ne sait pas l'ajouter apres coup). L'ordre inverse leve FOREIGN KEY.
+  const newFile = fileId
+    ? await fileManager.saveFile(fileId, ctx.userId, FileSaveType.ROLE_ICON)
+    : null;
+
+  await db
+    .update(roles)
+    .set({ iconFileId: newFile?.id ?? null })
+    .where(eq(roles.id, roleId))
+    .run();
+
   if (role.iconFileId) {
     await removeFile(role.iconFileId);
-    await db
-      .update(roles)
-      .set({ iconFileId: null })
-      .where(eq(roles.id, roleId))
-      .run();
-  }
-
-  if (fileId) {
-    const newFile = await fileManager.saveFile(
-      fileId,
-      ctx.userId,
-      FileSaveType.ROLE_ICON
-    );
-
-    await db
-      .update(roles)
-      .set({ iconFileId: newFile.id })
-      .where(eq(roles.id, roleId))
-      .run();
   }
 
   publishRole(roleId, 'update');
