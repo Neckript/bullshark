@@ -83,7 +83,7 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
           isAccessible={isAccessible}
         />
 
-        <div className="hidden min-w-0 flex-1 overflow-y-auto p-6 md:block">
+        <div className="hidden min-w-0 flex-1 overflow-y-auto px-4 py-6 md:block">
           <div className="mx-auto max-w-4xl">
             {accessibleSections.map((section) => (
               <TabsContent key={section} value={section} className="space-y-6">
@@ -115,7 +115,7 @@ const ServerSettings = memo(({ close }: TServerSettingsProps) => {
               {t(SERVER_SETTINGS_SECTION_LABEL_KEYS[mobileOpenSection])}
             </h2>
           </div>
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto px-4 py-6">
             {SECTION_CONTENT[mobileOpenSection]}
           </div>
         </div>

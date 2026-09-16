@@ -18,7 +18,7 @@ const ServerSettingsDesktopNav = memo(
     const { t } = useTranslation('settings');
 
     return (
-      <nav className="hidden w-56 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border p-4 md:flex">
+      <nav className="hidden w-48 shrink-0 flex-col gap-4 overflow-y-auto border-r border-border p-3 md:flex">
         {SERVER_SETTINGS_GROUPS.map((group) => {
           const sections = group.sections.filter(isAccessible);
 
@@ -27,7 +27,7 @@ const ServerSettingsDesktopNav = memo(
           return (
             <div key={group.id} className="flex flex-col gap-0.5">
               {group.labelKey && (
-                <div className="px-2.5 pb-1 text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
+                <div className="mb-0.5 rounded-md bg-muted/50 px-2.5 py-1 text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
                   {t(group.labelKey)}
                 </div>
               )}
