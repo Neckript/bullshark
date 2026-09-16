@@ -3,7 +3,7 @@ import { useModViewOpen } from '@/features/app/hooks';
 import { useAdminUserInfo } from '@/features/server/admin/hooks';
 import { extractUrls } from '@bullshark/shared';
 import { Sheet, SheetContent, SheetTitle } from '@bullshark/ui';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ModViewContext, ModViewScreen, type TModViewContext } from './context';
 import { ModViewContent } from './mod-view-content';
@@ -63,21 +63,18 @@ const ModViewSheet = memo(() => {
     setModViewOpen(false);
   }, []);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [isOpen, handleClose]);
-
+  // onOpenChange cable la fermeture native de Radix : clic sur l'overlay,
+  // touche Echap et bouton X passent tous par la (avant, rien n'etait cable
+  // et seul un handler Echap manuel fermait la vue).
   return (
-    <Sheet defaultOpen={false} open={isOpen}>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          handleClose();
+        }
+      }}
+    >
       <SheetContent close={handleClose}>
         <SheetTitle className="sr-only">{t('modViewTitle')}</SheetTitle>
         {userId && <ContentWrapper userId={userId} />}
