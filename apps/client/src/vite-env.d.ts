@@ -19,6 +19,23 @@ declare global {
         reportState: (state: { inVoice: boolean; muted: boolean }) => void;
         onToggleRequest: (cb: () => void) => () => void;
       };
+      // In-game overlay companion API. Optional: the web client can ship ahead
+      // of a desktop shell that implements it, so callers guard with `?.`.
+      overlay?: {
+        reportParticipants: (payload: {
+          inVoice: boolean;
+          participants: {
+            userId: number;
+            name: string;
+            avatarUrl: string | null;
+            speaking: boolean;
+            micMuted: boolean;
+          }[];
+        }) => void;
+        // The shell tells the client whether the overlay is enabled, so the
+        // client can skip the audio analysis entirely when it is off.
+        onEnabledChanged: (cb: (enabled: boolean) => void) => () => void;
+      };
       focusWindow: () => void;
       onMuteChanged: (cb: (muted: boolean) => void) => () => void;
       // Optionnel: le client sort avant le shell qui l'implemente. Sur un
