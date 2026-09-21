@@ -282,7 +282,8 @@ export const useAdminChannelGeneral = (channelId: number) => {
         channelId,
         name: channel?.name ?? '',
         topic: channel?.topic ?? null,
-        private: channel?.private ?? false
+        private: channel?.private ?? false,
+        slowModeSeconds: channel?.slowModeSeconds ?? 0
       });
 
       toast.success('Channel updated');
@@ -293,7 +294,7 @@ export const useAdminChannelGeneral = (channelId: number) => {
   }, [channel, channelId]);
 
   const onChange = useCallback(
-    (field: keyof TChannel, value: string | null | boolean) => {
+    (field: keyof TChannel, value: string | null | boolean | number) => {
       if (!channel) return;
       setChannel((c) => (c ? { ...c, [field]: value } : c));
       setErrors((e) => ({ ...e, [field]: undefined }));
