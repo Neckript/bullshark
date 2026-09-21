@@ -16,6 +16,7 @@ import { assertDmChannel, isDirectMessageChannel } from '../../db/queries/dms';
 import { getSettings } from '../../db/queries/server';
 import { messageFiles, messages } from '../../db/schema';
 import { getInvokerCtxFromTrpcCtx } from '../../helpers/get-invoker-ctx-from-trpc-ctx';
+import { assertNotTimedOut, assertSlowModeOk } from '../../helpers/moderation';
 import { parseCommandArgs } from '../../helpers/parse-command-args';
 import { sanitizeMessageHtml } from '../../helpers/sanitize-html';
 import { pluginManager } from '../../plugins';
@@ -48,6 +49,9 @@ const sendMessageRoute = rateLimitedProcedure(protectedProcedure, {
         ChannelPermission.SEND_MESSAGES
       )
     ]);
+
+    await assertNotTimedOut(ctx.userId);
+    await assertSlowModeOk(ctx.userId, input.channelId, ctx.hasPermission);
 
     if (input.parentMessageId) {
       const parentMessage = await db
