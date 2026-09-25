@@ -11,15 +11,17 @@ import {
 } from '@/features/server/voice/hooks';
 import { getFileUrl } from '@/helpers/get-file-url';
 import { cn } from '@/lib/utils';
-import { StreamKind } from '@bullshark/shared';
-import { HeadphoneOff, MicOff, Monitor, Video } from 'lucide-react';
+import { Permission, StreamKind } from '@bullshark/shared';
+import { HeadphoneOff, MicOff, Monitor, ShieldOff, Video } from 'lucide-react';
 import { memo, useCallback } from 'react';
+import { Protect } from '../../protect';
 import { CardControls } from './card-controls';
 import { CardGradient } from './card-gradient';
 import { useVoiceRefs } from './hooks/use-voice-refs';
 import { PictureInPictureButton } from './picture-in-picture-button';
 import { PinButton } from './pin-button';
 import { QualityButton } from './quality-button';
+import { ServerMuteButton } from './server-mute-button';
 import { VolumeButton } from './volume-button';
 
 type TVoiceUserCardProps = {
@@ -86,6 +88,14 @@ const VoiceUserCard = memo(
 
         <CardControls>
           {!isOwnUser && <VolumeButton volumeKey={volumeKey} />}
+          {!isOwnUser && (
+            <Protect permission={Permission.MANAGE_USERS}>
+              <ServerMuteButton
+                userId={userId}
+                serverMuted={voiceUser.state.serverMuted}
+              />
+            </Protect>
+          )}
           {showQualityControl && (
             <QualityButton
               streamId={userId}
@@ -131,8 +141,12 @@ const VoiceUserCard = memo(
             </div>
 
             <div className="flex items-center gap-1">
-              {voiceUser.state.micMuted && (
-                <MicOff className="size-3.5 text-destructive" />
+              {voiceUser.state.serverMuted ? (
+                <ShieldOff className="size-3.5 text-destructive" />
+              ) : (
+                voiceUser.state.micMuted && (
+                  <MicOff className="size-3.5 text-destructive" />
+                )
               )}
 
               {voiceUser.state.soundMuted && (

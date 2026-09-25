@@ -12,6 +12,10 @@ export enum ActivityLogType {
   USER_KICKED = 'USER_KICKED',
   USER_BANNED = 'USER_BANNED',
   USER_UNBANNED = 'USER_UNBANNED',
+  USER_TIMED_OUT = 'USER_TIMED_OUT',
+  USER_TIMEOUT_REMOVED = 'USER_TIMEOUT_REMOVED',
+  USER_VOICE_MUTED = 'USER_VOICE_MUTED',
+  USER_VOICE_UNMUTED = 'USER_VOICE_UNMUTED',
   USER_DELETED = 'USER_DELETED',
   USER_UPDATED_PASSWORD = 'USER_UPDATED_PASSWORD',
   USER_ENABLED_2FA = 'USER_ENABLED_2FA',
@@ -68,6 +72,20 @@ export type TActivityLogDetailsMap = {
   };
   [ActivityLogType.USER_UNBANNED]: {
     unbannedBy: number;
+  };
+  [ActivityLogType.USER_TIMED_OUT]: {
+    reason: string | undefined;
+    mutedUntil: number;
+    mutedBy: number;
+  };
+  [ActivityLogType.USER_TIMEOUT_REMOVED]: {
+    removedBy: number;
+  };
+  [ActivityLogType.USER_VOICE_MUTED]: {
+    mutedBy: number;
+  };
+  [ActivityLogType.USER_VOICE_UNMUTED]: {
+    unmutedBy: number;
   };
   [ActivityLogType.USER_DELETED]: {
     reason: string | undefined;

@@ -486,7 +486,9 @@ describe('roles router - permission escalation guard', () => {
       .where(eq(roles.id, 1))
       .run();
 
-    await expect(caller.roles.changeIcon({ roleId: 1 })).resolves.toBeUndefined();
+    await expect(
+      caller.roles.changeIcon({ roleId: 1 })
+    ).resolves.toBeUndefined();
 
     const updatedRole = await tdb
       .select()
