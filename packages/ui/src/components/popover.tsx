@@ -20,6 +20,7 @@ function PopoverContent({
   align = 'center',
   sideOffset = 4,
   collisionPadding = 8,
+  hideWhenDetached = true,
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Content>) {
   return (
@@ -29,6 +30,11 @@ function PopoverContent({
         align={align}
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
+        /* Le tiroir lateral mobile reste monte une fois ferme, il est
+           simplement translate hors de l'ecran. Un popover ouvert depuis
+           celui-ci suivait donc son declencheur au-dela du bord gauche au
+           lieu de disparaitre. */
+        hideWhenDetached={hideWhenDetached}
         /* Les largeurs sont fixees en dur par les appelants (w-72 ici, w-80 ou
            w-96 ailleurs) : sur un ecran de telephone le contenu depassait donc
            du viewport, et un declencheur colle en bas d'un tiroir le faisait
