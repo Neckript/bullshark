@@ -66,7 +66,11 @@ const UserPopover = memo(({ userId, children }: TUserPopoverProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start" side="right">
+      {/* `side="top"` et pas `"right"` : pour un placement lateral, floating-ui
+          ne decale la carte que verticalement, donc sur un ecran de telephone
+          elle debordait a droite sans que rien ne la ramene. Au-dessus du
+          declencheur, le recentrage se fait sur l'axe horizontal. */}
+      <PopoverContent className="w-80 p-0" align="start" side="top">
         <div className="relative">
           {user.banned && (
             <div className="absolute right-2 top-2 bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded-md flex items-center gap-1">

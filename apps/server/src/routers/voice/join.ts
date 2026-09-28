@@ -8,7 +8,7 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { config } from '../../config';
 import { db } from '../../db';
-import { channels } from '../../db/schema';
+import { channels, users } from '../../db/schema';
 import { logger } from '../../logger';
 import { VoiceRuntime } from '../../runtimes/voice';
 import { invariant } from '../../utils/invariant';
@@ -45,6 +45,14 @@ const joinVoiceRoute = rateLimitedProcedure(protectedProcedure, {
       message: 'Channel not found'
     });
 
+    // Read the persisted voice-mute fresh: the connection context's user row is
+    // captured at connect time and would be stale for a mid-session mute.
+    const voiceMutedRow = await db
+      .select({ voiceMuted: users.voiceMuted })
+      .from(users)
+      .where(eq(users.id, ctx.user.id))
+      .get();
+
     invariant(channel.type === ChannelType.VOICE, {
       code: 'BAD_REQUEST',
       message: 'Channel is not a voice channel'
@@ -66,7 +74,10 @@ const joinVoiceRoute = rateLimitedProcedure(protectedProcedure, {
       message: 'Voice runtime not found for this channel'
     });
 
-    runtime.addUser(ctx.user.id, input.state);
+    runtime.addUser(ctx.user.id, {
+      ...input.state,
+      serverMuted: voiceMutedRow?.voiceMuted ?? false
+    });
 
     const state = runtime.getUserState(ctx.user.id);
 

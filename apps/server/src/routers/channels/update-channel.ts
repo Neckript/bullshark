@@ -15,7 +15,8 @@ const updateChannelRoute = protectedProcedure
       channelId: z.number().min(1),
       name: z.string().min(2).max(27).optional(),
       topic: z.string().max(128).nullable().optional(),
-      private: z.boolean().optional()
+      private: z.boolean().optional(),
+      slowModeSeconds: z.number().int().min(0).max(21600).optional()
     })
   )
   .mutation(async ({ ctx, input }) => {
@@ -39,7 +40,8 @@ const updateChannelRoute = protectedProcedure
       .set({
         name: input.name,
         topic: input.topic,
-        private: input.private
+        private: input.private,
+        slowModeSeconds: input.slowModeSeconds
       })
       .where(eq(channels.id, input.channelId))
       .returning()

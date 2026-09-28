@@ -5,6 +5,7 @@
 import type { TActivityLogDetailsMap } from '@bullshark/shared/src/logs';
 import type { TMessageMetadata } from '@bullshark/shared/src/types';
 import {
+  type AnySQLiteColumn,
   index,
   integer,
   primaryKey,
@@ -181,6 +182,7 @@ const channels = sqliteTable(
     isDm: integer('is_dm_channel', { mode: 'boolean' })
       .notNull()
       .default(false),
+    slowModeSeconds: integer('slow_mode_seconds').notNull().default(0),
     position: integer('position').notNull(),
     categoryId: integer('category_id').references(() => categories.id, {
       onDelete: 'cascade'
@@ -213,6 +215,14 @@ const users = sqliteTable(
     banned: integer('banned', { mode: 'boolean' }).notNull().default(false),
     banReason: text('ban_reason'),
     bannedAt: integer('banned_at'),
+    mutedUntil: integer('muted_until'),
+    mutedBy: integer('muted_by').references((): AnySQLiteColumn => users.id, {
+      onDelete: 'set null'
+    }),
+    muteReason: text('mute_reason'),
+    voiceMuted: integer('voice_muted', { mode: 'boolean' })
+      .notNull()
+      .default(false),
     bannerColor: text('banner_color'),
     nicknameColor: text('nickname_color'),
     nicknameFont: text('nickname_font'),
