@@ -98,7 +98,11 @@ const Message = memo(
                 <span>{t('reply', { count: replyCount })}</span>
               </button>
             )}
-            {!disableActions && (
+            {/* Sur ecran tactile, le bouton a trois points et sa feuille
+                d'actions ci-dessous remplacent cette barre. La regle
+                `@media (hover: none)` d'index.css devoilerait les deux en
+                meme temps, ce qui encombrait chaque message sur mobile. */}
+            {!disableActions && !isCoarse && (
               <MessageActions
                 onEdit={() => setIsPencilEditing(true)}
                 canManage={canManage}
