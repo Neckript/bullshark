@@ -1,5 +1,13 @@
 import { type TPluginInfo } from '@bullshark/shared';
-import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
+import {
+  afterAll,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  mock,
+  test
+} from 'bun:test';
 import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import path from 'path';
@@ -8,10 +16,27 @@ import { loadMockedPlugins, resetPluginMocks } from '../../__tests__/mocks';
 import { tdb } from '../../__tests__/setup';
 import { config } from '../../config';
 import { pluginData } from '../../db/schema';
+import * as downloadsModule from '../../helpers/downloads';
+import * as marketplaceModule from '../../helpers/marketplace';
 import { PLUGINS_PATH } from '../../helpers/paths';
 import { pluginManager } from '../../plugins';
 
+// Bun's mock.module is global and permanent, and the whole suite shares one
+// process: the stubs the install/update tests install below otherwise outlive
+// this file and are still in place when a later file imports the real helper.
+// downloads.test.ts then got a downloadPlugin that always resolves, so its
+// "rejects an unsafe URL" assertions failed - on Linux CI only, since the
+// specifier resolves differently on Windows. Snapshot the real modules here,
+// before any test body runs, and put them back when this file is done.
+const realDownloads = { ...downloadsModule };
+const realMarketplace = { ...marketplaceModule };
+
 describe('plugins router', () => {
+  afterAll(() => {
+    mock.module('../../helpers/downloads', () => realDownloads);
+    mock.module('../../helpers/marketplace', () => realMarketplace);
+  });
+
   beforeEach(async () => {
     await loadMockedPlugins();
     await resetPluginMocks();
