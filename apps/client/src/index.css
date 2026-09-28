@@ -27,6 +27,25 @@
   }
 }
 
+/* Tailwind v4 n'emet les utilitaires `hover:` / `group-hover:` que sous
+   `@media (hover: hover)`. Sur un ecran tactile la regle ne s'applique donc
+   jamais et tout ce qui n'apparait qu'au survol restait definitivement
+   invisible : controles de carte vocale (mute serveur, volume, pin, qualite,
+   PiP), actions de message, overlays "changer l'image". Sur ces appareils on
+   les affiche en permanence, faute de survol a simuler.
+   Regle volontairement hors `@layer` : les utilitaires Tailwind sont dans
+   `@layer utilities`, donc une regle sans couche l'emporte sur `opacity-0`
+   et `hidden` quel que soit l'ordre des declarations. */
+@media (hover: none) {
+  .group-hover\:opacity-100 {
+    opacity: 1;
+  }
+
+  .group-hover\:flex {
+    display: flex;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

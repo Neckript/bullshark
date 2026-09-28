@@ -57,6 +57,11 @@ const updateVoiceStateRoute = protectedProcedure
       message: 'Voice runtime not found for this channel'
     });
 
+    // A server-muted user cannot lift their own mic mute.
+    if (runtime.getUserState(ctx.user.id).serverMuted) {
+      delete validatedInput.micMuted;
+    }
+
     runtime.updateUserState(ctx.user.id, {
       ...validatedInput
     });

@@ -42,6 +42,13 @@ const produceRoute = protectedProcedure
         ctx.currentVoiceChannelId,
         ChannelPermission.SPEAK
       );
+
+      const runtimeForMute = VoiceRuntime.findById(ctx.currentVoiceChannelId);
+
+      invariant(!runtimeForMute?.getUserState(ctx.user.id).serverMuted, {
+        code: 'FORBIDDEN',
+        message: 'You have been muted by a moderator'
+      });
     } else if (input.kind === StreamKind.VIDEO) {
       await ctx.needsChannelPermission(
         ctx.currentVoiceChannelId,

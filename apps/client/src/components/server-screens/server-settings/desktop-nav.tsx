@@ -14,7 +14,11 @@ type TServerSettingsDesktopNavProps = {
 };
 
 const ServerSettingsDesktopNav = memo(
-  ({ activeSection, onSelect, isAccessible }: TServerSettingsDesktopNavProps) => {
+  ({
+    activeSection,
+    onSelect,
+    isAccessible
+  }: TServerSettingsDesktopNavProps) => {
     const { t } = useTranslation('settings');
 
     return (

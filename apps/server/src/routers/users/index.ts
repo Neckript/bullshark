@@ -15,6 +15,8 @@ import { getUserInfoRoute } from './get-user-info';
 import { getUsersRoute } from './get-users';
 import { kickRoute } from './kick';
 import { removeRoleRoute } from './remove-role';
+import { removeTimeoutRoute } from './remove-timeout';
+import { timeoutRoute } from './timeout';
 import { unbanRoute } from './unban';
 import { updatePasswordRoute } from './update-password';
 import { updateUserRoute } from './update-user';
@@ -31,6 +33,8 @@ export const usersRouter = t.router({
   kick: kickRoute,
   ban: banRoute,
   unban: unbanRoute,
+  timeout: timeoutRoute,
+  removeTimeout: removeTimeoutRoute,
   delete: deleteUserRoute,
   onJoin: onUserJoinRoute,
   onLeave: onUserLeaveRoute,

@@ -103,7 +103,8 @@ const defaultUserState: TVoiceUserState = {
   micMuted: false,
   soundMuted: false,
   webcamEnabled: false,
-  sharingScreen: false
+  sharingScreen: false,
+  serverMuted: false
 };
 
 type TTransportMap = {
@@ -408,7 +409,9 @@ class VoiceRuntime {
 
   public addUser = (
     userId: number,
-    state: Pick<TVoiceUserState, 'micMuted' | 'soundMuted'>
+    state: Pick<TVoiceUserState, 'micMuted' | 'soundMuted'> & {
+      serverMuted?: boolean;
+    }
   ) => {
     if (this.getUser(userId)) return;
 
@@ -416,7 +419,9 @@ class VoiceRuntime {
       userId,
       state: {
         ...defaultUserState,
-        ...state
+        ...state,
+        // A server-muted user always starts muted, whatever they requested.
+        micMuted: state.serverMuted ? true : state.micMuted
       }
     });
 

@@ -54,6 +54,12 @@ const useVoiceControls = ({
     if (isTogglingMic.current) return;
     const nextMicMuted = !ownVoiceState.micMuted;
 
+    // A moderator server-mute cannot be lifted by the user themselves.
+    if (ownVoiceState.serverMuted && !nextMicMuted) {
+      toast.error('You have been muted by a moderator');
+      return;
+    }
+
     if (ownVoiceState.soundMuted && !nextMicMuted) {
       return;
     }
@@ -99,6 +105,7 @@ const useVoiceControls = ({
   }, [
     ownVoiceState.micMuted,
     ownVoiceState.soundMuted,
+    ownVoiceState.serverMuted,
     startMicStream,
     currentVoiceChannelId,
     localAudioStream

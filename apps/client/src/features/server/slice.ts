@@ -100,7 +100,8 @@ const initialState: IServerState = {
     micMuted: false,
     soundMuted: false,
     webcamEnabled: false,
-    sharingScreen: false
+    sharingScreen: false,
+    serverMuted: false
   },
   pinnedCard: undefined,
   channelPermissions: {},
