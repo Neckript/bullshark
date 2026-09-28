@@ -6,7 +6,21 @@
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
     <meta name="theme-color" content="#030a10" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- iOS only honours the manifest's display:standalone since 16.4, and
+         unevenly: without this, "Add to Home Screen" yields a bookmark that
+         reopens Safari chrome instead of an installed app. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Opaque dark status bar to match theme-color. Deliberately not
+         black-translucent: that extends content under the status bar, and
+         nothing reads safe-area-inset-top yet. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <!-- viewport-fit=cover is what makes env(safe-area-inset-*) resolve to
+         anything but 0 - message-compose already reserves the bottom inset for
+         the home indicator, and that reservation is dead without this. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>Bullshark</title>
   </head>
   <body>
