@@ -227,9 +227,11 @@ config = applyEnvOverrides(config, {
 config = Object.freeze(config);
 
 // Only query the external IP-echo services when no announced address is
-// configured. Otherwise getPublicIp() makes 3 third-party requests at every
-// startup whose result would be unused — mediasoup falls back to SERVER_PUBLIC_IP
-// only when webRtc.announcedAddress is empty (utils/mediasoup.ts).
+// configured. Otherwise getPublicIp() reaches out to a third party at every
+// startup for a result that would be unused — one request when the first
+// endpoint answers, up to three as it falls back (network.ts) — and mediasoup
+// falls back to SERVER_PUBLIC_IP only when webRtc.announcedAddress is empty
+// (utils/mediasoup.ts).
 const SERVER_PUBLIC_IP = config.webRtc.announcedAddress
   ? undefined
   : await getPublicIp();

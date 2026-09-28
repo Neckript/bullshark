@@ -130,9 +130,13 @@ chat.example.com {
 ```
 
 That's it — Caddy handles ACME, redirects, and renewal on its own. Point your
-domain's `A`/`AAAA` record at the server first. / C'est tout — Caddy gère
+domain's `A`/`AAAA` record at the server first. Provider-by-provider
+instructions for that record — OVH, Hetzner, other EU hosts — are in
+[dns-providers.md](./dns-providers.md). / C'est tout — Caddy gère
 l'ACME, les redirections et le renouvellement tout seul. Pointe d'abord
-l'enregistrement `A`/`AAAA` de ton domaine vers le serveur.
+l'enregistrement `A`/`AAAA` de ton domaine vers le serveur. Les instructions
+hébergeur par hébergeur pour cet enregistrement — OVH, Hetzner, autres
+hébergeurs UE — sont dans [dns-providers.md](./dns-providers.md).
 
 The certificate is publicly trusted — no browser warning, ever. / Le
 certificat est reconnu publiquement — aucun avertissement navigateur, jamais.
