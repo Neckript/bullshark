@@ -80,6 +80,7 @@ import {
 } from './helpers';
 import { useDesktopBridge } from './hooks/use-desktop-bridge';
 import { useLocalStreams } from './hooks/use-local-streams';
+import { useOverlayReporter } from './hooks/use-overlay-reporter';
 import { usePtt } from './hooks/use-ptt';
 import { useRemoteStreams } from './hooks/use-remote-streams';
 import { useSoundboard } from './hooks/use-soundboard';
@@ -1370,6 +1371,14 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
     inVoice: !!currentVoiceChannelId,
     micMuted: ownVoiceState.micMuted,
     toggleMic
+  });
+
+  useOverlayReporter({
+    inVoice: !!currentVoiceChannelId,
+    currentVoiceChannelId,
+    localAudioStream,
+    remoteUserStreams,
+    ownMicMuted: ownVoiceState.micMuted
   });
 
   useEffect(() => {
