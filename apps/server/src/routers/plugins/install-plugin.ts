@@ -26,7 +26,11 @@ const installRoute = protectedProcedure
       await pluginManager.unload(input.pluginId);
     }
 
-    await downloadPlugin(versionData.downloadUrl, versionData.checksum);
+    await downloadPlugin(
+      versionData.downloadUrl,
+      versionData.checksum,
+      input.pluginId
+    );
 
     if (wasEnabled) {
       await pluginManager.load(input.pluginId);
