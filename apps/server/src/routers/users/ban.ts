@@ -26,12 +26,6 @@ const banRoute = protectedProcedure
 
     await assertOutranksUser(ctx.userId, input.userId);
 
-    const userWs = ctx.getUserWs(input.userId);
-
-    if (userWs) {
-      userWs.close(DisconnectCode.BANNED, input.reason);
-    }
-
     await db
       .update(users)
       .set({
@@ -40,6 +34,10 @@ const banRoute = protectedProcedure
         bannedAt: Date.now()
       })
       .where(eq(users.id, input.userId));
+
+    // the ban has to be persisted first: a client reconnects within tens of
+    // milliseconds and would otherwise pass the banned check in createContext
+    ctx.disconnectUser(input.userId, DisconnectCode.BANNED, input.reason);
 
     publishUser(input.userId, 'update');
 

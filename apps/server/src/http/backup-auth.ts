@@ -13,6 +13,10 @@ const getOwnerFromRequest = async (req: http.IncomingMessage) => {
 
   const user = await getUserByToken(token);
   if (!user) return null;
+  // reachable: an owner can ban another owner (assertOutranksUser returns early
+  // when the actor is owner), and isOwner only reads user_roles, so a banned
+  // owner keeps the role and a working token until it expires
+  if (user.banned) return null;
   if (!(await isOwner(user.id))) return null;
 
   return user;

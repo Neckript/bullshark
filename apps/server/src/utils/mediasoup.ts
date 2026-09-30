@@ -18,7 +18,8 @@ const loadMediasoup = async () => {
 
   const workerConfig: mediasoup.types.WorkerSettings = {
     logLevel: 'debug',
-    disableLiburing: true,
+    // disableLiburing is gone: mediasoup removed io_uring support entirely in
+    // 3.20.7, so there is nothing left to disable and no replacement option.
     workerBin: MEDIASOUP_BINARY_PATH
   };
 
@@ -34,6 +35,10 @@ const loadMediasoup = async () => {
     mediaSoupWorker = await mediasoup.createWorker(workerConfig);
   } catch (error) {
     logger.error('Failed to load mediasoup worker: %s', getErrorMessage(error));
+    // Swallowing this left mediaSoupWorker undefined and the .on('died') call
+    // below threw a TypeError that masked the real cause logged just above.
+    // A server with no worker cannot serve voice, so fail loudly instead.
+    throw error;
   } finally {
     restoreSpawn();
   }

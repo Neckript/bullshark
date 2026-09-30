@@ -89,10 +89,16 @@ const loadEmbeds = async () => {
       await fs.writeFile(mediasoupPath, buffer);
       await fs.chmod(mediasoupPath, 0o755);
     } catch (error) {
+      // Fatal, like the interface and migration extractions above. Only logging
+      // here left the server running against whatever worker binary was already
+      // in the data dir: after a version bump that is the OLD worker talking a
+      // different protocol to the new JS library, so voice breaks in a way that
+      // only shows up as a debug line. Better to refuse to boot.
       logger.error(
         'Failed to extract mediasoup worker: %s',
         getErrorMessage(error)
       );
+      process.exit(1);
     }
   }
 };

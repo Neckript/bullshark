@@ -823,7 +823,8 @@ describe('plugins router', () => {
 
       expect(mockDownload).toHaveBeenCalledWith(
         'https://example.com/plugin.tar.gz',
-        'deadbeef1234'
+        'deadbeef1234',
+        'plugin-example'
       );
     });
 
@@ -879,7 +880,8 @@ describe('plugins router', () => {
 
       expect(mockDownload).toHaveBeenCalledWith(
         'https://example.com/plugin-a-v2.tar.gz',
-        'cafebabe5678'
+        'cafebabe5678',
+        'plugin-a'
       );
     });
 
