@@ -11,7 +11,7 @@
     },
     "apps/client": {
       "name": "client",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "dependencies": {
         "@bullshark/shared": "workspace:*",
         "@bullshark/ui": "workspace:*",
@@ -87,7 +87,7 @@
     },
     "apps/server": {
       "name": "@bullshark/server",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "dependencies": {
         "@bullshark/plugin-sdk": "workspace:*",
         "@bullshark/shared": "workspace:*",
@@ -100,7 +100,7 @@
         "ipaddr.js": "^2.3.0",
         "jsonwebtoken": "^9.0.2",
         "link-preview-js": "^3.1.0",
-        "mediasoup": "3.19.19",
+        "mediasoup": "3.27.1",
         "otpauth": "^9.5.1",
         "queue": "^7.0.0",
         "sanitize-html": "^2.17.0",
@@ -138,7 +138,7 @@
     },
     "packages/e2e": {
       "name": "@bullshark/e2e",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "devDependencies": {
         "@bullshark/shared": "workspace:*",
         "@playwright/test": "^1.58.2",
@@ -156,7 +156,7 @@
     },
     "packages/plugin-sdk": {
       "name": "@bullshark/plugin-sdk",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "devDependencies": {
         "@bullshark/shared": "workspace:*",
         "@types/bun": "latest",
@@ -184,7 +184,7 @@
     },
     "packages/scripts": {
       "name": "@bullshark/scripts",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -200,12 +200,12 @@
     },
     "packages/shared": {
       "name": "@bullshark/shared",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "dependencies": {
         "drizzle-orm": "^0.44.6",
         "js-sha256": "^0.11.1",
         "linkify-it": "^5.0.0",
-        "mediasoup": "^3.19.9",
+        "mediasoup": "^3.27.1",
         "zod": "^4.3.5",
       },
       "devDependencies": {
@@ -225,7 +225,7 @@
     },
     "packages/ui": {
       "name": "@bullshark/ui",
-      "version": "0.0.30",
+      "version": "0.0.32",
       "dependencies": {
         "@bullshark/shared": "workspace:*",
         "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -1148,7 +1148,7 @@
 
     "graphemer": ["graphemer@1.4.0", "", {}, "sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag=="],
 
-    "h264-profile-level-id": ["h264-profile-level-id@2.3.2", "", { "dependencies": { "debug": "^4.4.3" } }, "sha512-hnq1UDlw7WGJV6GCr/g7wnkHYUjdAY2bis9rgn2JqSdQS2WfVvnt1ZE9g8nTguracodf5LLKZOwURsDN49YtBQ=="],
+    "h264-profile-level-id": ["h264-profile-level-id@2.3.3", "", { "dependencies": { "debug": "^4.4.3" } }, "sha512-rPd5gpyWuIfEbBiHC/f9I4wdeCpAhg0aWdYgjMRdVTqhJT22C6VrWTi4hpAAgJad1Vv8BJDEvrzAQTW7CxzmJw=="],
 
     "has-flag": ["has-flag@4.0.0", "", {}, "sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ=="],
 
@@ -1326,7 +1326,7 @@
 
     "media-tracks": ["media-tracks@0.3.5", "", {}, "sha512-l54rkKXlLBt3ob3zOLWHcnjvwUmX5bNEZ70igyapOZZC9imzqBmq1oz8p2roiV04KhjblFIi2hetLPF1oYVLRA=="],
 
-    "mediasoup": ["mediasoup@3.19.19", "", { "dependencies": { "debug": "^4.4.3", "flatbuffers": "^25.9.23", "h264-profile-level-id": "^2.3.2", "node-fetch": "^3.3.2", "supports-color": "^10.2.2", "tar": "^7.5.13" } }, "sha512-rhaDxUEy+r54LlNBFNDowiWHNzoRTmFLN4PVWjarTrv7BRKq6qkNAkNadiMneo7vgV7YkRCMzfKy76XURP1fYw=="],
+    "mediasoup": ["mediasoup@3.27.1", "", { "dependencies": { "debug": "^4.4.3", "flatbuffers": "^25.9.23", "h264-profile-level-id": "^2.3.3", "node-fetch": "^3.3.2", "supports-color": "^11.0.0", "tar": "^7.5.22" } }, "sha512-unjG0ihJFZmCXxtS5ay6iPp+ov1Rg/BhJuP1gGfw4ElX/K5Z0it3PCC7rKecWMK2FgbQ52kKmDgZBPm/ewYO6A=="],
 
     "mediasoup-client": ["mediasoup-client@3.18.7", "", { "dependencies": { "@types/debug": "^4.1.12", "@types/events-alias": "npm:@types/events@^3.0.3", "awaitqueue": "^3.3.0", "debug": "^4.4.3", "events-alias": "npm:events@^3.3.0", "fake-mediastreamtrack": "^2.2.1", "h264-profile-level-id": "^2.3.2", "sdp-transform": "^3.0.0", "supports-color": "^10.2.2" } }, "sha512-110f+zYEvSllYoF6didbIznIvSrTwMY9CqDhdWpq1M0goX1HWLoBdguiYB/MqcA858R2dOKDarP1R4vv5RAg1w=="],
 
@@ -1580,7 +1580,7 @@
 
     "super-media-element": ["super-media-element@1.4.2", "", {}, "sha512-9pP/CVNp4NF2MNlRzLwQkjiTgKKe9WYXrLh9+8QokWmMxz+zt2mf1utkWLco26IuA3AfVcTb//qtlTIjY3VHxA=="],
 
-    "supports-color": ["supports-color@10.2.2", "", {}, "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="],
+    "supports-color": ["supports-color@11.0.0", "", {}, "sha512-/zyImLdxhdygBIaVX0xTlQhKaCDLCrm665aqHk8xqK/Pa6k61fL6gwQGQq1k31yNyz6x55PppQgF2DMyPQa5xw=="],
 
     "systeminformation": ["systeminformation@5.31.4", "", { "os": "!aix", "bin": { "systeminformation": "lib/cli.js" } }, "sha512-lZppDyQx91VdS5zJvAyGkmwe+Mq6xY978BDUG2wRkWE+jkmUF5ti8cvOovFQoN5bvSFKCXVkyKEaU5ec3SJiRg=="],
 
@@ -1590,7 +1590,7 @@
 
     "tapable": ["tapable@2.3.0", "", {}, "sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg=="],
 
-    "tar": ["tar@7.5.13", "", { "dependencies": { "@isaacs/fs-minipass": "^4.0.0", "chownr": "^3.0.0", "minipass": "^7.1.2", "minizlib": "^3.1.0", "yallist": "^5.0.0" } }, "sha512-tOG/7GyXpFevhXVh8jOPJrmtRpOTsYqUIkVdVooZYJS/z8WhfQUX8RJILmeuJNinGAMSu1veBr4asSHFt5/hng=="],
+    "tar": ["tar@7.5.22", "", { "dependencies": { "@isaacs/fs-minipass": "^4.0.0", "chownr": "^3.0.0", "minipass": "^7.1.2", "minizlib": "^3.1.0", "yallist": "^5.0.0" } }, "sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA=="],
 
     "text-hex": ["text-hex@1.0.0", "", {}, "sha512-uuVGNWzgJ4yhRaNSiubPY7OjISw4sw4E5Uv0wbjp+OzcbmVU/rsT8ujgcXJhn9ypzsgr5vlzpPqP+MBBKcGvbg=="],
 
@@ -1781,6 +1781,10 @@
     "knip/@types/node": ["@types/node@25.3.2", "", { "dependencies": { "undici-types": "7.18.2" } }, "sha512-RpV6r/ij22zRRdyBPcxDeKAzH43phWVKEjL2iksqo1Vz3CuBUrgmPpPhALKiRfU7OMCmeeO9vECBMsV0hMTG8Q=="],
 
     "markdown-it/entities": ["entities@4.5.0", "", {}, "sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw=="],
+
+    "mediasoup-client/h264-profile-level-id": ["h264-profile-level-id@2.3.2", "", { "dependencies": { "debug": "^4.4.3" } }, "sha512-hnq1UDlw7WGJV6GCr/g7wnkHYUjdAY2bis9rgn2JqSdQS2WfVvnt1ZE9g8nTguracodf5LLKZOwURsDN49YtBQ=="],
+
+    "mediasoup-client/supports-color": ["supports-color@10.2.2", "", {}, "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g=="],
 
     "micromatch/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
 
