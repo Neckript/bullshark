@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import type http from 'http';
 import {
   getJsonBody,
+  MAX_JSON_BODY_BYTES,
   getRequestPathname,
   hasPrefixPathSegment
 } from '../helpers';
@@ -15,6 +16,8 @@ const createMockRequest = (
 
   req.url = url;
   req.headers = { host };
+  req.resume = (() => req) as http.IncomingMessage['resume'];
+  req.destroy = (() => req) as http.IncomingMessage['destroy'];
 
   return req;
 };
@@ -74,6 +77,35 @@ describe('http helpers', () => {
       const body = await getJsonBody<{ identity: string }>(req);
 
       expect(body.identity).toBe('test');
+    });
+
+    test('rejects a body larger than the cap instead of buffering it', async () => {
+      const req = createMockRequest('/login', 'localhost:9999');
+
+      queueMicrotask(() => {
+        req.emit('data', Buffer.alloc(MAX_JSON_BODY_BYTES + 1));
+        req.emit('end');
+      });
+
+      await expect(getJsonBody(req)).rejects.toThrow(
+        'Request body is too large'
+      );
+    });
+
+    test('decodes a multi-byte character split across two chunks', async () => {
+      const req = createMockRequest('/login', 'localhost:9999');
+      // 'é' is 0xC3 0xA9: string concatenation would corrupt it here
+      const payload = Buffer.from('{"identity":"café"}', 'utf8');
+
+      queueMicrotask(() => {
+        req.emit('data', payload.subarray(0, 15));
+        req.emit('data', payload.subarray(15));
+        req.emit('end');
+      });
+
+      const body = await getJsonBody<{ identity: string }>(req);
+
+      expect(body.identity).toBe('café');
     });
 
     test('returns empty object when body is empty', async () => {

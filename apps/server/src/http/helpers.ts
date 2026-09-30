@@ -1,6 +1,7 @@
 import fs from 'fs';
 import http from 'http';
 import path from 'path';
+import { HttpValidationError } from './utils';
 
 type HttpRouteHandler<TContext = undefined> = (
   req: http.IncomingMessage,
@@ -8,24 +9,59 @@ type HttpRouteHandler<TContext = undefined> = (
   ctx: TContext
 ) => Promise<unknown> | unknown;
 
+// /login and /login/2fa are unauthenticated and their rate limiter only runs
+// after the body has been read, so an unbounded body grows a string in memory
+// until the process dies. The largest legitimate field here is a 128-char
+// password, so 1 MiB is already generous.
+const MAX_JSON_BODY_BYTES = 1024 * 1024;
+
 const getJsonBody = async <T = any>(req: http.IncomingMessage): Promise<T> => {
   return new Promise((resolve, reject) => {
-    let body = '';
+    const chunks: Buffer[] = [];
+    let received = 0;
+    let settled = false;
 
     req.on('data', (chunk) => {
-      body += chunk;
+      if (settled) return;
+
+      // Buffers, not string concatenation: a multi-byte UTF-8 character split
+      // across two chunks is corrupted by `body += chunk`.
+      const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+
+      received += buffer.length;
+
+      if (received > MAX_JSON_BODY_BYTES) {
+        settled = true;
+        chunks.length = 0;
+        // drain rather than destroy: destroying the socket means the client
+        // never receives the 413
+        req.resume();
+        reject(
+          new HttpValidationError('body', 'Request body is too large', 413)
+        );
+        return;
+      }
+
+      chunks.push(buffer);
     });
 
     req.on('end', () => {
+      if (settled) return;
+      settled = true;
+
       try {
-        const json = body ? JSON.parse(body) : {};
-        resolve(json);
+        const body = Buffer.concat(chunks).toString('utf8');
+        resolve(body ? JSON.parse(body) : {});
       } catch (err) {
         reject(err);
       }
     });
 
-    req.on('error', reject);
+    req.on('error', (err) => {
+      if (settled) return;
+      settled = true;
+      reject(err);
+    });
   });
 };
 
@@ -173,6 +209,7 @@ export {
   getJsonBody,
   getRequestPathname,
   hasPrefixPathSegment,
+  MAX_JSON_BODY_BYTES,
   sanitizeFileName,
   sendJsonError,
   sendNotModified
