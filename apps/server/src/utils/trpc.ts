@@ -1,6 +1,7 @@
 import {
   ChannelPermission,
   UserStatus,
+  type DisconnectCode,
   type Permission,
   type TUser
 } from '@bullshark/shared';
@@ -42,7 +43,12 @@ export type Context = {
   getOwnWs: () => WebSocket | undefined;
   getStatusById: (userId: number) => UserStatus;
   setWsUserId: (userId: number) => void;
-  getUserWs: (userId: number) => WebSocket | undefined;
+  // closes every socket the user holds; returns how many were closed
+  disconnectUser: (
+    userId: number,
+    code: DisconnectCode,
+    reason?: string
+  ) => number;
   getConnectionInfo: () => TConnectionInfo | undefined;
   throwValidationError: (field: string, message: string) => never;
   saveUserIp: (userId: number, ip: string) => Promise<void>;
