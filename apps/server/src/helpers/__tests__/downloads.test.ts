@@ -6,23 +6,35 @@ describe('downloadPlugin - URL safety', () => {
   // without touching the disk or making a request
   test('rejects a non-https download URL', async () => {
     await expect(
-      downloadPlugin('http://example.com/plugin.tar.gz', 'checksum', 'plugin-example')
+      downloadPlugin(
+        'http://example.com/plugin.tar.gz',
+        'checksum',
+        'plugin-example'
+      )
     ).rejects.toThrow('URL is not allowed.');
   });
 
   test('rejects a download URL pointing at an internal address', async () => {
     await expect(
-      downloadPlugin('https://127.0.0.1/plugin.tar.gz', 'checksum', 'plugin-example')
+      downloadPlugin(
+        'https://127.0.0.1/plugin.tar.gz',
+        'checksum',
+        'plugin-example'
+      )
     ).rejects.toThrow('URL is not allowed.');
 
     await expect(
-      downloadPlugin('https://169.254.169.254/plugin.tar.gz', 'checksum', 'plugin-example')
+      downloadPlugin(
+        'https://169.254.169.254/plugin.tar.gz',
+        'checksum',
+        'plugin-example'
+      )
     ).rejects.toThrow('URL is not allowed.');
   });
 
   test('rejects a malformed download URL', async () => {
-    await expect(downloadPlugin('not-a-url', 'checksum', 'plugin-example')).rejects.toThrow(
-      'URL is not allowed.'
-    );
+    await expect(
+      downloadPlugin('not-a-url', 'checksum', 'plugin-example')
+    ).rejects.toThrow('URL is not allowed.');
   });
 });

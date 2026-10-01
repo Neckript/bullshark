@@ -3,9 +3,9 @@ import { EventEmitter } from 'events';
 import type http from 'http';
 import {
   getJsonBody,
-  MAX_JSON_BODY_BYTES,
   getRequestPathname,
-  hasPrefixPathSegment
+  hasPrefixPathSegment,
+  MAX_JSON_BODY_BYTES
 } from '../helpers';
 
 const createMockRequest = (
@@ -78,8 +78,6 @@ describe('http helpers', () => {
 
       expect(body.identity).toBe('test');
     });
-
-
 
     test('rejects a body larger than the cap instead of buffering it', async () => {
       const req = createMockRequest('/login', 'localhost:9999');

@@ -23,7 +23,11 @@ const createFakeSocket = (userId?: number): TFakeSocket => {
 describe('closeUserSockets', () => {
   test('closes every session a user holds, not just the first', () => {
     // a user with two tabs plus the desktop app must not keep one alive
-    const sessions = [createFakeSocket(7), createFakeSocket(7), createFakeSocket(7)];
+    const sessions = [
+      createFakeSocket(7),
+      createFakeSocket(7),
+      createFakeSocket(7)
+    ];
     const other = createFakeSocket(9);
 
     const closed = closeUserSockets(
