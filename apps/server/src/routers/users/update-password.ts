@@ -1,5 +1,5 @@
 import { ActivityLogType } from '@bullshark/shared';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
 import { users } from '../../db/schema';
@@ -60,7 +60,11 @@ const updatePasswordRoute = protectedProcedure
     await db
       .update(users)
       .set({
-        password: hashedNewPassword
+        password: hashedNewPassword,
+        // Revokes every token already issued to this user. Changing a password
+        // that is only half-trusted is pointless if the sessions opened with
+        // the old one keep working.
+        tokenVersion: sql`${users.tokenVersion} + 1`
       })
       .where(eq(users.id, ctx.userId))
       .run();

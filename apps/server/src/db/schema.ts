@@ -235,7 +235,11 @@ const users = sqliteTable(
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at'),
     totpSecret: text('totp_secret'),
-    totpEnabledAt: integer('totp_enabled_at')
+    totpEnabledAt: integer('totp_enabled_at'),
+    // Bumped to revoke every token already issued to this user. There is no
+    // server-side logout, so without this a stolen token stays valid for its
+    // full 7 day life and a password change does not kill it.
+    tokenVersion: integer('token_version').notNull().default(0)
   },
   (t) => [
     uniqueIndex('users_identity_idx').on(t.identity),

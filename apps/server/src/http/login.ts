@@ -309,7 +309,7 @@ const loginRouteHandler = async (
     return res;
   }
 
-  const token = await signAuthToken(existingUser.id);
+  const token = await signAuthToken(existingUser.id, existingUser.tokenVersion);
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ success: true, token }));

@@ -204,6 +204,13 @@
       "when": 1789976722871,
       "tag": "0028_little_maria_hill",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "6",
+      "when": 1790863725653,
+      "tag": "0029_panoramic_payback",
+      "breakpoints": true
     }
   ]
 }

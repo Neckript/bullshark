@@ -47,6 +47,7 @@ const joinedUserColumns = {
   voiceMuted: users.voiceMuted,
   totpSecret: users.totpSecret,
   totpEnabledAt: users.totpEnabledAt,
+  tokenVersion: users.tokenVersion,
   avatar: userAvatarFiles,
   banner: userBannerFiles
 };
@@ -362,6 +363,14 @@ const getUserByToken = async (token: string | undefined) => {
 
     const user = await getUserById(decoded.userId);
 
+    if (!user) return undefined;
+
+    // Tokens minted before token revocation existed carry no tokenVersion
+    // claim, and every existing row was backfilled to 0 by the migration, so a
+    // missing claim reads as 0 and those sessions survive the deploy instead
+    // of every user being logged out at once.
+    if ((decoded.tokenVersion ?? 0) !== user.tokenVersion) return undefined;
+
     return user;
   } catch {
     return undefined;
@@ -399,6 +408,7 @@ const getUsers = async (): Promise<TJoinedUser[]> => {
           voiceMuted: users.voiceMuted,
           totpSecret: users.totpSecret,
           totpEnabledAt: users.totpEnabledAt,
+          tokenVersion: users.tokenVersion,
           avatar: avatarFiles,
           banner: bannerFiles
         })
@@ -461,6 +471,7 @@ const getUsers = async (): Promise<TJoinedUser[]> => {
     voiceMuted: result.voiceMuted,
     totpSecret: result.totpSecret,
     totpEnabledAt: result.totpEnabledAt,
+    tokenVersion: result.tokenVersion,
     roleIds: rolesMap[result.id] || []
   }));
 };

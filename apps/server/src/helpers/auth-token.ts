@@ -11,8 +11,12 @@ const AUTH_TOKEN_ALGORITHM = 'HS256' as const;
 
 // Single place where authentication tokens are minted, so login, 2FA and the
 // sliding refresh all issue tokens with the same lifetime.
-const signAuthToken = async (userId: number) =>
-  jwt.sign({ userId }, await getServerToken(), {
+//
+// tokenVersion is passed in rather than looked up here: all three call sites
+// already hold the user they are minting for, so a lookup would be a second
+// read of a row they just read.
+const signAuthToken = async (userId: number, tokenVersion: number) =>
+  jwt.sign({ userId, tokenVersion }, await getServerToken(), {
     algorithm: AUTH_TOKEN_ALGORITHM,
     expiresIn: AUTH_TOKEN_EXPIRES_IN
   });
