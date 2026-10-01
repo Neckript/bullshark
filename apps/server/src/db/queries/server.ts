@@ -3,58 +3,24 @@ import { eq, sql } from 'drizzle-orm';
 import { db } from '..';
 import { config } from '../../config';
 import { signFile } from '../../helpers/files-crypto';
+import { prepared } from '../prepared';
 import { files, settings } from '../schema';
 
 // since this is static, we can keep it in memory to avoid querying the DB every time
 let token: string;
 
-// getSettings sits on 46 call paths, including every batch of messages and
-// every joined user. Measured on this machine: drizzle spends 233us REBUILDING
-// the SQL on each call, against 0.5us for the same select prepared - the
-// database itself answers in 0.4us. So 99% of the cost here was query
-// construction, not the query.
-//
-// Preparing rather than caching the result on purpose: the statement still
-// hits the database every time, so there is nothing to invalidate and no way
-// to serve a stale setting - which matters because `new-owner-token` writes to
-// this table from a SECOND process while the server is running.
-//
-// Keyed on `db.$client` rather than kept in a plain variable because the test
-// harness swaps in a fresh in-memory database before every test; a statement
-// held across that swap would be bound to a closed sqlite handle and every
-// test after the first would fail.
-const buildStatements = () => ({
-  settings: db.select().from(settings).prepare(),
-  file: db
+const settingsStatement = prepared(() => db.select().from(settings).prepare());
+
+const fileStatement = prepared(() =>
+  db
     .select()
     .from(files)
     .where(eq(files.id, sql.placeholder('id')))
     .prepare()
-});
-
-const statementsByClient = new WeakMap<
-  object,
-  ReturnType<typeof buildStatements>
->();
-
-const getStatements = () => {
-  // $client exists at runtime (drizzle() returns it, and the test proxy
-  // forwards it) but is not on the exported BunSQLiteDatabase type. Verified
-  // to be a distinct object per test database, which is the whole point.
-  const client = (db as unknown as { $client: object }).$client;
-  let statements = statementsByClient.get(client);
-
-  if (!statements) {
-    statements = buildStatements();
-    statementsByClient.set(client, statements);
-  }
-
-  return statements;
-};
+);
 
 const getSettings = async (): Promise<TJoinedSettings> => {
-  const statements = getStatements();
-  const serverSettings = await statements.settings.get();
+  const serverSettings = await settingsStatement().get();
 
   if (!serverSettings) {
     throw new Error(
@@ -67,11 +33,11 @@ const getSettings = async (): Promise<TJoinedSettings> => {
   }
 
   const logo = serverSettings.logoId
-    ? await statements.file.get({ id: serverSettings.logoId })
+    ? await fileStatement().get({ id: serverSettings.logoId })
     : undefined;
 
   const banner = serverSettings.bannerId
-    ? await statements.file.get({ id: serverSettings.bannerId })
+    ? await fileStatement().get({ id: serverSettings.bannerId })
     : undefined;
 
   return {

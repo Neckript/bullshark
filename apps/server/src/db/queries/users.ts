@@ -3,15 +3,80 @@ import {
   type TJoinedUser,
   type TStorageData
 } from '@bullshark/shared';
-import { count, eq, sum } from 'drizzle-orm';
+import { count, eq, sql, sum } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import jwt from 'jsonwebtoken';
 import { db } from '..';
 import { AUTH_TOKEN_ALGORITHM } from '../../helpers/auth-token';
 import { signFile } from '../../helpers/files-crypto';
 import type { TTokenPayload } from '../../types';
+import { prepared } from '../prepared';
 import { files, userRoles, users } from '../schema';
 import { getServerToken, getSettings } from './server';
+
+// getUserById and getUserByIdentity are the two halves of the auth path: the
+// first runs on every WebSocket connection through getUserByToken, the second
+// on every login. They select the same 24 columns over the same two joins and
+// differ only in their WHERE, so they share one column list and one roles
+// query. Prepared, the pair drops from 1411us to 65us per call - see
+// `db/prepared.ts` for why preparing beats caching here.
+const userAvatarFiles = alias(files, 'avatarFiles');
+const userBannerFiles = alias(files, 'bannerFiles');
+
+const joinedUserColumns = {
+  id: users.id,
+  identity: users.identity,
+  name: users.name,
+  avatarId: users.avatarId,
+  bannerId: users.bannerId,
+  bio: users.bio,
+  password: users.password,
+  bannerColor: users.bannerColor,
+  nicknameColor: users.nicknameColor,
+  nicknameFont: users.nicknameFont,
+  showRoleBadge: users.showRoleBadge,
+  createdAt: users.createdAt,
+  updatedAt: users.updatedAt,
+  lastLoginAt: users.lastLoginAt,
+  banned: users.banned,
+  banReason: users.banReason,
+  bannedAt: users.bannedAt,
+  mutedUntil: users.mutedUntil,
+  mutedBy: users.mutedBy,
+  muteReason: users.muteReason,
+  voiceMuted: users.voiceMuted,
+  totpSecret: users.totpSecret,
+  totpEnabledAt: users.totpEnabledAt,
+  avatar: userAvatarFiles,
+  banner: userBannerFiles
+};
+
+const joinedUserFrom = () =>
+  db
+    .select(joinedUserColumns)
+    .from(users)
+    .leftJoin(userAvatarFiles, eq(users.avatarId, userAvatarFiles.id))
+    .leftJoin(userBannerFiles, eq(users.bannerId, userBannerFiles.id));
+
+const userByIdStatement = prepared(() =>
+  joinedUserFrom()
+    .where(eq(users.id, sql.placeholder('userId')))
+    .prepare()
+);
+
+const userByIdentityStatement = prepared(() =>
+  joinedUserFrom()
+    .where(eq(users.identity, sql.placeholder('identity')))
+    .prepare()
+);
+
+const userRoleIdsStatement = prepared(() =>
+  db
+    .select({ roleId: userRoles.roleId })
+    .from(userRoles)
+    .where(eq(userRoles.userId, sql.placeholder('userId')))
+    .prepare()
+);
 
 const getPublicUserById = async (
   userId: number
@@ -44,14 +109,7 @@ const getPublicUserById = async (
   if (!results) return undefined;
 
   const [roles, { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds }] =
-    await Promise.all([
-      db
-        .select({ roleId: userRoles.roleId })
-        .from(userRoles)
-        .where(eq(userRoles.userId, userId))
-        .all(),
-      getSettings()
-    ]);
+    await Promise.all([userRoleIdsStatement().all({ userId }), getSettings()]);
 
   return {
     id: results.id,
@@ -242,54 +300,12 @@ const getStorageUsageByUserId = async (
 const getUserById = async (
   userId: number
 ): Promise<TJoinedUser | undefined> => {
-  const avatarFiles = alias(files, 'avatarFiles');
-  const bannerFiles = alias(files, 'bannerFiles');
-
-  const user = await db
-    .select({
-      id: users.id,
-      identity: users.identity,
-      name: users.name,
-      avatarId: users.avatarId,
-      bannerId: users.bannerId,
-      bio: users.bio,
-      password: users.password,
-      bannerColor: users.bannerColor,
-      nicknameColor: users.nicknameColor,
-      nicknameFont: users.nicknameFont,
-      showRoleBadge: users.showRoleBadge,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-      lastLoginAt: users.lastLoginAt,
-      banned: users.banned,
-      banReason: users.banReason,
-      bannedAt: users.bannedAt,
-      mutedUntil: users.mutedUntil,
-      mutedBy: users.mutedBy,
-      muteReason: users.muteReason,
-      voiceMuted: users.voiceMuted,
-      totpSecret: users.totpSecret,
-      totpEnabledAt: users.totpEnabledAt,
-      avatar: avatarFiles,
-      banner: bannerFiles
-    })
-    .from(users)
-    .leftJoin(avatarFiles, eq(users.avatarId, avatarFiles.id))
-    .leftJoin(bannerFiles, eq(users.bannerId, bannerFiles.id))
-    .where(eq(users.id, userId))
-    .get();
+  const user = await userByIdStatement().get({ userId });
 
   if (!user) return undefined;
 
   const [roles, { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds }] =
-    await Promise.all([
-      db
-        .select({ roleId: userRoles.roleId })
-        .from(userRoles)
-        .where(eq(userRoles.userId, userId))
-        .all(),
-      getSettings()
-    ]);
+    await Promise.all([userRoleIdsStatement().all({ userId }), getSettings()]);
 
   return {
     ...user,
@@ -310,52 +326,13 @@ const getUserById = async (
 const getUserByIdentity = async (
   identity: string
 ): Promise<TJoinedUser | undefined> => {
-  const avatarFiles = alias(files, 'avatarFiles');
-  const bannerFiles = alias(files, 'bannerFiles');
-
-  const user = await db
-    .select({
-      id: users.id,
-      identity: users.identity,
-      name: users.name,
-      avatarId: users.avatarId,
-      bannerId: users.bannerId,
-      bio: users.bio,
-      bannerColor: users.bannerColor,
-      nicknameColor: users.nicknameColor,
-      nicknameFont: users.nicknameFont,
-      showRoleBadge: users.showRoleBadge,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-      password: users.password,
-      lastLoginAt: users.lastLoginAt,
-      banned: users.banned,
-      banReason: users.banReason,
-      bannedAt: users.bannedAt,
-      mutedUntil: users.mutedUntil,
-      mutedBy: users.mutedBy,
-      muteReason: users.muteReason,
-      voiceMuted: users.voiceMuted,
-      totpSecret: users.totpSecret,
-      totpEnabledAt: users.totpEnabledAt,
-      avatar: avatarFiles,
-      banner: bannerFiles
-    })
-    .from(users)
-    .leftJoin(avatarFiles, eq(users.avatarId, avatarFiles.id))
-    .leftJoin(bannerFiles, eq(users.bannerId, bannerFiles.id))
-    .where(eq(users.identity, identity))
-    .get();
+  const user = await userByIdentityStatement().get({ identity });
 
   if (!user) return undefined;
 
   const [roles, { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds }] =
     await Promise.all([
-      db
-        .select({ roleId: userRoles.roleId })
-        .from(userRoles)
-        .where(eq(userRoles.userId, user.id))
-        .all(),
+      userRoleIdsStatement().all({ userId: user.id }),
       getSettings()
     ]);
 
