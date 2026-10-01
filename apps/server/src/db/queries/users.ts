@@ -7,6 +7,7 @@ import { count, eq, sum } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import jwt from 'jsonwebtoken';
 import { db } from '..';
+import { AUTH_TOKEN_ALGORITHM } from '../../helpers/auth-token';
 import { signFile } from '../../helpers/files-crypto';
 import type { TTokenPayload } from '../../types';
 import { files, userRoles, users } from '../schema';
@@ -378,7 +379,9 @@ const getUserByToken = async (token: string | undefined) => {
   try {
     if (!token) return undefined;
 
-    const decoded = jwt.verify(token, await getServerToken()) as TTokenPayload;
+    const decoded = jwt.verify(token, await getServerToken(), {
+      algorithms: [AUTH_TOKEN_ALGORITHM]
+    }) as TTokenPayload;
 
     const user = await getUserById(decoded.userId);
 
