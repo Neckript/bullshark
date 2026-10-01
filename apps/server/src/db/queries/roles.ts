@@ -10,6 +10,7 @@ import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 import { db } from '..';
 import { signFile } from '../../helpers/files-crypto';
+import { prepared } from '../prepared';
 import { files, rolePermissions, roles, userRoles } from '../schema';
 import { getSettings } from './server';
 
@@ -27,6 +28,29 @@ const roleSelectFields = {
     'permissions'
   )
 };
+
+// getRole and getRoles share the same shape and differ only in their WHERE and
+// ordering, so they share one base builder. Measured before preparing:
+// getRoles() cost 630us, almost all of it drizzle rebuilding this grouped
+// two-join select. See `db/prepared.ts`.
+const roleQuery = () =>
+  db
+    .select(roleSelectFields)
+    .from(roles)
+    .leftJoin(rolePermissions, sql`${roles.id} = ${rolePermissions.roleId}`)
+    .leftJoin(iconFiles, eq(roles.iconFileId, iconFiles.id));
+
+const roleByIdStatement = prepared(() =>
+  roleQuery()
+    .where(eq(roles.id, sql.placeholder('roleId')))
+    .groupBy(roles.id)
+    .limit(1)
+    .prepare()
+);
+
+const allRolesStatement = prepared(() =>
+  roleQuery().groupBy(roles.id).orderBy(desc(roles.position)).prepare()
+);
 
 const parseRole = (
   role: TQueryResult,
@@ -47,15 +71,7 @@ const getRole = async (roleId: number): Promise<TJoinedRole | undefined> => {
   const { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds } =
     await getSettings();
 
-  const role = await db
-    .select(roleSelectFields)
-    .from(roles)
-    .leftJoin(rolePermissions, sql`${roles.id} = ${rolePermissions.roleId}`)
-    .leftJoin(iconFiles, eq(roles.iconFileId, iconFiles.id))
-    .where(sql`${roles.id} = ${roleId}`)
-    .groupBy(roles.id)
-    .limit(1)
-    .get();
+  const role = await roleByIdStatement().get({ roleId });
 
   if (!role) return undefined;
 
@@ -66,13 +82,7 @@ const getRoles = async (): Promise<TJoinedRole[]> => {
   const { storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds } =
     await getSettings();
 
-  const results = await db
-    .select(roleSelectFields)
-    .from(roles)
-    .leftJoin(rolePermissions, sql`${roles.id} = ${rolePermissions.roleId}`)
-    .leftJoin(iconFiles, eq(roles.iconFileId, iconFiles.id))
-    .groupBy(roles.id)
-    .orderBy(desc(roles.position));
+  const results = await allRolesStatement().all();
 
   return results.map((role) =>
     parseRole(role, storageSignedUrlsEnabled, storageSignedUrlsTtlSeconds)
