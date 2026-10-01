@@ -25,6 +25,7 @@ import {
 } from '../db/schema';
 import { signAuthToken } from '../helpers/auth-token';
 import { getWsInfo } from '../helpers/get-ws-info';
+import { zNewPassword } from '../helpers/password-policy';
 import { safeCompare } from '../helpers/safe-compare';
 import { createTotpChallenge } from '../helpers/totp-challenge';
 import { logger } from '../logger';
@@ -204,6 +205,19 @@ const loginRouteHandler = async (
         })
         .where(eq(invites.code, data.invite!))
         .execute();
+    }
+
+    // Checked here rather than in zBody: the same schema parses login
+    // attempts, and raising its minimum would lock out every account created
+    // under the old 4-character rule. Placed after the enumeration guard above
+    // so a probe on a non-existent identity still gets the generic answer.
+    const newPassword = zNewPassword.safeParse(data.password);
+
+    if (!newPassword.success) {
+      throw new HttpValidationError(
+        'password',
+        newPassword.error.issues[0]!.message
+      );
     }
 
     // user doesn't exist, but registration is open OR invite was valid - create the user automatically

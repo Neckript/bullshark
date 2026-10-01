@@ -3,6 +3,10 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db } from '../../db';
 import { users } from '../../db/schema';
+import {
+  PASSWORD_MAX_LENGTH,
+  zNewPassword
+} from '../../helpers/password-policy';
 import { enqueueActivityLog } from '../../queues/activity-log';
 import { invariant } from '../../utils/invariant';
 import { protectedProcedure } from '../../utils/trpc';
@@ -10,9 +14,12 @@ import { protectedProcedure } from '../../utils/trpc';
 const updatePasswordRoute = protectedProcedure
   .input(
     z.object({
-      currentPassword: z.string().min(4).max(128),
-      newPassword: z.string().min(4).max(128),
-      confirmNewPassword: z.string().min(4).max(128)
+      // currentPassword stays permissive on purpose: it is an existing
+      // password being verified, and accounts created under the old rule have
+      // shorter ones. Only the two fields being chosen get the new minimum.
+      currentPassword: z.string().min(1).max(PASSWORD_MAX_LENGTH),
+      newPassword: zNewPassword,
+      confirmNewPassword: zNewPassword
     })
   )
   .mutation(async ({ ctx, input }) => {

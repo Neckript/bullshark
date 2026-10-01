@@ -440,4 +440,46 @@ describe('/login', () => {
     expect(typeof body.challenge).toBe('string');
     expect(body.token).toBeUndefined();
   });
+  // The password minimum applies to choosing a password, never to checking an
+  // existing one. These two tests are a matched pair: raising the minimum
+  // inside zBody would make the first pass and the second fail, which is
+  // exactly the regression they exist to catch.
+  test('refuses to register an account with a password under the minimum', async () => {
+    const response = await login('shortpwuser', 'abcd');
+
+    expect(response.status).toBe(400);
+
+    const data: any = await response.json();
+
+    expect(data.errors).toHaveProperty(
+      'password',
+      'Password must be at least 8 characters long'
+    );
+
+    const created = await tdb
+      .select()
+      .from(users)
+      .where(eq(users.identity, 'shortpwuser'))
+      .get();
+
+    expect(created).toBeUndefined();
+  });
+
+  test('still logs in an account created under the old 4-character rule', async () => {
+    await tdb.insert(users).values({
+      identity: 'legacyuser',
+      password: await Bun.password.hash('abcd'),
+      name: 'Legacy User',
+      createdAt: Date.now()
+    });
+
+    const response = await login('legacyuser', 'abcd');
+
+    expect(response.status).toBe(200);
+
+    const data: any = await response.json();
+
+    expect(data).toHaveProperty('success', true);
+    expect(data).toHaveProperty('token');
+  });
 });
