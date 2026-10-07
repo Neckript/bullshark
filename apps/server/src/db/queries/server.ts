@@ -1,15 +1,26 @@
 import type { TJoinedSettings, TPublicServerSettings } from '@bullshark/shared';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '..';
 import { config } from '../../config';
 import { signFile } from '../../helpers/files-crypto';
+import { prepared } from '../prepared';
 import { files, settings } from '../schema';
 
 // since this is static, we can keep it in memory to avoid querying the DB every time
 let token: string;
 
+const settingsStatement = prepared(() => db.select().from(settings).prepare());
+
+const fileStatement = prepared(() =>
+  db
+    .select()
+    .from(files)
+    .where(eq(files.id, sql.placeholder('id')))
+    .prepare()
+);
+
 const getSettings = async (): Promise<TJoinedSettings> => {
-  const serverSettings = await db.select().from(settings).get();
+  const serverSettings = await settingsStatement().get();
 
   if (!serverSettings) {
     throw new Error(
@@ -22,19 +33,11 @@ const getSettings = async (): Promise<TJoinedSettings> => {
   }
 
   const logo = serverSettings.logoId
-    ? await db
-        .select()
-        .from(files)
-        .where(eq(files.id, serverSettings.logoId))
-        .get()
+    ? await fileStatement().get({ id: serverSettings.logoId })
     : undefined;
 
   const banner = serverSettings.bannerId
-    ? await db
-        .select()
-        .from(files)
-        .where(eq(files.id, serverSettings.bannerId))
-        .get()
+    ? await fileStatement().get({ id: serverSettings.bannerId })
     : undefined;
 
   return {

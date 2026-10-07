@@ -12,6 +12,13 @@ const loadDb = async () => {
   const sqlite = new Database(DB_PATH, { create: true, strict: true });
 
   sqlite.run('PRAGMA foreign_keys = ON;');
+  // WAL lets readers and writers run concurrently; the default rollback journal
+  // makes a writer block every reader, which is the wrong trade for a chat
+  // server. synchronous = NORMAL is the safe pairing with WAL, and without
+  // busy_timeout a concurrent write throws SQLITE_BUSY instead of waiting.
+  sqlite.run('PRAGMA journal_mode = WAL;');
+  sqlite.run('PRAGMA synchronous = NORMAL;');
+  sqlite.run('PRAGMA busy_timeout = 5000;');
 
   db = drizzle({ client: sqlite });
 

@@ -17,14 +17,16 @@ const kickRoute = protectedProcedure
 
     await assertOutranksUser(ctx.userId, input.userId);
 
-    const userWs = ctx.getUserWs(input.userId);
+    const closedSockets = ctx.disconnectUser(
+      input.userId,
+      DisconnectCode.KICKED,
+      input.reason
+    );
 
-    invariant(userWs, {
+    invariant(closedSockets > 0, {
       code: 'NOT_FOUND',
       message: 'User is not connected'
     });
-
-    userWs.close(DisconnectCode.KICKED, input.reason);
 
     enqueueActivityLog({
       type: ActivityLogType.USER_KICKED,

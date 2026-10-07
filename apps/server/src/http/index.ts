@@ -24,7 +24,7 @@ import { pluginBundleRouteHandler } from './plugin-bundle';
 import { pluginsComponentsRouteHandler } from './plugins-components';
 import { publicRouteHandler } from './public';
 import { uploadFileRouteHandler } from './upload';
-import { HttpValidationError } from './utils';
+import { HttpValidationError, sendJsonAndCloseConnection } from './utils';
 
 type RouteContext = {
   info: ReturnType<typeof getWsInfo>;
@@ -152,7 +152,15 @@ const handleRequest = async (
     } else if (error instanceof HttpValidationError) {
       errorsMap[error.field] = error.message;
 
-      res.writeHead(400, { 'Content-Type': 'application/json' });
+      // an oversized body is rejected while the request is still streaming in,
+      // so the unread remainder has to be cut off rather than left on a
+      // keep-alive socket where it would be parsed as the next request
+      if (error.status === 413) {
+        sendJsonAndCloseConnection(req, res, 413, { errors: errorsMap });
+        return;
+      }
+
+      res.writeHead(error.status, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ errors: errorsMap }));
       return;
     }

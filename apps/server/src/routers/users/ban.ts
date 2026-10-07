@@ -1,5 +1,5 @@
 import { ActivityLogType, DisconnectCode, Permission } from '@bullshark/shared';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import z from 'zod';
 import { db } from '../../db';
 import { publishUser } from '../../db/publishers';
@@ -26,20 +26,22 @@ const banRoute = protectedProcedure
 
     await assertOutranksUser(ctx.userId, input.userId);
 
-    const userWs = ctx.getUserWs(input.userId);
-
-    if (userWs) {
-      userWs.close(DisconnectCode.BANNED, input.reason);
-    }
-
     await db
       .update(users)
       .set({
         banned: true,
         banReason: input.reason ?? null,
-        bannedAt: Date.now()
+        bannedAt: Date.now(),
+        // The banned check below only guards new connections. Bumping this
+        // revokes the token itself, so a ban cannot be outlived by a session
+        // that was already authenticated.
+        tokenVersion: sql`${users.tokenVersion} + 1`
       })
       .where(eq(users.id, input.userId));
+
+    // the ban has to be persisted first: a client reconnects within tens of
+    // milliseconds and would otherwise pass the banned check in createContext
+    ctx.disconnectUser(input.userId, DisconnectCode.BANNED, input.reason);
 
     publishUser(input.userId, 'update');
 

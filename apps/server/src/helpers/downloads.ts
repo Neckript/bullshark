@@ -65,7 +65,8 @@ const resolveExtractedPluginPath = async (
 
 const downloadPlugin = async (
   url: string,
-  expectedChecksum: string
+  expectedChecksum: string,
+  expectedPluginId: string
 ): Promise<void> => {
   // the download URL comes from the marketplace registry (remote data): require
   // https and refuse internal targets so the plugin bundle - which becomes
@@ -103,6 +104,15 @@ const downloadPlugin = async (
     const manifest = zPluginManifest.parse(
       JSON.parse(await fs.readFile(manifestPath, 'utf-8'))
     );
+
+    // the install path is built from the id inside the archive, and the target
+    // is wiped before the copy: without this check an archive served for one
+    // plugin could declare another plugin's id and overwrite it
+    if (manifest.id !== expectedPluginId) {
+      throw new Error(
+        `Downloaded plugin declares id '${manifest.id}' but '${expectedPluginId}' was requested`
+      );
+    }
 
     const targetPluginPath = path.join(PLUGINS_PATH, manifest.id);
 

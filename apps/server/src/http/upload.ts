@@ -37,7 +37,11 @@ const uploadFileRouteHandler = async (
 
   const user = await getUserByToken(token);
 
-  if (!user) {
+  // getUserByToken only verifies the JWT, so a banned user keeps a working
+  // token until it expires (7 days). The ban is enforced per entry point
+  // rather than inside the shared query, so the WebSocket path can keep
+  // telling UNAUTHORIZED and FORBIDDEN apart.
+  if (!user || user.banned) {
     req.resume();
     res.writeHead(401, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Unauthorized' }));

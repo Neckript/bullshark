@@ -97,12 +97,6 @@ const deleteUserRoute = protectedProcedure
       message: 'Cannot delete the deleted user placeholder.'
     });
 
-    const userWs = ctx.getUserWs(input.userId);
-
-    if (userWs) {
-      userWs.close(DisconnectCode.KICKED, 'Your account has been deleted');
-    }
-
     const deletedUserId = await ensureDeletedUser();
 
     await db.transaction(async (tx) => {
@@ -134,6 +128,14 @@ const deleteUserRoute = protectedProcedure
 
       await tx.delete(users).where(eq(users.id, input.userId));
     });
+
+    // disconnect only once the row is gone, otherwise a client that reconnects
+    // in the gap gets a fully authenticated session for a doomed account
+    ctx.disconnectUser(
+      input.userId,
+      DisconnectCode.KICKED,
+      'Your account has been deleted'
+    );
 
     pubsub.publish(ServerEvents.USER_DELETE, {
       isWipe: input.wipe,

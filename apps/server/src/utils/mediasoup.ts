@@ -17,8 +17,14 @@ const loadMediasoup = async () => {
   const port = +config.webRtc.port;
 
   const workerConfig: mediasoup.types.WorkerSettings = {
-    logLevel: 'debug',
-    disableLiburing: true,
+    // 'debug' was hard-coded here, including in production, where the worker
+    // then logs per-packet events for every call. There is a single worker for
+    // the whole server, so that cost lands on the one core all voice channels
+    // share. Tied to the same switch as the app logger (logger.ts), so
+    // BULLSHARK_DEBUG turns both on together.
+    logLevel: config.server.debug ? 'debug' : 'warn',
+    // disableLiburing is gone: mediasoup removed io_uring support entirely in
+    // 3.20.7, so there is nothing left to disable and no replacement option.
     workerBin: MEDIASOUP_BINARY_PATH
   };
 
@@ -34,6 +40,10 @@ const loadMediasoup = async () => {
     mediaSoupWorker = await mediasoup.createWorker(workerConfig);
   } catch (error) {
     logger.error('Failed to load mediasoup worker: %s', getErrorMessage(error));
+    // Swallowing this left mediaSoupWorker undefined and the .on('died') call
+    // below threw a TypeError that masked the real cause logged just above.
+    // A server with no worker cannot serve voice, so fail loudly instead.
+    throw error;
   } finally {
     restoreSpawn();
   }

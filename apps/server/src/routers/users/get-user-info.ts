@@ -41,7 +41,11 @@ const getUserInfoRoute = protectedProcedure
       settings.storageSpaceQuotaByUser
     );
 
-    let cleanUser = clearFields(user, ['password', 'totpSecret']);
+    let cleanUser = clearFields(user, [
+      'password',
+      'totpSecret',
+      'tokenVersion'
+    ]);
     let cleanLogins: TLogin[] = [...logins];
 
     if (!(await ctx.hasPermission(Permission.VIEW_USER_SENSITIVE_DATA))) {

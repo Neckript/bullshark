@@ -74,7 +74,7 @@ const login2faRouteHandler = async (
     return;
   }
 
-  const token = await signAuthToken(userId);
+  const token = await signAuthToken(userId, user.tokenVersion);
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify({ success: true, token }));

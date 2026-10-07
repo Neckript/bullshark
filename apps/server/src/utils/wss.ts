@@ -6,6 +6,7 @@ import {
   Permission,
   ServerEvents,
   UserStatus,
+  type DisconnectCode,
   type TConnectionParams
 } from '@bullshark/shared';
 import { TRPCError } from '@trpc/server';
@@ -52,6 +53,25 @@ const getOnlineUserIds = (): number[] => {
   });
 
   return Array.from(userIdSet);
+};
+
+// takes the client set instead of reading `wss` so it can be tested without a
+// live WebSocket server
+const closeUserSockets = (
+  clients: Iterable<WebSocket>,
+  userId: number,
+  code: DisconnectCode,
+  reason?: string
+) => {
+  const sockets = Array.from(clients).filter(
+    (client) => client.userId === userId
+  );
+
+  for (const socket of sockets) {
+    socket.close(code, reason);
+  }
+
+  return sockets.length;
 };
 
 const createContext = async ({
@@ -152,9 +172,17 @@ const createContext = async ({
     return Array.from(wss.clients).find((client) => client.token === token);
   };
 
-  const getUserWs = (userId: number) => {
-    if (!wss) return undefined;
-    return Array.from(wss.clients).find((client) => client.userId === userId);
+  // closes every session the user holds and returns how many were closed: a
+  // user with several tabs or devices must not keep one alive after a ban, a
+  // kick or an account deletion
+  const disconnectUser = (
+    userId: number,
+    code: DisconnectCode,
+    reason?: string
+  ) => {
+    if (!wss) return 0;
+
+    return closeUserSockets(wss.clients, userId, code, reason);
   };
 
   const getStatusById = (userId: number) => {
@@ -239,7 +267,7 @@ const createContext = async ({
     getOwnWs,
     getStatusById,
     setWsUserId,
-    getUserWs,
+    disconnectUser,
     getConnectionInfo,
     throwValidationError,
     saveUserIp
@@ -290,23 +318,28 @@ const createWsServer = async (server: http.Server | https.Server) => {
               return;
             }
 
-            const user = await getUserById(userId);
-
-            if (!user) return;
-
-            const voiceRuntime = VoiceRuntime.findRuntimeByUserId(user.id);
+            // this runs before the user row is looked up: delete-user now
+            // disconnects after the row is gone, and that session still has to
+            // be removed from voice and from the presence list
+            const voiceRuntime = VoiceRuntime.findRuntimeByUserId(userId);
 
             if (voiceRuntime) {
-              voiceRuntime.removeUser(user.id);
+              voiceRuntime.removeUser(userId);
 
               pubsub.publish(ServerEvents.USER_LEAVE_VOICE, {
                 channelId: voiceRuntime.id,
-                userId: user.id
+                userId
               });
             }
 
-            usersIpMap.delete(user.id);
-            pubsub.publish(ServerEvents.USER_LEAVE, user.id);
+            usersIpMap.delete(userId);
+            pubsub.publish(ServerEvents.USER_LEAVE, userId);
+
+            const user = await getUserById(userId);
+
+            // the activity log has a foreign key on the user, so a deleted
+            // account gets no USER_LEFT entry
+            if (!user) return;
 
             logger.info('%s left the server', user.name);
 
@@ -354,4 +387,10 @@ const createWsServer = async (server: http.Server | https.Server) => {
   });
 };
 
-export { createContext, createWsServer, getOnlineUserIds, getUserIp };
+export {
+  closeUserSockets,
+  createContext,
+  createWsServer,
+  getOnlineUserIds,
+  getUserIp
+};

@@ -33,7 +33,7 @@
     "drizzle-orm": "^0.44.6",
     "js-sha256": "^0.11.1",
     "linkify-it": "^5.0.0",
-    "mediasoup": "^3.19.9",
+    "mediasoup": "^3.27.1",
     "zod": "^4.3.5"
   }
 }
