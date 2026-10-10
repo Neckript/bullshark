@@ -78,6 +78,13 @@ git checkout -b fix/123-your-bugfix
 Follow the standards below. Read them once — they're short.  
 Suis les standards ci-dessous. Lis-les une fois — ils sont courts.
 
+New to the codebase? [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) explains
+how the pieces fit together, and [`AGENTS.md`](AGENTS.md) states the rules any
+contributor — human or agent — works under.  
+Nouveau dans le code ? [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) explique
+comment les morceaux s'assemblent, et [`AGENTS.md`](AGENTS.md) donne les règles
+que suit tout contributeur, humain ou agent.
+
 ### Step 4 — Test / Étape 4 — Teste
 
 ```bash
