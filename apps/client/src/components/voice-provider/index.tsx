@@ -71,6 +71,7 @@ import {
   getSvcQualityLayers,
   getVp9Codec,
   isAdaptiveConsumerType,
+  isChromiumSender,
   loadStreamQualitiesFromStorage,
   normalizeStreamQuality,
   saveStreamQualitiesToStorage,
@@ -93,10 +94,7 @@ import { useVad } from './hooks/use-vad';
 import { useVoiceControls } from './hooks/use-voice-controls';
 import { useVoiceEvents } from './hooks/use-voice-events';
 import { SoundboardPlayers } from './soundboard-players';
-import {
-  SCREEN_SVC_SCALABILITY_MODE,
-  SIMULCAST_WEBCAM_MAX_BITRATE
-} from './statics';
+import { SIMULCAST_WEBCAM_MAX_BITRATE, SVC_SCALABILITY_MODE } from './statics';
 import { VolumeControlProvider } from './volume-control-context';
 
 type AudioVideoRefs = {
@@ -757,9 +755,30 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
       if (videoTrack) {
         logVoice('Obtained video track', { videoTrack });
 
-        const simulcastCodec = simulcastEnabled
-          ? getSimulcastCodec(routerRtpCapabilities.current)
-          : undefined;
+        // A Chromium sender packs all 3 spatial layers into a single VP9 SVC
+        // encoder. Unlike screen share, a non-Chromium sender keeps the
+        // 3-encoder VP8 simulcast path: a webcam's resolution is far below a
+        // desktop capture's, so it does not hit the same CPU wall.
+        const svcCodec =
+          simulcastEnabled && isChromiumSender(deviceRef.current?.handlerName)
+            ? getVp9Codec(routerRtpCapabilities.current)
+            : undefined;
+        const simulcastCodec =
+          simulcastEnabled && !svcCodec
+            ? getSimulcastCodec(routerRtpCapabilities.current)
+            : undefined;
+
+        if (svcCodec) {
+          logVoice('Using VP9 SVC for webcam (Chromium sender)', {
+            codec: svcCodec.mimeType
+          });
+        } else if (simulcastCodec) {
+          logVoice('Using VP8 for simulcast webcam', {
+            codec: simulcastCodec.mimeType
+          });
+        } else if (simulcastEnabled) {
+          logVoice('VP9/VP8 unavailable, creating webcam without simulcast');
+        }
 
         const webcamProducerOptions: ProducerOptions<TVideoProducerAppData> = {
           track: videoTrack,
@@ -767,9 +786,26 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
             kind: StreamKind.VIDEO
           }
         };
-        let simulcastWebcamProducerOptions = webcamProducerOptions;
+        let adaptiveWebcamProducerOptions = webcamProducerOptions;
 
-        if (simulcastCodec) {
+        if (svcCodec) {
+          const qualityLayers = getSvcQualityLayers(
+            videoTrack,
+            SVC_SCALABILITY_MODE
+          );
+
+          adaptiveWebcamProducerOptions = {
+            ...webcamProducerOptions,
+            appData: { kind: StreamKind.VIDEO, qualityLayers },
+            codec: svcCodec,
+            encodings: [
+              {
+                scalabilityMode: SVC_SCALABILITY_MODE,
+                maxBitrate: SIMULCAST_WEBCAM_MAX_BITRATE
+              }
+            ]
+          };
+        } else if (simulcastCodec) {
           const encodings = getSimulcastEncodings(SIMULCAST_WEBCAM_MAX_BITRATE);
 
           const qualityLayers = getSimulcastQualityLayers(
@@ -777,7 +813,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
             encodings
           );
 
-          simulcastWebcamProducerOptions = {
+          adaptiveWebcamProducerOptions = {
             ...webcamProducerOptions,
             appData: { kind: StreamKind.VIDEO, qualityLayers },
             codec: simulcastCodec,
@@ -787,13 +823,13 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
 
         try {
           localVideoProducer.current = await producerTransport.current?.produce(
-            simulcastWebcamProducerOptions
+            adaptiveWebcamProducerOptions
           );
         } catch (error) {
-          if (!simulcastCodec) throw error;
+          if (!svcCodec && !simulcastCodec) throw error;
 
           logVoice(
-            'Failed to create simulcast webcam producer, retrying without simulcast',
+            'Failed to create adaptive webcam producer, retrying without simulcast/SVC',
             { error }
           );
 
@@ -995,14 +1031,13 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         // (one encoder producing all layers) avoids that, but only Chromium
         // engines can send it. Firefox/Safari senders skip simulcast for
         // screen share entirely rather than hit the same CPU wall.
-        const isChromiumSender =
-          !!deviceRef.current?.handlerName?.startsWith('Chrome');
+        const isChromium = isChromiumSender(deviceRef.current?.handlerName);
         const svcCodec =
-          simulcastEnabled && !performanceMode && isChromiumSender
+          simulcastEnabled && !performanceMode && isChromium
             ? getVp9Codec(routerRtpCapabilities.current)
             : undefined;
         const simulcastCodec =
-          simulcastEnabled && !performanceMode && !svcCodec && isChromiumSender
+          simulcastEnabled && !performanceMode && !svcCodec && isChromium
             ? getSimulcastCodec(routerRtpCapabilities.current)
             : undefined;
         const screenCodec = svcCodec ?? simulcastCodec ?? preferredCodec;
@@ -1021,7 +1056,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
               'Screen share performance mode requested but H264 is unavailable; falling back to default negotiation'
             );
           }
-        } else if (simulcastEnabled && !isChromiumSender) {
+        } else if (simulcastEnabled && !isChromium) {
           logVoice(
             'Non-Chromium sender cannot use SVC for screen share; using a single stream instead of legacy VP8 simulcast to preserve framerate'
           );
@@ -1052,7 +1087,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
         if (svcCodec) {
           const qualityLayers = getSvcQualityLayers(
             videoTrack,
-            SCREEN_SVC_SCALABILITY_MODE
+            SVC_SCALABILITY_MODE
           );
 
           adaptiveScreenShareProducerOptions = {
@@ -1060,7 +1095,7 @@ const VoiceProvider = memo(({ children }: TVoiceProviderProps) => {
             appData: { kind: StreamKind.SCREEN, qualityLayers },
             encodings: [
               {
-                scalabilityMode: SCREEN_SVC_SCALABILITY_MODE,
+                scalabilityMode: SVC_SCALABILITY_MODE,
                 maxBitrate: maxBitrateKbps * 1000
               }
             ]

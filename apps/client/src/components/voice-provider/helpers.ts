@@ -160,8 +160,10 @@ const getSimulcastCodec = (
   );
 
 // VP9 SVC (single encoder, multiple layers) is only sendable on Chromium
-// engines - kept separate from getSimulcastCodec so the webcam's VP8
-// simulcast path (which calls getSimulcastCodec directly) is untouched.
+// engines. Non-Chromium senders fall back to getSimulcastCodec.
+const isChromiumSender = (handlerName: string | undefined): boolean =>
+  !!handlerName?.startsWith('Chrome');
+
 const getVp9Codec = (
   rtpCapabilities: RtpCapabilities | null
 ): RtpCodecCapability | undefined =>
@@ -203,6 +205,7 @@ export {
   getSvcQualityLayers,
   getVp9Codec,
   isAdaptiveConsumerType,
+  isChromiumSender,
   loadStreamQualitiesFromStorage,
   normalizeStreamQuality,
   parseStreamQualityDropdownValue,
