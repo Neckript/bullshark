@@ -133,7 +133,7 @@
   "startingCamera": "Avvio fotocamera...",
   "mirrorOwnVideoLabel": "Rifletti il tuo video",
   "simulcastUserLabel": "Simulcast",
-  "simulcastUserDesc": "Invia livelli separati di bassa, media e alta qualità per webcam e condivisione schermo. Usa più banda e CPU, ma aiuta chi ha connessioni più lente a ricevere uno stream più fluido. Forces the use of VP8 when enabled.",
+  "simulcastUserDesc": "Invia livelli separati di bassa, media e alta qualità per webcam e condivisione schermo. Usa più banda e CPU, ma aiuta chi ha connessioni più lente a ricevere uno stream più fluido.",
   "simulcastDisabledByServerDesc": "Simulcast è disattivato su questo server.",
   "screenSharingLabel": "Condivisione schermo",
   "screenSharePerformanceModeLabel": "Modalità prestazioni (codifica hardware)",
