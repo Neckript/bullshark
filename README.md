@@ -9,6 +9,7 @@
 [![License MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
 [![Built with Bun](https://img.shields.io/badge/built%20with-Bun-black?style=flat-square)](https://bun.sh)
 [![Self-hosted](https://img.shields.io/badge/self--hosted-first-purple?style=flat-square)](#)
+[![Status Beta](https://img.shields.io/badge/status-beta-orange?style=flat-square)](#status--état)
 
 </div>
 
@@ -24,6 +25,14 @@
 > Bullshark est un fork orienté gaming de [Sharkord](https://github.com/Sharkord/sharkord), construit et maintenu par la communauté, pour la communauté.
 >
 > 💙 Support the original creator of Sharkord: [ko-fi.com/diogomartino](https://ko-fi.com/B0B71U3476)
+
+---
+
+## Status / État
+
+**EN** — Bullshark is in **beta** since v0.1.0. The core is complete: text, voice, screen sharing, moderation, plugins, PWA and desktop app. Updates keep your data: database migrations run automatically when the server starts. Expect some rough edges, and please report them in the issues. Before a major update, take a backup from the server settings (owner only).
+
+**FR** — Bullshark est en **bêta** depuis la v0.1.0. Le cœur est complet : texte, vocal, partage d'écran, modération, plugins, PWA et appli desktop. Les mises à jour conservent tes données : les migrations de la base s'appliquent automatiquement au démarrage du serveur. Il reste sûrement quelques angles à arrondir, signale-les dans les issues. Avant une grosse mise à jour, fais une sauvegarde depuis les paramètres du serveur (propriétaire uniquement).
 
 ---
 
@@ -137,12 +146,12 @@ de vie complet du token owner, le modèle de sécurité et les notes de mise à 
 
 ---
 
-## Differences from Bullshark / Différences avec Bullshark
+## Differences from Sharkord / Différences avec Sharkord
 
 Bullshark is a gaming-focused fork. We diverge from upstream intentionally:
 
 - **Faster bug fixes** on anything that impacts voice stability
-- **Gaming features** outside Bullshark's scope: PTT, global hotkeys, soundboard, noise suppression, in-game overlay
+- **Gaming features** outside Sharkord's scope: PTT, global hotkeys, soundboard, noise suppression, in-game overlay
 - **Bilingual documentation** — French and English, because sovereignty is a European concern too
 - **No artificial scope restrictions** — we build what gamers need
 
@@ -154,31 +163,38 @@ We sync selectively from upstream — core fixes yes, vision conflicts no.
 
 ### Foundation / Fondations
 - [x] Fork established
-- [ ] `fix` Audio stability — voice freeze after 10s (#695 upstream)
-- [ ] `fix` Emoji reactions on Firefox (#728 upstream)
+- [x] `fix` Audio stability — voice freeze after 10s (#695 upstream)
+- [x] `fix` Emoji reactions on Firefox (#728 upstream)
 - [x] `feat` Global mute/unmute hotkey — OS-level, configurable, via [Bullshark Desktop](https://github.com/Neckript/bullshark-desktop) (2026-07-03)
 
 ### Sovereignty / Souveraineté
-- [ ] `docs` HTTPS guide — Caddy + OVH DNS (no Cloudflare dependency)
-- [ ] `docs` HTTPS guide — Caddy + Hetzner DNS
+- [x] `docs` HTTPS guide — Caddy + OVH DNS (no Cloudflare dependency)
+- [x] `docs` HTTPS guide — Caddy + Hetzner DNS
 - [ ] `docs` Deployment guides — OVH, Hetzner, Raspberry Pi, bare metal
 - [ ] `feat` Replace any remaining US-dependent defaults with EU-sovereign alternatives
 
 ### Gaming features / Fonctionnalités gaming
 - [x] `feat` Push-to-Talk + VAD (configurable input modes, window-scoped PTT key)
 - [x] `feat` Client-side noise suppression (RNNoise + noise gate worklets)
-- [ ] `feat` Soundboard
-- [ ] `feat` Voice channel grid UI
-- [ ] `feat` In-game overlay
+- [x] `feat` Soundboard
+- [x] `feat` Voice channel grid UI
+- [x] `feat` In-game overlay
 
 ### Platform / Plateforme
 - [x] `feat` Roles & permissions granular (per-channel, per-role)
 - [x] `feat` Threads & discussion channels
 - [x] `feat` Server backup — owner-only export/import (.zip) from the UI (2026-06-17)
-- [ ] `feat` PWA mobile optimized
+- [x] `feat` PWA mobile optimized
+
+### Next / Prochaines étapes
+- [ ] `perf` Voice stays clean under heavy CPU load (games): one shared audio context, process priority in the desktop app
+- [ ] `perf` GPU-encoded screen sharing on Windows
+- [ ] `feat` Audio redundancy (RED) for lossy Wi-Fi / 4G
+- [ ] `feat` Import a Discord server from a template link
 
 ### Release
-- [ ] `release` v0.1.0 stable — first Bullshark release
+- [x] `release` v0.1.0 — beta
+- [ ] `release` v1.0.0 — stable
 
 ---
 
