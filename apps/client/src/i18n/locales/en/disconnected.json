@@ -7,5 +7,6 @@
   "goToConnectScreen": "Go to Connect Screen",
   "details": "Details",
   "code": "Code: {{code}}",
-  "time": "Time: {{time}}"
+  "time": "Time: {{time}}",
+  "offline": "You're offline. Check your network connection."
 }

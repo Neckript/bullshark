@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { Permission, TestId } from '@bullshark/shared';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { ContentWrapper } from './content-wrapper';
+import { OfflineBanner } from './offline-banner';
 import { PreventBrowser } from './prevent-browser';
 
 const ServerView = memo(() => {
@@ -88,6 +89,7 @@ const ServerView = memo(() => {
           onToggleRightSidebar={handleDesktopRightSidebarToggle}
           isOpen={isDesktopRightSidebarOpen}
         />
+        <OfflineBanner />
         <div className="relative flex min-h-0 flex-1 overflow-hidden">
           <PreventBrowser />
 
