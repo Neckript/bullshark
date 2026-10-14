@@ -139,7 +139,7 @@
   "startingCamera": "Starting camera...",
   "mirrorOwnVideoLabel": "Mirror Own Video",
   "simulcastUserLabel": "Simulcast",
-  "simulcastUserDesc": "Send separate low, medium, and high-quality layers for your webcam and screen share. This uses more bandwidth and CPU, but helps viewers on slower connections receive a smoother stream. Forces the use of VP8 when enabled.",
+  "simulcastUserDesc": "Send separate low, medium, and high-quality layers for your webcam and screen share. This uses more bandwidth and CPU, but helps viewers on slower connections receive a smoother stream.",
   "simulcastDisabledByServerDesc": "Simulcast is disabled on this server.",
   "screenSharingLabel": "Screen Sharing",
   "screenSharePerformanceModeLabel": "Performance mode (hardware encoding)",

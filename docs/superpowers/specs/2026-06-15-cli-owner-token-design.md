@@ -2,7 +2,7 @@
 
 **Date :** 2026-06-15
 **Branche :** `development`
-**Contexte :** suite de l'audit `docs/security-audit-2026-06-14.md` (findings C1, M3, L1).
+**Contexte :** suite de l'audit de securite du 2026-06-14 (hors depot) (findings C1, M3, L1).
 **Statut :** approuvé (brainstorming), prêt pour plan d'implémentation.
 
 ---
