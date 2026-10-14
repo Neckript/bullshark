@@ -7,5 +7,6 @@
   "goToConnectScreen": "Přejít k úvodní obrazovce",
   "details": "Detaily",
   "code": "Kód: {{code}}",
-  "time": "Čas: {{time}}"
+  "time": "Čas: {{time}}",
+  "offline": "Jste offline. Zkontrolujte připojení k síti."
 }

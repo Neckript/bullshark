@@ -7,5 +7,6 @@
   "goToConnectScreen": "前往连接页面",
   "details": "详情",
   "code": "代码：{{code}}",
-  "time": "时间：{{time}}"
+  "time": "时间：{{time}}",
+  "offline": "已离线。请检查网络连接。"
 }
