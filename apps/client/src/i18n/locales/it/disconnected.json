@@ -7,5 +7,6 @@
   "goToConnectScreen": "Vai alla schermata di connessione",
   "details": "Dettagli",
   "code": "Codice: {{code}}",
-  "time": "Ora: {{time}}"
+  "time": "Ora: {{time}}",
+  "offline": "Sei offline. Controlla la connessione di rete."
 }

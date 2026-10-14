@@ -7,5 +7,6 @@
   "goToConnectScreen": "Accéder à l'écran de connexion",
   "details": "Détails",
   "code": "Code : {{code}}",
-  "time": "Date : {{time}}"
+  "time": "Date : {{time}}",
+  "offline": "Hors ligne. Vérifiez votre connexion réseau."
 }
