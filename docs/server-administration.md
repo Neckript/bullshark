@@ -158,6 +158,28 @@ La mise à jour est sûre sur une base peuplée : les données existantes sont
 intactes, et tout token owner imprimé auparavant reste valide jusqu'à ce que tu le
 régénères.
 
+### Native binary auto-update: one manual update needed / Mise à jour auto du binaire natif : une mise à jour manuelle nécessaire
+
+**EN** — Up to and including **v0.1.0**, the auto-updater of the native binary
+looked for releases on Codeberg, where no binary is published. It therefore never
+found an update. The fix ships in the release after v0.1.0, but a server still on
+v0.1.0 or older cannot fetch it on its own: replace the binary by hand **once**,
+then auto-update works again. Docker servers are not affected (they never
+auto-update; rebuild the image instead).
+
+**FR** — Jusqu'à la **v0.1.0** incluse, la mise à jour automatique du binaire
+natif cherchait les releases sur Codeberg, où aucun binaire n'est publié. Elle ne
+trouvait donc jamais de mise à jour. Le correctif arrive dans la version qui suit
+la v0.1.0, mais un serveur encore en v0.1.0 ou avant ne peut pas la récupérer
+seul : remplace le binaire à la main **une fois**, ensuite la mise à jour
+automatique refonctionne. Les serveurs Docker ne sont pas concernés (ils ne se
+mettent jamais à jour seuls ; reconstruis l'image à la place).
+
+```bash
+curl -L https://github.com/Neckript/bullshark/releases/latest/download/bullshark-linux-x64 -o bullshark
+chmod +x bullshark
+```
+
 ### Data directory rename: sharkord → bullshark / Renommage du répertoire de données : sharkord → bullshark
 
 **EN** — This release moves the server's data directory from `.../sharkord` to
