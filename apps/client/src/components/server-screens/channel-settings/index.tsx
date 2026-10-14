@@ -1,8 +1,8 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@bullshark/ui';
+import { useChannelById } from '@/features/server/channels/hooks';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TServerScreenBaseProps } from '../screens';
-import { ServerScreenLayout } from '../server-screen-layout';
+import { SectionedSettings } from '../sectioned-settings';
 import { General } from './general';
 import { ChannelPermissions } from './permissions';
 
@@ -12,25 +12,26 @@ type TChannelSettingsProps = TServerScreenBaseProps & {
 
 const ChannelSettings = memo(({ close, channelId }: TChannelSettingsProps) => {
   const { t } = useTranslation('settings');
+  const channel = useChannelById(channelId);
 
   return (
-    <ServerScreenLayout close={close} title={t('channelSettingsTitle')}>
-      <div className="mx-auto max-w-4xl">
-        <Tabs defaultValue="general" className="w-full">
-          <TabsList className="mb-6">
-            <TabsTrigger value="general">{t('generalTab')}</TabsTrigger>
-            <TabsTrigger value="permissions">{t('permissionsTab')}</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="general" className="space-y-6">
-            <General channelId={channelId} />
-          </TabsContent>
-          <TabsContent value="permissions" className="space-y-6">
-            <ChannelPermissions channelId={channelId} />
-          </TabsContent>
-        </Tabs>
-      </div>
-    </ServerScreenLayout>
+    <SectionedSettings
+      close={close}
+      title={t('channelSettingsTitle')}
+      groupLabel={channel?.name ?? ''}
+      sections={[
+        {
+          id: 'general',
+          label: t('generalTab'),
+          content: <General channelId={channelId} />
+        },
+        {
+          id: 'permissions',
+          label: t('permissionsTab'),
+          content: <ChannelPermissions channelId={channelId} />
+        }
+      ]}
+    />
   );
 });
 
