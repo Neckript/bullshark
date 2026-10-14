@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import type { ForgejoDeps } from './forgejo';
+import type { ReleaseDeps } from './github-releases';
 import { verifyChecksum } from './verify';
 
 type SwapArgs = {
@@ -12,7 +12,7 @@ type SwapArgs = {
 const downloadToTemp = async (
   downloadUrl: string,
   targetPath: string,
-  deps: ForgejoDeps
+  deps: ReleaseDeps
 ): Promise<string> => {
   const tempPath = path.join(
     path.dirname(targetPath),
@@ -31,7 +31,7 @@ const downloadToTemp = async (
 
 const swapBinary = async (
   args: SwapArgs,
-  deps: ForgejoDeps = { fetch }
+  deps: ReleaseDeps = { fetch }
 ): Promise<void> => {
   const tempPath = await downloadToTemp(
     args.downloadUrl,

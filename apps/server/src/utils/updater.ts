@@ -8,7 +8,7 @@ import {
   fetchLatestRelease,
   fetchReleaseMetadata,
   findAsset
-} from './updater/forgejo';
+} from './updater/github-releases';
 import { swapBinary } from './updater/swap';
 
 const UPDATE_CHECK_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
