@@ -24,6 +24,48 @@ const SPEAKING_THRESHOLD = 8;
 // 10 Hz: enough to feel live, cheap enough to satisfy the "minimal impact" goal.
 const TICK_MS = 100;
 
+// Avatars are handed to the overlay as small data URLs, not as file URLs.
+// Signed file URLs expire (storage TTL) and the overlay is another document:
+// it refetches them and gets a 403, while this page keeps serving the image
+// from its own per-document image cache. See docs/development/2026-10-25-overlay-avatars.md.
+const AVATAR_PX = 56;
+const avatarDataUrls = new Map<string, string | null>();
+
+const centerCropToDataUrl = (img: HTMLImageElement) => {
+  const side = Math.min(img.naturalWidth, img.naturalHeight);
+  const canvas = document.createElement('canvas');
+  canvas.width = AVATAR_PX;
+  canvas.height = AVATAR_PX;
+  canvas
+    .getContext('2d')
+    ?.drawImage(
+      img,
+      (img.naturalWidth - side) / 2,
+      (img.naturalHeight - side) / 2,
+      side,
+      side,
+      0,
+      0,
+      AVATAR_PX,
+      AVATAR_PX
+    );
+  return canvas.toDataURL('image/webp');
+};
+
+// Returns the cached data URL, or null while it loads or if it failed (the
+// overlay then shows initials). A re-signed URL is a new key, so it retries.
+// ponytail: keys are never evicted, one per avatar per token rotation; fine for
+// a session, add eviction if sessions ever run for weeks.
+const getAvatarDataUrl = (url: string) => {
+  if (avatarDataUrls.has(url)) return avatarDataUrls.get(url) ?? null;
+
+  avatarDataUrls.set(url, null);
+  const img = new Image();
+  img.onload = () => avatarDataUrls.set(url, centerCropToDataUrl(img));
+  img.src = url;
+  return null;
+};
+
 type TAnalyserEntry = {
   stream: MediaStream;
   analyser: AnalyserNode;
@@ -163,7 +205,9 @@ const useOverlayReporter = ({
           return {
             userId: user.id,
             name: user.name,
-            avatarUrl: user.avatar ? getFileUrl(user.avatar) : null,
+            avatarUrl: user.avatar
+              ? getAvatarDataUrl(getFileUrl(user.avatar))
+              : null,
             speaking,
             micMuted: user.state.micMuted
           };
