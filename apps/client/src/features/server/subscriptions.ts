@@ -5,6 +5,7 @@ import { setPublicServerSettings } from './actions';
 import { subscribeToCategories } from './categories/subscriptions';
 import { subscribeToChannels } from './channels/subscriptions';
 import { subscribeToEmojis } from './emojis/subscriptions';
+import { subscribeToFileTokens } from './files/subscriptions';
 import { subscribeToMessages } from './messages/subscriptions';
 import { subscribeToPlugins } from './plugins/subscriptions';
 import { subscribeToRoles } from './roles/subscriptions';
@@ -43,7 +44,8 @@ const initSubscriptions = () => {
     subscribeToMessages,
     subscribeToVoice,
     subscribeToCategories,
-    subscribeToPlugins
+    subscribeToPlugins,
+    subscribeToFileTokens
   ];
 
   const unsubscribes = subscriptors.map((subscriptor) => subscriptor());

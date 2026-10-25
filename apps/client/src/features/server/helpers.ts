@@ -116,8 +116,41 @@ const mergeMessagesChronologically = (
   return merged;
 };
 
+type TSignedFile = {
+  id: number;
+  _accessToken: string;
+  _accessTokenExpiresAt: number;
+};
+
+type TFileTokens = Record<number, { token: string; expiresAt: number }>;
+
+const isPlainNode = (value: unknown): value is Record<string, unknown> =>
+  value !== null &&
+  typeof value === 'object' &&
+  (Array.isArray(value) || Object.getPrototypeOf(value) === Object.prototype);
+
+const isSignedFile = (node: Record<string, unknown>) =>
+  typeof node.id === 'number' &&
+  typeof node._accessToken === 'string' &&
+  typeof node._accessTokenExpiresAt === 'number';
+
+// Visits every signed file anywhere in the state (users, emojis, roles,
+// messages...). Plain objects and arrays only: the slice also holds
+// MediaStreams and other class instances.
+const forEachSignedFile = (
+  node: unknown,
+  visit: (file: TSignedFile) => void
+) => {
+  if (!isPlainNode(node)) return;
+  if (isSignedFile(node)) visit(node as unknown as TSignedFile);
+
+  for (const child of Object.values(node)) forEachSignedFile(child, visit);
+};
+
 export {
   canViewChannel,
+  forEachSignedFile,
   hasUnreadMentionInMessages,
   mergeMessagesChronologically
 };
+export type { TFileTokens };
