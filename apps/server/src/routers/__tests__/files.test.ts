@@ -1,7 +1,11 @@
 import type { TTempFile } from '@bullshark/shared';
 import { beforeEach, describe, expect, test } from 'bun:test';
+import { eq } from 'drizzle-orm';
 import fs from 'fs/promises';
 import { initTest, login, uploadFile } from '../../__tests__/helpers';
+import { tdb } from '../../__tests__/setup';
+import { settings, users } from '../../db/schema';
+import { verifyFileToken } from '../../helpers/files-crypto';
 import { fileManager } from '../../utils/file-manager';
 
 describe('files router', () => {
@@ -70,5 +74,88 @@ describe('files router', () => {
     );
 
     expect(await fs.exists(tempFile.path)).toBe(true);
+  });
+});
+
+describe('files.refreshTokens', () => {
+  const uploadAs = async (name: string) => {
+    const response = await login('testowner', 'password123');
+    const { token } = (await response.json()) as { token: string };
+    const res = await uploadFile(
+      new File(['x'], name, { type: 'text/plain' }),
+      token
+    );
+
+    return (await res.json()) as TTempFile;
+  };
+
+  const enableSignedUrls = () =>
+    tdb.update(settings).set({
+      storageSignedUrlsEnabled: true,
+      storageSignedUrlsTtlSeconds: 3600
+    });
+
+  test('returns nothing while signed URLs are disabled', async () => {
+    const { caller } = await initTest();
+
+    expect(await caller.files.refreshTokens({ fileIds: [1] })).toEqual({});
+  });
+
+  test('re-signs an avatar for any member and skips orphaned files', async () => {
+    await enableSignedUrls();
+
+    const avatar = await fileManager.saveFile(
+      (await uploadAs('avatar.txt')).id,
+      1
+    );
+    const orphan = await fileManager.saveFile(
+      (await uploadAs('orphan.txt')).id,
+      1
+    );
+
+    await tdb.update(users).set({ avatarId: avatar.id }).where(eq(users.id, 1));
+
+    const { caller: member } = await initTest(2);
+    const tokens = await member.files.refreshTokens({
+      fileIds: [avatar.id, orphan.id]
+    });
+
+    expect(Object.keys(tokens)).toEqual([String(avatar.id)]);
+
+    const { token, expiresAt } = tokens[avatar.id]!;
+
+    expect(expiresAt).toBeGreaterThan(Date.now());
+    expect(verifyFileToken(avatar.id, token, expiresAt)).toBe(true);
+  });
+
+  test('re-signs an attachment only for members who can view its channel', async () => {
+    await enableSignedUrls();
+
+    const { caller: owner } = await initTest(1);
+
+    const messageId = await owner.messages.send({
+      content: 'private attachment',
+      channelId: 1,
+      files: [(await uploadAs('secret.txt')).id]
+    });
+    const [file] = await (
+      await import('../../db/queries/files')
+    ).getFilesByMessageId(messageId);
+
+    await owner.channels.update({
+      channelId: 1,
+      name: 'General',
+      topic: 'General text channel',
+      private: true
+    });
+
+    const { caller: member } = await initTest(2);
+
+    expect(await member.files.refreshTokens({ fileIds: [file!.id] })).toEqual(
+      {}
+    );
+    expect(
+      Object.keys(await owner.files.refreshTokens({ fileIds: [file!.id] }))
+    ).toEqual([String(file!.id)]);
   });
 });
