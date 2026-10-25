@@ -3,16 +3,16 @@ import {
   fetchLatestRelease,
   fetchReleaseMetadata,
   findAsset,
-  type ForgejoRelease
-} from '../forgejo';
+  type GithubRelease
+} from '../github-releases';
 
-const release: ForgejoRelease = {
+const release: GithubRelease = {
   tag_name: 'v1.2.3',
   assets: [
-    { name: 'release.json', browser_download_url: 'https://cb/release.json' },
+    { name: 'release.json', browser_download_url: 'https://gh/release.json' },
     {
       name: 'bullshark-linux-x64',
-      browser_download_url: 'https://cb/bullshark-linux-x64'
+      browser_download_url: 'https://gh/bullshark-linux-x64'
     }
   ]
 };
@@ -31,7 +31,7 @@ const jsonResponse = (body: unknown, ok = true) =>
 describe('findAsset', () => {
   test('finds an asset by exact name', () => {
     expect(findAsset(release, 'release.json')?.browser_download_url).toBe(
-      'https://cb/release.json'
+      'https://gh/release.json'
     );
   });
   test('returns undefined when absent', () => {
@@ -40,17 +40,23 @@ describe('findAsset', () => {
 });
 
 describe('fetchLatestRelease', () => {
-  test('GETs the Forgejo latest-release endpoint and returns the JSON', async () => {
+  // Les binaires et release.json ne sont publies que sur GitHub : la release
+  // Codeberg ne porte aucun asset (voir release.yml).
+  test('GETs the GitHub latest-release endpoint and returns the JSON', async () => {
     let calledUrl = '';
-    const fetchImpl = (async (url: string) => {
+    let calledHeaders: Record<string, string> = {};
+    const fetchImpl = (async (url: string, init?: RequestInit) => {
       calledUrl = url;
+      calledHeaders = init?.headers as Record<string, string>;
       return jsonResponse(release);
     }) as unknown as typeof fetch;
 
     const result = await fetchLatestRelease({ fetch: fetchImpl });
     expect(calledUrl).toBe(
-      'https://codeberg.org/api/v1/repos/The_Neckript/bullshark/releases/latest'
+      'https://api.github.com/repos/Neckript/bullshark/releases/latest'
     );
+    // GitHub refuse les requetes d'API sans User-Agent.
+    expect(calledHeaders['User-Agent']).toBeTruthy();
     expect(result.tag_name).toBe('v1.2.3');
   });
 
@@ -64,7 +70,7 @@ describe('fetchLatestRelease', () => {
 describe('fetchReleaseMetadata', () => {
   test('downloads + validates the release.json asset', async () => {
     const fetchImpl = (async (url: string) => {
-      if (url === 'https://cb/release.json') return jsonResponse(metadata);
+      if (url === 'https://gh/release.json') return jsonResponse(metadata);
       throw new Error(`unexpected url ${url}`);
     }) as unknown as typeof fetch;
 

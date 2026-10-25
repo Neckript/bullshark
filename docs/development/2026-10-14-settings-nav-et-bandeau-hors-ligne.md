@@ -86,3 +86,43 @@ Le README passe en anglais intégral, avec la version française dans
   `bullshark-linux-x64` et `bullshark-linux-arm64`.
 - Trois mentions « Bullshark » étaient des restes du renommage et désignaient
   en réalité Sharkord.
+
+## Mise à jour automatique du serveur : Codeberg → GitHub
+
+**Blocage trouvé en vérifiant la release v0.1.0 : les serveurs en binaire natif
+ne se mettaient plus à jour depuis le 18 juin.**
+
+L'updater (`apps/server/src/utils/updater/`) lisait la dernière release sur
+Codeberg puis y cherchait `release.json` et les binaires. Or l'étape « Create
+Codeberg release (metadata only) » de `.github/workflows/release.yml` crée
+volontairement une release Codeberg **sans aucun asset** : les binaires ne
+sont publiés que sur GitHub Releases, à cause du quota de stockage Codeberg.
+Vérifié sur `v0.0.32` et `v0.1.0` : `assets: []` côté Codeberg, contre
+`bullshark-linux-x64`, `bullshark-linux-arm64` et `release.json` côté GitHub.
+Chaque vérification levait donc « release.json asset not found in the latest
+release ». Les serveurs Docker n'étaient pas touchés : `canUpdate()` vaut
+`IS_PRODUCTION && !IS_DOCKER`.
+
+**Choix retenu : l'updater lit l'API GitHub Releases**
+(`updater/github-releases.ts`, ex-`forgejo.ts`). La réponse a la même forme
+(`tag_name`, `assets[].name`, `assets[].browser_download_url`), donc seuls
+l'URL et les en-têtes changent. GitHub refuse les appels d'API sans
+`User-Agent`, d'où l'en-tête `bullshark-server`. Sans jeton, la limite est de
+60 appels par heure et par IP : la vérification horaire en consomme un, plus
+deux par affichage de l'écran Mises à jour.
+
+**Écarté :**
+
+- Téléverser aussi les binaires sur Codeberg : c'est le quota que la release
+  évitait.
+- Mettre seulement `release.json` sur Codeberg et télécharger les binaires sur
+  GitHub : deux sources pour une seule mise à jour, et du code à changer quand
+  même.
+
+L'idée d'une mise à jour « souveraine via Codeberg » (spec du 2026-06-17)
+ne tenait déjà plus : les binaires ne vivent que sur GitHub.
+
+**Vérifié contre la vraie API**, pas seulement contre le mock : la release
+`v0.1.0` est trouvée, `release.json` est validé, les deux artefacts sont
+présents, et le binaire x64 répond `200` (115 Mo) après la redirection de
+GitHub.
