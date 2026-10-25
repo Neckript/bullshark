@@ -23,7 +23,11 @@ import type {
   TVoiceUserState
 } from '@bullshark/shared';
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { mergeMessagesChronologically } from './helpers';
+import {
+  forEachSignedFile,
+  mergeMessagesChronologically,
+  type TFileTokens
+} from './helpers';
 import type {
   TDisconnectInfo,
   TMessagesMap,
@@ -129,6 +133,16 @@ export const serverSlice = createSlice({
   name: 'server',
   initialState,
   reducers: {
+    refreshFileTokens: (state, action: PayloadAction<TFileTokens>) => {
+      forEachSignedFile(state, (file) => {
+        const fresh = action.payload[file.id];
+
+        if (!fresh) return;
+
+        file._accessToken = fresh.token;
+        file._accessTokenExpiresAt = fresh.expiresAt;
+      });
+    },
     resetState: (state) => {
       Object.assign(state, {
         ...initialState,
